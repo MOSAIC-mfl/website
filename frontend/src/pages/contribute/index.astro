@@ -44,6 +44,8 @@ const faqs = [
 <BaseLayout title="Contribute a dataset" description="Register a geospatial dataset in the MOSAIC catalogue — 4 required fields, about 2 minutes.">
   <PageHero
     variant="light"
+    compact
+    contours
     title="Contribute a dataset"
     subtitle="Register your dataset's metadata and it becomes an open, citable record — permanent ID, STAC metadata and its own page in the catalogue."
   >
@@ -52,7 +54,6 @@ const faqs = [
       <a class="btn btn-secondary" href={`${base}/contact`}>Ask before contributing</a>
     </div>
     <p class="hero-note">4 required fields · about 2 minutes · via GitHub or plain email</p>
-    <img slot="art" src={`${base}/illustrations/hero-home.jpg`} alt="" />
   </PageHero>
 
   <div class="container contrib-body">
