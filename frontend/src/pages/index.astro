@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import StatusBadge from '../components/ui/StatusBadge.astro'
-import AccessBadge from '../components/ui/AccessBadge.astro'
 import ContentCard from '../components/ui/ContentCard.astro'
 import Icon from '../components/ui/Icon.astro'
 import datasets from '../../data/datasets.json'
@@ -17,7 +16,10 @@ const featured = datasets.slice(0, 3)
 
 <BaseLayout title="Home">
 
-  <!-- ── Hero ──────────────────────────────────────────────────────── -->
+  <!-- ── Hero ──────────────────────────────────────────────────────────
+       Text and image share the page grid (the image used to bleed to the
+       window edge and outweighed the copy). Georgia appears once on this
+       page, here; every other heading is Calibri Bold. -->
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-content">
@@ -32,6 +34,8 @@ const featured = datasets.slice(0, 3)
           contribute data from your institution, project or landscape initiative.
         </p>
         <div class="hero-actions">
+          <!-- Site rule: Ocean Teal carries the primary action; Amber is an
+               accent colour only (eyebrows, highlights), never a button. -->
           <a href={`${base}/catalogue`} class="btn btn-hero-primary">
             <Icon name="search" size={18} aria-hidden="true" /> Explore datasets
           </a>
@@ -40,18 +44,23 @@ const featured = datasets.slice(0, 3)
           </a>
         </div>
       </div>
-    </div>
-    <div class="hero-art" aria-hidden="true">
-      <img src={`${base}/illustrations/hero-home.jpg`} alt="" />
+      <!-- Cropped from hero-home.jpg (the original is kept): the decorative
+           teal/green blobs and the torn sand edge were a full-bleed device and
+           read as ornament once the image sits inside the grid. -->
+      <div class="hero-art" aria-hidden="true">
+        <img src={`${base}/illustrations/hero-home-landscape.jpg`} alt="" width="815" height="460" />
+      </div>
     </div>
   </section>
 
-  <!-- ── Stats bar (floating card) ─────────────────────────────────── -->
+  <!-- ── Figures ───────────────────────────────────────────────────────
+       A plain bar, not a floating dashboard tile: no shadow, discreet
+       radius, uniform teal glyphs and the numbers in Calibri. -->
   <section class="stats-section">
     <div class="container">
-      <div class="stats-card">
+      <div class="stats-bar">
         <div class="stat-item">
-          <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="database" size={24} /></span>
+          <Icon name="database" size={20} class="stat-icon" aria-hidden="true" />
           <span class="stat-text">
             <span class="stat-number">{totalDatasets}</span>
             <span class="stat-label">Datasets catalogued</span>
@@ -59,7 +68,7 @@ const featured = datasets.slice(0, 3)
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="green" aria-hidden="true"><Icon name="mountains" size={24} /></span>
+          <Icon name="mountains" size={20} class="stat-icon" aria-hidden="true" />
           <span class="stat-text">
             <span class="stat-number">{landscapes}</span>
             <span class="stat-label">Landscapes with data</span>
@@ -67,7 +76,7 @@ const featured = datasets.slice(0, 3)
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="amber" aria-hidden="true"><Icon name="globe" size={24} /></span>
+          <Icon name="globe" size={20} class="stat-icon" aria-hidden="true" />
           <span class="stat-text">
             <span class="stat-number">{countries}</span>
             <span class="stat-label">Countries with data</span>
@@ -75,7 +84,7 @@ const featured = datasets.slice(0, 3)
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="building" size={24} /></span>
+          <Icon name="building" size={20} class="stat-icon" aria-hidden="true" />
           <span class="stat-text">
             <span class="stat-number">10</span>
             <span class="stat-label">CGIAR centres</span>
@@ -85,15 +94,14 @@ const featured = datasets.slice(0, 3)
     </div>
   </section>
 
-  <!-- ── Entry points ──────────────────────────────────────────────── -->
+  <!-- ── Entry points ──────────────────────────────────────────────────
+       The one component that keeps the tinted icon circle, because these
+       three are the page's main actions. -->
   <section class="section-subtle">
     <div class="container">
       <div class="section-head">
         <p class="section-eyebrow">Three ways in</p>
         <h2 class="section-title-center">Choose what you need</h2>
-        <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
-          <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-        </svg>
       </div>
       <div class="home-entry">
         <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="teal" arrow>
@@ -109,28 +117,29 @@ const featured = datasets.slice(0, 3)
     </div>
   </section>
 
-  <!-- ── Who is MOSAIC for? ────────────────────────────────────────── -->
+  <!-- ── Who is MOSAIC for? ────────────────────────────────────────────
+       Kept open (no cards), but tighter and with plain teal glyphs: this
+       section supports the entry points, it does not compete with them. -->
   <section class="section-white">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head section-head--tight">
         <p class="section-eyebrow section-eyebrow--amber">Open to all</p>
         <h2 class="section-title-center">Who is MOSAIC for?</h2>
-        <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
-          <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-        </svg>
       </div>
       <ul class="who-grid">
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape datasets</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing geospatial evidence</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> improving discoverability and reuse</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
+        <li class="who-item"><Icon name="search" size={18} class="who-ico" aria-hidden="true" /><span><strong>Researchers</strong> looking for landscape datasets</span></li>
+        <li class="who-item"><Icon name="upload" size={18} class="who-ico" aria-hidden="true" /><span><strong>Institutions</strong> sharing geospatial evidence</span></li>
+        <li class="who-item"><Icon name="map-pin" size={18} class="who-ico" aria-hidden="true" /><span><strong>Landscape teams</strong> coordinating data across places</span></li>
+        <li class="who-item"><Icon name="sparkles" size={18} class="who-ico" aria-hidden="true" /><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
+        <li class="who-item"><Icon name="database" size={18} class="who-ico" aria-hidden="true" /><span><strong>Data stewards</strong> improving discoverability and reuse</span></li>
+        <li class="who-item"><Icon name="users" size={18} class="who-ico" aria-hidden="true" /><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
       </ul>
     </div>
   </section>
 
-  <!-- ── Featured datasets ─────────────────────────────────────────── -->
+  <!-- ── Featured datasets ─────────────────────────────────────────────
+       Title leads; readiness keeps the colour marker, access level is
+       plain text. No gradient bar — the card already has structure. -->
   <section class="section-subtle">
     <div class="container">
       <div class="section-header">
@@ -144,11 +153,11 @@ const featured = datasets.slice(0, 3)
       <div class="cards-grid">
         {featured.map((d) => (
           <article class="dataset-card-new">
-            <div class="dataset-card-badges">
-              <StatusBadge status={d.readiness_status} />
-              <AccessBadge access={d.access_level} />
-            </div>
             <h3 class="dataset-card-title">{d.title}</h3>
+            <p class="dataset-card-status">
+              <StatusBadge status={d.readiness_status} />
+              <span class="dataset-card-access">{d.access_level ?? 'Access not specified'}</span>
+            </p>
             <dl class="dataset-card-meta">
               <div><dt>Country</dt><dd>{d.country}</dd></div>
               <div><dt>Theme</dt><dd>{d.mfl_theme}</dd></div>
@@ -160,21 +169,18 @@ const featured = datasets.slice(0, 3)
     </div>
   </section>
 
-  <!-- ── Closing CTA — grow the network ────────────────────────────── -->
+  <!-- ── Closing CTA — grow the network ────────────────────────────────
+       Title, one explanation and the button. The territorial context is
+       already carried by the hero. -->
   <section class="grow-cta">
     <div class="container">
       <div class="grow-card">
-        <div class="grow-art" aria-hidden="true">
-          <img src={`${base}/illustrations/seedling.png`} alt="" />
-        </div>
         <div class="grow-main">
           <h2 class="grow-title">Help grow the MOSAIC network</h2>
-          <p class="grow-body">Your dataset could help researchers, landscape teams and decision-makers across multiple countries.</p>
-          <ul class="grow-features">
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="users" size={18} /></span><span>Strengthen collaboration</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="database" size={18} /></span><span>Increase data discoverability</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="sparkles" size={18} /></span><span>Drive better decisions</span></li>
-          </ul>
+          <p class="grow-body">
+            Your dataset could help researchers, landscape teams and decision-makers
+            across multiple countries.
+          </p>
         </div>
         <a class="grow-btn" href={`${base}/contribute`}>
           Contribute a dataset
@@ -192,36 +198,29 @@ const featured = datasets.slice(0, 3)
     position: relative;
     background-color: var(--mosaic-sand);
     color: var(--mosaic-ink);
-    padding: 4.5rem 0 6.5rem;
+    padding: 4rem 0 4.5rem;
     overflow: hidden;
   }
 
   .hero-inner {
     position: relative;
     z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: center;
   }
   .hero-content { max-width: 540px; }
 
-  /* Full-bleed art anchored to the right edge of the viewport */
-  .hero-art {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 58%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    pointer-events: none;
-    z-index: 1;
-  }
+  /* Contained in the page grid, not bled to the window edge. */
+  .hero-art { min-width: 0; }
   .hero-art img {
     display: block;
     width: 100%;
-    height: auto;
-    /* Soft blend of the image's left edge into the sand background */
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 16%);
-    mask-image: linear-gradient(to right, transparent 0%, #000 16%);
+    height: 340px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: var(--radius-md);
   }
 
   .hero-eyebrow {
@@ -233,41 +232,43 @@ const featured = datasets.slice(0, 3)
     margin-bottom: var(--space-4);
     line-height: 1.2;
   }
+  /* The one Georgia heading on this page. */
   .hero-headline {
-    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    font-family: var(--font-title);
+    font-size: clamp(2.1rem, 3.6vw, 3rem);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.12;
     color: var(--mosaic-ink);
     letter-spacing: -0.02em;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
   }
   .hero-sub {
     font-size: var(--text-lg);
     /* Fixed grey (not a theming token) — this hero is always light in both
        themes, so the subtitle must stay dark-on-sand and never invert. */
     color: #4B5563;
-    line-height: 1.7;
+    line-height: 1.6;
     max-width: 470px;
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
   }
   .hero-support {
     font-size: var(--text-base);
     color: #5B6B72;
-    line-height: 1.65;
+    line-height: 1.6;
     max-width: 470px;
-    margin: 0 0 var(--space-8);
+    margin: 0 0 var(--space-6);
   }
   .hero-actions { display: flex; gap: var(--space-4); flex-wrap: wrap; }
   .hero-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
 
   .btn-hero-primary {
-    background-color: var(--mosaic-amber);
+    background-color: var(--mosaic-teal);
     color: var(--color-white);
-    border-color: var(--mosaic-amber);
+    border-color: var(--mosaic-teal);
     font-weight: 600;
     padding: var(--space-3) var(--space-6);
   }
-  .btn-hero-primary:hover { background-color: #b06d12; border-color: #b06d12; color: var(--color-white); }
+  .btn-hero-primary:hover { background-color: var(--mosaic-teal-dark); border-color: var(--mosaic-teal-dark); color: var(--color-white); }
   .btn-hero-ghost {
     /* Sits on the hero band, which stays light in BOTH themes — use the
        never-remapped white, not --color-surface (dark-on-dark in dark mode). */
@@ -287,73 +288,74 @@ const featured = datasets.slice(0, 3)
   }
   .btn-hero-ghost:hover { background-color: var(--mosaic-teal); color: var(--color-white); }
 
-  /* ── Stats (floating card) ─────────────────────────────────── */
+  /* ── Figures bar ───────────────────────────────────────────── */
   .stats-section {
     background-color: var(--color-bg);
-    padding: 0 0 var(--space-16);
+    padding: var(--space-8) 0 var(--space-12);
   }
-  .stats-card {
-    position: relative;
-    z-index: 5;
-    margin-top: -3.5rem;
+  .stats-bar {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    padding: var(--space-6) var(--space-8);
+    padding: var(--space-5) var(--space-6);
   }
   .stat-item {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     flex: 1 1 0;
     min-width: 0;
   }
-  .stat-icon {
+  /* Uniform Ocean Teal glyphs — no tinted circles. */
+  .stat-item :global(.stat-icon) {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-full);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-white);
+    color: var(--mosaic-teal);
   }
-  .stat-icon[data-tint="teal"]  { background-color: var(--mosaic-teal); }
-  .stat-icon[data-tint="green"] { background-color: #6F8F5F; }
-  .stat-icon[data-tint="amber"] { background-color: var(--mosaic-amber); }
+  /* Ocean Teal disappears on the dark surfaces — use the reverse brand tone. */
+  :global([data-theme='dark']) .stat-item :global(.stat-icon) { color: var(--mosaic-light-teal); }
   .stat-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  /* Figures are data, not editorial headings → Calibri. */
   .stat-number {
-    font-family: var(--font-title);
-    font-size: 2rem;
+    font-family: var(--font-body);
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--color-text);
-    line-height: 1;
-    letter-spacing: -0.03em;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
   }
   .stat-label { font-size: var(--text-sm); color: var(--color-muted); font-weight: 400; }
   .stat-divider { width: 1px; align-self: stretch; background-color: var(--color-border); flex-shrink: 0; margin: var(--space-1) 0; }
 
   /* ── Sections ──────────────────────────────────────────────── */
-  .section-white { background-color: var(--color-bg); padding: var(--space-16) 0; }
+  .section-white { background-color: var(--color-bg); padding: var(--space-12) 0; }
   .section-subtle { background-color: var(--color-gray-50); padding: var(--space-16) 0; }
-  .section-title-center { text-align: center; margin-bottom: var(--space-12); }
 
-  /* Centred section head: eyebrow + title + wavy underline */
-  .section-head { text-align: center; margin-bottom: var(--space-12); }
-  .section-head .section-title-center { margin-bottom: var(--space-2); }
+  /* Section headings are UI, not editorial copy → Calibri Bold. */
+  .section-title-center,
+  .section-header h2,
+  .grow-title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .section-title-center { text-align: center; font-size: 1.7rem; margin-bottom: var(--space-10); }
+
+  /* Centred section head: eyebrow + title. No decorative wave underneath —
+     it carried no information and was not tied to the MOSAIC mark. */
+  .section-head { text-align: center; margin-bottom: var(--space-10); }
+  .section-head .section-title-center { margin-bottom: 0; }
+  .section-head--tight { margin-bottom: var(--space-8); }
   .section-eyebrow {
-    margin: 0 0 var(--space-3);
+    margin: 0 0 var(--space-2);
     font-size: var(--text-sm);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #6F8F5F;
   }
-  .section-wavy { display: inline-block; color: var(--mosaic-teal); }
 
   .section-header {
     display: flex;
@@ -362,7 +364,7 @@ const featured = datasets.slice(0, 3)
     margin-bottom: var(--space-8);
     gap: var(--space-4);
   }
-  .section-header h2 { margin: 0; }
+  .section-header h2 { margin: 0; font-size: 1.7rem; }
   .section-header-text { display: flex; flex-direction: column; }
   .section-header .section-eyebrow { margin-bottom: var(--space-2); }
   .section-eyebrow--amber { color: var(--mosaic-amber); }
@@ -383,196 +385,107 @@ const featured = datasets.slice(0, 3)
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6) var(--space-8);
+    gap: var(--space-4) var(--space-8);
   }
   .who-item {
     display: flex;
     gap: var(--space-3);
-    align-items: center;
+    align-items: flex-start;
     color: var(--color-text);
-    line-height: 1.45;
+    font-size: var(--text-sm);
+    line-height: 1.5;
   }
   .who-item strong { font-weight: 700; }
-  .who-ico {
+  .who-item :global(.who-ico) {
     flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    margin-top: 2px;
+    color: var(--mosaic-teal);
   }
-  .who-ico[data-tint="teal"]      { background: #D6EEF2; color: var(--mosaic-teal); }
-  .who-ico[data-tint="amber"]     { background: #F6E6CE; color: var(--mosaic-amber); }
-  .who-ico[data-tint="terracotta"]{ background: #F3DED6; color: var(--mosaic-terracotta); }
+  :global([data-theme='dark']) .who-item :global(.who-ico) { color: var(--mosaic-light-teal); }
   @media (max-width: 900px) { .who-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
-  /* ── "Find your way in" action cards ───────────────────────────
-     Rounded card with a topographic contour texture rising from the
-     bottom-right corner, one hue per card (teal / amber / terracotta)
-     to follow the MOSAIC graphic line. Scoped to .home-entry so other
+  /* ── Entry cards ───────────────────────────────────────────────
+     Plain cards: discreet radius, hairline border, no corner contour
+     texture and no lift shadow. Scoped to .home-entry so other
      ContentCard uses are untouched. */
   .home-entry :global(.content-card) {
-    --contour: 8, 90, 117;            /* teal (default) */
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-radius: 24px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
+    border-radius: var(--radius-md);
+    box-shadow: none;
   }
-  .home-entry :global(.content-card[data-tint="amber"])      { --contour: 201, 125, 27; }
-  .home-entry :global(.content-card[data-tint="terracotta"]) { --contour: 181, 77, 47; }
-
-  /* Keep the card content above the contour layer */
-  .home-entry :global(.content-card) > * { position: relative; z-index: 1; }
-
-  /* Contour texture lives on a masked layer so it stays in the bottom-right
-     corner and fades out before it reaches the title/body. */
-  .home-entry :global(.content-card)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(ellipse at bottom right, rgba(var(--contour), 0.12), transparent 50%),
-      repeating-radial-gradient(
-        ellipse at bottom right,
-        rgba(var(--contour), 0.14) 0,
-        rgba(var(--contour), 0.14) 1px,
-        transparent 1px,
-        transparent 14px
-      );
-    -webkit-mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
-    mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
+  .home-entry :global(.content-card--link:hover),
+  .home-entry :global(.content-card--link:focus-visible) {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--mosaic-teal);
   }
-
-  .home-entry :global(.content-card--link:hover) {
-    box-shadow: 0 20px 45px rgba(8, 90, 117, 0.16);
+  /* Card titles are not editorial headings → Calibri Bold. */
+  .home-entry :global(.content-card-title) {
+    font-family: var(--font-body);
+    font-weight: 700;
   }
 
   /* ── Dataset cards ─────────────────────────────────────────── */
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-6); }
   .dataset-card-new {
-    position: relative;
-    overflow: hidden;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 18px;
-    padding: calc(var(--space-6) + 4px) var(--space-6) var(--space-6);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: var(--space-3);
+    transition: border-color 0.15s;
   }
-  /* Gradient accent bar across the top (teal → amber), clipped to the card radius */
-  .dataset-card-new::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, var(--mosaic-teal), var(--mosaic-amber));
+  .dataset-card-new:hover { border-color: var(--mosaic-teal); }
+  .dataset-card-title {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.3;
+    margin: 0;
   }
-  .dataset-card-new:hover { border-color: var(--mosaic-teal); box-shadow: var(--shadow-card-hover); }
-  .dataset-card-badges { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-  .dataset-card-title { font-size: var(--text-lg); font-weight: 600; color: var(--color-text); line-height: 1.3; margin: 0; }
-  .dataset-card-meta { display: flex; flex-direction: column; gap: var(--space-1); margin: 0; }
+  /* Readiness keeps the colour marker; access level is plain text. */
+  .dataset-card-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+  }
+  .dataset-card-access { font-size: var(--text-sm); color: var(--color-muted); }
+  .dataset-card-meta { display: flex; flex-direction: column; gap: var(--space-1); margin: var(--space-1) 0 0; }
   .dataset-card-meta div { display: flex; gap: var(--space-2); font-size: var(--text-sm); }
   .dataset-card-meta dt { color: var(--color-muted); font-weight: 500; min-width: 56px; }
   .dataset-card-meta dd { color: var(--color-text); margin: 0; }
-  .dataset-card-link { margin-top: auto; font-size: var(--text-sm); font-weight: 600; color: var(--mosaic-teal); text-decoration: none; }
+  .dataset-card-link { margin-top: auto; padding-top: var(--space-2); font-size: var(--text-sm); font-weight: 600; color: var(--mosaic-teal); text-decoration: none; }
 
   /* ── Closing CTA — grow the network ────────────────────────── */
   .grow-cta {
     background-color: var(--color-surface);
-    padding: var(--space-16) 0;
+    padding: var(--space-12) 0;
   }
   .grow-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--space-8);
     flex-wrap: wrap;
     background-color: var(--mosaic-sand);
     border: 1px solid var(--color-border);
-    border-radius: 28px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
-    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-md);
+    padding: var(--space-8);
   }
-  /* Faint dot texture on the right, fading toward the left */
-  .grow-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(8, 90, 117, 0.12) 1.4px, transparent 1.6px);
-    background-size: 18px 18px;
-    -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-    mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-  }
-  .grow-art, .grow-main, .grow-btn { position: relative; z-index: 1; }
-
-  .grow-art { flex-shrink: 0; width: 280px; align-self: stretch; }
-  .grow-art img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 16px;
-  }
-
-  .grow-main {
-    flex: 1;
-    min-width: 280px;
-    padding-left: var(--space-8);
-    border-left: 1px solid var(--color-border);
-  }
-  .grow-title { margin: 0 0 var(--space-2); color: var(--mosaic-ink); }
-  .grow-body { margin: 0 0 var(--space-6); color: #4B5563; max-width: 52ch; line-height: 1.6; }
-
-  .grow-features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: var(--space-6);
-    flex-wrap: wrap;
-  }
-  .grow-features li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--mosaic-ink);
-    max-width: 17ch;
-    line-height: 1.25;
-  }
-  .grow-feat-icon {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-full);
-    background-color: var(--tint-teal-bg);
-    color: var(--mosaic-teal);
-  }
+  .grow-main { flex: 1; min-width: 280px; }
+  .grow-title { margin: 0 0 var(--space-2); font-size: 1.5rem; color: var(--mosaic-ink); }
+  .grow-body { margin: 0; color: #4B5563; max-width: 58ch; line-height: 1.6; }
 
   .grow-btn {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    background-color: var(--color-bookend);
+    background-color: var(--mosaic-teal);
     color: var(--color-white);
     font-weight: 600;
     padding: var(--space-3) var(--space-6);
@@ -584,43 +497,31 @@ const featured = datasets.slice(0, 3)
   .grow-btn:hover { background-color: var(--mosaic-teal-dark); color: var(--color-white); }
 
   @media (max-width: 900px) {
-    .grow-card { gap: var(--space-6); padding: var(--space-8); }
-    .grow-main { border-left: none; padding-left: 0; }
+    .grow-card { padding: var(--space-6); }
     .grow-btn { width: 100%; justify-content: center; }
-  }
-  @media (max-width: 640px) {
-    .grow-art { display: none; }
   }
 
   /* ── Responsive ────────────────────────────────────────────── */
   @media (max-width: 992px) {
-    .hero-art { width: 50%; }
+    .hero-inner { gap: var(--space-8); }
     .hero-content { max-width: 460px; }
+    .hero-art img { height: 300px; }
   }
   @media (max-width: 900px) {
     .home-entry { grid-template-columns: 1fr; }
-    .stats-card { flex-wrap: wrap; }
+    .stats-bar { flex-wrap: wrap; }
     .stat-item { flex: 1 1 40%; }
     .stat-divider { display: none; }
   }
   @media (max-width: 767px) {
-    .hero { padding: 3.5rem 0 5rem; }
+    .hero { padding: 3rem 0 3.5rem; }
+    .hero-inner { grid-template-columns: 1fr; }
     .hero-content { max-width: none; }
-    .hero-art {
-      position: static;
-      width: 100%;
-      margin-top: var(--space-8);
-      justify-content: center;
-    }
-    .hero-art img {
-      -webkit-mask-image: none;
-      mask-image: none;
-      border-radius: var(--radius-lg);
-    }
+    .hero-art img { height: 220px; }
   }
   @media (max-width: 640px) {
     .stat-item { flex: 1 1 100%; }
-    .stat-number { font-size: 1.75rem; }
-    .stats-card { padding: var(--space-6); gap: var(--space-6); }
+    .stat-number { font-size: 1.5rem; }
+    .stats-bar { padding: var(--space-5); gap: var(--space-5); }
   }
 </style>
