@@ -110,6 +110,8 @@ const edgePoint = (box: Box, tx: number, ty: number) => {
 // Candidate directions (deg, screen space: −90 = up) and push distances.
 const ANGLES = [-90, -52, 52, -128, 128, 0, 180, -28, 28, 90]
 const margin = 1
+// Keep a visible gap between neighbouring label boxes, not just no overlap.
+const LABEL_PAD = 0.8
 
 type Placed = {
   p: LandscapePoint
@@ -138,7 +140,9 @@ for (const p of [...points].sort((a, b) => b.count - a.count)) {
   const r = rOf(p.count)
   const w = p.code.length * CW
   const base0 = r + 1.4 + LH / 2
-  const dists = [base0, base0 + 2, base0 + 4.5, base0 + 7.5, base0 + 11]
+  // East Africa packs several landscapes into a few degrees, so the search
+  // keeps pushing labels outward (and further out) until one lands clear.
+  const dists = [base0, base0 + 2, base0 + 4.5, base0 + 7.5, base0 + 11, base0 + 15, base0 + 19.5, base0 + 25]
 
   let best: { lx: number; ly: number; box: Box } | null = null
   for (const d of dists) {
@@ -149,8 +153,12 @@ for (const p of [...points].sort((a, b) => b.count - a.count)) {
       const box: Box = { x0: lx - w / 2, y0: ly - LH / 2, x1: lx + w / 2, y1: ly + LH / 2 }
       if (box.x0 < VB_X + margin || box.x1 > VB_X + VB_W - margin) continue
       if (box.y0 < VB_Y + margin || box.y1 > VB_Y + VB_H - margin) continue
-      if (dotBoxes.some((b) => overlaps(box, b))) continue
-      if (labelBoxes.some((b) => overlaps(box, b))) continue
+      const padded: Box = {
+        x0: box.x0 - LABEL_PAD, y0: box.y0 - LABEL_PAD,
+        x1: box.x1 + LABEL_PAD, y1: box.y1 + LABEL_PAD,
+      }
+      if (dotBoxes.some((b) => overlaps(padded, b))) continue
+      if (labelBoxes.some((b) => overlaps(padded, b))) continue
       best = { lx, ly, box }
       break
     }
@@ -205,17 +213,11 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
   <div class="locator-head">
     <h2 id="locator-heading" class="locator-title">Where the datasets sit</h2>
     <p class="locator-sub">
-      The Living Landscapes connected through MOSAIC, shown with their delineated
-      boundaries (simplified for display). Dot size reflects how many datasets are
-      registered for each landscape. <strong>Click a landscape</strong> — its dot,
-      code or boundary — to zoom to its delineation; press Escape or choose
-      “World view” to return.
+      The Living Landscapes connected through MOSAIC, with their delineated boundaries.
+      <strong>Click a landscape</strong> — dot, code or boundary — to zoom in; press Escape
+      to return.
     </p>
 
-    <ul class="locator-legend" aria-hidden="false">
-      <li><span class="locator-key locator-key--boundary"></span> Delineated landscape boundary (simplified)</li>
-      <li><span class="locator-key locator-key--landscape"></span> Landscape centroid, sized by dataset count</li>
-    </ul>
   </div>
 
   <div class="locator-figure">
@@ -316,6 +318,12 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     <script type="application/json" class="locator-payload" is:inline set:html={payloadJson} />
   </div>
 
+  <div class="locator-notes">
+  <ul class="locator-legend" aria-hidden="false">
+    <li><span class="locator-key locator-key--boundary"></span> Delineated landscape boundary (simplified)</li>
+    <li><span class="locator-key locator-key--landscape"></span> Landscape centroid, sized by dataset count</li>
+  </ul>
+
   <p class="locator-note" role="note">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
@@ -339,6 +347,7 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json">STAC boundary asset</a>.
     Land: Natural Earth.
   </p>
+  </div>
 </section>
 
 <script>
@@ -500,25 +509,28 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
   .locator {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg, 14px);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     margin: 0 0 1.75rem;
     display: grid;
-    grid-template-columns: 0.82fr 1.18fr;
-    gap: 1.25rem 1.75rem;
-    align-items: center;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  .locator-head { max-width: none; align-self: center; }
+  .locator-head { max-width: 72ch; }
+  /* Section heading, not editorial copy → Calibri Bold (Georgia is reserved
+     for the page title). */
   .locator-title {
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 1.25rem;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     color: var(--color-text);
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.3rem;
   }
   .locator-sub {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     color: var(--color-muted);
-    margin: 0 0 1rem;
+    margin: 0;
   }
   .locator-figure { position: relative; margin: 0; }
   .locator-svg {
@@ -677,26 +689,31 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     border: 0;
   }
 
-  /* Full-width provenance note under both columns so it reads in clean lines */
+  /* Everything below the map is one secondary block: legend, scope note and
+     attribution, set smaller and quieter than the map itself. */
+  .locator-notes {
+    display: grid;
+    gap: 0.6rem;
+    padding-top: 0.25rem;
+  }
+
   .locator-note {
-    grid-column: 1 / -1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
     font-size: 0.82rem;
     line-height: 1.45;
-    color: var(--mosaic-teal);
-    background: var(--mosaic-light-teal);
-    border-radius: 8px;
-    padding: 0.6rem 0.85rem;
-    margin: 0.25rem 0 0;
+    color: var(--color-muted);
+    background: transparent;
+    padding: 0;
+    margin: 0;
   }
   .locator-note svg { flex: 0 0 auto; }
   .locator-note strong { font-weight: 700; }
-  .locator-note a { color: inherit; font-weight: 600; }
+  .locator-note a { color: var(--mosaic-teal); font-weight: 600; }
+  .locator-note svg { color: var(--color-muted); }
 
   .locator-credit {
-    grid-column: 1 / -1;
     margin: 0;
     font-size: 0.72rem;
     line-height: 1.45;
@@ -729,9 +746,7 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     background: rgba(13, 92, 107, 0.25);
   }
 
-  @media (max-width: 860px) {
-    .locator { grid-template-columns: 1fr; gap: 1.25rem; }
-  }
+
   @media (max-width: 640px) {
     .locator { padding: 1rem; }
     .locator-label { font-size: 3.3px; }

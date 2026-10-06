@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
-import StatCard from '../../components/ui/StatCard.astro'
 import { CatalogueFilter } from '../../components/catalogue/CatalogueFilter'
 import LandscapeLocatorMap from '../../components/catalogue/LandscapeLocatorMap.astro'
 import { loadDatasets } from '../../utils/loadDatasets'
@@ -22,21 +21,34 @@ const countries   = [...new Set(datasets.map((d) => d.country).filter((c) => c &
 >
   <div class="catalogue-page">
 
-    <!-- ── Hero ──────────────────────────────────────────────── -->
+    <!-- ── Hero ──────────────────────────────────────────────────
+         Compact band with discreet contour lines instead of the illustrated
+         landscape: this is a working tool, so the header gives up height to
+         the results. "Dataset Catalogue" is the one Georgia title on the page. -->
     <PageHero
       variant="light"
+      compact
+      contours
+      width="var(--catalogue-max)"
       title="Dataset Catalogue"
       subtitle="Search geospatial datasets by country, landscape, theme, organization or readiness status."
-    >
-      <img slot="art" src={`${base}/illustrations/hero-catalogue.jpg`} alt="" />
-    </PageHero>
+    />
 
-    <!-- ── Stats ─────────────────────────────────────────────── -->
-    <div class="catalogue-stats">
-      <StatCard icon="layers" value={totalDatasets} label="Datasets" tint="teal" />
-      <StatCard icon="map-pin" value={landscapes} label="Landscapes" tint="amber" />
-      <StatCard icon="globe" value={countries} label="Countries" tint="terracotta" />
-    </div>
+    <!-- ── Figures (open strip, not dashboard tiles) ──────────── -->
+    <p class="catalogue-band catalogue-statline">
+      <span class="catalogue-stat">
+        <span class="catalogue-stat-value">{totalDatasets}</span>
+        <span class="catalogue-stat-label">datasets</span>
+      </span>
+      <span class="catalogue-stat">
+        <span class="catalogue-stat-value">{landscapes}</span>
+        <span class="catalogue-stat-label">landscapes</span>
+      </span>
+      <span class="catalogue-stat">
+        <span class="catalogue-stat-value">{countries}</span>
+        <span class="catalogue-stat-label">countries</span>
+      </span>
+    </p>
 
     <!-- ── Search + Filters + Results (primary task) ─────────── -->
     <noscript>
@@ -57,7 +69,7 @@ const countries   = [...new Set(datasets.map((d) => d.country).filter((c) => c &
     </div>
 
     <!-- ── Technical access (secondary, for advanced users) ──── -->
-    <p class="catalogue-tech-access">
+    <p class="catalogue-band catalogue-tech-access">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
       </svg>

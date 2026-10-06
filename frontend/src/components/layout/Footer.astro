@@ -77,15 +77,15 @@ const year = new Date().getFullYear()
   }
 
   .footer-main {
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-8);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
   }
 
   .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
-    gap: var(--space-8);
-    margin-bottom: var(--space-8);
+    gap: var(--space-6) var(--space-8);
+    margin-bottom: var(--space-6);
   }
 
   .footer-brand {
@@ -105,7 +105,7 @@ const year = new Date().getFullYear()
 
   .footer-about-text {
     font-size: var(--text-sm);
-    line-height: 1.7;
+    line-height: 1.6;
     color: rgba(255, 255, 255, 0.8);
     max-width: 46ch;
     margin: 0;
@@ -124,7 +124,7 @@ const year = new Date().getFullYear()
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: 0.35rem;
     margin: 0;
     padding: 0;
   }
@@ -146,8 +146,8 @@ const year = new Date().getFullYear()
     gap: var(--space-6);
     background-color: var(--color-white);
     border-radius: var(--radius-md);
-    padding: var(--space-4) var(--space-6);
-    margin-bottom: var(--space-6);
+    padding: var(--space-3) var(--space-6);
+    margin-bottom: var(--space-4);
   }
 
   .footer-endorsement-logo {
@@ -172,13 +172,18 @@ const year = new Date().getFullYear()
   /* ── Bottom bar ──────────────────────────────────────────────── */
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding-top: var(--space-6);
+    padding-top: var(--space-4);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-4);
     font-size: var(--text-xs);
     flex-wrap: wrap;
+  }
+
+  .footer-bottom p {
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
   }
 
   .footer-bottom a {

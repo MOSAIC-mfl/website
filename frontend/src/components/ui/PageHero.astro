@@ -5,9 +5,24 @@ interface Props {
   subtitle2?: string
   eyebrow?: string
   variant?: 'dark' | 'light'
+  /** Shorter band — for working pages where the header must not eat the content. */
+  compact?: boolean
+  /** Discreet topographic contour lines instead of an illustration. */
+  contours?: boolean
+  /** Override the inner container width so the hero lines up with the page grid. */
+  width?: string
 }
 
-const { title, subtitle, subtitle2, eyebrow, variant = 'light' } = Astro.props
+const {
+  title,
+  subtitle,
+  subtitle2,
+  eyebrow,
+  variant = 'light',
+  compact = false,
+  contours = false,
+  width,
+} = Astro.props
 const hasArt = Astro.slots.has('art')
 ---
 
@@ -15,14 +30,15 @@ const hasArt = Astro.slots.has('art')
   class:list={[
     'page-hero',
     `page-hero--${variant}`,
-    { 'page-hero--has-art': hasArt },
+    { 'page-hero--has-art': hasArt, 'page-hero--compact': compact },
   ]}
+  style={width ? `--hero-width: ${width}` : undefined}
 >
-  {variant === 'dark' && (
-    <!-- Topographic contour pattern (decorative), only on the dark variant -->
+  {(variant === 'dark' || contours) && (
+    <!-- Topographic contour pattern — territorial contours, no illustration -->
     <div class="page-hero-topo" aria-hidden="true">
       <svg width="100%" height="100%" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMid slice" fill="none">
-        <g stroke="#D6EEF2" stroke-width="1.2" fill="none">
+        <g stroke={variant === 'dark' ? '#D6EEF2' : '#0D5C6B'} stroke-width="1.2" fill="none">
           <path d="M-100 280 Q260 240 540 268 T1080 250 T1600 282" opacity="0.12"/>
           <path d="M-100 230 Q300 188 580 216 T1120 198 T1600 230" opacity="0.11"/>
           <path d="M-100 180 Q340 136 620 164 T1160 146 T1600 178" opacity="0.10"/>
@@ -59,6 +75,14 @@ const hasArt = Astro.slots.has('art')
     overflow: hidden;
   }
 
+  /* Working pages (the catalogue): a band, not a cover. */
+  .page-hero--compact { padding: 2.5rem 0 2.25rem; }
+  .page-hero--compact .page-hero-title { font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: var(--space-3); }
+  .page-hero--compact .page-hero-subtitle { font-size: var(--text-base); max-width: 58ch; }
+
+  /* Align the hero text with a page that uses a wider grid than the default. */
+  .page-hero-inner { max-width: var(--hero-width, var(--container-max)); }
+
   /* ── Variants ─────────────────────────────────────────── */
   .page-hero--dark {
     background-color: var(--mosaic-teal);
@@ -81,6 +105,10 @@ const hasArt = Astro.slots.has('art')
     inset: 0;
     pointer-events: none;
   }
+
+  /* On Warm Sand the contours are ink, so they need a much lower alpha than
+     the light-teal lines used on the dark hero. */
+  .page-hero--light .page-hero-topo :global(path) { opacity: 0.16; }
 
   .page-hero-topo svg {
     width: 100%;
@@ -184,6 +212,7 @@ const hasArt = Astro.slots.has('art')
 
   @media (max-width: 767px) {
     .page-hero { padding: 3.5rem 0 4rem; }
+    .page-hero--compact { padding: 2rem 0 1.75rem; }
     .page-hero--has-art .page-hero-text { max-width: none; }
 
     .page-hero-art {
