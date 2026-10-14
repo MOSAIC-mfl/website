@@ -6,8 +6,13 @@ import LandscapeCard from '../../components/catalogue/LandscapeCard.astro'
 import CtaBand from '../../components/ui/CtaBand.astro'
 import landscapes from '../../../data/landscapes.json'
 import datasets from '../../../data/datasets.json'
+import boundaries from '../../../data/landscape_boundaries.json'
 
 const base = import.meta.env.BASE_URL
+
+const fileSize = (bytes: number) =>
+  bytes < 1e6 ? `${Math.round(bytes / 1e3)} KB` : `${(bytes / 1e6).toFixed(1)} MB`
+const boundaryRows = [...boundaries.landscapes].sort((a, b) => a.name.localeCompare(b.name))
 
 const landscapesWithCounts = landscapes
   .map((l) => ({
@@ -43,7 +48,10 @@ const pillars = [
           Each landscape is a real place — a watershed, a highland, a valley — where multiple CGIAR
           centres are active and where the programme aims to achieve measurable outcomes for people and nature.
         </p>
-        <a href={`${base}/about`} class="lp-approach-link">About our approach &rarr;</a>
+        <div class="lp-intro-links">
+          <a href={`${base}/about`} class="lp-approach-link">About our approach &rarr;</a>
+          <a href="#download" class="lp-approach-link">Download the boundaries &darr;</a>
+        </div>
       </div>
       <div class="lp-chips">
         {pillars.map((p) => (
@@ -80,6 +88,57 @@ const pillars = [
       ))}
     </ul>
     <p id="lp-empty" class="lp-empty" hidden>No landscapes match your search.</p>
+
+    <!-- Boundary downloads (files attached to a release of the catalog repository on GitHub) -->
+    <section id="download" class="lp-download" aria-labelledby="lp-download-title">
+      <h2 id="lp-download-title" class="lp-download-title">Download the boundaries</h2>
+      <p class="lp-download-lede">
+        The outlines MOSAIC uses for the {boundaries.landscapes.length} living landscapes, at full detail,
+        in WGS&nbsp;84 (EPSG:4326). Each source has its own terms: keep the credit with the data and in any map
+        made from it. Every download includes a README with the source, licence and full credit.
+      </p>
+
+      <div class="lp-download-all">
+        {boundaries.all.map((a, i) => (
+          <a class={`btn ${i === 0 ? 'btn-primary' : 'btn-secondary'}`} href={`${boundaries.download_base}${a.file}`}>
+            All landscapes · {a.format}
+            <span class="lp-size">{fileSize(a.bytes)}</span>
+          </a>
+        ))}
+      </div>
+
+      <ul class="lp-dl-list">
+        {boundaryRows.map((l) => (
+          <li class="lp-dl-row">
+            <div class="lp-dl-name">
+              <strong>{l.name}</strong>
+              <span class="lp-dl-meta">{l.code} · {l.country}</span>
+              {l.note && <span class="lp-dl-note">{l.note}</span>}
+            </div>
+            <div class="lp-dl-licence">
+              {l.licence_url
+                ? <a href={l.licence_url} target="_blank" rel="noopener">{l.licence_label}</a>
+                : <span>{l.licence_label}</span>}
+            </div>
+            <a class="lp-dl-link" href={`${boundaries.download_base}${l.file}`}>
+              Shapefile <span class="lp-size">{fileSize(l.bytes)}</span>
+            </a>
+            <details class="lp-dl-credit">
+              <summary>Credit to keep with the data</summary>
+              <p>{l.credit}</p>
+            </details>
+          </li>
+        ))}
+      </ul>
+
+      <p class="lp-dl-foot">
+        Version {boundaries.version}.
+        <a href={boundaries.release_url} target="_blank" rel="noopener">All files of this version</a>
+        · <a href={`${boundaries.download_base}${boundaries.readme}`}>README</a>
+        · Simplified outlines for web maps are in the
+        <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" target="_blank" rel="noopener">STAC catalog</a>.
+      </p>
+    </section>
 
   </div>
 
@@ -183,6 +242,113 @@ const pillars = [
     font-size: var(--text-base);
   }
 
+  .lp-intro-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+  }
+
+  /* Boundary downloads */
+  .lp-download {
+    margin-top: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+    scroll-margin-top: 6rem;
+  }
+  .lp-download-title {
+    font-family: var(--font-title);
+    font-weight: normal;
+    font-size: var(--text-2xl);
+    margin: 0 0 var(--space-3);
+  }
+  .lp-download-lede {
+    max-width: 68ch;
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin: 0 0 var(--space-6);
+  }
+  .lp-download-all {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+  }
+  .lp-size {
+    font-weight: 400;
+    font-size: var(--text-sm);
+    opacity: 0.8;
+    font-variant-numeric: tabular-nums;
+  }
+  .lp-dl-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .lp-dl-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 11rem 9rem;
+    gap: var(--space-1) var(--space-6);
+    align-items: baseline;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .lp-dl-name strong {
+    margin-right: var(--space-2);
+  }
+  .lp-dl-meta {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+  }
+  .lp-dl-note {
+    display: block;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    font-style: italic;
+  }
+  .lp-dl-licence {
+    font-size: var(--text-sm);
+  }
+  .lp-dl-licence a,
+  .lp-dl-foot a {
+    color: var(--mosaic-teal);
+  }
+  .lp-dl-link {
+    font-weight: 600;
+    color: var(--mosaic-teal);
+    text-decoration: none;
+    justify-self: end;
+  }
+  .lp-dl-link:hover {
+    text-decoration: underline;
+  }
+  .lp-dl-credit {
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  .lp-dl-credit summary {
+    cursor: pointer;
+    width: fit-content;
+  }
+  .lp-dl-credit p {
+    max-width: 90ch;
+    margin: var(--space-2) 0 0;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+  .lp-dl-foot {
+    margin: var(--space-6) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  .lp-dl-link:focus-visible,
+  .lp-dl-licence a:focus-visible,
+  .lp-dl-credit summary:focus-visible {
+    outline: 2px solid var(--mosaic-teal);
+    outline-offset: 2px;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px; height: 1px;
@@ -195,6 +361,9 @@ const pillars = [
 
   @media (max-width: 767px) {
     .lp-intro { grid-template-columns: 1fr; }
+    .lp-dl-row { grid-template-columns: minmax(0, 1fr) auto; }
+    .lp-dl-name { grid-column: 1 / -1; }
+    .lp-dl-link { justify-self: end; }
   }
   @media (max-width: 480px) {
     .lp-chips { grid-template-columns: 1fr; }
