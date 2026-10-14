@@ -12,7 +12,12 @@ const base = import.meta.env.BASE_URL
 
 const fileSize = (bytes: number) =>
   bytes < 1e6 ? `${Math.round(bytes / 1e3)} KB` : `${(bytes / 1e6).toFixed(1)} MB`
-const boundaryRows = [...boundaries.landscapes].sort((a, b) => a.name.localeCompare(b.name))
+const boundaryByCode = new Map(
+  boundaries.landscapes.map((b) => [
+    b.code,
+    { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) },
+  ]),
+)
 
 const landscapesWithCounts = landscapes
   .map((l) => ({
@@ -83,6 +88,7 @@ const pillars = [
             count={l.count}
             pending={'pending' in l && l.pending === true}
             href={`${base}/catalogue?landscape=${l.code}`}
+            download={boundaryByCode.get(l.code)}
           />
         </li>
       ))}
@@ -96,6 +102,7 @@ const pillars = [
         The outlines MOSAIC uses for the {boundaries.landscapes.length} living landscapes, at full detail,
         in WGS&nbsp;84 (EPSG:4326). Each source has its own terms: keep the credit with the data and in any map
         made from it. Every download includes a README with the source, licence and full credit.
+        Download all landscapes here, or one landscape from the <strong>Boundary</strong> button on its card.
       </p>
 
       <div class="lp-download-all">
@@ -106,30 +113,6 @@ const pillars = [
           </a>
         ))}
       </div>
-
-      <ul class="lp-dl-list">
-        {boundaryRows.map((l) => (
-          <li class="lp-dl-row">
-            <div class="lp-dl-name">
-              <strong>{l.name}</strong>
-              <span class="lp-dl-meta">{l.code} · {l.country}</span>
-              {l.note && <span class="lp-dl-note">{l.note}</span>}
-            </div>
-            <div class="lp-dl-licence">
-              {l.licence_url
-                ? <a href={l.licence_url} target="_blank" rel="noopener">{l.licence_label}</a>
-                : <span>{l.licence_label}</span>}
-            </div>
-            <a class="lp-dl-link" href={`${boundaries.download_base}${l.file}`}>
-              Shapefile <span class="lp-size">{fileSize(l.bytes)}</span>
-            </a>
-            <details class="lp-dl-credit">
-              <summary>Credit to keep with the data</summary>
-              <p>{l.credit}</p>
-            </details>
-          </li>
-        ))}
-      </ul>
 
       <p class="lp-dl-foot">
         Version {boundaries.version}.
@@ -279,72 +262,15 @@ const pillars = [
     opacity: 0.8;
     font-variant-numeric: tabular-nums;
   }
-  .lp-dl-list {
-    list-style: none;
+  .lp-dl-foot {
     margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--color-border);
-  }
-  .lp-dl-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 11rem 9rem;
-    gap: var(--space-1) var(--space-6);
-    align-items: baseline;
-    padding: var(--space-4) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .lp-dl-name strong {
-    margin-right: var(--space-2);
-  }
-  .lp-dl-meta {
+    font-size: var(--text-sm);
     color: var(--color-muted);
-    font-size: var(--text-sm);
   }
-  .lp-dl-note {
-    display: block;
-    color: var(--color-muted);
-    font-size: var(--text-sm);
-    font-style: italic;
-  }
-  .lp-dl-licence {
-    font-size: var(--text-sm);
-  }
-  .lp-dl-licence a,
   .lp-dl-foot a {
     color: var(--mosaic-teal);
   }
-  .lp-dl-link {
-    font-weight: 600;
-    color: var(--mosaic-teal);
-    text-decoration: none;
-    justify-self: end;
-  }
-  .lp-dl-link:hover {
-    text-decoration: underline;
-  }
-  .lp-dl-credit {
-    grid-column: 1 / -1;
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-  }
-  .lp-dl-credit summary {
-    cursor: pointer;
-    width: fit-content;
-  }
-  .lp-dl-credit p {
-    max-width: 90ch;
-    margin: var(--space-2) 0 0;
-    line-height: 1.55;
-    overflow-wrap: anywhere;
-  }
-  .lp-dl-foot {
-    margin: var(--space-6) 0 0;
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-  }
-  .lp-dl-link:focus-visible,
-  .lp-dl-licence a:focus-visible,
-  .lp-dl-credit summary:focus-visible {
+  .lp-dl-foot a:focus-visible {
     outline: 2px solid var(--mosaic-teal);
     outline-offset: 2px;
   }
@@ -361,9 +287,6 @@ const pillars = [
 
   @media (max-width: 767px) {
     .lp-intro { grid-template-columns: 1fr; }
-    .lp-dl-row { grid-template-columns: minmax(0, 1fr) auto; }
-    .lp-dl-name { grid-column: 1 / -1; }
-    .lp-dl-link { justify-self: end; }
   }
   @media (max-width: 480px) {
     .lp-chips { grid-template-columns: 1fr; }
