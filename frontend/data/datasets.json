@@ -1296,7 +1296,7 @@
     "license": "ARCWeather usage terms: non-commercial, educational, research or personal use only, with citation. The portal states that Côte d'Ivoire climate data is distributed by Sodexam; no licence stated by the rights holder",
     "readiness_status": "Validated",
     "formats": [
-      "CSV"
+      "XLSX"
     ],
     "description": "Daily weather data for three synoptic stations in and around the N'Zi watershed, served by AfricaRice's ARCWeather portal: Bouaké and Ferkessédougou from 1980 to 2010, Korhogo from 1994 to 2001. Korhogo holds fewer variables, and its dew point is estimated from the minimum temperature. AfricaRice's own M'Bé research-station data from 2014 onward is a separate record, MFL-2026-084.",
     "download_url": "https://arcweather.africarice.org/en/downloads",
@@ -1741,7 +1741,7 @@
   },
   {
     "id": "MFL-2026-064",
-    "title": "Tree conservation and restoration priority areas",
+    "title": "Tree conservation and restoration priority areas (Kenya)",
     "country": "Kenya",
     "living_landscape": "KEN-LVB",
     "landscape_name": "Lake Victoria Basin (Kenya)",
@@ -1857,7 +1857,7 @@
   },
   {
     "id": "MFL-2026-068",
-    "title": "Tree conservation and restoration priority areas",
+    "title": "Tree conservation and restoration priority areas (Laos)",
     "country": "Laos",
     "living_landscape": "MEK-3S",
     "landscape_name": "3S Basins (Sekong, Sesan, Srepok)",
@@ -1886,7 +1886,7 @@
   },
   {
     "id": "MFL-2026-069",
-    "title": "Tree conservation and restoration priority areas",
+    "title": "Tree conservation and restoration priority areas (Vietnam)",
     "country": "Vietnam",
     "living_landscape": "MEK-3S",
     "landscape_name": "3S Basins (Sekong, Sesan, Srepok)",
