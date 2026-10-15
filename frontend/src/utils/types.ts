@@ -87,4 +87,7 @@ export interface Dataset {
   download_url?: string | null
   metadata_url?: string | null
   citation?: string | null
+  // Earth Engine asset identifier (MOSAIC's own STAC field
+  // mosaic:gee_asset_id). An id, not a URL: the assets are private.
+  gee_asset_id?: string | null
 }

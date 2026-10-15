@@ -180,6 +180,20 @@ const readinessDescriptions: Record<string, string> = {
           {dataset.contact && <p><strong>Contact:</strong> <a href={`mailto:${dataset.contact}`}>{dataset.contact}</a></p>}
         </div>
       )}
+
+      {dataset.gee_asset_id && (
+        <div style="margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--mosaic-teal);">
+          <p style="margin-bottom: var(--space-2);"><strong>Google Earth Engine asset</strong></p>
+          <p style="margin-bottom: var(--space-2);">
+            <code style="font-size: var(--text-xs); word-break: break-all;">{dataset.gee_asset_id}</code>
+          </p>
+          <p style="font-size: var(--text-sm); margin-bottom: 0;">
+            An asset identifier, not a download link. The asset is not public yet &mdash; opening it
+            in Earth Engine needs an Earth Engine account and access granted by the MOSAIC
+            coordination team.
+          </p>
+        </div>
+      )}
     </section>
 
     <!-- Readiness explanation -->
