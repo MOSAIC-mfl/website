@@ -2727,5 +2727,237 @@
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/TUN-NW/items/MFL-2026-097.json",
     "citation": "Shiri, Zahra; Frija, Aymen; Rejeb, Hichem; Ouerghemmi, Hassen; Le, Quang Bao, 2024, \"Data on the dynamics of Land Cover at different scales: Kef-Siliana region and sub spatial units of Agroecological Living Lab Landscape in Tunisia (2017-2022)\", https://hdl.handle.net/20.500.11766.1/FK2/U4JHNU, MELDATA, V14",
     "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-098",
+    "title": "N'Zi Watershed living landscape boundary",
+    "country": "Côte d'Ivoire",
+    "living_landscape": "CIV-NZ",
+    "landscape_name": "N'Zi Watershed",
+    "coverage": "landscape",
+    "centroid": [
+      -4.7151,
+      7.5534
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "Source terms (https://data.hydrosheds.org/file/technical-documentation/HydroSHEDS_TechDoc_v1_4.pdf)",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the N'Zi Watershed living landscape (CIV-NZ), used to define the landscape across the catalogue. Source: HydroBASINS v1c, level 6, basin HYBAS_ID 1060982320 (PFAF_ID 145402), unmodified. HydroSHEDS version 1, World Wildlife Fund (WWF). Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/CIV-NZ_NZi_Watershed_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/CIV-NZ/items/MFL-2026-098.json",
+    "citation": "This product (MOSAIC landscape boundary CIV-NZ) incorporates data from the HydroSHEDS version 1 database which is © World Wildlife Fund, Inc. (2006-2022) and has been used herein under license. WWF has not evaluated the data as altered and incorporated within MOSAIC landscape boundary CIV-NZ, and therefore gives no warranty regarding its accuracy, completeness, currency or suitability for any particular purpose. Portions of the HydroSHEDS v1 database incorporate data which are the intellectual property rights of © USGS (2006-2008), NASA (2000-2005), ESRI (1992-1998), CIAT (2004-2006), UNEP-WCMC (1993), WWF (2004), Commonwealth of Australia (2007), and Her Royal Majesty and the British Crown and are used under license. The HydroSHEDS v1 database and more information are available at https://www.hydrosheds.org. Citation: Lehner, B., Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. Hydrological Processes, 27(15): 2171-2186. https://doi.org/10.1002/hyp.9740",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-099",
+    "title": "Cumbal (Nariño) living landscape boundary",
+    "country": "Colombia",
+    "living_landscape": "COL-CUM",
+    "landscape_name": "Cumbal (Narino)",
+    "coverage": "landscape",
+    "centroid": [
+      -77.9096,
+      0.9702
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "No licence stated by the source",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Cumbal (Nariño) living landscape (COL-CUM), used to define the landscape across the catalogue. Source: Nine veredas of the Cumbal indigenous reserve area (Tasmag, Quilismal, Boyera, Cuaical, Cuaspud Grande, Llano de Piedras, Cuetial, Guan, San Martin-Miraflores), layer 'Cumbal_veredas_wgs84' compiled by Javier Ochoa (CIP). Original source to be confirmed. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/COL-CUM_Cumbal_Narino_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/COL-CUM/items/MFL-2026-099.json",
+    "citation": "Vereda boundaries compiled by J. Ochoa (CIP) for the CGIAR Science Program on Multifunctional Landscapes; original source to be confirmed.",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-100",
+    "title": "Omo-Gibe Basin living landscape boundary",
+    "country": "Ethiopia",
+    "living_landscape": "ETH-OG",
+    "landscape_name": "Omo-Gibe Basin",
+    "coverage": "landscape",
+    "centroid": [
+      36.7199,
+      6.8439
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "CC-BY-4.0",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Omo-Gibe Basin living landscape (ETH-OG), used to define the landscape across the catalogue. Source: Ethiopia River Basins (eth_basins), World Bank Group, World Bank Data Catalog dataset 0040202: Omo basin polygon (79,549 km2). Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/ETH-OG_Omo-Gibe_Basin_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/ETH-OG/items/MFL-2026-100.json",
+    "citation": "Contains data from 'Ethiopia River Basins', World Bank Group (World Bank Data Catalog, dataset 0040202), licensed under CC BY 4.0. Changes: Omo basin polygon extracted, reprojected from Adindan / UTM zone 37N to WGS 84 and trimmed near the Kenya border (about 255 km2).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-101",
+    "title": "LEILA (Southern Kenya Rangelands) living landscape boundary",
+    "country": "Kenya",
+    "living_landscape": "KEN-LEI",
+    "landscape_name": "LEILA (Southern Kenya Rangelands)",
+    "coverage": "landscape",
+    "centroid": [
+      37.1654,
+      -1.9256
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "Source terms (https://gadm.org/license.html)",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the LEILA (Southern Kenya Rangelands) living landscape (KEN-LEI), used to define the landscape across the catalogue. Source: GADM 4.1, level 1: counties Kajiado (KEN.10_1), Kiambu (KEN.13_1), Machakos (KEN.22_1) and Makueni (KEN.23_1), unmodified. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/KEN-LEI_LEILA_Southern_Kenya_Rangelands_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/KEN-LEI/items/MFL-2026-101.json",
+    "citation": "County boundaries: GADM version 4.1 (gadm.org).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-102",
+    "title": "Lake Victoria Basin (Kenya) living landscape boundary",
+    "country": "Kenya",
+    "living_landscape": "KEN-LVB",
+    "landscape_name": "Lake Victoria Basin (Kenya)",
+    "coverage": "landscape",
+    "centroid": [
+      34.5623,
+      0.0264
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "Source terms (https://gadm.org/license.html)",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Lake Victoria Basin (Kenya) living landscape (KEN-LVB), used to define the landscape across the catalogue. Source: GADM 4.1, level 1: counties Kakamega (KEN.11_1), Kisumu (KEN.17_1), Siaya (KEN.38_1) and Vihiga (KEN.45_1), unmodified. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/KEN-LVB_Lake_Victoria_Basin_Kenya_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/KEN-LVB/items/MFL-2026-102.json",
+    "citation": "County boundaries: GADM version 4.1 (gadm.org).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-103",
+    "title": "Pucallpa – Ucayali living landscape boundary",
+    "country": "Peru",
+    "living_landscape": "PER-PCL",
+    "landscape_name": "Pucallpa - Ucayali",
+    "coverage": "landscape",
+    "centroid": [
+      -75.2342,
+      -8.635
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "No licence stated by the source",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Pucallpa – Ucayali living landscape (PER-PCL), used to define the landscape across the catalogue. Source: INEI referential census district limits (cartography of the V Censo Nacional Economico 2022; 'Distrital' layer, ide.inei.gob.pe): 11 whole districts of Coronel Portillo and Padre Abad provinces (Ucayali) and a clipped part of Calleria. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/PER-PCL_Pucallpa_Ucayali_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/PER-PCL/items/MFL-2026-103.json",
+    "citation": "Contains referential census district limits of the Instituto Nacional de Estadistica e Informatica (INEI), Peru (ide.inei.gob.pe); the limits are referential and have no demarcation value. Changes: districts dissolved into one outline and Calleria clipped. No licence is stated by INEI (to be confirmed).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-104",
+    "title": "Fatick Department living landscape boundary",
+    "country": "Senegal",
+    "living_landscape": "SEN-FK",
+    "landscape_name": "Fatick Department",
+    "coverage": "landscape",
+    "centroid": [
+      -16.4833,
+      14.3286
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "Source terms (https://gadm.org/license.html)",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Fatick Department living landscape (SEN-FK), used to define the landscape across the catalogue. Source: GADM: level 2 unit Fatick departement (GADM v2 attribute schema; geometry identical to GADM 3.6 and 4.1 SEN.3.1_1). Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/SEN-FK_Fatick_Department_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/SEN-FK/items/MFL-2026-104.json",
+    "citation": "Departement boundary: GADM (gadm.org).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-105",
+    "title": "Mbire – Lower Zambezi Valley living landscape boundary",
+    "country": "Zimbabwe",
+    "living_landscape": "ZWE-MB",
+    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "coverage": "landscape",
+    "centroid": [
+      30.1731,
+      -16.4096
+    ],
+    "mfl_theme": "Boundaries / admin units",
+    "data_type": "Vector",
+    "spatial_resolution": "Landscape boundary",
+    "temporal_coverage": "2026",
+    "source": "Alliance Bioversity-CIAT (MOSAIC)",
+    "contact": "l.llanos@cgiar.org",
+    "access_level": "Open",
+    "license": "Source terms (https://gadm.org/license.html)",
+    "readiness_status": "Processed",
+    "formats": [
+      "ZIP"
+    ],
+    "description": "Canonical MOSAIC delineation of the Mbire – Lower Zambezi Valley living landscape (ZWE-MB), used to define the landscape across the catalogue. Source: GADM 4.1, level 3: all 112 wards of the districts Mbire, Centenary/Muzarabani and Mount Darwin (Mashonaland Central) and Hurungwe (Mashonaland West), unmodified. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/ZWE-MB_Mbire_Lower_Zambezi_Valley_boundary_2026-10-14.zip",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/ZWE-MB/items/MFL-2026-105.json",
+    "citation": "Ward boundaries: GADM version 4.1 (gadm.org).",
+    "gee_asset_id": null
   }
 ]
