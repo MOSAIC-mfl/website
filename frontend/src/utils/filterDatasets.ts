@@ -10,17 +10,30 @@ export interface FilterState {
   license: string[]
 }
 
+/**
+ * One filter facet against one dataset field.
+ *
+ * Several catalogue fields are nullable, because a record may legitimately not
+ * carry a country, theme, type, access level or licence. A dataset with no
+ * value for a facet cannot be one of the selected values, so an active filter
+ * excludes it; with no filter selected, everything passes.
+ */
+function matchesFacet(selected: string[], value: string | null): boolean {
+  if (selected.length === 0) return true
+  return value !== null && selected.includes(value)
+}
+
 export function filterDatasets(datasets: Dataset[], filters: FilterState): Dataset[] {
-  return datasets.filter((d) => {
-    if (filters.country.length > 0 && !filters.country.includes(d.country)) return false
-    if (filters.living_landscape.length > 0 && !filters.living_landscape.includes(d.living_landscape)) return false
-    if (filters.mfl_theme.length > 0 && !filters.mfl_theme.includes(d.mfl_theme)) return false
-    if (filters.readiness_status.length > 0 && !filters.readiness_status.includes(d.readiness_status)) return false
-    if (filters.data_type.length > 0 && !filters.data_type.includes(d.data_type)) return false
-    if (filters.access_level.length > 0 && !filters.access_level.includes(d.access_level)) return false
-    if (filters.license.length > 0 && !filters.license.includes(d.license)) return false
-    return true
-  })
+  return datasets.filter(
+    (d) =>
+      matchesFacet(filters.country, d.country) &&
+      matchesFacet(filters.living_landscape, d.living_landscape) &&
+      matchesFacet(filters.mfl_theme, d.mfl_theme) &&
+      matchesFacet(filters.readiness_status, d.readiness_status) &&
+      matchesFacet(filters.data_type, d.data_type) &&
+      matchesFacet(filters.access_level, d.access_level) &&
+      matchesFacet(filters.license, d.license),
+  )
 }
 
 export function emptyFilters(): FilterState {
