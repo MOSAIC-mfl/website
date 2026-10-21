@@ -17,11 +17,18 @@ REQUIRED_FIELDS = [
 # legitimately incomplete or flagged for repair, e.g. the malformed "Soil dataset" rows).
 OPTIONAL_VOCAB_FIELDS = ["country", "mfl_theme", "data_type", "access_level", "license"]
 
+# Mirrors the catalog's authoritative enum: see catalog spec/record_schema.md
+# field 4 and spec/vocab_reconciliation.md. Keep the two in step — this list is
+# a copy, and it had already drifted once (the region tier below was added to
+# the schema on 2026-08-03 and never reached here).
 # "Global" is the pseudo-country carried by global / cross-landscape records.
+# The three regions are UN M49 macro-regions, for datasets spanning many
+# countries within one region; "Global" stays reserved for worldwide scope.
 VALID_COUNTRIES = [
     "Cambodia", "Colombia", "Côte d'Ivoire", "Ethiopia", "Global", "India",
     "Kenya", "Laos", "Peru", "Senegal", "Tanzania", "Tunisia", "Vietnam",
-    "Zimbabwe"
+    "Zimbabwe",
+    "Africa", "Asia", "Latin America and the Caribbean",
 ]
 
 # Canonical living-landscape codes (approved 2026-07-21).
