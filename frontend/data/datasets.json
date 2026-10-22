@@ -16,7 +16,7 @@
     "temporal_coverage": "2025",
     "source": "IWMI",
     "contact": "s.maliappan@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Internal",
     "license": "CC-BY-4.0",
     "readiness_status": "Processed",
     "formats": [
@@ -74,7 +74,7 @@
     "temporal_coverage": "2024-2025",
     "source": "NASA / USGS (external)",
     "contact": "s.maliappan@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Internal",
     "license": "CC-BY-4.0",
     "readiness_status": "Processed",
     "formats": [
@@ -567,7 +567,7 @@
     "temporal_coverage": null,
     "source": "ISRA-BAME",
     "contact": "dieyemohamadou@gmail.com",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -625,7 +625,7 @@
     "temporal_coverage": "2000 - 2024",
     "source": "ISRA-BAME",
     "contact": "dieyemohamadou@gmail.com",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Processed",
     "formats": [
@@ -654,7 +654,7 @@
     "temporal_coverage": "2021",
     "source": "ISRA-BAME",
     "contact": "dieyemohamadou@gmail.com",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -712,7 +712,7 @@
     "temporal_coverage": "2025 -2026",
     "source": "CIMMYT",
     "contact": "telma.sibanda@um6p.ma",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Raw",
     "formats": [
@@ -770,7 +770,7 @@
     "temporal_coverage": "2026",
     "source": "CIMMYT",
     "contact": "telma.sibanda@um6p.ma",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -799,7 +799,7 @@
     "temporal_coverage": "2026",
     "source": "CIMMYT",
     "contact": "telma.sibanda@um6p.ma",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -828,7 +828,7 @@
     "temporal_coverage": "2026",
     "source": "IWMI",
     "contact": "telma.sibanda@um6p.ma",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Processed",
     "formats": [
@@ -857,7 +857,7 @@
     "temporal_coverage": "NA",
     "source": "ICARDA",
     "contact": "l.atassi@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -886,7 +886,7 @@
     "temporal_coverage": "NA",
     "source": "ICARDA",
     "contact": "l.atassi@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -915,7 +915,7 @@
     "temporal_coverage": "NA",
     "source": "ICARDA",
     "contact": "l.atassi@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -944,7 +944,7 @@
     "temporal_coverage": "2021",
     "source": "ICARDA",
     "contact": "a.frija@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -973,7 +973,7 @@
     "temporal_coverage": "2021",
     "source": "ICARDA",
     "contact": "a.frija@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
@@ -1031,7 +1031,7 @@
     "temporal_coverage": "2018",
     "source": "NASA / USGS (external)",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "Restricted — contact data owner",
     "readiness_status": "Raw",
     "formats": [
@@ -1089,7 +1089,7 @@
     "temporal_coverage": "2024",
     "source": "Alliance Bioversity-CIAT",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "Restricted — contact data owner",
     "readiness_status": "Validated",
     "formats": [
@@ -1118,7 +1118,7 @@
     "temporal_coverage": "1991-2020",
     "source": "National government (external)",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -1147,7 +1147,7 @@
     "temporal_coverage": "2005",
     "source": "National government (external)",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -1176,7 +1176,7 @@
     "temporal_coverage": "2000-2020",
     "source": "Alliance Bioversity-CIAT",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -1205,7 +1205,7 @@
     "temporal_coverage": "NA",
     "source": "National government (external)",
     "contact": "d.tibebe@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Validated",
     "formats": [
@@ -1727,7 +1727,7 @@
     "temporal_coverage": "2018-2024",
     "source": "Alliance Bioversity-CIAT",
     "contact": "s.krishnan@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CC-BY-4.0",
     "readiness_status": "Processed",
     "formats": [
@@ -1785,7 +1785,7 @@
     "temporal_coverage": "2024",
     "source": "CIMMYT",
     "contact": "telma.sibanda@um6p.ma",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Processed",
     "formats": [
@@ -1872,7 +1872,7 @@
     "temporal_coverage": "2017-2025",
     "source": "Alliance Bioversity-CIAT",
     "contact": "h.gaisberger@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Raw",
     "formats": [
@@ -1901,7 +1901,7 @@
     "temporal_coverage": "2017-2025",
     "source": "Alliance Bioversity-CIAT",
     "contact": "h.gaisberger@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Raw",
     "formats": [
@@ -2307,7 +2307,7 @@
     "temporal_coverage": "2023",
     "source": "IFPRI",
     "contact": "z.guo@cgiar.org",
-    "access_level": "Open",
+    "access_level": "Restricted",
     "license": "CGIAR Open Access",
     "readiness_status": "Validated",
     "formats": [
