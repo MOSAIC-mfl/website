@@ -23,8 +23,8 @@
 
 /* ── Stat strip ──────────────────────────────────────────────
    An open figure line, not three dashboard tiles: no boxes, no icon
-   squares, no shadows. The numbers are data, so they are set in Calibri
-   (--font-body), never in the editorial Georgia. */
+   squares, no shadows. The numbers are "data callouts" in the Brand
+   Guidelines, so they are set in Georgia (Lizeth, 2026-10-28). */
 .catalogue-statline {
   display: flex;
   flex-wrap: wrap;
@@ -50,7 +50,7 @@
 }
 
 .catalogue-stat-value {
-  font-family: var(--font-body);
+  font-family: var(--font-title);
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1;
