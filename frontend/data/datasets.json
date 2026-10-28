@@ -1103,7 +1103,7 @@
   },
   {
     "id": "MFL-2026-039",
-    "title": "District level crop area, prodcution and yield data - India",
+    "title": "District level crop area, production and yield data - Ethiopia",
     "country": "Ethiopia",
     "living_landscape": "ETH-OG",
     "landscape_name": "Omo-Gibe Basin",
@@ -1182,7 +1182,7 @@
     "formats": [
       "CSV"
     ],
-    "description": "Agroecological zonations",
+    "description": "",
     "download_url": null,
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/ETH-OG/items/MFL-2026-041.json",
     "citation": null,
