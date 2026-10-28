@@ -5,12 +5,13 @@ import AccessBadge from '../components/ui/AccessBadge.astro'
 import ContentCard from '../components/ui/ContentCard.astro'
 import Icon from '../components/ui/Icon.astro'
 import datasets from '../../data/datasets.json'
+import { countCountries } from '../utils/countries'
 
 const base = import.meta.env.BASE_URL
 const totalDatasets = datasets.length
 // 'GLB' is the global / cross-landscape value, not a landscape; likewise the
-// pseudo-country 'Global' carried by those records is not a country.
-const countries = [...new Set(datasets.map((d) => d.country).filter((c) => c && c !== 'Global'))].length
+// 'Global' and regional values of `country` are not countries.
+const countries = countCountries(datasets)
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
 const featured = datasets.slice(0, 3)
 ---
