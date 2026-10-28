@@ -4,15 +4,16 @@ import PageHero from '../../components/ui/PageHero.astro'
 import { CatalogueFilter } from '../../components/catalogue/CatalogueFilter'
 import LandscapeLocatorMap from '../../components/catalogue/LandscapeLocatorMap.astro'
 import { loadDatasets } from '../../utils/loadDatasets'
+import { countCountries } from '../../utils/countries'
 
 const datasets = await loadDatasets()
 const base = import.meta.env.BASE_URL
 
 const totalDatasets = datasets.length
 // 'GLB' is the global / cross-landscape value, not a landscape; likewise the
-// pseudo-country 'Global' carried by those records is not a country.
+// 'Global' and regional values of `country` are not countries.
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
-const countries   = [...new Set(datasets.map((d) => d.country).filter((c) => c && c !== 'Global'))].length
+const countries   = countCountries(datasets)
 ---
 
 <BaseLayout
