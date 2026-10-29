@@ -391,7 +391,7 @@
     "data_type": "Raster",
     "spatial_resolution": "Multiple resolutions",
     "temporal_coverage": "2017 - 2023",
-    "source": "National government (external)",
+    "source": "CoRE Stack (external)",
     "contact": "s.maliappan@cgiar.org",
     "access_level": "Open",
     "license": "CC-BY-4.0",
@@ -400,7 +400,7 @@
       "GeoTIFF"
     ],
     "description": "Tree canopy cover, density and height",
-    "download_url": "https://github.com/core-stack-org/QGIS-Styles/blob/main/Tree%20Health/ccd_style.qml",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-013.json",
     "citation": null,
     "gee_asset_id": null
@@ -420,16 +420,16 @@
     "data_type": "Mixed",
     "spatial_resolution": "Multiple resolutions",
     "temporal_coverage": "Static",
-    "source": "National government (external)",
+    "source": "India-WRIS, via CoRE Stack (external)",
     "contact": "s.maliappan@cgiar.org",
     "access_level": "Open",
-    "license": "CC-BY-4.0",
+    "license": "India-WRIS layers re-published by CoRE Stack; no licence stated by the source",
     "readiness_status": "Processed",
     "formats": [
       "Mixed"
     ],
     "description": "Waterbodies data",
-    "download_url": "https://github.com/core-stack-org/QGIS-Styles/blob/main/Hydrology/Sub-Basin_style.qml",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-014.json",
     "citation": null,
     "gee_asset_id": null
@@ -449,7 +449,7 @@
     "data_type": "Raster",
     "spatial_resolution": "30m",
     "temporal_coverage": "2018 - 2025",
-    "source": "National government (external)",
+    "source": "CoRE Stack (external)",
     "contact": "s.maliappan@cgiar.org",
     "access_level": "Open",
     "license": "CC-BY-4.0",
@@ -458,7 +458,7 @@
       "GeoTIFF"
     ],
     "description": "Landuse and Land cover changes",
-    "download_url": "https://github.com/core-stack-org/QGIS-Styles/blob/main/Land/LULC0_12class.qml",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-015.json",
     "citation": null,
     "gee_asset_id": null
