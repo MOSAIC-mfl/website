@@ -464,6 +464,35 @@
     "gee_asset_id": null
   },
   {
+    "id": "MFL-2026-016",
+    "title": "Groundwater data - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Water / hydrology",
+    "data_type": "Vector",
+    "spatial_resolution": "Multiple resolutions",
+    "temporal_coverage": "2011 - 2025",
+    "source": "CGWB, via CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "CGWB layers re-published by CoRE Stack; no licence stated in the CoRE Stack layer sheet",
+    "readiness_status": "Processed",
+    "formats": [
+      "Shapefile"
+    ],
+    "description": "Groundwater levels in dug wells and bore wells, and the Stage of Groundwater Extraction from the groundwater resource assessments of 2011, 2013, 2017, 2020, 2022, 2023, 2024 and 2025. Published by the Central Ground Water Board (CGWB) and re-published by CoRE Stack. Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-016.json",
+    "citation": null,
+    "gee_asset_id": null
+  },
+  {
     "id": "MFL-2026-017",
     "title": "Land Use and Land Cover - Senegal",
     "country": "Senegal",
@@ -2958,6 +2987,151 @@
     "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/ZWE-MB_Mbire_Lower_Zambezi_Valley_boundary_2026-10-14.zip",
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/ZWE-MB/items/MFL-2026-105.json",
     "citation": "Ward boundaries: GADM version 4.1 (gadm.org).",
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-106",
+    "title": "Microwatershed boundaries and drainage network - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Water / hydrology",
+    "data_type": "Mixed",
+    "spatial_resolution": "Multiple resolutions",
+    "temporal_coverage": "Static",
+    "source": "CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "CC-BY-4.0",
+    "readiness_status": "Processed",
+    "formats": [
+      "Mixed"
+    ],
+    "description": "CoRE Stack hydrological layers. Microwatershed boundaries (v1 and v2) and microwatershed connectivity; drainage lines, stream order, distance to upstream drainage line, single-flow and multi-flow catchment area, and natural depressions. Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-106.json",
+    "citation": null,
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-107",
+    "title": "Climate hazard and drought indices - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Scenarios / future risks",
+    "data_type": "Raster",
+    "spatial_resolution": null,
+    "temporal_coverage": null,
+    "source": "CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "CoRE Stack layers; no licence stated in the CoRE Stack layer sheet",
+    "readiness_status": "Processed",
+    "formats": [
+      "GeoTIFF"
+    ],
+    "description": "CoRE Stack Hazard Index layers. Extreme rainfall, forest fire and high wind speed indices, and SPEI drought indices at 1, 3 and 12 months (monthly, seasonal and annual drought). Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-107.json",
+    "citation": null,
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-108",
+    "title": "Restoration opportunities and plantation site suitability - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Hotspots / leverage points",
+    "data_type": "Raster",
+    "spatial_resolution": null,
+    "temporal_coverage": "Static",
+    "source": "WRI India and CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "Mixed per layer: WRI India atlas re-published by CoRE Stack with no licence stated; plantation site suitability licensed as stated in the CoRE Stack layer sheet",
+    "readiness_status": "Processed",
+    "formats": [
+      "GeoTIFF"
+    ],
+    "description": "Two layers for restoration planning. The Restoration Opportunities Atlas of WRI India, re-published by CoRE Stack, and the plantation site suitability layer of CoRE Stack (CC BY 4.0 per the sheet). Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-108.json",
+    "citation": null,
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-109",
+    "title": "Land-use pressures: mining, industry, energy and land conflicts - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Pressures / drivers",
+    "data_type": "Vector",
+    "spatial_resolution": null,
+    "temporal_coverage": null,
+    "source": "Land Conflict Watch, ASI, Global Energy Monitor and others, via CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "Third-party layers re-published by CoRE Stack; licence set by each source (Land Conflict Watch, Pande et al. 2020, ASI, Global Energy Monitor)",
+    "readiness_status": "Processed",
+    "formats": [
+      "Shapefile"
+    ],
+    "description": "Layers re-published by CoRE Stack. Land conflicts (Land Conflict Watch), mining (Pande et al., 2020), industries (Annual Survey of Industries), and solar and wind power plants (Global Energy Monitor). Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-109.json",
+    "citation": null,
+    "gee_asset_id": null
+  },
+  {
+    "id": "MFL-2026-110",
+    "title": "Soil type, nutrients and organic carbon - India",
+    "country": "India",
+    "living_landscape": "IND-CH",
+    "landscape_name": "Central India Highlands",
+    "coverage": "landscape",
+    "centroid": [
+      79.6362,
+      24.134
+    ],
+    "mfl_theme": "Degradation / land health",
+    "data_type": "Raster",
+    "spatial_resolution": null,
+    "temporal_coverage": null,
+    "source": "CoRE Stack (external)",
+    "contact": "s.maliappan@cgiar.org",
+    "access_level": "Open",
+    "license": "CoRE Stack layers; no licence stated in the CoRE Stack layer sheet",
+    "readiness_status": "Processed",
+    "formats": [
+      "GeoTIFF"
+    ],
+    "description": "CoRE Stack soil layers. Soil type; soil nitrogen, phosphorus and potassium; and soil organic carbon over cropland and over trees and shrubs. The nutrient and carbon layers come from Random Forest models trained on Government of India Soil Health Card data (Soil Health Training Data tab of the sheet). Pan-India.",
+    "download_url": "https://docs.google.com/spreadsheets/d/1xS5d7vgyjyoqqnmmajKDZBx9qS6GqyAdSbNDR62ot2Y/edit?gid=0",
+    "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/IND-CH/items/MFL-2026-110.json",
+    "citation": null,
     "gee_asset_id": null
   }
 ]
