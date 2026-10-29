@@ -517,10 +517,10 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     gap: 1rem;
   }
   .locator-head { max-width: 72ch; }
-  /* Section heading, not editorial copy → Calibri Bold (Georgia is reserved
-     for the page title). */
+  /* H2 section heading → Georgia, per the Brand Guidelines typography table
+     (Lizeth, 2026-10-28). H3-level titles stay Calibri. */
   .locator-title {
-    font-family: var(--font-body);
+    font-family: var(--font-title);
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: 0.01em;
