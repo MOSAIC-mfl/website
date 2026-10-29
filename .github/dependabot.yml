@@ -15,6 +15,18 @@ updates:
           - "react"
           - "react-dom"
           - "@types/react*"
-    open-pull-requests-limit: 5
+      # eslint and typescript-eslint must move together. The plugin pins
+      # "@typescript-eslint/parser": "^<same version>", so a PR that bumps only
+      # one of the pair cannot install; and eslint 10 needs typescript-eslint
+      # >= 8.4, whose peer range is the first to accept "^10.0.0". Ungrouped,
+      # each of these PRs fails on its own and none of them can ever merge
+      # (PRs #12, #14 and #15, all red since June 2026).
+      linting:
+        patterns:
+          - "eslint"
+          - "@typescript-eslint/*"
+    # The previous limit of 5 was saturated by five stale PRs, which stopped
+    # Dependabot opening anything new, security updates included.
+    open-pull-requests-limit: 8
     labels:
       - "dependencies"
