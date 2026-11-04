@@ -9,7 +9,7 @@ body:
     id: page
     attributes:
       label: Affected page or component
-      placeholder: "e.g. /catalogue, Dataset detail for KEN-LV_LC_2023_ILRI_v1"
+      placeholder: "e.g. /catalogue, Dataset page for MFL-2026-079, /landscapes/ken-lvb/"
     validations:
       required: true
   - type: textarea

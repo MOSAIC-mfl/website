@@ -53,6 +53,10 @@ const hasArt = Astro.slots.has('art')
   }
   .info-callout--note-teal .info-callout-icon { color: var(--mosaic-teal); }
 
+  /* Both variants keep a light surface in every theme, so their links keep
+     Ocean Teal instead of the theme's link colour. */
+  .info-callout :global(a) { color: var(--mosaic-teal); }
+
   .info-callout-icon {
     flex-shrink: 0;
     display: inline-flex;

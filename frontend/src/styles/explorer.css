@@ -1,0 +1,284 @@
+/*
+ * Map explorer of the landscape profiles. Ported from the Lake Victoria Basin Explorer
+ * (site/css/app.css + site.css, @ 0d22fe2) and scoped under .lvx so it cannot leak into the site.
+ * The explorer keeps its own light design (panels float over satellite imagery, STYLE.md), with the
+ * site's MOSAIC tokens instead of a copy of them. Data palettes on the map are not brand colours.
+ */
+.lvx {
+  /* MOSAIC brand mapping (the author's tokens.css, resolved to the site's variables) */
+  --ground: #f7f4ef;            /* Warm Sand */
+  --surface: #ffffff;
+  --raised: #efece4;            /* sand, one step down */
+  --active: #d6eef2;            /* Light Teal */
+  --border: #e2e0d9;
+  --rule: #efede6;
+  --control: #c9c5ba;
+  --text: #1c2b3a;
+  --muted: #62707a;             /* muted grey darkened for 4.5:1 on sand/white */
+  --faint: #62707a;
+  --accent: #0d5c6b;
+  --primary: #0d5c6b;
+  --negative: #c4242a;
+  --pill-warning-bg: #fffbeb;
+  --pill-warning-ink: #92400e;
+  --tag-raw-bg: #eceae3;        --tag-raw-ink: #5e6b75;
+  --tag-review-bg: #fef3c7;     --tag-review-ink: #92400e;
+  --tag-restricted-bg: #f7e4dd; --tag-restricted-ink: #ad492d;
+  --tag-validated-bg: #d6eef2;  --tag-validated-ink: #0d5c6b;
+  --chart-1: #117a8d; --chart-2: #8a8a8a; --chart-3: #1c2b3a; --chart-muted: #cfd3d6;
+  --chart-mark: var(--text); --chart-span: 0.06; --grid: var(--rule); --axis-ink: var(--muted); --ink: var(--text);
+  --radius-card: 12px; --radius-control: 8px;
+  --font: var(--font-body);
+  --explorer-top: var(--site-header-h, 74px);
+
+  position: relative;
+  height: calc(100dvh - var(--explorer-top));
+  min-height: 520px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  font: 400 14px/1.45 var(--font);
+  color: var(--text);
+  background: var(--ground);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.lvx *, .lvx *::before, .lvx *::after { box-sizing: border-box; }
+.lvx [hidden] { display: none !important; }
+.lvx h1, .lvx h2, .lvx h3, .lvx h4, .lvx p { margin: 0; color: inherit; line-height: inherit; }
+.lvx button, .lvx input { font: inherit; color: inherit; }
+.lvx a { color: var(--accent); }
+.lvx .num { font-variant-numeric: tabular-nums; }
+.lvx :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- explorer bar: its title and the "Uses & studies" action (its header, under the site's) ---------- */
+.lvx-bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; min-height: 52px;
+           background: var(--surface); border-bottom: 1px solid var(--border); z-index: 8; }
+.lvx-bar h2 { font: 400 19px/1.2 var(--font-title); color: var(--text); letter-spacing: .01em; }
+.lvx-bar .lvx-bar-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.lvx-bar .lvx-bar-link { font: 600 13px var(--font); text-decoration: none; color: var(--accent); }
+.lvx-bar .lvx-bar-link:hover { text-decoration: underline; }
+.lvx .nav-btn { border: 1px solid var(--accent); border-radius: 9999px; background: none; padding: 4px 12px;
+                font: 600 13px var(--font); color: var(--accent); cursor: pointer; white-space: nowrap; }
+.lvx .nav-btn:hover, .lvx .nav-btn[aria-expanded="true"] { background: var(--accent); color: #fff; }
+.lvx .nav-btn .when-narrow { display: none; }
+.lvx .menu-btn { display: none; border: 0; background: none; padding: 8px; color: var(--text); cursor: pointer; }
+
+/* ---------- shell: rail + map canvas ---------- */
+.lvx .shell { position: relative; display: grid; grid-template-columns: 256px minmax(0, 1fr); min-height: 0; }
+.lvx .sidebar { display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+                background: var(--ground); border-right: 1px solid var(--border); }
+.lvx .canvas { position: relative; min-width: 0; min-height: 0; }
+.lvx .map { position: absolute; inset: 0; background: #dfe5ea; }
+.lvx .finding { margin: 14px 16px 4px; font-size: 12px; color: var(--muted); }
+
+.lvx .rail { flex: 1; overflow-y: auto; padding: 8px 8px 16px; }
+.lvx .rail .group { margin-top: 22px; }
+.lvx .rail .group:first-child { margin-top: 10px; }
+.lvx .rail .group-label { font-size: 12px; color: var(--muted); padding: 0 8px 6px; }
+.lvx .rail .item { display: flex; align-items: center; gap: 9px; width: 100%; height: 32px; padding: 0 8px; margin: 1px 0;
+                   border: 0; border-radius: var(--radius-control); background: none; font: 400 14px var(--font);
+                   color: var(--text); text-align: left; cursor: pointer; }
+.lvx .rail .item:hover { background: var(--raised); }
+.lvx .rail .item[aria-pressed="true"] { background: var(--active); font-weight: 500; }
+.lvx .rail .item[aria-pressed="true"] .swatch { outline: 2px solid var(--accent); outline-offset: 1px; }
+.lvx .rail .item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.lvx .rail .item .swatch { flex: none; width: 14px; height: 14px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.lvx .rail .item .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lvx .rail .item .pill { margin-left: auto; }
+.lvx .rail .item.unavailable { color: var(--faint); cursor: default; }
+.lvx .rail .item.unavailable:hover { background: none; }
+
+/* status tags: the MOSAIC dataset-card badge style */
+.lvx .pill { display: inline-flex; align-items: center; padding: .2rem .55rem; border-radius: 9999px; font-size: 11.5px;
+             font-weight: 600; letter-spacing: .01em; white-space: nowrap; line-height: 1.3;
+             background: var(--tag-raw-bg); color: var(--tag-raw-ink); }
+.lvx .pill.restricted { background: var(--tag-restricted-bg); color: var(--tag-restricted-ink); }
+.lvx .pill.review { background: var(--tag-review-bg); color: var(--tag-review-ink); }
+.lvx .pill.validated { background: var(--tag-validated-bg); color: var(--tag-validated-ink); }
+
+.lvx .rail-bottom { border-top: 1px solid var(--border); padding: 12px 16px 14px; }
+.lvx .exag label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.lvx .exag input { width: 100%; accent-color: var(--accent); }
+.lvx .btn-text { border: 0; background: none; padding: 6px 0 0; font: 400 13px var(--font); color: var(--muted); cursor: pointer; }
+.lvx .btn-text:hover { color: var(--text); }
+
+/* ---------- panels on the map ---------- */
+.lvx .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
+              box-shadow: 0 10px 30px rgba(28, 43, 58, .08); }
+.lvx .legend { position: absolute; right: 12px; bottom: 34px; padding: 10px 12px; max-width: 240px; font-size: 12px; z-index: 5; }
+.lvx .legend h3 { margin: 0 0 6px; font-size: 12px; font-weight: 500; }
+.lvx .legend .seg { margin: 0 0 6px; }
+.lvx .legend .seg button { padding: 3px 9px; font-size: 12px; }
+.lvx .legend .seg button[aria-pressed="true"] { padding: 2px 8px; }
+.lvx .legend .steps { display: flex; gap: 0; margin: 4px 0 2px; }
+.lvx .legend .steps span { height: 10px; flex: 1; }
+.lvx .legend .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+.lvx .legend .src { margin: 6px 0 0; color: var(--faint); font-size: 12px; }
+.lvx .legend .class-row { display: flex; align-items: center; gap: 7px; margin: 2px 0; font-size: 12px; }
+.lvx .legend .class-row span:first-child { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+.lvx .attrib { position: absolute; left: 8px; bottom: 8px; font-size: 12px; color: #3d4349;
+               background: rgba(255,255,255,.85); border-radius: 4px; padding: 2px 7px; z-index: 2; max-width: calc(100% - 280px); }
+.lvx .notice { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 460px; z-index: 7;
+               background: var(--pill-warning-bg); border: 1px solid #fde68a; color: var(--pill-warning-ink);
+               border-radius: 6px; padding: 7px 12px; font-size: 12px; }
+
+/* right rail: lake / location / about / studies panels (384 px) */
+.lvx .rside { position: absolute; top: 12px; right: 12px; width: 384px; max-width: calc(100% - 24px);
+              max-height: calc(100% - 46px); display: flex; flex-direction: column; overflow: hidden; z-index: 6; }
+.lvx .rside-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 16px 10px; gap: 8px; }
+.lvx .rside-head h2 { margin: 0; font: 400 21px/1.2 var(--font-title); }
+.lvx .rside .meta { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.lvx .rside-body { overflow-y: auto; padding: 0 16px 16px; }
+.lvx .icon-btn { border: 0; background: none; font-size: 13px; color: var(--muted); cursor: pointer; padding: 4px 6px; border-radius: 4px; }
+.lvx .icon-btn:hover { background: var(--raised); color: var(--text); }
+
+/* KPI strip: one container split by hairlines */
+.lvx .kpis { display: grid; grid-template-columns: 1.28fr 0.92fr 1.12fr; border: 1px solid var(--border);
+             border-radius: var(--radius-card); margin: 6px 0 14px; }
+.lvx .kpis > div { padding: 10px 12px; border-left: 1px solid var(--rule); min-width: 0; }
+.lvx .kpis > div:first-child { border-left: 0; }
+.lvx .kpis .label { font-size: 12px; color: var(--muted); }
+.lvx .kpis .value { font-size: 19px; font-weight: 400; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lvx .kpis .value .unit { font-size: 11px; color: var(--muted); }
+.lvx .kpis .lead .value { font-size: 26px; }
+.lvx .kpis .sub { font-size: 12px; color: var(--faint); margin-top: 2px; }
+
+.lvx .chart-block h3 { font-size: 13px; font-weight: 500; margin: 12px 0 4px; }
+.lvx .chart-block .meta { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.lvx .empty { border: 1px dashed var(--control); border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 13px; margin: 8px 0; }
+.lvx .p-meta { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+
+/* click popover */
+.lvx .popover { position: absolute; min-width: 200px; max-width: 280px; padding: 10px 12px; font-size: 13px; z-index: 6; }
+.lvx .popover h3 { margin: 0 0 4px; font-size: 13px; font-weight: 500; }
+.lvx .row { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; }
+.lvx .row span:last-child { font-variant-numeric: tabular-nums; text-align: right; }
+.lvx .popover .p-meta { color: var(--faint); }
+
+/* ---------- time bar (climate and yearly layers) ---------- */
+.lvx .timebar { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 5;
+                display: flex; gap: 14px; align-items: center; padding: 9px 14px; flex-wrap: wrap; max-width: calc(100% - 320px); }
+.lvx .seg { display: inline-flex; background: var(--raised); border-radius: var(--radius-control); padding: 2px; }
+.lvx .seg button { border: 0; background: none; font: 400 13px var(--font); color: var(--muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+.lvx .seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); font-weight: 500; border: 1px solid var(--border); padding: 4px 9px; }
+.lvx .seg button:disabled { color: var(--control); cursor: default; }
+.lvx .yearbox { display: flex; align-items: center; gap: 10px; }
+.lvx .yearbox input { width: 190px; accent-color: var(--accent); }
+.lvx .time-label { font-size: 13px; color: var(--muted); }
+.lvx .time-label strong { color: var(--text); font-weight: 600; }
+@media (max-width: 1150px) { .lvx .timebar:not([hidden]) ~ .legend { bottom: 150px; } }
+
+/* ---------- about ---------- */
+.lvx .about-brand img { width: 180px; height: auto; margin: 4px 0 2px; }
+.lvx .about-brand p { margin: 6px 0; font-size: 13px; }
+.lvx .source-block { border-top: 1px solid var(--rule); padding-top: 4px; }
+.lvx .source-block h3 { font-size: 13px; font-weight: 500; margin: 12px 0 4px; }
+.lvx .source-block .p-meta a { font-weight: 600; }
+
+/* ---------- uses & studies drawer ---------- */
+.lvx #lvx-stories { width: 400px; }
+.lvx .story-card { border: 1px solid var(--border); border-radius: var(--radius-control); margin: 8px 0; }
+.lvx .story-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; width: 100%; border: 0;
+                   background: none; text-align: left; cursor: pointer; padding: 10px 12px; font: 400 14px/1.4 var(--font);
+                   color: var(--text); border-radius: var(--radius-control); }
+.lvx .story-head:hover { background: var(--raised); }
+.lvx .story-head[aria-expanded="true"] { font-weight: 500; }
+.lvx .story-head .pill { flex: none; margin-top: 1px; }
+.lvx .story-body { padding: 0 12px 12px; }
+.lvx .story-finding { margin: 0 0 6px; font-size: 13px; line-height: 1.5; }
+.lvx .story-caveat { margin: 0 0 6px; font-size: 12px; line-height: 1.45; color: var(--tag-review-ink); background: var(--tag-review-bg); border-radius: 6px; padding: 6px 8px; }
+.lvx .story-body .p-meta { margin: 0 0 8px; }
+.lvx .story-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+.lvx .story-show { border: 1px solid var(--accent); border-radius: var(--radius-control); background: var(--accent); color: #fff;
+                   font: 500 12.5px var(--font); padding: 5px 10px; cursor: pointer; }
+.lvx .story-show:hover { background: #0a4753; }
+.lvx .story-chip { border: 1px solid var(--control); border-radius: 9999px; background: var(--surface); color: var(--text);
+                   font: 400 12px var(--font); padding: 3px 10px; cursor: pointer; }
+.lvx .story-chip:hover { background: var(--raised); }
+.lvx .stories-note { margin: 8px 2px; font-size: 12px; color: var(--muted); }
+.lvx .story-tabs { margin: 2px 0 10px; }
+.lvx .story-tabs button { font-weight: 500; }
+.lvx .chapter { padding: 14px 2px 18px; border-top: 1px solid var(--rule); opacity: .62; transition: opacity .25s ease; }
+.lvx .chapter:first-of-type { border-top: 0; }
+.lvx .chapter.active { opacity: 1; }
+.lvx .chapter-title { margin: 0 0 6px; font: 400 18px/1.25 var(--font-title); color: var(--text); }
+.lvx .chapter-title .pill { vertical-align: 2px; margin-left: 6px; }
+.lvx .chapter-text { margin: 0 0 10px; font-size: 13.5px; line-height: 1.55; }
+.lvx .chapter-figure { width: 100%; height: auto; border-radius: 6px; cursor: zoom-in; margin: 4px 0 10px; background: #fff; display: block; }
+.lvx .chapter-chart { margin: 4px 0 10px; --chart-span: 0.14; }
+.lvx .chapter-chart .chart-block h3 { font-size: 12.5px; margin: 0 0 4px; }
+.lvx .story-placeholder { border: 1px dashed var(--control); border-radius: 8px; padding: 9px 11px; font-size: 12.5px; line-height: 1.5; color: var(--muted); margin: 4px 0 10px; }
+.lvx .story-num { display: flex; gap: 10px; align-items: baseline; margin: 8px 0; }
+.lvx .story-num-val { flex: none; min-width: 74px; font-size: 17px; font-weight: 600; color: var(--accent); text-align: right; }
+.lvx .story-num-body { font-size: 12.5px; line-height: 1.45; }
+.lvx .story-num-body .p-meta { font-size: 11.5px; margin-top: 1px; }
+.lvx .sources { margin: 8px 0 2px; font-size: 12px; color: var(--muted); }
+.lvx .sources summary { cursor: pointer; font-weight: 500; color: var(--accent); }
+.lvx .sources p { margin: 5px 0 0; line-height: 1.45; }
+.lvx .story-spacer { height: 42vh; }
+.lvx .mini-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; margin-top: 2px; }
+.lvx .mini-title { font-size: 12px; color: var(--text); margin-bottom: -2px; }
+.lvx .mini-title .num { color: var(--muted); }
+
+/* while the Story tab is open the drawer stays: the map furniture moves left of it */
+@media (min-width: 901px) {
+  .lvx[data-story="on"] .legend { right: 424px; }
+  .lvx[data-story="on"] .timebar { left: calc(50% - 212px); max-width: calc(100% - 700px); }
+  .lvx[data-story="on"]:has(.timebar:not([hidden])) .legend { bottom: 150px; }
+}
+
+/* figure enlarged over the map */
+.lvx-fig-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(28,43,58,.72); display: flex; flex-direction: column;
+                   align-items: center; justify-content: center; gap: 10px; padding: 4vh 4vw; cursor: zoom-out; border: 0; width: 100%; }
+.lvx-fig-overlay img { max-width: min(92vw, 1100px); max-height: 82vh; background: #fff; border-radius: 8px; padding: 12px; }
+.lvx-fig-overlay span { color: #fff; font-size: 12px; }
+
+/* ---------- swipe comparison ---------- */
+.lvx .compare-map { position: absolute; inset: 0; }
+.lvx .maplibregl-compare { z-index: 3; background-color: #fff; }
+.lvx .maplibregl-compare .compare-swiper-vertical { background-color: var(--accent); }
+.lvx .maplibregl-compare .compare-swiper-vertical:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.lvx .compare-ui { position: absolute; top: 12px; left: 56px; right: 12px; z-index: 4; pointer-events: none; display: flex; align-items: flex-start; gap: 8px; }
+.lvx[data-story="on"] .compare-ui { right: 436px; }
+.lvx .compare-label { background: rgba(17,26,34,0.82); color: #fff; font: 500 12.5px/1.35 var(--font); padding: 5px 9px; border-radius: 6px; max-width: 46%; }
+.lvx .compare-label.right { margin-left: auto; text-align: right; }
+.lvx .compare-close { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 4; border: 1px solid var(--border);
+                      background: var(--surface); color: var(--text); font: 500 13px var(--font); border-radius: var(--radius-control);
+                      padding: 7px 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(28,43,58,.08); }
+.lvx[data-story="on"] .compare-close { left: calc((100% - 424px) / 2); }
+.lvx[data-comparing="on"] .legend, .lvx[data-comparing="on"] .timebar { display: none; }
+
+/* ---------- phone / tablet: the rail folds into a drawer, panels become a bottom sheet ---------- */
+@media (max-width: 900px) {
+  .lvx .menu-btn { display: block; }
+  .lvx-bar h2 { font-size: 16px; }
+  .lvx .nav-btn { padding: 3px 9px; font-size: 12px; }
+  .lvx .nav-btn .when-wide { display: none; }
+  .lvx .nav-btn .when-narrow { display: inline; }
+  .lvx .shell { grid-template-columns: minmax(0, 1fr); }
+  .lvx .sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 25; width: min(320px, 100%);
+                  transform: translateX(-100%); transition: transform .22s ease; }
+  .lvx .sidebar.open { transform: none; box-shadow: 4px 0 16px rgba(0,0,0,.18); }
+  .lvx .rside { top: auto; left: 16px; right: 16px; bottom: 12px; width: auto; max-height: 62%; }
+  .lvx #lvx-stories { width: auto; }
+  .lvx .legend { bottom: 92px; }
+  .lvx .attrib { display: none; }
+  .lvx .timebar { left: 16px; right: 16px; transform: none; max-width: none; bottom: 12px; gap: 8px; }
+  .lvx .yearbox input { width: 130px; flex: 1; }
+  .lvx .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lvx .kpis > .lead { grid-column: 1 / -1; }
+  .lvx .kpis > div { border-left: 0; border-top: 1px solid var(--rule); }
+  .lvx .kpis > div:first-child { border-top: 0; }
+  .lvx .kpis > .lead + div + div { border-left: 1px solid var(--rule); }
+  .lvx .story-spacer { height: 24vh; }
+  .lvx[data-story="on"] #lvx-stories { max-height: 52%; }
+  .lvx[data-story="on"] .legend, .lvx[data-story="on"] .timebar { display: none; }
+  .lvx .maplibregl-compare .compare-swiper-vertical { top: 25%; }
+  .lvx .compare-ui { top: 8px; left: 52px; right: 8px; flex-wrap: wrap; }
+  .lvx[data-story="on"] .compare-ui { right: 8px; }
+  .lvx .compare-close, .lvx[data-story="on"] .compare-close { top: 64px; bottom: auto; left: auto; right: 8px; transform: none; font-size: 12px; padding: 5px 10px; }
+}
+/* a phone bar holds the title and the Studies button; the data report stays in About & sources */
+@media (max-width: 480px) { .lvx-bar .lvx-bar-link { display: none; } }
+@media (prefers-reduced-motion: reduce) { .lvx .sidebar, .lvx .chapter { transition: none; } }

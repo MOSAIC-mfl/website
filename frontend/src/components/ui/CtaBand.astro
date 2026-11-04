@@ -87,6 +87,11 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
   .cta-band--soft .cta-band-title { color: var(--mosaic-ink); margin: 0 0 var(--space-2); }
   .cta-band--soft .cta-band-body { color: var(--color-gray-700); margin: 0 0 var(--space-4); max-width: 56ch; }
   .cta-band--soft .cta-band-sticky { flex-shrink: 0; }
+  /* Dark theme: same reason as the light page hero — the sand/teal tints are
+     brand constants, the text tokens flip. */
+  :global([data-theme='dark']) .cta-band--soft[data-tint] { background-color: var(--color-surface); }
+  :global([data-theme='dark']) .cta-band--soft .cta-band-title { color: var(--color-text); }
+  :global([data-theme='dark']) .cta-band--soft .cta-band-body { color: var(--color-muted); }
 
   /* ── dark ─────────────────────────────────────────────── */
   .cta-band--dark { background-color: var(--mosaic-ink); }
@@ -117,7 +122,7 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
   }
   .cta-band-link {
     font-weight: 600;
-    color: var(--mosaic-teal);
+    color: var(--color-link);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -136,7 +141,7 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
   }
-  .cta-band-bar-icon { color: var(--mosaic-teal); flex-shrink: 0; display: inline-flex; }
+  .cta-band-bar-icon { color: var(--color-link); flex-shrink: 0; display: inline-flex; }
   .cta-band-bar-text { margin: 0; flex: 1; min-width: 220px; color: var(--color-muted); font-size: var(--text-sm); }
   .cta-band-bar-text strong { color: var(--color-text); }
 

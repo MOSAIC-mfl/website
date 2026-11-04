@@ -2,6 +2,12 @@ name: Dataset catalogue update
 description: Add a new dataset or update an existing catalogue entry
 labels: ["data"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        The catalogue records live in [MOSAIC-mfl/catalog](https://github.com/MOSAIC-mfl/catalog)
+        (`records/<ID>/record.yaml`); the website reads them through the MOSAIC API. You can also
+        use the "Register a new dataset" form there. A maintainer moves this request to the record.
   - type: dropdown
     id: action
     attributes:
@@ -13,7 +19,7 @@ body:
     id: dataset_id
     attributes:
       label: Dataset ID
-      placeholder: "e.g. KEN-LV_LC_2023_ILRI_v1"
+      placeholder: "e.g. MFL-2026-079"
   - type: input
     id: title
     attributes:

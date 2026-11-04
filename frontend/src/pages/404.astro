@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+// GitHub Pages serves this page for any unknown path. Links to the previous website's dataset
+// pages (/catalogue/MFL-2026-079/) are sent to the new page (/catalogue/dataset/?id=mosaic:MFL-2026-079).
+const base = import.meta.env.BASE_URL
+---
+
+<BaseLayout title="Page not found">
+  <div class="container" style="padding-top: var(--space-12); padding-bottom: var(--space-16); max-width: 720px;">
+    <h1>Page not found</h1>
+    <p id="nf-text">The page you are looking for does not exist or has moved.</p>
+    <p><a href={`${base}/catalogue`} style="color: var(--color-link); font-weight: 600;">Go to the dataset catalogue &rarr;</a></p>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ base }}>
+  ;(function () {
+    var m = window.location.pathname.match(/\/catalogue\/(MFL-\d{4}-\d{3,})\/?$/i)
+    if (m) {
+      window.location.replace(base + '/catalogue/dataset/?id=' + encodeURIComponent('mosaic:' + m[1].toUpperCase()))
+    }
+  })()
+</script>

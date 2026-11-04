@@ -1,0 +1,3304 @@
+{
+ "profile": "mosaic-landscape-profile@0.1",
+ "landscape": {
+  "code": "KEN-LVB",
+  "label": "Lake Victoria Basin (Kenya)",
+  "countries": [
+   "KEN"
+  ],
+  "bbox": [
+   33.9499,
+   -0.4243,
+   35.343,
+   0.6557
+  ]
+ },
+ "curated": true,
+ "title": "Lake Victoria Basin",
+ "summary": "Terrain, flood hazard, rainfall, drought, population, tree-cover change, land cover and fire across the Lake Victoria Basin, 1981–2026, with a guided story and published studies.",
+ "status": "draft",
+ "credits": [
+  {
+   "name": "Andrés Aguilar",
+   "role": "Lake Victoria Basin Explorer: data pipeline, analysis, design",
+   "url": "https://github.com/anaguilarar/mosaic-lake-victoria"
+  }
+ ],
+ "origin": {
+  "repository": "https://github.com/anaguilarar/mosaic-lake-victoria",
+  "commit": "0d22fe2",
+  "note": "Converted by scripts/migrate_lake_victoria.py; the original explorer is unchanged."
+ },
+ "sections": [
+  {
+   "id": "explorer",
+   "kind": "map-explorer",
+   "title": "Basin Explorer",
+   "config": {
+    "title": "Lake Victoria Basin Explorer",
+    "tagline": "Terrain, flood hazard, rainfall, drought, population and tree-cover change · 1981–2026",
+    "data": {
+     "roots": {
+      "site": "https://anaguilarar.github.io/mosaic-lake-victoria/data/",
+      "hf": "https://huggingface.co/datasets/aaguilar90/mosaic-lake-victoria/resolve/main/"
+     },
+     "default_root": "hf",
+     "routes": [
+      {
+       "prefix": "meta/",
+       "root": "site"
+      },
+      {
+       "prefix": "series/",
+       "root": "site"
+      },
+      {
+       "prefix": "vectors/",
+       "root": "site"
+      },
+      {
+       "prefix": "figures/",
+       "root": "site"
+      },
+      {
+       "prefix": "fonts/",
+       "root": "site"
+      },
+      {
+       "prefix": "climate/",
+       "root": "site"
+      },
+      {
+       "prefix": "fire/",
+       "root": "site"
+      },
+      {
+       "path": "query/flood_query_100m.tif",
+       "root": "site"
+      },
+      {
+       "path": "tiles/s2_rgb.pmtiles",
+       "root": "site"
+      },
+      {
+       "path": "tiles/osm_basemap.pmtiles",
+       "root": "site"
+      },
+      {
+       "path": "tiles/terrain.pmtiles",
+       "root": "site"
+      }
+     ],
+     "withheld": [
+      "vectors/basin.geojson",
+      "vectors/basin_mask.geojson"
+     ],
+     "withheld_reason": "ICPAC basin boundary: licence not specified, never published",
+     "tiles_version": "13",
+     "report": "https://github.com/anaguilarar/mosaic-lake-victoria/blob/main/DATA_REPORT.md"
+    },
+    "map": {
+     "center": [
+      32.6,
+      -1.15
+     ],
+     "zoom": 6.65,
+     "pitch": 38,
+     "bearing": -8,
+     "min_zoom": 6.15,
+     "max_zoom": 13,
+     "max_pitch": 62,
+     "max_bounds": [
+      [
+       28.6,
+       -4.75
+      ],
+      [
+       36.5,
+       2.0
+      ]
+     ],
+     "sky": {
+      "sky-color": "#c8d4de",
+      "horizon-color": "#e7ebef",
+      "fog-color": "#e7ebef",
+      "sky-horizon-blend": 0.6,
+      "horizon-fog-blend": 0.7
+     },
+     "glyphs": "fonts/{fontstack}/{range}.pbf",
+     "terrain": {
+      "source": "dem",
+      "exaggeration": 1.8,
+      "min": 1,
+      "max": 4,
+      "step": 0.1
+     },
+     "attribution": "Copernicus GLO-30 · Sentinel-2",
+     "sources": {
+      "basin": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/basin.geojson"
+       }
+      },
+      "mask": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/basin_mask.geojson"
+       }
+      },
+      "lake": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/lake.geojson"
+       }
+      },
+      "lakeDetail": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/lake_detailed.geojson"
+       }
+      },
+      "s2": {
+       "type": "raster",
+       "url": {
+        "pmtiles": "tiles/s2_rgb.pmtiles"
+       },
+       "tileSize": 256
+      },
+      "dem": {
+       "type": "raster-dem",
+       "url": {
+        "pmtiles": "tiles/terrain.pmtiles"
+       },
+       "tileSize": 256,
+       "encoding": "mapbox"
+      },
+      "rivers": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/rivers.geojson"
+       }
+      },
+      "adm1": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/adm1.geojson"
+       }
+      },
+      "adm2": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/adm2.geojson"
+       }
+      },
+      "admLabels": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/admin_labels.geojson"
+       }
+      },
+      "osm": {
+       "type": "vector",
+       "url": {
+        "pmtiles": "tiles/osm_basemap.pmtiles"
+       },
+       "attribution": "© OpenStreetMap contributors"
+      }
+     },
+     "layers": [
+      {
+       "id": "bg",
+       "type": "background",
+       "paint": {
+        "background-color": "#dfe5ea"
+       }
+      },
+      {
+       "id": "s2",
+       "type": "raster",
+       "source": "s2",
+       "paint": {
+        "raster-resampling": "linear"
+       }
+      },
+      {
+       "id": "hillshade",
+       "type": "hillshade",
+       "source": "dem",
+       "paint": {
+        "hillshade-exaggeration": 0.35,
+        "hillshade-shadow-color": "#3c4148",
+        "hillshade-highlight-color": "#ffffff",
+        "hillshade-accent-color": "#5b6672"
+       }
+      },
+      {
+       "id": "lake-fill",
+       "type": "fill",
+       "source": "lakeDetail",
+       "paint": {
+        "fill-color": "#2e4b59",
+        "fill-opacity": 1
+       }
+      },
+      {
+       "id": "dim",
+       "type": "fill",
+       "source": "mask",
+       "paint": {
+        "fill-color": "#1c232b",
+        "fill-opacity": 0.28
+       }
+      },
+      {
+       "id": "rivers",
+       "type": "line",
+       "source": "rivers",
+       "layout": {
+        "visibility": "visible",
+        "line-cap": "round",
+        "line-join": "round"
+       },
+       "paint": {
+        "line-color": "#117A8D",
+        "line-opacity": 0.65,
+        "line-width": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "get",
+          "order"
+         ],
+         4,
+         0.5,
+         6,
+         1.3,
+         8,
+         2.4
+        ]
+       }
+      },
+      {
+       "id": "basin-line",
+       "type": "line",
+       "source": "basin",
+       "paint": {
+        "line-color": "#0a0a0a",
+        "line-width": 1.4
+       }
+      },
+      {
+       "id": "lake-hit",
+       "type": "fill",
+       "source": "lake",
+       "paint": {
+        "fill-opacity": 0
+       }
+      },
+      {
+       "id": "labels-start",
+       "type": "background",
+       "paint": {
+        "background-opacity": 0
+       }
+      },
+      {
+       "id": "adm2-hit",
+       "type": "fill",
+       "source": "adm2",
+       "minzoom": 8,
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "fill-opacity": 0
+       }
+      },
+      {
+       "id": "adm1-hit",
+       "type": "fill",
+       "source": "adm1",
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "fill-opacity": 0
+       }
+      },
+      {
+       "id": "adm2-line",
+       "type": "line",
+       "source": "adm2",
+       "minzoom": 8,
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "line-color": "#c9ced2",
+        "line-width": 0.6,
+        "line-dasharray": [
+         3,
+         2
+        ],
+        "line-opacity": 0.8
+       }
+      },
+      {
+       "id": "adm1-line",
+       "type": "line",
+       "source": "adm1",
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "line-color": "#dfe3e6",
+        "line-width": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         0.7,
+         11,
+         1.4
+        ],
+        "line-opacity": 0.9
+       }
+      },
+      {
+       "id": "adm1-label",
+       "type": "symbol",
+       "source": "admLabels",
+       "minzoom": 7,
+       "maxzoom": 11,
+       "filter": [
+        "==",
+        [
+         "get",
+         "level"
+        ],
+        "ADM1"
+       ],
+       "layout": {
+        "visibility": "none",
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Regular"
+        ],
+        "text-size": 11,
+        "text-letter-spacing": 0.06,
+        "text-transform": "uppercase",
+        "text-padding": 4
+       },
+       "paint": {
+        "text-color": "#e4e8eb",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.3
+       }
+      },
+      {
+       "id": "adm2-label",
+       "type": "symbol",
+       "source": "admLabels",
+       "minzoom": 9.5,
+       "filter": [
+        "==",
+        [
+         "get",
+         "level"
+        ],
+        "ADM2"
+       ],
+       "layout": {
+        "visibility": "none",
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 4
+       },
+       "paint": {
+        "text-color": "#e4e8eb",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.3
+       }
+      },
+      {
+       "id": "osm-natural",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "pois",
+       "minzoom": 8,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "national_park",
+           "nature_reserve",
+           "protected_area",
+           "forest"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8
+       },
+       "paint": {
+        "text-color": "#e6f0dc",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-water-river",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "water",
+       "minzoom": 9,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "river",
+           "canal",
+           "stream"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-placement": "line",
+        "symbol-spacing": 400
+       },
+       "paint": {
+        "text-color": "#d6eef2",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-water",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "water",
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "geometry-type"
+         ],
+         "Point"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "lake",
+           "water",
+           "bay",
+           "reservoir"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         12,
+         10,
+         14
+        ],
+        "text-padding": 3,
+        "text-max-width": 8
+       },
+       "paint": {
+        "text-color": "#d6eef2",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-village",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "minzoom": 11,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind_detail"
+         ],
+         [
+          "literal",
+          [
+           "village",
+           "hamlet"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Regular"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-town",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "minzoom": 7,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind_detail"
+         ],
+         "town"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         7,
+         11,
+         12,
+         13
+        ],
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-city",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind_detail"
+         ],
+         "city"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         12,
+         12,
+         15
+        ],
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-country",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "maxzoom": 8,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "country"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": 13,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "text-transform": "uppercase",
+        "text-letter-spacing": 0.12
+       },
+       "paint": {
+        "text-color": "#f3f5f6",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      }
+     ]
+    },
+    "groups": [
+     "Base",
+     "Water",
+     "Flood hazard",
+     "Climate",
+     "Exposure",
+     "Land",
+     "Fire"
+    ],
+    "toggles": [
+     {
+      "id": "place_names",
+      "group": "Base",
+      "title": "Place names",
+      "swatch": "#ffffff",
+      "default": true,
+      "layers": [
+       "osm-natural",
+       "osm-water-river",
+       "osm-water",
+       "osm-village",
+       "osm-town",
+       "osm-city",
+       "osm-country"
+      ],
+      "attribution": "© OpenStreetMap contributors",
+      "source_ref": "osm_labels"
+     },
+     {
+      "id": "admin",
+      "group": "Base",
+      "title": "Admin boundaries",
+      "swatch": "#c9ced2",
+      "default": false,
+      "layers": [
+       "adm2-line",
+       "adm1-line",
+       "adm2-hit",
+       "adm1-hit",
+       "adm2-label",
+       "adm1-label"
+      ],
+      "attribution": "geoBoundaries (Runfola et al. 2020)",
+      "source_ref": "admin_boundaries"
+     },
+     {
+      "id": "rivers",
+      "group": "Water",
+      "title": "Rivers",
+      "swatch": "#117A8D",
+      "default": true,
+      "layers": [
+       "rivers"
+      ],
+      "source_ref": "rivers"
+     }
+    ],
+    "panels": [
+     {
+      "id": "lake",
+      "group": "Water",
+      "title": "Lake level",
+      "swatch": "#117A8D",
+      "kind": "series-summary",
+      "source_ref": "lake_level",
+      "open_on_click": "lake-hit",
+      "heading": "Lake Victoria",
+      "subheading": "Satellite altimetry · DAHITI (DGFI-TUM)",
+      "series": "series/lake_level.json",
+      "points": "data",
+      "date": "date",
+      "value": "wse",
+      "unit": "m",
+      "decimals": 2,
+      "summary": [
+       {
+        "stat": "latest",
+        "label": "Latest level · {date}"
+       },
+       {
+        "stat": "vs_median",
+        "label": "vs median"
+       },
+       {
+        "stat": "max",
+        "label": "Record · {month}"
+       }
+      ],
+      "chart": {
+       "title": "Water surface elevation, monthly mean (m)",
+       "height": 190,
+       "decimals": 1,
+       "annotate_max": "Record {value} m",
+       "annotate_max_short": "record",
+       "reference": "median"
+      },
+      "note": "{n} altimetry passes, {first} → {last} · {source} · fetched {fetched}. WSE is geoid-referenced altimetry of today’s lake; it is not comparable with the GLO-30 terrain, whose surface dates from 2011–2015.",
+      "empty": "Lake-level series not available in this version."
+     }
+    ],
+    "click": {
+     "title": "Terrain",
+     "source": "Copernicus GLO-30",
+     "admin": {
+      "layers": [
+       "adm2-hit",
+       "adm1-hit"
+      ],
+      "visible_layer": "adm1-hit",
+      "units": {
+       "KEN": [
+        "County",
+        "Sub-county"
+       ],
+       "UGA": [
+        "Region",
+        "County"
+       ],
+       "TZA": [
+        "Region",
+        "District"
+       ],
+       "RWA": [
+        "Province",
+        "District"
+       ],
+       "BDI": [
+        "Province",
+        "Commune"
+       ]
+      }
+     }
+    },
+    "overlays": [
+     {
+      "id": "flood_years",
+      "group": "Flood hazard",
+      "title": "Years flooded",
+      "kind": "raster-tiles",
+      "source_ref": "flood_hazard",
+      "asset": "tiles/flood_years.pmtiles",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "Copernicus EMS GFM",
+      "inspect": {
+       "kind": "flood-query",
+       "asset": "query/flood_query_100m.tif",
+       "crs": "EPSG:32736",
+       "source": "Copernicus EMS GFM · 2016–2025"
+      },
+      "legend": {
+       "kind": "steps",
+       "title": "Calendar years with ≥1 flood detection, 2016–2025",
+       "colors": [
+        "#45347f",
+        "#3b508a",
+        "#30688d",
+        "#267f8e",
+        "#1e978a",
+        "#27ad80",
+        "#4bc26c",
+        "#81d34c",
+        "#bfdf24",
+        "#fde724"
+       ],
+       "labels": [
+        "1",
+        "10"
+       ],
+       "notes": [
+        "a pixel is coloured if any part of it flooded (highest years shown) · 0 years = transparent · where GFM excludes ≥50 % of observations, absence of floods is uncertain (see ‘Not assessed’)"
+       ],
+       "source": "Copernicus EMS GFM · 2016–2025"
+      }
+     },
+     {
+      "id": "flood_freq",
+      "group": "Flood hazard",
+      "title": "Flood frequency",
+      "kind": "raster-tiles",
+      "source_ref": "flood_hazard",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "Copernicus EMS GFM",
+      "inspect": {
+       "kind": "flood-query",
+       "asset": "query/flood_query_100m.tif",
+       "crs": "EPSG:32736",
+       "source": "Copernicus EMS GFM · 2016–2025"
+      },
+      "variants": [
+       {
+        "id": "all",
+        "label": "All",
+        "asset": "tiles/flood_freq.pmtiles",
+        "legend": {
+         "kind": "steps",
+         "title": "Flood detections, % of valid observations",
+         "colors": [
+          "#45347f",
+          "#355c8c",
+          "#267f8e",
+          "#1fa286",
+          "#4bc26c",
+          "#9fd938",
+          "#fde724"
+         ],
+         "labels": [
+          "≤1 %",
+          "100 %"
+         ],
+         "notes": [
+          "zoomed out, a pixel shows the highest frequency within it"
+         ],
+         "source": "Copernicus EMS GFM · 2016–2025"
+        }
+       },
+       {
+        "id": "mam",
+        "label": "MAM",
+        "asset": "tiles/flood_freq_mam.pmtiles",
+        "legend": {
+         "kind": "steps",
+         "title": "Flood detections, % of valid March–May observations",
+         "colors": [
+          "#45347f",
+          "#355c8c",
+          "#267f8e",
+          "#1fa286",
+          "#4bc26c",
+          "#9fd938",
+          "#fde724"
+         ],
+         "labels": [
+          "≤1 %",
+          "100 %"
+         ],
+         "notes": [
+          "zoomed out, a pixel shows the highest frequency within it · needs ≥20 valid observations in the season · values on click are for the whole year"
+         ],
+         "source": "Copernicus EMS GFM · 2016–2025"
+        }
+       },
+       {
+        "id": "ond",
+        "label": "OND",
+        "asset": "tiles/flood_freq_ond.pmtiles",
+        "legend": {
+         "kind": "steps",
+         "title": "Flood detections, % of valid October–December observations",
+         "colors": [
+          "#45347f",
+          "#355c8c",
+          "#267f8e",
+          "#1fa286",
+          "#4bc26c",
+          "#9fd938",
+          "#fde724"
+         ],
+         "labels": [
+          "≤1 %",
+          "100 %"
+         ],
+         "notes": [
+          "zoomed out, a pixel shows the highest frequency within it · needs ≥20 valid observations in the season · values on click are for the whole year"
+         ],
+         "source": "Copernicus EMS GFM · 2016–2025"
+        }
+       }
+      ]
+     },
+     {
+      "id": "flood_excl",
+      "group": "Flood hazard",
+      "title": "Not assessed (GFM exclusion)",
+      "kind": "raster-tiles",
+      "source_ref": "flood_hazard",
+      "asset": "tiles/flood_excl.pmtiles",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "Copernicus EMS GFM",
+      "inspect": {
+       "kind": "flood-query",
+       "asset": "query/flood_query_100m.tif",
+       "crs": "EPSG:32736",
+       "source": "Copernicus EMS GFM · 2016–2025"
+      },
+      "legend": {
+       "kind": "steps",
+       "title": "Observations excluded by GFM, %",
+       "colors": [
+        "#787878",
+        "#4b4b4b",
+        "#1e1e1e"
+       ],
+       "labels": [
+        "50 %",
+        "100 %"
+       ],
+       "notes": [
+        "Flood layers carry no data here · also covers the Serengeti–Mara zone of radar look-alikes (not assessed, see the data report)"
+       ],
+       "source": "Copernicus EMS GFM · 2016–2025"
+      }
+     },
+     {
+      "id": "max_2020",
+      "group": "Flood hazard",
+      "title": "Max extent 2020",
+      "kind": "raster-tiles",
+      "source_ref": "flood_hazard",
+      "asset": "tiles/max_2020.pmtiles",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "Copernicus EMS GFM",
+      "inspect": {
+       "kind": "flood-query",
+       "asset": "query/flood_query_100m.tif",
+       "crs": "EPSG:32736",
+       "source": "Copernicus EMS GFM · 2016–2025"
+      },
+      "legend": {
+       "kind": "steps",
+       "title": "Observed water outside the 2011–2015 lake (GLO-30 WBM), Apr–Jul 2020",
+       "colors": [
+        "#1f5fbf"
+       ],
+       "labels": [
+        "water observed at least once",
+        ""
+       ],
+       "notes": [
+        "a pixel is coloured if any part of it flooded · Pietroiusti et al. (2024) map additional flooding east of the Speke Gulf head; neither GFM’s algorithms nor JRC Global Surface Water (May–June 2020) confirm it; April 2020 could not be checked optically because of cloud, and part of the area is outside GFM’s mappable zone."
+       ],
+       "source": "Copernicus EMS GFM · 2016–2025"
+      }
+     },
+     {
+      "id": "precip",
+      "group": "Climate",
+      "title": "Precipitation",
+      "kind": "climate-grid",
+      "swatch": "#434e6b",
+      "source_ref": "precip",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "CHIRPS v3 (UCSB CHC)",
+      "variables": [
+       {
+        "id": "precip",
+        "label": "Precip",
+        "title": "Precipitation",
+        "cells": "precip_cells.bin"
+       }
+      ],
+      "aggregate": "total",
+      "units": "mm",
+      "source": "CHIRPS v3.0",
+      "ramp": [
+       "#fde737",
+       "#dec957",
+       "#bbad6c",
+       "#9b9376",
+       "#7c7b78",
+       "#61646f",
+       "#434e6b",
+       "#1a386f",
+       "#00224d"
+      ],
+      "anomaly": {
+       "kind": "ratio",
+       "units": "% of normal",
+       "centre": 100,
+       "ramp": [
+        "#543005",
+        "#8a5009",
+        "#bf812d",
+        "#dec07b",
+        "#f6e8c3",
+        "#f4f4f4",
+        "#c7eae5",
+        "#7ecbc0",
+        "#35978f",
+        "#00655d",
+        "#003c30"
+       ],
+       "normals": "precip"
+      },
+      "water_note": "satellite rainfall over the lake is less reliable",
+      "water_cell_note": "Lake-surface cell: satellite rainfall estimates over open water are less reliable."
+     },
+     {
+      "id": "temperature",
+      "group": "Climate",
+      "title": "Temperature",
+      "kind": "climate-grid",
+      "swatch": "#e14c66",
+      "source_ref": "temperature",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "CHIRTS-ERA5 (UCSB CHC)",
+      "variables": [
+       {
+        "id": "tmean",
+        "label": "Tmean",
+        "title": "Tmean (Tmax+Tmin)/2",
+        "cells": "tmean_cells.bin",
+        "normals": "tmean"
+       },
+       {
+        "id": "tmax",
+        "label": "Tmax",
+        "title": "Tmax",
+        "cells": "tmean_cells.bin",
+        "series_of": "tmean"
+       },
+       {
+        "id": "tmin",
+        "label": "Tmin",
+        "title": "Tmin",
+        "cells": "tmean_cells.bin",
+        "series_of": "tmean"
+       }
+      ],
+      "aggregate": "mean",
+      "units": "°C",
+      "source": "CHIRTS-ERA5",
+      "ramp": [
+       "#060519",
+       "#2a115c",
+       "#5a157e",
+       "#872781",
+       "#b53679",
+       "#e14c66",
+       "#f97b5d",
+       "#feb179",
+       "#fce6a8"
+      ],
+      "anomaly": {
+       "kind": "difference",
+       "units": "°C vs normal",
+       "centre": 0,
+       "ramp": [
+        "#053061",
+        "#2064aa",
+        "#4393c3",
+        "#90c4dd",
+        "#d1e5f0",
+        "#f7f6f6",
+        "#fddbc7",
+        "#f3a380",
+        "#d6604d",
+        "#b0172a",
+        "#67001f"
+       ]
+      }
+     },
+     {
+      "id": "spi3",
+      "group": "Climate",
+      "title": "Drought (SPI-3)",
+      "kind": "index-grid",
+      "swatch": "#35978f",
+      "source_ref": "spi3",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "SPI-3 from CHIRPS v3",
+      "stack": "spi3.tif",
+      "cells": "spi3_cells.bin",
+      "qc": "spi3_qc.tif",
+      "scale": 0.01,
+      "range": [
+       -3,
+       3
+      ],
+      "ramp": [
+       "#543005",
+       "#8a5009",
+       "#bf812d",
+       "#dec07b",
+       "#f6e8c3",
+       "#f4f4f4",
+       "#c7eae5",
+       "#7ecbc0",
+       "#35978f",
+       "#00655d",
+       "#003c30"
+      ],
+      "provisional_months": 3,
+      "basin_series": "series/spi3_basin.json",
+      "title_long": "SPI-3 — 3-month standardized precipitation",
+      "short": "SPI-3",
+      "calibration": "1991–2020",
+      "provisional_note": "{from} to {to}: provisional (latest CHIRPS months, may be revised)",
+      "provisional_cell_note": "The latest 2–3 CHIRPS months may be revised.",
+      "axis": [
+       "−3 dry",
+       "+3 wet"
+      ],
+      "classes": [
+       {
+        "max": -2,
+        "label": "extremely dry"
+       },
+       {
+        "max": -1.5,
+        "label": "severely dry"
+       },
+       {
+        "max": -1,
+        "label": "moderately dry"
+       },
+       {
+        "below": 1,
+        "label": "near normal"
+       },
+       {
+        "below": 1.5,
+        "label": "moderately wet"
+       },
+       {
+        "below": 2,
+        "label": "very wet"
+       },
+       {
+        "label": "extremely wet"
+       }
+      ],
+      "legend_notes": [
+       "≤ −2.0 extremely dry · −1.5 to −1.99 severely dry · −1.0 to −1.49 moderately dry · −0.99 to 0.99 near normal (WMO 2012)"
+      ],
+      "source": "Gamma fit (Thom), calibration 1991–2020 · CHIRPS v3.0 · 0.05°",
+      "cell_source": "SPI-3 from CHIRPS v3.0 · calibration 1991–2020",
+      "cell_method": "SPI-3 from CHIRPS v3.0 · gamma fit (Thom 1958), zero-rain mixed distribution"
+     },
+     {
+      "id": "population",
+      "group": "Exposure",
+      "title": "Population",
+      "kind": "raster-tiles",
+      "swatch": "#d7301f",
+      "source_ref": "population",
+      "asset": "tiles/population.pmtiles",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "WorldPop 2020 (CC-BY)",
+      "legend": {
+       "kind": "steps",
+       "title": "Population — persons per ~100 m cell (log scale)",
+       "colors": [
+        "#fff3e5",
+        "#fdd49e",
+        "#fdbb84",
+        "#fc8d59",
+        "#ef6548",
+        "#d7301f",
+        "#b30000",
+        "#7f0000"
+       ],
+       "labels": [
+        "1",
+        "≥3000"
+       ],
+       "source": "WorldPop constrained individual countries 2020, 100 m (KEN, UGA, TZA, RWA, BDI) · exposure input, not risk"
+      },
+      "inspect": {
+       "kind": "cell-sum",
+       "asset": "query/pop_100m.tif",
+       "title": "Population (exposure input)",
+       "cell_label": "This ~100 m cell",
+       "block_label": "3×3 cells (~300 m)",
+       "nodata_text": "no data / uninhabited",
+       "note": "WorldPop 2020 constrained · modelled counts · people in place, not risk"
+      }
+     },
+     {
+      "id": "forest_loss",
+      "group": "Land",
+      "title": "Tree-cover loss",
+      "kind": "year-tiles",
+      "swatch": "#b2182b",
+      "source_ref": "forest_loss",
+      "before": "rivers",
+      "attribution": "Hansen GFC (UMD)",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.9
+      },
+      "years": {
+       "2005": "tiles/loss_le_2005.pmtiles",
+       "2010": "tiles/loss_le_2010.pmtiles",
+       "2015": "tiles/loss_le_2015.pmtiles",
+       "2020": "tiles/loss_le_2020.pmtiles",
+       "2025": "tiles/loss_le_2025.pmtiles"
+      },
+      "time_label": "≤ {year}",
+      "time_caption": "cumulative tree-cover loss (5-yr steps)",
+      "legend": {
+       "kind": "steps",
+       "title": "Tree-cover loss 2001–{year}, 5-yr steps (cover 2000 ≥ 30 %)",
+       "colors": [
+        "rgba(178,24,43,0.9)"
+       ],
+       "labels": [
+        "loss",
+        ""
+       ],
+       "source": "Hansen Global Forest Change GFC-2025-v1.13; loss where tree cover 2000 >= 30 % · detection improved ~2011–13; annual values not strictly comparable · tree-cover loss, not deforestation"
+      },
+      "inspect": {
+       "kind": "region-series",
+       "series": "series/forest_loss.json",
+       "regions_path": [
+        "regions"
+       ],
+       "default_region": "Lake Victoria Basin",
+       "polygons": "vectors/subbasins.geojson",
+       "title": "Tree-cover loss · {region}",
+       "hint": "Hansen Global Forest Change GFC-2025-v1.13; loss where tree cover 2000 >= 30 %",
+       "unit": "km²",
+       "kpi_upto": "Loss 2001–{year}",
+       "kpi_total": "Full record",
+       "kpi_extra": {
+        "label": "Cover threshold",
+        "value": "≥30 % (2000)"
+       },
+       "chart_title": "Annual tree-cover loss, {region} (km²)",
+       "meta_fields": [
+        "version",
+        "note"
+       ]
+      }
+     },
+     {
+      "id": "landcover",
+      "group": "Land",
+      "title": "Land cover",
+      "kind": "year-tiles",
+      "swatch": "#e49635",
+      "source_ref": "landcover",
+      "before": "rivers",
+      "attribution": "Esri/IO LULC (CC-BY)",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.8
+      },
+      "years": {
+       "2017": "tiles/lulc_2017.pmtiles",
+       "2018": "tiles/lulc_2018.pmtiles",
+       "2019": "tiles/lulc_2019.pmtiles",
+       "2020": "tiles/lulc_2020.pmtiles",
+       "2021": "tiles/lulc_2021.pmtiles",
+       "2022": "tiles/lulc_2022.pmtiles",
+       "2023": "tiles/lulc_2023.pmtiles"
+      },
+      "time_caption": "land cover",
+      "legend": {
+       "kind": "classes",
+       "title": "Land cover {year} (Esri/Impact Observatory)",
+       "classes": [
+        {
+         "value": 1,
+         "name": "Water",
+         "rgb": [
+          65,
+          155,
+          223
+         ]
+        },
+        {
+         "value": 2,
+         "name": "Trees",
+         "rgb": [
+          57,
+          125,
+          73
+         ]
+        },
+        {
+         "value": 4,
+         "name": "Flooded vegetation",
+         "rgb": [
+          122,
+          135,
+          198
+         ]
+        },
+        {
+         "value": 5,
+         "name": "Crops",
+         "rgb": [
+          228,
+          150,
+          53
+         ]
+        },
+        {
+         "value": 7,
+         "name": "Built area",
+         "rgb": [
+          196,
+          40,
+          27
+         ]
+        },
+        {
+         "value": 8,
+         "name": "Bare ground",
+         "rgb": [
+          165,
+          155,
+          143
+         ]
+        },
+        {
+         "value": 11,
+         "name": "Rangeland",
+         "rgb": [
+          227,
+          226,
+          195
+         ]
+        }
+       ],
+       "source": "10 m shown at 30 m · CC BY 4.0 · 2017→2023 change is indicative (classifier year-to-year differences; Kerner et al. 2023) · Class definitions differ: IO ‘Rangeland’ = WorldCover grassland + shrubland; colours follow each product’s official palette."
+      },
+      "inspect": {
+       "kind": "class-at-point",
+       "asset": "query/lulc_stack_30m.tif",
+       "band_per_year": true,
+       "classes": [
+        {
+         "value": 1,
+         "name": "Water",
+         "rgb": [
+          65,
+          155,
+          223
+         ]
+        },
+        {
+         "value": 2,
+         "name": "Trees",
+         "rgb": [
+          57,
+          125,
+          73
+         ]
+        },
+        {
+         "value": 4,
+         "name": "Flooded vegetation",
+         "rgb": [
+          122,
+          135,
+          198
+         ]
+        },
+        {
+         "value": 5,
+         "name": "Crops",
+         "rgb": [
+          228,
+          150,
+          53
+         ]
+        },
+        {
+         "value": 7,
+         "name": "Built area",
+         "rgb": [
+          196,
+          40,
+          27
+         ]
+        },
+        {
+         "value": 8,
+         "name": "Bare ground",
+         "rgb": [
+          165,
+          155,
+          143
+         ]
+        },
+        {
+         "value": 9,
+         "name": "Snow/ice",
+         "rgb": [
+          168,
+          235,
+          255
+         ]
+        },
+        {
+         "value": 10,
+         "name": "Clouds",
+         "rgb": [
+          97,
+          97,
+          97
+         ]
+        },
+        {
+         "value": 11,
+         "name": "Rangeland",
+         "rgb": [
+          227,
+          226,
+          195
+         ]
+        }
+       ],
+       "title": "Land cover at {place}",
+       "hint": "Esri/Impact Observatory annual LULC v2 (10 m; displayed at 30 m, nearest), via Microsoft Planetary Computer (io-lulc-annual-v02)",
+       "area_series": {
+        "file": "series/lulc_areas.json",
+        "path": [
+         "areas",
+         "{year}",
+         "Lake Victoria Basin"
+        ],
+        "label": "Basin area of class",
+        "unit": "km²"
+       },
+       "years_label": "2017–2023",
+       "note": "Global land-cover products disagree on cropland in sub-Saharan Africa (Kerner et al. 2023); year-to-year change is indicative."
+      }
+     },
+     {
+      "id": "worldcover",
+      "group": "Land",
+      "title": "WorldCover 2021 (reference)",
+      "kind": "raster-tiles",
+      "swatch": "#397d49",
+      "source_ref": "worldcover",
+      "asset": "tiles/worldcover2021.pmtiles",
+      "before": "rivers",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.8
+      },
+      "attribution": "ESA WorldCover (CC-BY)",
+      "legend": {
+       "kind": "classes",
+       "title": "Land cover 2021 (ESA WorldCover v200)",
+       "classes": [
+        {
+         "value": 10,
+         "name": "Tree cover",
+         "rgb": [
+          0,
+          100,
+          0
+         ]
+        },
+        {
+         "value": 20,
+         "name": "Shrubland",
+         "rgb": [
+          255,
+          187,
+          34
+         ]
+        },
+        {
+         "value": 30,
+         "name": "Grassland",
+         "rgb": [
+          255,
+          255,
+          76
+         ]
+        },
+        {
+         "value": 40,
+         "name": "Cropland",
+         "rgb": [
+          240,
+          150,
+          255
+         ]
+        },
+        {
+         "value": 50,
+         "name": "Built-up",
+         "rgb": [
+          250,
+          0,
+          0
+         ]
+        },
+        {
+         "value": 60,
+         "name": "Bare / sparse vegetation",
+         "rgb": [
+          180,
+          180,
+          180
+         ]
+        },
+        {
+         "value": 80,
+         "name": "Permanent water bodies",
+         "rgb": [
+          0,
+          100,
+          200
+         ]
+        },
+        {
+         "value": 90,
+         "name": "Herbaceous wetland",
+         "rgb": [
+          0,
+          150,
+          160
+         ]
+        }
+       ],
+       "source": "10 m shown at 30 m · CC BY 4.0 · Class definitions differ: IO ‘Rangeland’ = WorldCover grassland + shrubland; colours follow each product’s official palette."
+      },
+      "inspect": {
+       "kind": "class-at-point",
+       "asset": "query/worldcover_30m.tif",
+       "classes": [
+        {
+         "value": 10,
+         "name": "Tree cover",
+         "rgb": [
+          0,
+          100,
+          0
+         ]
+        },
+        {
+         "value": 20,
+         "name": "Shrubland",
+         "rgb": [
+          255,
+          187,
+          34
+         ]
+        },
+        {
+         "value": 30,
+         "name": "Grassland",
+         "rgb": [
+          255,
+          255,
+          76
+         ]
+        },
+        {
+         "value": 40,
+         "name": "Cropland",
+         "rgb": [
+          240,
+          150,
+          255
+         ]
+        },
+        {
+         "value": 50,
+         "name": "Built-up",
+         "rgb": [
+          250,
+          0,
+          0
+         ]
+        },
+        {
+         "value": 60,
+         "name": "Bare / sparse vegetation",
+         "rgb": [
+          180,
+          180,
+          180
+         ]
+        },
+        {
+         "value": 80,
+         "name": "Permanent water bodies",
+         "rgb": [
+          0,
+          100,
+          200
+         ]
+        },
+        {
+         "value": 90,
+         "name": "Herbaceous wetland",
+         "rgb": [
+          0,
+          150,
+          160
+         ]
+        },
+        {
+         "value": 95,
+         "name": "Mangroves",
+         "rgb": [
+          0,
+          207,
+          117
+         ]
+        },
+        {
+         "value": 100,
+         "name": "Moss and lichen",
+         "rgb": [
+          250,
+          230,
+          160
+         ]
+        }
+       ],
+       "title": "WorldCover at {place}",
+       "hint": "ESA WorldCover 10 m 2021 v200 (displayed at 30 m, nearest)",
+       "year": "2021",
+       "facts": [
+        {
+         "label": "Product",
+         "value": "ESA WorldCover v200"
+        },
+        {
+         "label": "Licence",
+         "value": "CC BY 4.0"
+        }
+       ],
+       "note": "Class definitions differ: IO ‘Rangeland’ = WorldCover grassland + shrubland; colours follow each product’s official palette."
+      }
+     },
+     {
+      "id": "fire",
+      "group": "Fire",
+      "title": "Active fires",
+      "kind": "year-tiles",
+      "swatch": "#e55064",
+      "source_ref": "fire",
+      "before": "rivers",
+      "attribution": "NASA FIRMS VIIRS",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "years": {
+       "2012": "tiles/fire_density_2012.pmtiles",
+       "2013": "tiles/fire_density_2013.pmtiles",
+       "2014": "tiles/fire_density_2014.pmtiles",
+       "2015": "tiles/fire_density_2015.pmtiles",
+       "2016": "tiles/fire_density_2016.pmtiles",
+       "2017": "tiles/fire_density_2017.pmtiles",
+       "2018": "tiles/fire_density_2018.pmtiles",
+       "2019": "tiles/fire_density_2019.pmtiles",
+       "2020": "tiles/fire_density_2020.pmtiles",
+       "2021": "tiles/fire_density_2021.pmtiles",
+       "2022": "tiles/fire_density_2022.pmtiles",
+       "2023": "tiles/fire_density_2023.pmtiles",
+       "2024": "tiles/fire_density_2024.pmtiles",
+       "2025": "tiles/fire_density_2025.pmtiles"
+      },
+      "time_caption": "active-fire density (S-NPP)",
+      "points": {
+       "assets": {
+        "2012": "fire/points_2012.geojson",
+        "2013": "fire/points_2013.geojson",
+        "2014": "fire/points_2014.geojson",
+        "2015": "fire/points_2015.geojson",
+        "2016": "fire/points_2016.geojson",
+        "2017": "fire/points_2017.geojson",
+        "2018": "fire/points_2018.geojson",
+        "2019": "fire/points_2019.geojson",
+        "2020": "fire/points_2020.geojson",
+        "2021": "fire/points_2021.geojson",
+        "2022": "fire/points_2022.geojson",
+        "2023": "fire/points_2023.geojson",
+        "2024": "fire/points_2024.geojson",
+        "2025": "fire/points_2025.geojson"
+       },
+       "min_zoom": 10,
+       "before": "labels-start",
+       "paint": {
+        "circle-radius": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         10,
+         2,
+         13,
+         4.5
+        ],
+        "circle-color": "#e55064",
+        "circle-opacity": 0.75,
+        "circle-stroke-color": "#7f1d2e",
+        "circle-stroke-width": 0.5
+       }
+      },
+      "legend": {
+       "kind": "classes",
+       "title": "Active fires {year} — density (S-NPP only)",
+       "classes": [
+        {
+         "color": "#1e1049",
+         "name": "≤ 0.1 fires/km²"
+        },
+        {
+         "color": "#50127b",
+         "name": "≤ 0.5 fires/km²"
+        },
+        {
+         "color": "#842681",
+         "name": "≤ 1 fires/km²"
+        },
+        {
+         "color": "#b73779",
+         "name": "≤ 2 fires/km²"
+        },
+        {
+         "color": "#e55064",
+         "name": "≤ 5 fires/km²"
+        },
+        {
+         "color": "#fb8761",
+         "name": "≤ 10 fires/km²"
+        }
+       ],
+       "source": "VIIRS 375 m, confidence nominal/high · points from zoom 10 incl. NOAA-20 · savanna and crop-residue burning; charcoal not detected reliably"
+      },
+      "inspect": {
+       "kind": "annual-series",
+       "series": "series/fire.json",
+       "path": [
+        "snpp_detections_basin"
+       ],
+       "title": "Active fires · basin (S-NPP)",
+       "hint": "NASA FIRMS VIIRS 375 m active fires; density: S-NPP only (2012-2025); points: S-NPP + NOAA-20 (NOAA-20 archive from 2020); confidence nominal/high",
+       "unit": "detections",
+       "chart_title": "S-NPP detections per year (basin)",
+       "note_field": "caveats"
+      }
+     },
+     {
+      "id": "burned_area",
+      "group": "Fire",
+      "title": "Burned area",
+      "kind": "year-tiles",
+      "swatch": "#782012",
+      "source_ref": "burned_area",
+      "before": "rivers",
+      "attribution": "MODIS MCD64A1",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "years": {
+       "2001": "tiles/burned_2001.pmtiles",
+       "2002": "tiles/burned_2002.pmtiles",
+       "2003": "tiles/burned_2003.pmtiles",
+       "2004": "tiles/burned_2004.pmtiles",
+       "2005": "tiles/burned_2005.pmtiles",
+       "2006": "tiles/burned_2006.pmtiles",
+       "2007": "tiles/burned_2007.pmtiles",
+       "2008": "tiles/burned_2008.pmtiles",
+       "2009": "tiles/burned_2009.pmtiles",
+       "2010": "tiles/burned_2010.pmtiles",
+       "2011": "tiles/burned_2011.pmtiles",
+       "2012": "tiles/burned_2012.pmtiles",
+       "2013": "tiles/burned_2013.pmtiles",
+       "2014": "tiles/burned_2014.pmtiles",
+       "2015": "tiles/burned_2015.pmtiles",
+       "2016": "tiles/burned_2016.pmtiles",
+       "2017": "tiles/burned_2017.pmtiles",
+       "2018": "tiles/burned_2018.pmtiles",
+       "2019": "tiles/burned_2019.pmtiles",
+       "2020": "tiles/burned_2020.pmtiles",
+       "2021": "tiles/burned_2021.pmtiles",
+       "2022": "tiles/burned_2022.pmtiles",
+       "2023": "tiles/burned_2023.pmtiles",
+       "2024": "tiles/burned_2024.pmtiles",
+       "2025": "tiles/burned_2025.pmtiles"
+      },
+      "time_caption": "burned area",
+      "legend": {
+       "kind": "classes",
+       "title": "Burned at least once in {year}",
+       "classes": [
+        {
+         "color": "rgb(120,32,18)",
+         "name": "burned (MCD64A1, ~500 m)"
+        }
+       ],
+       "source": "MODIS MCD64A1 v6.1 · misses small/low-intensity burns; cloud limits wet-season detection"
+      },
+      "inspect": {
+       "kind": "annual-series",
+       "series": "series/fire.json",
+       "path": [
+        "burned_km2_basin"
+       ],
+       "title": "Burned area · basin",
+       "hint": "MODIS MCD64A1 v6.1 monthly burned area, annual union per ~500 m cell, via Microsoft Planetary Computer",
+       "unit": "km²",
+       "chart_title": "Burned area per year (km²)",
+       "note": "~500 m detection misses small/low-intensity burns; cloud limits wet-season detection."
+      }
+     }
+    ],
+    "story": {
+     "about": "Chapters for the Story tab of the Uses & studies drawer (site/js/stories.js). Rules: numbers with source.kind='study' are printed in the cited PDF in bibliography/ (page recorded); source.kind='app' numbers are this app's analysis of its own served data (method named, details in DATA_REPORT.md); no causal claims beyond the cited papers; at most two key numbers per chapter and none that the text already states; per-chapter citations live in 'sources' (collapsed in the UI). status='pending' chapters show their placeholder until the named work lands. visual.highlight draws the Nyando river highlight; story labels (Mau, Nyando, Kano plains, Winam Gulf, Kisumu) show whenever the story is open.",
+     "updated": "2026-10-23",
+     "title": "From the Mau to the lake",
+     "map": {
+      "sources": {
+       "story-labels": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/story_labels.geojson"
+        }
+       },
+       "nyando": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/nyando_river.geojson"
+        }
+       },
+       "sediment": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/sediment_subcatchments.geojson"
+        }
+       },
+       "sedimentLabels": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/sediment_subcatchments_labels.geojson"
+        }
+       }
+      },
+      "layers": [
+       {
+        "id": "sediment-line",
+        "type": "line",
+        "source": "sediment",
+        "layout": {
+         "visibility": "none"
+        },
+        "paint": {
+         "line-color": "#ffffff",
+         "line-width": 2,
+         "line-opacity": 0.9
+        }
+       },
+       {
+        "id": "sediment-label",
+        "type": "symbol",
+        "source": "sedimentLabels",
+        "layout": {
+         "visibility": "none",
+         "text-field": [
+          "get",
+          "name"
+         ],
+         "text-font": [
+          "Noto Sans Medium"
+         ],
+         "text-size": 13,
+         "text-max-width": 9
+        },
+        "paint": {
+         "text-color": "#ffffff",
+         "text-halo-color": "rgba(17,26,34,0.9)",
+         "text-halo-width": 1.6
+        }
+       },
+       {
+        "id": "nyando-hl",
+        "type": "line",
+        "source": "nyando",
+        "layout": {
+         "visibility": "none",
+         "line-cap": "round",
+         "line-join": "round"
+        },
+        "paint": {
+         "line-color": "#C97D1B",
+         "line-opacity": 0.95,
+         "line-width": [
+          "interpolate",
+          [
+           "linear"
+          ],
+          [
+           "get",
+           "order"
+          ],
+          4,
+          1.8,
+          6,
+          3.2,
+          8,
+          5
+         ]
+        }
+       },
+       {
+        "id": "story-labels",
+        "type": "symbol",
+        "source": "story-labels",
+        "filter": [
+         "!=",
+         [
+          "get",
+          "name"
+         ],
+         "Nyando River"
+        ],
+        "layout": {
+         "visibility": "none",
+         "text-field": [
+          "get",
+          "name"
+         ],
+         "text-font": [
+          "Noto Sans Regular"
+         ],
+         "text-size": 13,
+         "text-padding": 6
+        },
+        "paint": {
+         "text-color": "#1C2B3A",
+         "text-halo-color": "#ffffff",
+         "text-halo-width": 1.6
+        }
+       },
+       {
+        "id": "story-label-nyando",
+        "type": "symbol",
+        "source": "story-labels",
+        "minzoom": 7.4,
+        "filter": [
+         "==",
+         [
+          "get",
+          "name"
+         ],
+         "Nyando River"
+        ],
+        "layout": {
+         "visibility": "none",
+         "text-field": [
+          "get",
+          "name"
+         ],
+         "text-font": [
+          "Noto Sans Regular"
+         ],
+         "text-size": 13,
+         "text-anchor": "right",
+         "text-offset": [
+          -0.3,
+          0
+         ]
+        },
+        "paint": {
+         "text-color": "#1C2B3A",
+         "text-halo-color": "#ffffff",
+         "text-halo-width": 1.6
+        }
+       }
+      ],
+      "while_open": [
+       "story-labels",
+       "story-label-nyando"
+      ],
+      "highlights": {
+       "nyando": [
+        "nyando-hl"
+       ],
+       "subcatchments": [
+        "sediment-line",
+        "sediment-label"
+       ]
+      }
+     },
+     "note": "Study numbers are as printed in the cited papers (pages in story_chapters.json); “this app's analysis” numbers come from the app's own data (methods in the data report).",
+     "chapters": [
+      {
+       "id": "flyin",
+       "title": "From the Mau to the lake",
+       "text": "Lake Victoria's basin gathers rain from highlands in five East African countries - the Mau escarpment among them - and drains it through rivers like the Nyando into the world's second-largest freshwater lake. This story follows that water: the rains, the lake's record levels, the floods, the droughts, and the land the water crosses. Scroll on; the map follows each chapter.",
+       "status": "ready",
+       "visual": {
+        "type": "map",
+        "layers": [],
+        "camera": {
+         "lng": 34.95,
+         "lat": -0.22,
+         "zoom": 8.6,
+         "pitch": 50
+        },
+        "show": [
+         "nyando"
+        ]
+       },
+       "numbers": [],
+       "sources": [
+        "Five countries (Kenya, Uganda, Tanzania, Rwanda, Burundi): Mugo et al. (2020), Remote Sensing 12, 2829 · p.1"
+       ]
+      },
+      {
+       "id": "rains",
+       "title": "The short rains of 2019",
+       "text": "Late 2019 brought exceptional rain. On the map, the October-December 2019 rainfall anomaly stands out across the basin; the chart tracks each year's short rains. Khaki & Awange (2021) found the September-November short rains had the dominant effect on the lake's rise that followed, with a strong positive Indian Ocean Dipole identified as the main cause of the above-average rains. This app's short-rains season is October–December; Khaki & Awange used September–November.",
+       "status": "ready",
+       "visual": {
+        "type": "map",
+        "layers": [
+         "precip"
+        ],
+        "time": {
+         "var": "precip",
+         "season": "ond",
+         "mode": "anomaly",
+         "year": 2019
+        },
+        "camera": {
+         "lng": 32.6,
+         "lat": -1.15,
+         "zoom": 6.65,
+         "pitch": 0
+        },
+        "charts": [
+         {
+          "builder": "seasonal-total",
+          "title": "Short-rains (OND) basin rainfall, mm",
+          "series": "series/precip_basin.json",
+          "path": [
+           "monthly"
+          ],
+          "months": [
+           10,
+           11,
+           12
+          ],
+          "normal": [
+           1991,
+           2020
+          ],
+          "unit": "mm",
+          "decimals": 0,
+          "height": 150,
+          "reference_label": "normal",
+          "annotations": [
+           {
+            "at": "2019",
+            "label": "2019 · {value} mm",
+            "short": "2019"
+           }
+          ]
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "658 mm",
+         "label": "OND 2019 basin rainfall, vs a 381 mm OND normal (1991-2020)",
+         "source": {
+          "kind": "app",
+          "method": "CHIRPS v3.0 basin mean, land cells only"
+         }
+        }
+       ],
+       "sources": [
+        "SON 2019 rains dominant; IOD the main driver: Khaki & Awange (2021), Sensors 21, 4304 · abstract p.1; sect. 4.5 p.14"
+       ]
+      },
+      {
+       "id": "lake",
+       "title": "A lake at record levels",
+       "text": "The lake answered within months. Pietroiusti et al. (2024) measure a 1.21 m rise in the six months to 17 May 2020, to a record 13.46 m on the Jinja gauge - a 63-year event in the current climate. The satellite altimetry series in the chart shows the same climb, and a new record in May 2024.",
+       "status": "ready",
+       "visual": {
+        "type": "chart",
+        "camera": {
+         "lng": 33.0,
+         "lat": -1.0,
+         "zoom": 7,
+         "pitch": 0
+        },
+        "layers": [],
+        "note": "The Jinja gauge (13.46 m) and the satellite series (~1,135 m) use different datums: a local gauge zero versus elevation above sea level.",
+        "charts": [
+         {
+          "builder": "monthly-mean",
+          "title": "Lake level, monthly mean (m, DAHITI altimetry)",
+          "series": "series/lake_level.json",
+          "points": "data",
+          "date": "date",
+          "value": "wse",
+          "unit": "m",
+          "decimals": 2,
+          "height": 160,
+          "round_range": true,
+          "annotations": [
+           {
+            "from": "2019-11",
+            "to": "2020-05",
+            "label": "2020 rise"
+           },
+           {
+            "at": "2024-05",
+            "label": "May 2024 record",
+            "short": "record"
+           }
+          ]
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "1136.79 m",
+         "label": "altimetry record, 24 May 2024 (water surface elevation)",
+         "source": {
+          "kind": "app",
+          "method": "DAHITI (DGFI-TUM) series served by this app"
+         }
+        }
+       ],
+       "sources": [
+        "1.21 m; 13.46 m on the Jinja gauge; 63-year event: Pietroiusti et al. (2024), ESD 15, 225-264 · abstract p.225; sect. 1.1 p.227 (gauge: sect. 2 p.229); sect. 3.5 p.237"
+       ]
+      },
+      {
+       "id": "flood_extent",
+       "title": "Where the water went",
+       "text": "Around the rising lake, water spread over the floodplains. The map shows the water that Sentinel-1 radar observed at least once between April and July 2020, outside the lake's 2011-2015 extent. In the Nzoia-Yala floodplain and on the Speke Gulf shore it agrees with Pietroiusti et al. (2024). Their additional flooding east of the Speke Gulf head is not confirmed by GFM's algorithms or by JRC Global Surface Water.",
+       "visual": {
+        "layers": [
+         "max_2020"
+        ],
+        "camera": {
+         "lng": 34.05,
+         "lat": 0.05,
+         "zoom": 10,
+         "pitch": 0
+        },
+        "steps": [
+         {
+          "label": "Nzoia–Yala floodplain",
+          "camera": {
+           "lng": 34.05,
+           "lat": 0.05,
+           "zoom": 10,
+           "pitch": 0
+          }
+         },
+         {
+          "label": "Out to the Winam Gulf",
+          "camera": {
+           "lng": 34.55,
+           "lat": -0.2,
+           "zoom": 8.7,
+           "pitch": 0
+          }
+         }
+        ],
+        "note": "≤ 312.3 km² of water outside the 2011–2015 lake within 50 km of the shore (upper bound: measured over 1 Apr–31 Jul 2020, which contains Pietroiusti et al.'s 5 Apr–1 Jul window), against their ~642.5 km². Ours is the GFM ensemble water extent minus a static lake mask; theirs is HASARD flood detections. April 2020 could not be checked optically because of cloud, and part of the area east of the Speke Gulf head is outside GFM's mappable zone.",
+        "comparison_note": "≤ 312.3 km² of water outside the 2011–2015 lake within 50 km of the shore (upper bound: measured over 1 Apr–31 Jul 2020, which contains Pietroiusti et al.'s 5 Apr–1 Jul window), against their ~642.5 km². Ours is the GFM ensemble water extent minus a static lake mask; theirs is HASARD flood detections."
+       },
+       "numbers": [
+        {
+         "value": "≤ 312.3 km²",
+         "label": "water outside the 2011–2015 lake within 50 km of the shore, 2020 (upper bound)",
+         "source": {
+          "kind": "app",
+          "method": "GFM ensemble water extent minus the GLO-30 lake mask, 1 Apr–31 Jul 2020 (contains 5 Apr–1 Jul)"
+         }
+        },
+        {
+         "value": "~642.5 km²",
+         "label": "flooded area within 50 km of the shore, 5 Apr–1 Jul 2020 (HASARD)",
+         "source": {
+          "kind": "study",
+          "citation": "Pietroiusti et al. (2024), ESD 15, 225-264",
+          "page": "window: sect. 2.1.1 p.228; area: sect. 3.2 p.232, fig. 5 p.237"
+         }
+        }
+       ],
+       "sources": [
+        "2020 flood map and boxes (SAR window 5 Apr–1 Jul 2020): Pietroiusti et al. (2024), ESD 15, 225-264 · sect. 2.1.1 p.228; sect. 3.2 p.232; fig. 5 p.237",
+        "Agreement and disagreement by box: DATA_REPORT §3.1 (comparison with Pietroiusti et al. Fig. 5)"
+       ],
+       "compare_option": {
+        "overlay": "max_2020",
+        "left_label": "Satellite image 2023–2025 (median)",
+        "right_label": "Water observed Apr–Jul 2020 (GFM, outside the 2011–2015 lake)",
+        "note": "Launch version shows max_2020 as a plain map (visual.layers). To restore the swipe (2017/2019 comparison), move these keys back into visual and drop visual.layers."
+       }
+      },
+      {
+       "id": "people",
+       "title": "People in the water's way",
+       "text": "Floods matter because people live on the plains the water takes. Pietroiusti et al. (2024) estimate that more than 29,000 people living within 50 km of the shoreline were affected by flooding over 5 Apr–1 Jul 2020. The map shows the years-flooded record over the Kano plains, where the Nyando meets the gulf.",
+       "visual": {
+        "type": "map",
+        "layers": [
+         "flood_years",
+         "population"
+        ],
+        "camera": {
+         "lng": 34.85,
+         "lat": -0.18,
+         "zoom": 9.4,
+         "pitch": 0
+        },
+        "exposure": {
+         "label": "people living in cells where water was detected in ≥ N years (2016–2025), WorldPop 2020",
+         "note": "Not comparable to Pietroiusti et al.'s >29,000 for 2020: different metric (people in cells ever flooded vs people affected in one event) and period.",
+         "default_n": 1,
+         "n_values": [
+          1,
+          2,
+          3,
+          5
+         ],
+         "source": "series/flood_exposure.json (prep/13_exposure.py); method in DATA_REPORT §2 (Population)",
+         "series": "series/flood_exposure.json"
+        }
+       },
+       "numbers": [],
+       "sources": [
+        ">29,000 people affected within 50 km, 5 Apr–1 Jul 2020: Pietroiusti et al. (2024), ESD 15, 225-264 · window: methods sect. 2.1.1 p.228; number: sect. 3.2 p.232 (the abstract, p.225, says \"between April and July\")",
+        "People in cells flooded in ≥ N years: this app's analysis, GFM years flooded 2016–2025 × WorldPop 2020 (DATA_REPORT §2, Population)"
+       ]
+      },
+      {
+       "id": "drought",
+       "title": "When the rains run short",
+       "text": "The same rains that flood can fail. The figure sets the drenched end of 2019 beside August 2026, when the basin's three-month rainfall was moderately dry (basin-mean SPI-3 −1.13, June–August; provisional). The chart tracks the basin-mean SPI-3 through both floods and the dry spells between them. Liu et al. (2022) modelled the basin's runoff droughts as generally aggravated under the 1985-to-2014 land-cover change, particularly in the central-western and eastern basin.",
+       "status": "ready",
+       "visual": {
+        "type": "figure",
+        "figure": "figures/spi_2019_2026.png",
+        "alt": "SPI-3 maps: December 2019 wet versus August 2026 dry",
+        "layers": [
+         "spi3"
+        ],
+        "camera": {
+         "lng": 32.6,
+         "lat": -1.15,
+         "zoom": 6.65,
+         "pitch": 0
+        },
+        "note": "Liu et al. modelled runoff drought (3-month SRI); the app's SPI-3 is rainfall deficit - the two need not match.",
+        "charts": [
+         {
+          "builder": "monthly",
+          "title": "Basin-mean SPI-3, monthly",
+          "series": "series/spi3_basin.json",
+          "path": [
+           "monthly"
+          ],
+          "decimals": 2,
+          "height": 150,
+          "min": -3,
+          "max": 3,
+          "y_ticks": [
+           -3,
+           -2,
+           -1,
+           0,
+           1,
+           2,
+           3
+          ],
+          "provisional": 3,
+          "reference": {
+           "value": 0,
+           "label": "normal"
+          },
+          "annotations": [
+           {
+            "from": "2019-10",
+            "to": "2020-07",
+            "label": "2020 floods"
+           },
+           {
+            "at": "2024-05",
+            "label": "2024 floods",
+            "short": "2024"
+           }
+          ]
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "+1.78 / −1.13",
+         "label": "basin-mean SPI-3, Dec 2019 vs Aug 2026",
+         "source": {
+          "kind": "app",
+          "method": "SPI-3 from CHIRPS v3.0, gamma fit 1991-2020, basin land mean"
+         }
+        }
+       ],
+       "sources": [
+        "Drought aggravated (frequency, duration), central-western and eastern basin: Liu et al. (2022), Ecological Indicators 145, 109580 · abstract p.1; results pp.6, 8; conclusions p.9"
+       ]
+      },
+      {
+       "id": "treecover",
+       "title": "The land the water crosses",
+       "text": "Upstream, the basin's land has been changing. The map shows cumulative tree-cover loss over the Mau and the upper Nyando; the chart counts the basin's loss year by year. Mugo et al. (2020) record the basin's conversion to farmland and settlements between 1985 and 2014: small-scale farmland grew by over 90 %, urban areas by over 800 %.",
+       "status": "ready",
+       "visual": {
+        "type": "map",
+        "layers": [
+         "forest_loss"
+        ],
+        "camera": {
+         "lng": 35.45,
+         "lat": -0.35,
+         "zoom": 9.3,
+         "pitch": 45
+        },
+        "note": "Sub-basins: HydroBASINS units for the Nzoia, Yala, Nyando and Sondu-Miriu (see the data report).",
+        "show": [
+         "nyando"
+        ],
+        "charts": [
+         {
+          "builder": "annual-bars",
+          "title": "Tree-cover loss in the basin (km²/year)",
+          "series": "series/forest_loss.json",
+          "path": [
+           "regions",
+           "Lake Victoria Basin"
+          ],
+          "unit": "km²",
+          "decimals": 0,
+          "height": 140,
+          "highlight": "2017",
+          "annotations": [
+           {
+            "from": "2011",
+            "to": "2013",
+            "label": "Landsat 8 improves detection"
+           }
+          ],
+          "multiples": {
+           "title": "By sub-basin (km²/year, same scale)",
+           "path": [
+            "regions"
+           ],
+           "names": [
+            "Nzoia",
+            "Yala",
+            "Nyando",
+            "Sondu-Miriu"
+           ],
+           "height": 78,
+           "decimals": 1,
+           "label_years": [
+            "2005",
+            "2025"
+           ],
+           "annotations": [
+            {
+             "from": "2011",
+             "to": "2013",
+             "label": ""
+            }
+           ]
+          }
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "4,866 km²",
+         "label": "tree-cover loss in the basin, 2001-2025 (peak year 2017, 383 km²)",
+         "source": {
+          "kind": "app",
+          "method": "Hansen GFC-2025-v1.13, cover 2000 >= 30 %; loss, not deforestation"
+         }
+        }
+       ],
+       "sources": [
+        "Farmland +90 %, urban +800 %, 1985-2014: Mugo et al. (2020), Remote Sensing 12, 2829 · results p.9; table 2 p.10"
+       ]
+      },
+      {
+       "id": "sediment",
+       "title": "What the rivers carry",
+       "text": "Changed land sends more than water downstream. In the Nyando basin, geochemical fingerprinting of riverbed sediment points to the highland sub-catchments: the Nyando-Kipchorian and Ainamutua together account for most of the sampled sediment mixture, areas the authors describe as affected by cropping on steep slopes and deforestation.",
+       "status": "ready",
+       "visual": {
+        "type": "figure",
+        "figure": "figures/sediment_nyando.png",
+        "alt": "Sediment source shares of the Nyando riverbed mixture",
+        "layers": [
+         "forest_loss"
+        ],
+        "camera": {
+         "lng": 35.2,
+         "lat": -0.35,
+         "zoom": 8.9,
+         "pitch": 40
+        },
+        "note": "Sub-catchments approximate, derived from HydroSHEDS using the outlet sample sites of Humphrey et al. (2025).",
+        "show": [
+         "nyando",
+         "subcatchments"
+        ]
+       },
+       "numbers": [],
+       "sources": [
+        "Nyando-Kipchorian 44 ± 4 %, Ainamutua 39 ± 4 %, Awach Kano & Nyaidho 17 ± 7 %: Humphrey et al. (2025), Catena 255, 109053 · abstract p.1; sect. 3.2 p.5, fig. 5a"
+       ]
+      },
+      {
+       "id": "gaps",
+       "title": "What we cannot see yet",
+       "text": "Honest maps say where they end. Radar cannot assess floods everywhere - dense vegetation and towns hide them. Water quality is measurable from space in principle, but Warren et al. (2021) used no in-situ data for any of their 24 lakes, Lake Victoria included - field checks would come first.",
+       "status": "ready",
+       "visual": {
+        "type": "map",
+        "layers": [],
+        "camera": {
+         "lng": 32.6,
+         "lat": -1.15,
+         "zoom": 6.65,
+         "pitch": 38
+        }
+       },
+       "numbers": [
+        {
+         "value": "24 lakes",
+         "label": "tuned satellite-to-satellite - no field validation in any of them",
+         "source": {
+          "kind": "study",
+          "citation": "Warren et al. (2021), RSE 265, 112651",
+          "page": "abstract p.1; introduction p.2"
+         }
+        }
+       ],
+       "sources": [
+        "No in-situ validation for any study lake: Warren et al. (2021), RSE 265, 112651 · abstract p.1; introduction p.2"
+       ]
+      },
+      {
+       "id": "explore",
+       "title": "Explore it yourself",
+       "text": "Every layer in this story is in the explorer: years flooded and flood frequency by season, rainfall and drought by month, population, land cover and tree-cover loss, and the lake's full altimetry record. The Studies tab holds the papers behind the numbers.",
+       "status": "ready",
+       "visual": {
+        "type": "map",
+        "layers": [
+         "flood_years"
+        ],
+        "camera": {
+         "lng": 34.6,
+         "lat": -0.25,
+         "zoom": 8.6,
+         "pitch": 30
+        },
+        "action": "explore"
+       },
+       "numbers": [],
+       "sources": []
+      }
+     ]
+    },
+    "studies": {
+     "about": "Registry for the 'Uses & studies' drawer (site/js/stories.js). Rules: every number or claim in a kind='published' card was verified against the cited PDF in bibliography/ on 2026-10-23; 'verified' records where. Only figures stated in the paper - no percentages or values derived from its tables. kind='explore' cards carry a question only - no numbers, no claims.",
+     "updated": "2026-10-23",
+     "note": "Published findings quote the cited paper (page and figure recorded in studies.json); explore cards are open questions, not claims.",
+     "cards": [
+      {
+       "id": "rise_2020",
+       "question": "How unusual was the 2020 lake-level rise?",
+       "kind": "published",
+       "finding": "Lake Victoria rose by 1.21 m in the six months to 17 May 2020, reaching a record 13.46 m on the Jinja gauge - a 63-year event in the current climate, estimated 1.8 times as likely (95% CI 0.8-15.8) than in a pre-industrial climate.",
+       "citation": "Pietroiusti et al. (2024), Earth System Dynamics 15, 225-264",
+       "doi": "10.5194/esd-15-225-2024",
+       "verified": [
+        {
+         "claim": "1.21 m rise, Nov 2019 - 17 May 2020 (84% of the 1.44 m Sep 2019 - May 2020 rise); 'record-breaking level of 13.46 m measured in situ on 17 May 2020' - the in-situ record is the Jinja gauge (gauge datum, not metres a.s.l., hence 'on the Jinja gauge' in the finding)",
+         "where": "abstract p.225; sect. 1.1 p.227; in-situ series at Jinja: sect. 2 p.229; sect. 3.3 p.234"
+        },
+        {
+         "claim": "return period 63.2 years (CI 27-395)",
+         "where": "abstract p.225; sect. 3.5 p.237, fig. 11a-b"
+        },
+        {
+         "claim": "probability ratio 1.8 (95% CI 0.8-15.8); CI includes 1",
+         "where": "abstract p.225; sect. 3.7 p.239, fig. 12"
+        }
+       ],
+       "layers": [],
+       "open_panel": "lake",
+       "camera": {
+        "lng": 33.0,
+        "lat": -1.0,
+        "zoom": 7,
+        "pitch": 0
+       },
+       "caveat": "The confidence interval includes 1, so the attribution to climate change is suggestive, not conclusive - the paper says so itself."
+      },
+      {
+       "id": "rains_2019",
+       "question": "What drove the 2019-2020 rise?",
+       "kind": "published",
+       "finding": "Satellite gravimetry and altimetry put the rise at ~1.4 m. Rainfall in the September-November 2019 short rains had the dominant effect, and a strong positive Indian Ocean Dipole is identified as the main cause of the above-average rains.",
+       "citation": "Khaki & Awange (2021), Sensors 21, 4304",
+       "doi": "10.3390/s21134304",
+       "verified": [
+        {
+         "claim": "~1.4 m rise (1.387 m, mid-2020 vs the same time in 2019)",
+         "where": "abstract p.1; sect. 4 p.8; conclusions p.16"
+        },
+        {
+         "claim": "SON 2019 short rains dominant (MAM 2019 was also above average)",
+         "where": "abstract p.1; fig. 3 caption p.8"
+        },
+        {
+         "claim": "IOD the main driver (precipitation correlation 0.69; ENSO 0.32, NAO 0.27)",
+         "where": "abstract p.1; sect. 4.5 p.14; sect. 5 p.15"
+        }
+       ],
+       "layers": [
+        "precip"
+       ],
+       "caveat": "This app's short-rains season is October–December; Khaki & Awange used September–November.",
+       "time": {
+        "var": "precip",
+        "season": "ond",
+        "mode": "anomaly",
+        "year": 2019
+       },
+       "camera": {
+        "lng": 32.6,
+        "lat": -1.15,
+        "zoom": 6.65,
+        "pitch": 0
+       }
+      },
+      {
+       "id": "flood_2020_people",
+       "question": "Who was affected by the 2020 floods?",
+       "kind": "published",
+       "finding": "More than 29,000 people living within 50 km of the shoreline are estimated to have been affected by flooding over 5 Apr–1 Jul 2020, the paper's radar window, over a flooded area of about 642.5 km².",
+       "citation": "Pietroiusti et al. (2024), Earth System Dynamics 15, 225-264",
+       "doi": "10.5194/esd-15-225-2024",
+       "verified": [
+        {
+         "claim": "'more than 29 000 people... affected by floods between April and July 2020' (exact estimate 29,070, stated for Apr-Jun in table 1); 'affected', not displaced",
+         "where": "abstract p.225; sect. 3.2 p.232; table 1 p.235"
+        },
+        {
+         "claim": "flooded area ~642.5 km² within 50 km of the shores; SAR window 5 April 2020-1 July 2020",
+         "where": "window: methods sect. 2.1.1 p.228; area: sect. 3.2 p.232, fig. 5 p.237"
+        }
+       ],
+       "layers": [
+        "max_2020",
+        "population"
+       ],
+       "camera": {
+        "lng": 34.75,
+        "lat": -0.2,
+        "zoom": 9.5,
+        "pitch": 0
+       },
+       "caveat": "Our GFM flood layer agrees only partly with the paper's flood map - see DATA_REPORT §3.1 for where and why. The paper's text also calls this window April–July (sect. 3.2) and April–June (Fig. 5)."
+      },
+      {
+       "id": "drought_landuse",
+       "question": "Where did drought risk change as forest became farmland?",
+       "kind": "published",
+       "finding": "SWAT modelling of the basin under its 1985 versus 2014 land cover shows hydrological drought became more frequent and longer-lasting, particularly in the central-western and eastern basin where forest was massively converted to agricultural land. Agriculture grew from about 35 % to 65 % of the basin over that period; grassland shrank from 30 % to 10 %.",
+       "citation": "Liu et al. (2022), Ecological Indicators 145, 109580",
+       "doi": "10.1016/j.ecolind.2022.109580",
+       "verified": [
+        {
+         "claim": "'hydrological drought was generally aggravated with increased drought frequency and lengthened duration, particularly for the central western and eastern regions with massive conversion of forest to agricultural land'",
+         "where": "abstract p.1; results p.6 and p.8; conclusions p.9"
+        },
+        {
+         "claim": "method: SWAT run with the 1985 and 2014 LULC maps; droughts from the 3-month standardized runoff index (SRI <= -1)",
+         "where": "sect. 2-3, pp.3-4"
+        },
+        {
+         "claim": "'the agricultural area increased from approximately 35 % in 1985 to 65 % in 2014'; 'the grassland area decreased from 30 % in 1985 to 10 % in 2014'",
+         "where": "sect. 4.1 p.4, fig. 4"
+        }
+       ],
+       "layers": [
+        "spi3"
+       ],
+       "camera": {
+        "lng": 32.6,
+        "lat": -1.15,
+        "zoom": 6.65,
+        "pitch": 0
+       },
+       "caveat": "The app's SPI-3 shows rainfall deficit; the paper's droughts are runoff droughts (3-month SRI from a model), so the two patterns need not match."
+      },
+      {
+       "id": "lulc_change",
+       "question": "How has land use changed across the basin?",
+       "kind": "published",
+       "finding": "Between 1985 and 2014 forests, woodlands, grasslands and wetlands were converted to farmland and settlements: small-scale farmland grew by over 90%, from about 5.7 to 11.0 million hectares, urban areas grew by over 800%, and open grasslands declined by 41%.",
+       "citation": "Mugo et al. (2020), Remote Sensing 12, 2829",
+       "doi": "10.3390/rs12172829",
+       "verified": [
+        {
+         "claim": "conversion of forests, woodlands, grasslands, wetlands to farmlands or settlements, 1985-2014",
+         "where": "abstract p.1"
+        },
+        {
+         "claim": "small-scale farmlands +'over 90%', 5,656,113.81 ha (1985) to 11,016,723.51 ha (2014); urban +'over 800%'; open grasslands -41%; all as printed (no derived shares)",
+         "where": "results p.9; table 2 p.10"
+        }
+       ],
+       "layers": [
+        "landcover",
+        "forest_loss"
+       ],
+       "camera": {
+        "lng": 32.6,
+        "lat": -1.15,
+        "zoom": 6.65,
+        "pitch": 0
+       },
+       "caveat": "Indicative change only: the app's land-cover layer (Esri/IO LULC, 2017-) is a different product and period than the paper's Landsat classification (1985-2014)."
+      },
+      {
+       "id": "nyando_sediment",
+       "question": "Which sub-catchments supply the Nyando's sediment?",
+       "kind": "published",
+       "finding": "Geochemical fingerprinting of riverbed sediment apportions the Nyando catchment's sediment mixture to the Nyando-Kipchorian (44 ± 4 %) and Ainamutua (39 ± 4 %) sub-catchments - highland areas affected by cropping on steep slopes and deforestation - with 17 ± 7 % from the Awach Kano and Nyaidho.",
+       "citation": "Humphrey et al. (2025), Catena 255, 109053",
+       "doi": "10.1016/j.catena.2025.109053",
+       "verified": [
+        {
+         "claim": "Nyando-Kipchorian 44 ± 4 %, Ainamutua 39 ± 4 %, Awach Kano and Nyaidho 17 ± 7 % of the Nyando riverbed-sediment end-point mixture",
+         "where": "abstract p.1; sect. 3.2 p.5, fig. 5a; conclusions p.12"
+        }
+       ],
+       "layers": [
+        "forest_loss"
+       ],
+       "camera": {
+        "lng": 35.3,
+        "lat": -0.2,
+        "zoom": 9.8,
+        "pitch": 45
+       },
+       "caveat": "These are modelled shares of the riverbed sediment sampled within the Nyando basin, not measured sediment flux to Lake Victoria. Rivers are drawn on the map; the Nyando's headwaters are the highlands in view."
+      },
+      {
+       "id": "water_quality",
+       "question": "Could the app show water quality in the lake?",
+       "kind": "published",
+       "finding": "Chlorophyll-a and turbidity algorithms for Sentinel-2 can be aligned with Sentinel-3 so the two sensors give complementary observations, and Lake Victoria is among the 24 lakes tuned. But the study is satellite-to-satellite: no in-situ measurements were used for any lake, Lake Victoria included.",
+       "citation": "Warren et al. (2021), Remote Sensing of Environment 265, 112651",
+       "doi": "10.1016/j.rse.2021.112651",
+       "verified": [
+        {
+         "claim": "MSI tuned against OLCI; complementary chl-a and turbidity observations; Lake Victoria one of 24 study lakes",
+         "where": "abstract p.1; table 1 p.3; figs. 9-10 p.12; conclusions p.15"
+        },
+        {
+         "claim": "no in-situ validation data for any lake ('large in situ data gaps... prevent direct calibration and validation')",
+         "where": "introduction p.2; abstract p.1"
+        }
+       ],
+       "layers": [],
+       "caveat": "Not in the app yet: a water-quality layer would need this kind of retrieval plus field checks on Lake Victoria."
+      },
+      {
+       "id": "fire_patterns",
+       "question": "Where do fires cluster, and in which season?",
+       "kind": "explore",
+       "layers": [
+        "fire"
+       ],
+       "camera": {
+        "lng": 32.6,
+        "lat": -1.15,
+        "zoom": 6.65,
+        "pitch": 0
+       },
+       "caveat": "No fire study of the basin is in bibliography/ yet - use the layer's year control to look for patterns."
+      },
+      {
+       "id": "burned_extent",
+       "question": "How much land burns in a typical year?",
+       "kind": "explore",
+       "layers": [
+        "burned_area"
+       ],
+       "camera": {
+        "lng": 32.6,
+        "lat": -1.15,
+        "zoom": 6.65,
+        "pitch": 0
+       },
+       "caveat": "No burned-area study of the basin is in bibliography/ yet - the layer's annual totals are a starting point."
+      }
+     ]
+    },
+    "about": {
+     "intro": "Part of MOSAIC — the CGIAR Multifunctional Landscapes Science Programme.",
+     "licence": "Content licensed under CC BY 4.0 unless otherwise stated. Each layer below carries its own source, period and citation.",
+     "sources": [
+      {
+       "id": "basin",
+       "title": "Lake Victoria Basin boundary",
+       "group": "Base",
+       "source": "ICPAC geoportal (geonode:lv_basin), 2019; lake shoreline from the Copernicus GLO-30 water-body mask (2011-2015), class 2 at native ~30 m, islands as holes",
+       "licence": "ICPAC: not specified (confirm before public release); WBM: Copernicus, free with attribution",
+       "caveats": "Lake shoreline from the Copernicus GLO-30 water-body mask (2011-2015); it predates the 2020/2024 high stands.",
+       "citation": "ICPAC Geoportal; Copernicus DEM GLO-30 (ESA/Airbus)",
+       "record": null
+      },
+      {
+       "id": "flood_hazard",
+       "title": "Flood hazard (observed flood frequency)",
+       "group": "Flood hazard",
+       "placeholder": false,
+       "source": "Copernicus EMS Global Flood Monitoring (Sentinel-1), 20 m, 2016-2025",
+       "period": "2016-2025",
+       "units": "band1: years flooded (0-10); band2: % of valid obs; band3: % excluded",
+       "licence": "Copernicus EMS: free with attribution",
+       "citation": "Salamon et al. (2021) IGARSS, doi:10.1109/IGARSS47720.2021.9554214. Contains modified Copernicus EMS information (2016-2025). Hazard proxy, not risk.",
+       "caveats": "Flooded vegetation and urban areas under-detected; short floods between overpasses missed; band 3 shows where SAR cannot map floods.",
+       "record": null
+      },
+      {
+       "id": "terrain",
+       "title": "Terrain (Copernicus GLO-30)",
+       "group": "Base",
+       "source": "Copernicus DEM GLO-30 (~30 m), basin extent",
+       "period": "GLO-30 2021 release",
+       "units": "m above sea level",
+       "licence": "Copernicus DEM: free use with attribution",
+       "citation": "ESA (2021). Copernicus DEM GLO-30. Contains modified Copernicus data.",
+       "caveats": "The DEM export is a union of two rectangles; areas outside it (all outside the basin: north-west of 31E/1N, the far south-east and south-west corners) and the 600 km display padding hold synthetic filler. Elevations are neither shown nor queryable anywhere; the basin itself has full real GLO-30 coverage.",
+       "record": null
+      },
+      {
+       "id": "precip",
+       "title": "Precipitation (CHIRPS v3)",
+       "group": "Climate",
+       "source": "CHIRPS v3.0 daily, 0.05 deg. CHIRPS is a pentad product; daily values are pentad totals disaggregated with ECMWF ERA5 precipitation (the 'rnl' flavour).",
+       "period": "1981-2025",
+       "units": "mm",
+       "licence": "CC-BY-4.0",
+       "caveats": "Satellite rainfall over the lake surface is less reliable; basin means use land cells only.",
+       "citation": "Funk et al. (2015), Scientific Data 2:150066; CHIRPS v3.0, UCSB Climate Hazards Center",
+       "record": null
+      },
+      {
+       "id": "temperature",
+       "title": "Temperature (CHIRTS-ERA5)",
+       "group": "Climate",
+       "source": "CHIRTS-ERA5 daily Tmax/Tmin, 0.05 deg; Tmean = (Tmax+Tmin)/2",
+       "period": "1981-2025",
+       "units": "degC",
+       "licence": "CC-BY-4.0",
+       "citation": "Funk et al. (2019), J. Climate 32:5639-5658; CHIRTS-ERA5, UCSB CHC",
+       "record": null
+      },
+      {
+       "id": "s2_rgb",
+       "title": "Satellite imagery (Sentinel-2)",
+       "group": "Base",
+       "source": "Sentinel-2 L2A median mosaic 2023-2025 (COPERNICUS/S2_SR_HARMONIZED), 30 m",
+       "period": "2023-2025 (median composite)",
+       "units": "true colour (fixed stretch 0-3000, gamma 2.2)",
+       "licence": "Copernicus Sentinel data: free use with attribution",
+       "citation": "Contains modified Copernicus Sentinel-2 data [2023-2025]",
+       "record": null
+      },
+      {
+       "id": "lake_level",
+       "title": "Lake water level (satellite altimetry)",
+       "group": "Water",
+       "source": "DAHITI (DGFI-TUM), multi-mission altimetry",
+       "period": "1992-10-17 to 2026-09-14",
+       "units": "m WSE",
+       "licence": "CC BY-NC 4.0 (DAHITI terms of use; non-commercial use only)",
+       "attribution": "DAHITI, DGFI-TUM",
+       "citation": "Schwatke, C., Dettmering, D., Bosch, W., Seitz, F. (2015), HESS 19, 4345–4364, doi:10.5194/hess-19-4345-2015",
+       "record": null
+      },
+      {
+       "id": "spi3",
+       "title": "Drought index (SPI-3)",
+       "group": "Climate",
+       "source": "SPI-3 computed from CHIRPS v3.0 monthly totals (gamma fit, Thom 1958; zero-rain mixed distribution), calibration 1991-2020. Daily CHIRPS = ERA5-disaggregated pentads ('rnl'); monthly totals are unaffected by the disaggregation choice.",
+       "period": "1981-03 to 2026-08",
+       "units": "SPI (unitless)",
+       "licence": "Derived from CHIRPS v3.0 (CC-BY-4.0)",
+       "citation": "McKee, Doesken & Kleist (1993), 8th Conf. Applied Climatology; classes: WMO (2012), SPI User Guide, WMO-No. 1090; Funk et al. (2015), Scientific Data 2:150066",
+       "record": null
+      },
+      {
+       "id": "rivers",
+       "title": "Rivers (HydroRIVERS)",
+       "group": "Base",
+       "source": "HydroRIVERS v1.0 (HydroSHEDS), Strahler order >= 4, clipped to the basin",
+       "period": "static (derived from ~2000 SRTM)",
+       "units": "stream order; mean discharge m3/s",
+       "licence": "HydroSHEDS v1 licence (WWF; HydroSHEDS Technical Documentation v1.4, Appendix A). Incorporates data from the HydroSHEDS version 1 database, © World Wildlife Fund, Inc. (2006-2022), used under license; full attribution in the data README",
+       "citation": "Lehner, B. & Grill, G. (2013). Hydrological Processes 27(15):2171-2186; Lehner, B., Verdin, K., Jarvis, A. (2008): New global hydrography derived from spaceborne elevation data. Eos, Transactions, AGU, 89(10): 93-94. www.hydrosheds.org",
+       "caveats": "The Yala main stem (Strahler >= 4) ends at the Yala Swamp, about 6 km from open water; only lower-order swamp channels reach the lake (HydroRIVERS v1.0).",
+       "attribution": "HydroSHEDS-derived layers (rivers, sub-catchments) are included for display in this app only and may not be redistributed separately. © World Wildlife Fund, Inc. (2006-2022), used under licence. This product MOSAIC Lake Victoria Basin Explorer incorporates data from the HydroSHEDS version 1 database which is © World Wildlife Fund, Inc. (2006-2022) and has been used herein under license. WWF has not evaluated the data as altered and incorporated within MOSAIC Lake Victoria Basin Explorer, and therefore gives no warranty regarding its accuracy, completeness, currency or suitability for any particular purpose. Portions of the HydroSHEDS v1 database incorporate data which are the intellectual property rights of © USGS (2006-2008), NASA (2000-2005), ESRI (1992-1998), CIAT (2004-2006), UNEP-WCMC (1993), WWF (2004), Commonwealth of Australia (2007), and Her Royal Majesty and the British Crown and are used under license. The HydroSHEDS v1 database and more information are available at https://www.hydrosheds.org.",
+       "record": null
+      },
+      {
+       "id": "population",
+       "title": "Population (exposure input)",
+       "group": "Exposure",
+       "source": "WorldPop constrained individual countries 2020, 100 m (KEN, UGA, TZA, RWA, BDI)",
+       "release_note": "2020 constrained (Global 2000-2020, BSGM/maxar): no newer constrained release was found on hub.worldpop.org at build time",
+       "period": "2020",
+       "units": "persons per ~100 m grid cell",
+       "licence": "CC-BY-4.0",
+       "caveats": "Exposure input (people in place), not risk; census-era modelled counts.",
+       "citation": "WorldPop (2020), School of Geography and Environmental Science, University of Southampton. doi:10.5258/SOTON/WP00682",
+       "record": null
+      },
+      {
+       "id": "forest_loss",
+       "title": "Tree-cover loss (Hansen GFC)",
+       "group": "Land",
+       "source": "Hansen Global Forest Change GFC-2025-v1.13; loss where tree cover 2000 >= 30 %",
+       "period": "2001-2025",
+       "units": "loss year; cover %",
+       "licence": "CC-BY-4.0",
+       "caveats": "Tree-cover loss, not deforestation; only where cover 2000 >= 30 %; detection improved ~2011-2013, annual values not strictly comparable across the break. Map shows cumulative loss at 5-year epochs (MapLibre cannot style rasters by value); the panel reports exact annual areas.",
+       "citation": "Hansen et al. (2013), Science 342:850-853. Data: UMD/Google/USGS/NASA.",
+       "record": null
+      },
+      {
+       "id": "fire",
+       "title": "Active fires (VIIRS)",
+       "group": "Fire",
+       "source": "NASA FIRMS VIIRS 375 m active fires; density: S-NPP only (2012-2025); points: S-NPP + NOAA-20 (NOAA-20 archive from 2020); confidence nominal/high",
+       "period": "2012-2025",
+       "units": "fires per km2 per year",
+       "licence": "NASA open data (attribution)",
+       "caveats": "Mostly savanna and crop-residue burning; charcoal production not detected reliably; cloud hides wet-season fires. NOAA-20 only in the point layer.",
+       "citation": "NASA FIRMS; Schroeder et al. (2014), RSE 143:85-96. doi:10.5067/FIRMS/VIIRS/VNP14IMGT",
+       "record": null
+      },
+      {
+       "id": "burned_area",
+       "title": "Burned area (MODIS)",
+       "group": "Fire",
+       "source": "MODIS MCD64A1 v6.1 monthly burned area, annual union per ~500 m cell, via Microsoft Planetary Computer",
+       "period": "2001-2025",
+       "units": "burned at least once in the year (0/1)",
+       "licence": "NASA open data (attribution)",
+       "caveats": "~500 m detection misses small/low-intensity burns; cloud limits wet-season detection.",
+       "citation": "Giglio et al. (2018), RSE 217:72-85. doi:10.5067/MODIS/MCD64A1.061",
+       "range_note": "annual burned area in the basin, all years 2001-2025: min 4100 km2 (2017), median 10296 km2, max 15323 km2 (2003)",
+       "record": null
+      },
+      {
+       "id": "landcover",
+       "title": "Land cover (Esri/IO annual)",
+       "group": "Land",
+       "source": "Esri/Impact Observatory annual LULC v2 (10 m; displayed at 30 m, nearest), via Microsoft Planetary Computer (io-lulc-annual-v02)",
+       "period": "2017-2023 (no 2024 release on Planetary Computer at build time, probed 2026-10-21)",
+       "units": "land-cover class",
+       "licence": "CC BY 4.0",
+       "caveats": "Global land-cover products disagree on cropland in sub-Saharan Africa (Kerner et al. 2023); year-to-year change is indicative.",
+       "citation": "Karra et al. (2021), IGARSS; Impact Observatory, Esri, Microsoft.",
+       "record": null
+      },
+      {
+       "id": "worldcover",
+       "title": "Land cover reference (ESA WorldCover 2021)",
+       "group": "Land",
+       "source": "ESA WorldCover 10 m 2021 v200 (displayed at 30 m, nearest)",
+       "period": "2021",
+       "units": "land-cover class",
+       "licence": "CC BY 4.0",
+       "citation": "Zanaga et al. (2022). ESA WorldCover 10 m 2021 v200. doi:10.5281/zenodo.7254221",
+       "record": null
+      },
+      {
+       "id": "osm_labels",
+       "title": "Place names",
+       "group": "Base",
+       "source": "OpenStreetMap via the Protomaps daily basemap (build 2026-10-22, schema v4, Planetiler 0.10.2)",
+       "period": "OSM data as of 2026-10-22",
+       "units": "labels only: countries, cities, towns, villages (from z11), lakes, rivers, protected areas",
+       "licence": "ODbL 1.0 - © OpenStreetMap contributors",
+       "citation": "© OpenStreetMap contributors (openstreetmap.org/copyright). Basemap tiles: Protomaps (protomaps.com). Fonts: Noto Sans (SIL Open Font License) via protomaps/basemaps-assets.",
+       "caveats": "Volunteered geographic information: coverage and spelling vary; label positions are OSM points, not authoritative gazetteer locations.",
+       "record": null
+      },
+      {
+       "id": "admin_boundaries",
+       "title": "Admin boundaries",
+       "group": "Base",
+       "source": "geoBoundaries gbOpen ADM1 + ADM2 (simplified), Kenya, Uganda, Tanzania, Rwanda, Burundi; clipped to the basin",
+       "period": "boundary years vary by country (2006-2021; see provenance)",
+       "units": "ADM1 and ADM2 polygons; names at mid zoom",
+       "licence": "per boundary - see provenance (Public Domain, CC0, CC BY 4.0, CC BY 3.0 IGO, ODbL); geoBoundaries itself CC BY 4.0",
+       "citation": "Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866. doi:10.1371/journal.pone.0231866",
+       "caveats": "Boundaries are indicative and not an official delimitation. Uganda ADM1 is the 4 regions (2017, from OSM) and ADM2 the 2006 counties; Tanzania ADM1 is OSM-derived. Not GADM.",
+       "provenance": [
+        {
+         "country": "Kenya",
+         "level": "ADM1",
+         "type": "Counties",
+         "year": "2020",
+         "source": "RCMRD GeoPortal, Africa GeoPortal",
+         "licence": "Public Domain",
+         "boundaryID": "KEN-ADM1-32016919",
+         "units_in_basin": 20
+        },
+        {
+         "country": "Uganda",
+         "level": "ADM1",
+         "type": "Unknown",
+         "year": "2017",
+         "source": "OpenStreetMap, Wambacher",
+         "licence": "Open Data Commons Open Database License 1.0",
+         "boundaryID": "UGA-ADM1-17295835",
+         "units_in_basin": 3
+        },
+        {
+         "country": "Tanzania",
+         "level": "ADM1",
+         "type": "Regions",
+         "year": "2015",
+         "source": "OpenStreetMap, Wambacher",
+         "licence": "Open Data Commons Open Database License 1.0",
+         "boundaryID": "TZA-ADM1-36957248",
+         "units_in_basin": 8
+        },
+        {
+         "country": "Rwanda",
+         "level": "ADM1",
+         "type": "Province",
+         "year": "2020",
+         "source": "The Rwanda Geo Portal",
+         "licence": "Creative Commons Attribution 4.0 (CC BY 4.0)",
+         "boundaryID": "RWA-ADM1-91480417",
+         "units_in_basin": 5
+        },
+        {
+         "country": "Burundi",
+         "level": "ADM1",
+         "type": "Province",
+         "year": "2014",
+         "source": "geoBoundaries, Wikimedia",
+         "licence": "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+         "boundaryID": "BDI-ADM1-87207978",
+         "units_in_basin": 14
+        },
+        {
+         "country": "Kenya",
+         "level": "ADM2",
+         "type": "Sub-Counties",
+         "year": "2020",
+         "source": "IEBC, OCHA ROSEA",
+         "licence": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+         "boundaryID": "KEN-ADM2-3690345",
+         "units_in_basin": 115
+        },
+        {
+         "country": "Uganda",
+         "level": "ADM2",
+         "type": "Counties",
+         "year": "2006",
+         "source": "geoBoundaries, Wikimedia Commons",
+         "licence": "Public Domain",
+         "boundaryID": "UGA-ADM2-47994165",
+         "units_in_basin": 48
+        },
+        {
+         "country": "Tanzania",
+         "level": "ADM2",
+         "type": "Districts",
+         "year": "2021",
+         "source": "Tanzania National Bureau of Statistics / UN OCHA ROSA, OCHA ROSA",
+         "licence": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+         "boundaryID": "TZA-ADM2-72390352",
+         "units_in_basin": 37
+        },
+        {
+         "country": "Rwanda",
+         "level": "ADM2",
+         "type": "Unknown",
+         "year": "2012",
+         "source": "Open Data Rwanda",
+         "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+         "boundaryID": "RWA-ADM2-39286606",
+         "units_in_basin": 30
+        },
+        {
+         "country": "Burundi",
+         "level": "ADM2",
+         "type": "Unknown",
+         "year": "2007",
+         "source": "New York University Spatial Data Repository, Stanford University, Map Maker Limited",
+         "licence": "Public Domain",
+         "boundaryID": "BDI-ADM2-21766830",
+         "units_in_basin": 81
+        }
+       ],
+       "record": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "datasets",
+   "kind": "catalogue-datasets",
+   "title": "Datasets in the catalogue"
+  },
+  {
+   "id": "data-status",
+   "kind": "data-status",
+   "title": "Data status"
+  }
+ ]
+}

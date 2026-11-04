@@ -54,7 +54,7 @@
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   font-variant-numeric: tabular-nums;
 }
 
@@ -425,7 +425,7 @@
 }
 .readiness-legend summary {
   cursor: pointer;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   font-weight: 600;
   width: fit-content;
 }
@@ -521,7 +521,7 @@
   flex-shrink: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   background: var(--color-surface);
 }
 
@@ -593,7 +593,7 @@
   gap: 0.3rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -616,7 +616,7 @@
 
 .ds-card:hover .ds-card-arrow {
   opacity: 1;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   transform: translateX(2px);
 }
 
@@ -809,4 +809,4 @@
   font-weight: 600;
   word-break: break-word;
 }
-.ds-fact-value a { color: var(--mosaic-teal); }
+.ds-fact-value a { color: var(--color-link); }

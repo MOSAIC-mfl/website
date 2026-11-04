@@ -5,7 +5,6 @@ import IconChip from '../../components/ui/IconChip.astro'
 import LandscapeCard from '../../components/catalogue/LandscapeCard.astro'
 import CtaBand from '../../components/ui/CtaBand.astro'
 import landscapes from '../../../data/landscapes.json'
-import datasets from '../../../data/datasets.json'
 import boundaries from '../../../data/landscape_boundaries.json'
 
 const base = import.meta.env.BASE_URL
@@ -19,12 +18,9 @@ const boundaryByCode = new Map(
   ]),
 )
 
-const landscapesWithCounts = landscapes
-  .map((l) => ({
-    ...l,
-    count: datasets.filter((d) => d.living_landscape === l.code).length,
-  }))
-  .sort((a, b) => b.count - a.count)
+// Counts are read from mosaic-api in the browser (script at the end); the cards start in name order
+// and are re-ordered by count, as in the approved page, once the counts arrive.
+const landscapesWithCounts = [...landscapes].sort((a, b) => a.name.localeCompare(b.name))
 
 const pillars = [
   { icon: 'map-pin', label: 'Place-based', caption: 'Real-world landscapes where we work', tint: 'teal' },
@@ -80,14 +76,15 @@ const pillars = [
     <!-- Landscape grid -->
     <ul class="lp-grid" id="lp-grid">
       {landscapesWithCounts.map((l) => (
-        <li class="lp-item" data-search={`${l.name} ${l.code} ${l.country}`.toLowerCase()}>
+        <li class="lp-item" data-code={l.code} data-search={`${l.name} ${l.code} ${l.country}`.toLowerCase()}>
           <LandscapeCard
             code={l.code}
             name={l.name}
             country={l.country}
-            count={l.count}
+            count={null}
             pending={'pending' in l && l.pending === true}
             href={`${base}/catalogue?landscape=${l.code}`}
+            profileHref={`${base}/landscapes/${l.code.toLowerCase()}/`}
             download={boundaryByCode.get(l.code)}
           />
         </li>
@@ -118,8 +115,7 @@ const pillars = [
         Version {boundaries.version}.
         <a href={boundaries.release_url} target="_blank" rel="noopener">All files of this version</a>
         · <a href={`${boundaries.download_base}${boundaries.readme}`}>README</a>
-        · Simplified outlines for web maps are in the
-        <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" target="_blank" rel="noopener">STAC catalog</a>.
+.
       </p>
     </section>
 
@@ -158,7 +154,7 @@ const pillars = [
   }
   .lp-approach-link {
     font-weight: 600;
-    color: var(--mosaic-teal);
+    color: var(--color-link);
     text-decoration: none;
   }
   .lp-chips {
@@ -268,7 +264,7 @@ const pillars = [
     color: var(--color-muted);
   }
   .lp-dl-foot a {
-    color: var(--mosaic-teal);
+    color: var(--color-link);
   }
   .lp-dl-foot a:focus-visible {
     outline: 2px solid var(--mosaic-teal);
@@ -294,7 +290,11 @@ const pillars = [
 </style>
 
 <script>
-  // Lightweight client-side landscape filter (no dependency, no React island).
+  import { catalogue } from '../../lib/catalog'
+  import { fold } from '../../lib/domain/text'
+
+  // Lightweight client-side landscape filter (no React island). Same text folding as the catalogue,
+  // so "cote d ivoire" finds "Côte d'Ivoire".
   const input = document.getElementById('lp-search') as HTMLInputElement | null
   const items = Array.from(document.querySelectorAll<HTMLElement>('.lp-item'))
   const countEl = document.getElementById('lp-count')
@@ -302,10 +302,10 @@ const pillars = [
   const total = items.length
 
   function apply() {
-    const q = (input?.value ?? '').trim().toLowerCase()
+    const q = fold(input?.value ?? '')
     let shown = 0
     for (const li of items) {
-      const hay = li.getAttribute('data-search') ?? ''
+      const hay = fold(li.getAttribute('data-search') ?? '')
       const match = !q || hay.includes(q)
       li.style.display = match ? '' : 'none'
       if (match) shown++
@@ -315,4 +315,21 @@ const pillars = [
   }
 
   input?.addEventListener('input', apply)
+
+  // Dataset counts per landscape, from the API; then cards are ordered by count (approved order).
+  catalogue()
+    .overview()
+    .then(({ facets }) => {
+      const counts = facets.landscape ?? {}
+      const grid = document.getElementById('lp-grid')
+      for (const el of document.querySelectorAll<HTMLElement>('[data-count-for]')) {
+        const n = counts[el.dataset.countFor ?? ''] ?? 0
+        el.textContent = n === 0 ? 'No datasets yet' : `${n} ${n === 1 ? 'dataset' : 'datasets'}`
+      }
+      const n = (li: HTMLElement) => counts[li.dataset.code ?? ''] ?? 0
+      items.sort((a, b) => n(b) - n(a)).forEach((li) => grid?.appendChild(li))
+    })
+    .catch(() => {
+      /* counts stay blank; the page still works */
+    })
 </script>

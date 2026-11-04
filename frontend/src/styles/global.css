@@ -42,12 +42,12 @@ p {
 }
 
 a {
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   text-decoration: underline;
 }
 
 a:hover {
-  color: var(--mosaic-teal-dark);
+  color: var(--color-link-hover);
 }
 
 img {
@@ -111,6 +111,16 @@ img {
 
 .btn-secondary:hover {
   background-color: var(--color-green-light);
+}
+
+/* Dark theme: an Ocean Teal outline on a dark surface is too faint (brand
+   annex §5), so the secondary button uses the theme's link colour. */
+[data-theme="dark"] .btn-secondary {
+  color: var(--color-link);
+  border-color: var(--color-link);
+}
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: var(--color-tint);
 }
 
 /* Tables */

@@ -7,8 +7,8 @@
  * simplified for display — data/landscape_outlines.json, built from
  * MOSAIC_catalog/boundaries/ by scripts/build_map_outlines.py) plus one
  * centroid dot per landscape (positions from data/landscape_centroids.json;
- * dataset counts computed from datasets.json at build time, grouped by
- * living_landscape code as the catalogue filter does). Most landscapes are
+ * dataset counts read from mosaic-api when the page opens (landscape facet; the
+ * layout is built for equal dots, then each dot is resized to its count). Most landscapes are
  * too small to read at world scale, so the dots and code labels stay the
  * primary markers.
  *
@@ -35,7 +35,6 @@
 import centroidData from '../../../data/landscape_centroids.json'
 import outlineData from '../../../data/landscape_outlines.json'
 import world from '../../../data/world_land_path.json'
-import { loadDatasets } from '../../utils/loadDatasets'
 
 interface LandscapePoint {
   code: string
@@ -52,13 +51,12 @@ interface Outline {
   bbox: number[] // projected [x0, y0, x1, y1]
 }
 
-// Counts come from datasets.json on every build, never from a stored number.
-const datasets = await loadDatasets()
-const countOf = (code: string) => datasets.filter((d) => d.living_landscape === code).length
+// No catalogue data at build time: the layout uses equal dots; counts, sizes and texts are
+// filled in the browser from mosaic-api (see the script below).
+const countOf = (_code: string) => 0
 
 const points: LandscapePoint[] = centroidData.landscapes.map((l) => ({ ...l, count: countOf(l.code) }))
 const outlines = outlineData.outlines as Record<string, Outline>
-const globalCount = countOf('GLB')
 const base = import.meta.env.BASE_URL
 
 // ── Equirectangular projection (must match world_land_path.json) ─────
@@ -331,9 +329,10 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     <span>
       Boundaries are the <strong>canonical Living Landscape delineations</strong>, simplified for
       display; each dot marks the landscape centroid.
-      {globalCount > 0 && (
-        <> Plus {globalCount} global / cross-landscape dataset{globalCount === 1 ? '' : 's'} not shown on the map — <a href={`${base}/catalogue?landscape=GLB`}>browse them in the catalogue</a>.</>
-      )}
+      <span class="locator-global" hidden>
+        Plus <span class="locator-global-count"></span> not shown on the map —
+        <a href={`${base}/catalogue?geography=global`}>browse them in the catalogue</a>.
+      </span>
     </span>
   </p>
 
@@ -344,7 +343,7 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     COD-AB Tunisia, INS / UN OCHA, CC BY-IGO 3.0 (TUN-NW) · World Bank Ethiopia River Basins,
     CC BY 4.0 (ETH-OG) · INEI referential census limits (PER-PCL) · J. Ochoa, CIP (COL-CUM).
     Outlines simplified by MOSAIC; full attribution and licence in each landscape's
-    <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json">STAC boundary asset</a>.
+    boundary download (README).
     Land: Natural Earth.
   </p>
   </div>
@@ -382,7 +381,10 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
     const live = figure.querySelector<HTMLElement>('.locator-live')
     if (!svg || !payloadEl?.textContent || !chip || !chipName || !chipMeta || !chipLink || !chipEmpty || !chipReset || !live) return
 
-    const payload = JSON.parse(payloadEl.textContent) as Payload
+    let payload = JSON.parse(payloadEl.textContent) as Payload
+    figure.addEventListener('locator:counts', (e) => {
+      payload = (e as CustomEvent<Payload>).detail
+    })
     const WORLD = payload.world
     const ASPECT = WORLD[2] / WORLD[3]
     const dots = Array.from(figure.querySelectorAll<HTMLButtonElement>('.locator-dot'))
@@ -503,6 +505,43 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
   }
 
   document.querySelectorAll<HTMLElement>('.locator-figure').forEach(initLocator)
+
+  // ── Counts from the API ────────────────────────────────────────────
+  // The map is drawn without data; this fills dot sizes, tooltips, the zoom chip and the
+  // "global datasets" note from the catalogue's facet counts.
+  async function applyCounts() {
+    const { catalogue } = await import('../../lib/catalog')
+    const { facets } = await catalogue().overview()
+    const counts = facets.landscape ?? {}
+    const phrase = (n: number) => (n === 0 ? 'no datasets yet' : `${n} dataset${n === 1 ? '' : 's'}`)
+    for (const figure of document.querySelectorAll<HTMLElement>('.locator-figure')) {
+      const payloadEl = figure.querySelector('.locator-payload')
+      if (!payloadEl?.textContent) continue
+      const payload = JSON.parse(payloadEl.textContent) as Payload
+      const vbW = payload.world[2]
+      for (const [code, info] of Object.entries(payload.landscapes)) info.count = counts[code] ?? 0
+      payloadEl.textContent = JSON.stringify(payload)
+      for (const dot of figure.querySelectorAll<HTMLButtonElement>('.locator-dot')) {
+        const code = dot.dataset.code ?? ''
+        const info = payload.landscapes[code]
+        if (!info) continue
+        const r = 1.6 + Math.min(info.count, 20) * 0.2 // same scale as the build-time layout
+        dot.style.setProperty('--dot', `${((2 * r) / vbW) * 100}%`)
+        dot.title = `${info.name} (${code}) — ${phrase(info.count)}. Click to zoom to its boundary.`
+        dot.setAttribute('aria-label', `${info.name}, ${phrase(info.count)} — zoom to boundary`)
+      }
+      figure.dispatchEvent(new CustomEvent('locator:counts', { detail: payload }))
+    }
+    const global = (facets.geography ?? {}).global ?? 0
+    for (const note of document.querySelectorAll<HTMLElement>('.locator-global')) {
+      const n = note.querySelector('.locator-global-count')
+      if (n) n.textContent = `${global} global dataset${global === 1 ? '' : 's'}`
+      note.hidden = global === 0
+    }
+  }
+  applyCounts().catch(() => {
+    /* the map still works without counts */
+  })
 </script>
 
 <style>
@@ -710,7 +749,7 @@ const payloadJson = JSON.stringify(payload).replace(/</g, '\\u003c')
   }
   .locator-note svg { flex: 0 0 auto; }
   .locator-note strong { font-weight: 700; }
-  .locator-note a { color: var(--mosaic-teal); font-weight: 600; }
+  .locator-note a { color: var(--color-link); font-weight: 600; }
   .locator-note svg { color: var(--color-muted); }
 
   .locator-credit {

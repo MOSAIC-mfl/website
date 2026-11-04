@@ -78,6 +78,9 @@
   /* Catalogue design system → MOSAIC */
   --color-primary:       #0D5C6B;   /* Ocean Teal */
   --color-primary-light: #D6EEF2;   /* Light Teal */
+  --color-link:          #0D5C6B;   /* links: Ocean Teal on light surfaces */
+  --color-link-hover:    #0A4753;
+  --color-tint:          #D6EEF2;   /* tinted panels (e.g. "How to access") */
   --color-secondary:     #117A8D;
   --color-bg:            #F7F4EF;   /* Warm Sand */
   --color-surface:       #FFFFFF;
@@ -169,6 +172,14 @@
   --color-text:     #EAF2F4;   /* body text                */
   --color-muted:    #9DB0B8;   /* captions, secondary text */
   --color-border:   #26414C;   /* hairlines, dividers      */
+
+  /* Brand annex §5: Ocean Teal has too little contrast on dark surfaces for
+     small marks, so links switch to Light Teal; tinted panels become a dark
+     teal surface instead of Light Teal (whose dark text would otherwise flip
+     to light and disappear). */
+  --color-link:       #D6EEF2;
+  --color-link-hover: #FFFFFF;
+  --color-tint:       #133540;
 
   /* Neutral ramp remap (gray-50/100/200 become dark surfaces; the higher
      greys, used for text, become light). --color-white is intentionally NOT

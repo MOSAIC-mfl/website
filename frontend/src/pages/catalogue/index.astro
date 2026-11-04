@@ -1,19 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
-import { CatalogueFilter } from '../../components/catalogue/CatalogueFilter'
+import { CatalogueApp } from '../../components/catalogue/CatalogueApp'
+import { CatalogueStats } from '../../components/catalogue/CatalogueStats'
 import LandscapeLocatorMap from '../../components/catalogue/LandscapeLocatorMap.astro'
-import { loadDatasets } from '../../utils/loadDatasets'
-import { countCountries } from '../../utils/countries'
+import { readConfig } from '../../lib/config'
 
-const datasets = await loadDatasets()
+// No catalogue data at build time: the islands below read it from mosaic-api when the page opens.
 const base = import.meta.env.BASE_URL
-
-const totalDatasets = datasets.length
-// 'GLB' is the global / cross-landscape value, not a landscape; likewise the
-// 'Global' and regional values of `country` are not countries.
-const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
-const countries   = countCountries(datasets)
+const api = readConfig()
+const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/v1/manifest.json` : `${api.apiUrl}/docs`
 ---
 
 <BaseLayout
@@ -32,23 +28,12 @@ const countries   = countCountries(datasets)
       contours
       width="var(--catalogue-max)"
       title="Dataset Catalogue"
-      subtitle="Search geospatial datasets by country, landscape, theme, organization or readiness status."
+      subtitle="Search geospatial datasets by country, landscape, theme, organization or data type."
     />
 
     <!-- ── Figures (open strip, not dashboard tiles) ──────────── -->
     <p class="catalogue-band catalogue-statline">
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{totalDatasets}</span>
-        <span class="catalogue-stat-label">datasets</span>
-      </span>
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{landscapes}</span>
-        <span class="catalogue-stat-label">landscapes</span>
-      </span>
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{countries}</span>
-        <span class="catalogue-stat-label">countries</span>
-      </span>
+      <CatalogueStats client:load />
     </p>
 
     <!-- ── Search + Filters + Results (primary task) ─────────── -->
@@ -57,12 +42,11 @@ const countries   = countCountries(datasets)
         <p style="background: var(--mosaic-light-teal); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); color: var(--color-gray-700); font-size: var(--text-sm);">
           Interactive search and filtering need JavaScript. You can still reach the full,
           machine-readable catalogue through the
-          <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" style="color: var(--mosaic-teal); font-weight: 600;">STAC endpoint</a>
-          — the source of truth MOSAIC connects to.
+          <a href={apiEntry} style="color: var(--color-link); font-weight: 600;">MOSAIC API</a>.
         </p>
       </div>
     </noscript>
-    <CatalogueFilter client:visible datasets={datasets} base={base} />
+    <CatalogueApp client:load base={base} />
 
     <!-- ── Locator map (supporting context) ──────────────────── -->
     <div class="catalogue-locator-wrap">
@@ -75,8 +59,8 @@ const countries   = countCountries(datasets)
         <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
       </svg>
       Technical access:
-      <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" target="_blank" rel="noopener noreferrer">STAC endpoint</a>
-      — the machine-readable catalogue MOSAIC connects to.
+      <a href={apiEntry} target="_blank" rel="noopener noreferrer">MOSAIC API</a>
+      — the machine-readable catalogue (MOSAIC and the catalogues it connects to).
     </p>
 
   </div>
@@ -96,5 +80,5 @@ const countries   = countCountries(datasets)
     color: var(--color-muted);
   }
   .catalogue-tech-access svg { flex: 0 0 auto; color: var(--color-muted); }
-  .catalogue-tech-access a { color: var(--mosaic-teal); font-weight: 600; }
+  .catalogue-tech-access a { color: var(--color-link); font-weight: 600; }
 </style>

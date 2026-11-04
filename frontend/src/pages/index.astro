@@ -1,19 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import StatusBadge from '../components/ui/StatusBadge.astro'
-import AccessBadge from '../components/ui/AccessBadge.astro'
 import ContentCard from '../components/ui/ContentCard.astro'
 import Icon from '../components/ui/Icon.astro'
-import datasets from '../../data/datasets.json'
-import { countCountries } from '../utils/countries'
 
+// Figures and featured datasets are read from mosaic-api in the browser (script at the end), so the
+// home page never needs a rebuild when the catalogue changes.
 const base = import.meta.env.BASE_URL
-const totalDatasets = datasets.length
-// 'GLB' is the global / cross-landscape value, not a landscape; likewise the
-// 'Global' and regional values of `country` are not countries.
-const countries = countCountries(datasets)
-const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
-const featured = datasets.slice(0, 3)
 ---
 
 <BaseLayout title="Home">
@@ -54,7 +46,7 @@ const featured = datasets.slice(0, 3)
         <div class="stat-item">
           <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
-            <span class="stat-number">{totalDatasets}</span>
+            <span class="stat-number" data-stat="resources">–</span>
             <span class="stat-label">Datasets catalogued</span>
           </span>
         </div>
@@ -62,7 +54,7 @@ const featured = datasets.slice(0, 3)
         <div class="stat-item">
           <span class="stat-icon" data-tint="green" aria-hidden="true"><Icon name="mountains" size={24} /></span>
           <span class="stat-text">
-            <span class="stat-number">{landscapes}</span>
+            <span class="stat-number" data-stat="landscapes">–</span>
             <span class="stat-label">Landscapes with data</span>
           </span>
         </div>
@@ -70,7 +62,7 @@ const featured = datasets.slice(0, 3)
         <div class="stat-item">
           <span class="stat-icon" data-tint="amber" aria-hidden="true"><Icon name="globe" size={24} /></span>
           <span class="stat-text">
-            <span class="stat-number">{countries}</span>
+            <span class="stat-number" data-stat="countries">–</span>
             <span class="stat-label">Countries with data</span>
           </span>
         </div>
@@ -98,7 +90,7 @@ const featured = datasets.slice(0, 3)
       </div>
       <div class="home-entry">
         <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="teal" arrow>
-          Search datasets by place, theme, source or readiness status.
+          Search datasets by place, theme, source or data type.
         </ContentCard>
         <ContentCard icon="upload" title="Share data" href={`${base}/contribute`} tint="amber" arrow>
           Register a dataset so others can discover, cite or request access to it.
@@ -140,21 +132,21 @@ const featured = datasets.slice(0, 3)
           <h2>Featured datasets</h2>
           <p class="section-subtitle">Recently added and validated datasets from across the network.</p>
         </div>
-        <a href={`${base}/catalogue`} class="section-link">Browse all {totalDatasets} datasets &rarr;</a>
+        <a href={`${base}/catalogue`} class="section-link">Browse all <span data-stat="resources"></span> datasets &rarr;</a>
       </div>
       <div class="cards-grid">
-        {featured.map((d) => (
-          <article class="dataset-card-new">
+        {[0, 1, 2].map(() => (
+          <article class="dataset-card-new" data-featured hidden>
             <div class="dataset-card-badges">
-              <StatusBadge status={d.readiness_status} />
-              <AccessBadge access={d.access_level} />
+              <span data-field="status"></span>
+              <span data-field="access"></span>
             </div>
-            <h3 class="dataset-card-title">{d.title}</h3>
+            <h3 class="dataset-card-title" data-field="title"></h3>
             <dl class="dataset-card-meta">
-              <div><dt>Country</dt><dd>{d.country}</dd></div>
-              <div><dt>Theme</dt><dd>{d.mfl_theme}</dd></div>
+              <div><dt>Country</dt><dd data-field="country"></dd></div>
+              <div><dt>Theme</dt><dd data-field="theme"></dd></div>
             </dl>
-            <a href={`${base}/catalogue/${d.id}`} class="dataset-card-link">View details &rarr;</a>
+            <a href={`${base}/catalogue`} class="dataset-card-link" data-field="link">View details &rarr;</a>
           </article>
         ))}
       </div>
@@ -186,6 +178,47 @@ const featured = datasets.slice(0, 3)
   </section>
 
 </BaseLayout>
+
+<script>
+  import { catalogue } from '../lib/catalog'
+  import { emptyQuery } from '../lib/domain/query'
+  import { ACCESS_BADGE, ACCESS_LABEL, COMPLETENESS_BADGE, COMPLETENESS_LABEL, datasetHref, joinLabels } from '../lib/domain/present'
+  import { headline } from '../lib/domain/stats'
+
+  const base = import.meta.env.BASE_URL
+  const repo = catalogue()
+
+  async function fill() {
+    const { manifest, facets, labels } = await repo.overview()
+    const h = headline(manifest.counts.resources, facets)
+    for (const el of document.querySelectorAll<HTMLElement>('[data-stat]')) {
+      el.textContent = String(h[el.dataset.stat as keyof typeof h] ?? '–')
+    }
+    // Featured: complete records first (the most useful to a visitor), most recent period first.
+    const complete = await repo.search({ ...emptyQuery(), filters: { status: ['complete'] }, pageSize: 3 })
+    const items = complete.items.length >= 3 ? complete.items : (await repo.search({ ...emptyQuery(), pageSize: 3 })).items
+    document.querySelectorAll<HTMLElement>('[data-featured]').forEach((card, i) => {
+      const d = items[i]
+      if (!d) return
+      const set = (field: string, text: string, cls?: string) => {
+        const el = card.querySelector<HTMLElement>(`[data-field="${field}"]`)
+        if (!el) return
+        el.textContent = text
+        if (cls) el.className = cls
+      }
+      set('status', COMPLETENESS_LABEL[d.status] ?? d.status, COMPLETENESS_BADGE[d.status])
+      set('access', d.access ? ACCESS_LABEL[d.access] : 'Access not specified', d.access ? ACCESS_BADGE[d.access] : 'badge badge-internal')
+      set('title', d.title)
+      set('country', joinLabels(labels, 'geography', d.geography, 2) ?? 'Not specified')
+      set('theme', joinLabels(labels, 'theme', d.themes, 1) ?? 'Not specified')
+      card.querySelector<HTMLAnchorElement>('[data-field="link"]')?.setAttribute('href', datasetHref(base, d.id))
+      card.hidden = false
+    })
+  }
+  fill().catch(() => {
+    /* figures stay as dashes; the rest of the page works */
+  })
+</script>
 
 <style>
   /* ── Hero (light) ──────────────────────────────────────────── */
@@ -354,7 +387,7 @@ const featured = datasets.slice(0, 3)
     text-transform: uppercase;
     color: #6F8F5F;
   }
-  .section-wavy { display: inline-block; color: var(--mosaic-teal); }
+  .section-wavy { display: inline-block; color: var(--color-link); }
 
   .section-header {
     display: flex;
@@ -373,7 +406,7 @@ const featured = datasets.slice(0, 3)
     font-size: var(--text-base);
     max-width: 60ch;
   }
-  .section-link { font-size: var(--text-sm); font-weight: 600; color: var(--mosaic-teal); text-decoration: none; white-space: nowrap; }
+  .section-link { font-size: var(--text-sm); font-weight: 600; color: var(--color-link); text-decoration: none; white-space: nowrap; }
 
   .home-entry { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
 
@@ -477,6 +510,7 @@ const featured = datasets.slice(0, 3)
     height: 8px;
     background: linear-gradient(90deg, var(--mosaic-teal), var(--mosaic-amber));
   }
+  .dataset-card-new[hidden] { display: none; }
   .dataset-card-new:hover { border-color: var(--mosaic-teal); box-shadow: var(--shadow-card-hover); }
   .dataset-card-badges { display: flex; gap: var(--space-2); flex-wrap: wrap; }
   .dataset-card-title { font-size: var(--text-lg); font-weight: 600; color: var(--color-text); line-height: 1.3; margin: 0; }
@@ -484,7 +518,7 @@ const featured = datasets.slice(0, 3)
   .dataset-card-meta div { display: flex; gap: var(--space-2); font-size: var(--text-sm); }
   .dataset-card-meta dt { color: var(--color-muted); font-weight: 500; min-width: 56px; }
   .dataset-card-meta dd { color: var(--color-text); margin: 0; }
-  .dataset-card-link { margin-top: auto; font-size: var(--text-sm); font-weight: 600; color: var(--mosaic-teal); text-decoration: none; }
+  .dataset-card-link { margin-top: auto; font-size: var(--text-sm); font-weight: 600; color: var(--color-link); text-decoration: none; }
 
   /* ── Closing CTA — grow the network ────────────────────────── */
   .grow-cta {
@@ -565,7 +599,7 @@ const featured = datasets.slice(0, 3)
     height: 34px;
     border-radius: var(--radius-full);
     background-color: var(--tint-teal-bg);
-    color: var(--mosaic-teal);
+    color: var(--mosaic-teal); /* the grow card stays light in both themes */
   }
 
   .grow-btn {

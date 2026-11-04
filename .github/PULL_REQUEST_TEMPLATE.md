@@ -6,7 +6,6 @@
 
 - [ ] Bug fix
 - [ ] New feature or page
-- [ ] Dataset or metadata update
 - [ ] Content or documentation update
 - [ ] GitHub Actions / automation change
 - [ ] Dependency update
@@ -17,7 +16,8 @@
 - [ ] Build succeeds with `npm run build`
 - [ ] No lint errors (`npm run lint`)
 - [ ] TypeScript checks pass (`npm run typecheck`)
-- [ ] `datasets.json` validates (if data files changed)
+- [ ] Tests pass (`npm test`)
+- [ ] API types regenerated if the contract changed (`npm run gen:api`)
 
 ## Notes for reviewer
 
