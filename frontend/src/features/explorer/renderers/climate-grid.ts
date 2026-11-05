@@ -12,7 +12,7 @@ import { fmtInt, signed } from '../domain/format'
 import { rampLegend, type LegendModel } from '../domain/legend'
 import type { Options } from '../domain/options'
 import { BaseRenderer } from './base'
-import { gridData, gridLayer, NODATA, WATER, type GridData, type GridMeta } from './grid'
+import { gridData, gridLayer, NODATA, normalValue, stackScale, WATER, type GridData, type GridMeta } from './grid'
 import type { ExplorerContext, OverlayView, Segment, TimeControl, TimeInput } from './types'
 
 export interface ClimateTime {
@@ -32,7 +32,6 @@ interface Variable {
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const SEASON_MONTHS: Record<string, number[]> = { annual: [], mam: [2, 3, 4], ond: [9, 10, 11] }
-const seasonName = (s: string) => (s === 'annual' ? 'annual' : s.toUpperCase())
 
 export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
   readonly timeKey = 'climate'
@@ -61,7 +60,25 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
 
   private seasons(): string[] {
     const s = this.o.strList('seasons')
-    return s.length ? s : ['annual', 'mam', 'ond']
+    if (s.length) return s
+    return this.meta?.seasons ? Object.keys(this.meta.seasons) : ['annual', 'mam', 'ond']
+  }
+
+  /** the season in running text ('annual', 'MAM', or the profile's `season_names`) */
+  private seasonName(s: string): string {
+    return this.o.strMap('season_names')[s] ?? (s === 'annual' ? 'annual' : s.toUpperCase())
+  }
+
+  /** the season's button label (`season_labels`) */
+  private seasonLabel(s: string): string {
+    return this.o.strMap('season_labels')[s] ?? (s === 'annual' ? 'Annual' : s.toUpperCase())
+  }
+
+  /** 0-based months of a season */
+  private seasonMonths(meta: GridMeta, s: string): number[] {
+    const m = meta.seasons?.[s]
+    if (m) return m.length === 12 ? [] : m.map((x) => x - 1)
+    return SEASON_MONTHS[s] ?? []
   }
 
   initialTime(): ClimateTime {
@@ -106,7 +123,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     const band = stack.bands[years.indexOf(t.year ?? -1)]
     if (!band) return
     const { lo, hi, ramp } = this.display(meta, t)
-    const scale = meta.scale
+    const scale = stackScale(meta, v.id)
     const ratio = this.o.sub('anomaly')?.optStr('kind') === 'ratio'
     gridLayer(ctx, this.o.str('grid'), this.config.before).draw(
       meta,
@@ -115,9 +132,9 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
         if (raw === NODATA) return null
         const value = raw * scale
         if (!normal) return value
-        const n = normal[i]
-        if (n === NODATA) return null
-        return ratio ? (100 * value) / (n * scale) : value - n * scale
+        const n = normalValue(meta, normal[i])
+        if (n === null) return null
+        return ratio ? (100 * value) / n : value - n
       },
       lo,
       hi,
@@ -140,7 +157,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
       return { lo: c - d, hi: c + d, ramp: a.strList('ramp'), label: `${a.str('units')} (${meta.normal})` }
     }
     const r = meta.ranges[`${t.v}_${t.season}`] ?? [0, 1]
-    return { lo: r[0], hi: r[1], ramp: this.o.strList('ramp'), label: `${units} · ${seasonName(t.season)} ${this.o.str('aggregate')}` }
+    return { lo: r[0], hi: r[1], ramp: this.o.strList('ramp'), label: `${units} · ${this.seasonName(t.season)} ${this.o.str('aggregate')}` }
   }
 
   legend(view: OverlayView<ClimateTime>): LegendModel | null {
@@ -162,7 +179,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
         id: 'season',
         label: 'Season',
         value: t.season,
-        options: this.seasons().map((s) => ({ value: s, label: s === 'annual' ? 'Annual' : s.toUpperCase() })),
+        options: this.seasons().map((s) => ({ value: s, label: this.seasonLabel(s) })),
       },
       {
         id: 'mode',
@@ -177,7 +194,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     return {
       segments,
       slider: { min: years[0] ?? 0, max: years.at(-1) ?? 0, step: 1, value: t.year ?? 0 },
-      caption: { strong: String(t.year ?? ''), rest: `${seasonName(t.season)} ${this.o.str('aggregate')}` },
+      caption: { strong: String(t.year ?? ''), rest: `${this.seasonName(t.season)} ${this.o.str('aggregate')}` },
     }
   }
 
@@ -224,7 +241,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     const monthsOf = (y: number) => Array.from(series.slice((y - y0) * 12, (y - y0) * 12 + 12))
     const total = this.o.str('aggregate') === 'total'
     const agg = (vals: number[]) => {
-      const idx = SEASON_MONTHS[t.season] ?? []
+      const idx = this.seasonMonths(meta, t.season)
       const sel = (idx.length ? vals.filter((_, i) => idx.includes(i)) : vals).map(val)
       if (sel.some((x) => x == null)) return null
       const s = (sel as number[]).reduce((a, b) => a + b, 0)
@@ -250,7 +267,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
       {
         type: 'kpis',
         items: [
-          { label: `${seasonName(t.season)} ${this.o.str('aggregate')} · ${t.year}`, value: fmtV(yearVal), unit, lead: true },
+          { label: `${this.seasonName(t.season)} ${this.o.str('aggregate')} · ${t.year}`, value: fmtV(yearVal), unit, lead: true },
           { label: `Normal ${meta.normal}`, value: fmtV(normal), unit },
           { label: 'This year', value: anomTxt, size: 18 },
         ],

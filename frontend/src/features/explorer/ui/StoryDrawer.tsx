@@ -6,12 +6,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Block } from '../domain/blocks'
-import type { Chapter, ModuleOptions, StoryConfig, StoryNumber, StudiesConfig, StudyCard } from '../domain/config'
+import type { Chapter, ChapterStep, ModuleOptions, StoryConfig, StoryNumber, StudiesConfig, StudyCard } from '../domain/config'
 import { Blocks } from './Blocks'
 
 export interface StoryActions {
   enterChapter(ch: Chapter): void
-  flyStep(camera: NonNullable<Chapter['visual']>['camera'] & object): void
+  playStep(step: ChapterStep, ch: Chapter): void
   exploreFrom(ch: Chapter): void
   showCard(card: StudyCard, layer: string | null): void
   overlayTitle(id: string): string | undefined
@@ -156,7 +156,7 @@ function ChapterView({ ch, active, actions, onFigure }: { ch: Chapter; active: b
       {ready && v.steps?.length ? (
         <div className="story-actions">
           {v.steps.map((s) => (
-            <button key={s.label} type="button" className="story-chip" onClick={() => actions.flyStep(s.camera)}>
+            <button key={s.label} type="button" className="story-chip" onClick={() => actions.playStep(s, ch)}>
               {s.label}
             </button>
           ))}
@@ -247,6 +247,11 @@ function StudiesTab({ studies, activeOverlay, actions }: { studies: StudiesConfi
             <button type="button" className="story-head" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : c.id)}>
               <span className="story-q">{c.question}</span>
               <span className={`pill${c.kind === 'published' ? ' validated' : ''}`}>{c.kind === 'published' ? 'study' : 'explore'}</span>
+              {c.steps || c.map_note || c.data_note ? (
+                <span className="pill" title={layers.length ? 'Opens a layer of this app on the map' : "No map layer: the study's data are not in this app"}>
+                  {layers.length ? 'Map' : 'Reference'}
+                </span>
+              ) : null}
             </button>
             {expanded && (
               <div className="story-body">
@@ -266,7 +271,20 @@ function StudiesTab({ studies, activeOverlay, actions }: { studies: StudiesConfi
                   </p>
                 )}
                 <div className="story-actions">
-                  {layers.length || c.camera || c.open_panel ? (
+                  {layers.length && c.steps?.length ? (
+                    c.steps
+                      .filter((st) => !st.layer || actions.overlayAvailable(st.layer))
+                      .map((st) => (
+                        <button
+                          key={st.label}
+                          type="button"
+                          className="story-show"
+                          onClick={() => actions.showCard({ ...c, time: st.time ?? c.time, camera: st.camera ?? c.camera }, st.layer ?? layers[0])}
+                        >
+                          {st.label}
+                        </button>
+                      ))
+                  ) : layers.length || c.camera || c.open_panel ? (
                     <>
                       <button type="button" className="story-show" onClick={() => actions.showCard(c, layers[0] ?? null)}>
                         Show me on the map
@@ -277,10 +295,12 @@ function StudiesTab({ studies, activeOverlay, actions }: { studies: StudiesConfi
                         </button>
                       ))}
                     </>
-                  ) : (
+                  ) : c.data_note ? null : (
                     <span className="p-meta">Not in the app yet — no layer to show.</span>
                   )}
                 </div>
+                {c.map_note && <p className="p-meta">{c.map_note}</p>}
+                {!layers.length && c.data_note && <p className="p-meta">{c.data_note}</p>}
                 {missing.length > 0 && <p className="p-meta">Layer not built in this copy: {missing.join(', ')}</p>}
               </div>
             )}

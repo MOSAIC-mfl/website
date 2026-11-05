@@ -15,6 +15,19 @@ export interface Camera {
   zoom?: number
   pitch?: number
   bearing?: number
+  /** [west, south, east, north]: frame this box (lng/lat stay its centre, for the URL and jumps) */
+  bounds?: [number, number, number, number]
+  /** share of the visible map the box fills (default 0.6) */
+  fill?: number
+}
+
+/** A chip under a chapter: switches the layer (and its time), highlights a feature, moves the map. */
+export interface ChapterStep {
+  label: string
+  camera?: Camera
+  layer?: string
+  time?: Record<string, string | number>
+  focus?: string
 }
 
 export type AssetRef = { asset: string } | { pmtiles: string }
@@ -105,7 +118,16 @@ export type OverlayConfig = RailItemConfig &
 export interface ClickConfig {
   title?: string
   source?: string
-  admin?: { layers: string[]; visible_layer?: string; units?: Record<string, [string, string]> }
+  admin?: {
+    layers: string[]
+    visible_layer?: string
+    units?: Record<string, [string, string]>
+    /** property holding the unit's name in each layer (default `name`) */
+    name_fields?: [string, string]
+    /** when the layers carry no country / iso properties (one-country landscapes) */
+    country?: string
+    iso?: string
+  }
 }
 
 export interface ChapterVisual {
@@ -117,7 +139,9 @@ export interface ChapterVisual {
   charts?: ModuleOptions[]
   figure?: string
   alt?: string
-  steps?: { label: string; camera: Camera }[]
+  steps?: ChapterStep[]
+  /** the feature the chapter is about (story.map.focus: which layers, which field) */
+  focus?: string
   note?: string
   pending_note?: string
   exposure?: Record<string, unknown>
@@ -150,6 +174,8 @@ export interface StoryConfig {
     layers?: StyleLayerSpec[]
     while_open?: string[]
     highlights?: Record<string, string[]>
+    /** layers drawn only around one feature (`visual.focus` / a step's `focus`): `field` == the value */
+    focus?: { layers: string[]; field: string }
   }
   chapters: Chapter[]
 }
@@ -166,6 +192,12 @@ export interface StudyCard {
   open_panel?: string
   camera?: Camera
   time?: Record<string, string | number>
+  /** buttons instead of "Show me on the map": the same layer at two dates, ... */
+  steps?: { label: string; layer?: string; time?: Record<string, string | number>; camera?: Camera }[]
+  /** what the map shows for this card (e.g. context only, not the study's data) */
+  map_note?: string
+  /** why no layer is shown */
+  data_note?: string
 }
 
 export interface StudiesConfig {

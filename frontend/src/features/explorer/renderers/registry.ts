@@ -7,12 +7,14 @@
 import { CORE_CHART_BUILDERS, type ChartBuilder } from '../application/chart-builders'
 import type { OverlayConfig } from '../domain/config'
 import { Options } from '../domain/options'
+import { ATTRIBUTE_INSPECTORS, combined } from '../inspectors/attributes'
 import { CORE_INSPECTORS } from '../inspectors/core'
 import { CORE_PANELS, type PanelFactory } from '../panels/core'
 import { ClimateGridRenderer } from './climate-grid'
 import { IndexGridRenderer } from './index-grid'
 import { RasterTilesRenderer } from './raster-tiles'
-import type { InspectorFactory, OverlayRenderer, RendererFactory, RendererServices } from './types'
+import { StyleLayersRenderer } from './style-layers'
+import type { Inspector, InspectorFactory, OverlayRenderer, RendererFactory, RendererServices } from './types'
 import { YearTilesRenderer } from './year-tiles'
 
 export class ModuleRegistry {
@@ -39,6 +41,17 @@ export class ModuleRegistry {
   registerChart(builder: string, fn: ChartBuilder): this {
     this.charts.set(builder, fn)
     return this
+  }
+
+  /** an inspector from its options block ({kind, ...}); null when the kind is unknown */
+  inspectorFrom(options: Options, where: string): Inspector | null {
+    const kind = options.str('kind')
+    const factory = this.inspectors.get(kind)
+    if (!factory) {
+      console.warn(`explorer: no inspector '${kind}' (${where})`)
+      return null
+    }
+    return factory(options)
   }
 
   private services: RendererServices = {
@@ -74,7 +87,9 @@ export function coreRegistry(): ModuleRegistry {
   r.registerRenderer('year-tiles', (c, s) => new YearTilesRenderer(c, s) as OverlayRenderer)
   r.registerRenderer('climate-grid', (c, s) => new ClimateGridRenderer(c, s) as OverlayRenderer)
   r.registerRenderer('index-grid', (c, s) => new IndexGridRenderer(c, s) as OverlayRenderer)
-  for (const [k, f] of Object.entries(CORE_INSPECTORS)) r.registerInspector(k, f)
+  r.registerRenderer('style-layers', (c, s) => new StyleLayersRenderer(c, s) as OverlayRenderer)
+  for (const [k, f] of Object.entries({ ...CORE_INSPECTORS, ...ATTRIBUTE_INSPECTORS })) r.registerInspector(k, f)
+  r.registerInspector('combined', combined((part) => r.inspectorFrom(part, 'combined inspector part')))
   for (const [k, f] of Object.entries(CORE_PANELS)) r.registerPanel(k, f)
   for (const [k, f] of Object.entries(CORE_CHART_BUILDERS)) r.registerChart(k, f)
   return r

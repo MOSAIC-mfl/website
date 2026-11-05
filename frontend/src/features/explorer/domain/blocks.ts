@@ -2,9 +2,12 @@
  * What panels, popovers and story chapters show, as data. Inspectors and panels build blocks;
  * React components draw them (ui/Blocks.tsx). Keeps HTML out of the logic: no innerHTML anywhere.
  */
-import type { BarsOptions, LineOptions } from '../charts/svg-charts'
+import type { BarsOptions, HBarsOptions, HBarsRow, LineOptions } from '../charts/svg-charts'
 
-export type ChartSpec = { kind: 'line'; options: Omit<LineOptions, 'legend'>; legend?: boolean } | { kind: 'bars'; options: BarsOptions }
+export type ChartSpec =
+  | { kind: 'line'; options: Omit<LineOptions, 'legend'>; legend?: boolean }
+  | { kind: 'bars'; options: BarsOptions }
+  | { kind: 'hbars'; rows: HBarsRow[]; options: HBarsOptions }
 
 export interface Kpi {
   label: string

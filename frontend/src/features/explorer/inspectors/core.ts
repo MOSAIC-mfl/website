@@ -65,7 +65,7 @@ export const classAtPoint: InspectorFactory = (o: Options): Inspector => ({
     if (area) {
       const doc = await ctx.data.json(area.str('file'))
       const areas = pick(doc, area.strList('path'), { year }) as Record<string, number> | undefined
-      const a = cls && areas ? areas[cls.name] : undefined
+      const a = cls && areas ? areas[area.optStr('key') === 'value' ? String(cls.value) : cls.name] : undefined
       kpis.push({ label: area.str('label'), value: a != null ? `${fmtInt(a)} ${area.optStr('unit') ?? ''}`.trim() : '—', lead: false, size: 18 })
     }
     for (const f of o.list('facts')) kpis.push({ label: f.str('label'), value: f.str('value'), lead: false, size: 15 })
@@ -94,7 +94,7 @@ export const annualSeries: InspectorFactory = (o: Options): Inspector => ({
         {
           type: 'kpis',
           items: [
-            { label: `${y} · basin`, value: fmtInt(data[y] ?? 0), unit, lead: true },
+            { label: `${y} · ${o.optStr('area_name') ?? 'basin'}`, value: fmtInt(data[y] ?? 0), unit, lead: true },
             { label: 'Median year', value: fmtInt(median(values)), size: 18 },
             { label: 'Record', value: fmtInt(Math.max(...values)), size: 18 },
           ],

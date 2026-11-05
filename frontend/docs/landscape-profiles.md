@@ -32,8 +32,10 @@ features/explorer/
   adapters/        maplibre/engine.ts (MapLibre 6 + PMTiles; lazy layers; swipe comparison),
                    data.ts (HTTP + geotiff)
   renderers/       one class per kind of overlay, all with the same interface (OverlayRenderer):
-                   raster-tiles, year-tiles, climate-grid, index-grid; registry.ts maps kind -> class
-  inspectors/      what a click shows: cell-sum, class-at-point, annual-series, region-series
+                   raster-tiles, year-tiles, climate-grid, index-grid, style-layers (the overlay's own
+                   MapLibre sources and layers: vectors, points); registry.ts maps kind -> class
+  inspectors/      what a click shows: cell-sum, class-at-point, annual-series, region-series (core.ts);
+                   feature-attributes, value-at-point, series-values, combined (attributes.ts)
   panels/          side panels: series-summary (the lake level panel)
   application/     ExplorerController (the only place that changes what the map shows),
                    chart builders for story charts, a small store
@@ -43,6 +45,11 @@ features/explorer/
   plugins.ts       profile plugins, loaded only on their landscape page
 profiles/ken-lvb/  Lake Victoria plugin: the flood click (its query raster's codes)
 ```
+
+The Ucayali profile (PER-PCL) needs no plugin: its vector layers, clicks and class charts are core
+modules (`style-layers`, `feature-attributes`, `value-at-point`, `series-values`, `combined`,
+`class-bars`), and story `steps` with `layer`, `time`, `focus` and camera `bounds` are part of the
+story drawer.
 
 **Rules that keep it extensible.**
 

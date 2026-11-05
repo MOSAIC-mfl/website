@@ -17,6 +17,12 @@ export interface Padding {
   right: number
 }
 
+export interface FeatureHit {
+  layer: string
+  properties: Record<string, unknown>
+  at?: ScreenPoint
+}
+
 export interface MapClick {
   lngLat: LngLat
   point: ScreenPoint
@@ -42,8 +48,13 @@ export interface MapEngine {
   setVisible(id: string, visible: boolean): void
   isVisible(id: string): boolean
   setGeoJSON(sourceId: string, data: unknown): void
-  /** properties of the features of `layers` under a point, top first */
-  queryAt(point: ScreenPoint, layers: string[]): { layer: string; properties: Record<string, unknown> }[]
+  /** a MapLibre filter expression on a layer (also before a lazy layer is added) */
+  setFilter(id: string, filter: unknown[] | null): void
+  /**
+   * Features of `layers` under a point, top first; `radius` (px) widens the search to a box around it.
+   * `at`: where a point feature is on screen (to pick the nearest one).
+   */
+  queryAt(point: ScreenPoint, layers: string[], radius?: number): FeatureHit[]
   project(lngLat: LngLat): ScreenPoint
   onClick(handler: (e: MapClick) => void): () => void
   onLayerClick(layer: string, handler: (e: MapClick) => void): () => void

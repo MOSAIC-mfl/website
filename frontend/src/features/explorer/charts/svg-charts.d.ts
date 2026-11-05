@@ -48,6 +48,20 @@ export interface BarsOptions {
   max?: number | null
 }
 
+export interface HBarsRow {
+  label: string
+  value: number
+  group?: string
+  tip?: string
+}
+export interface HBarsOptions {
+  format?: Format
+  groups?: Record<string, { label: string; colour: string }> | null
+  max?: number | null
+  labelWidth?: string
+}
+
+export function hbars(el: HTMLElement, rows: HBarsRow[], options?: HBarsOptions): void
 export function line(el: HTMLElement, options: LineOptions): { legend: HTMLUListElement | null }
 export function bars(el: HTMLElement, options: BarsOptions): void
 export function ticks(min: number, max: number, count?: number): number[]

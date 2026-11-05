@@ -103,7 +103,7 @@ export default function ExplorerApp(props: ExplorerProps) {
     const data = controller.ctx.data
     return {
       enterChapter: (ch: Chapter) => void controller.enterChapter(ch),
-      flyStep: (cam) => controller.flyStep(cam),
+      playStep: (step, ch) => void controller.playStep(step, ch),
       exploreFrom: (ch: Chapter) => void controller.applyScene(controller.chapterScene(ch), null).then(() => controller.closeFloating()),
       showCard: (card: StudyCard, layer: string | null) => void controller.showCard(card, layer),
       overlayTitle: (id: string) => config.overlays.find((o) => o.id === id)?.title,

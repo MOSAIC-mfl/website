@@ -17,7 +17,7 @@ import { Protocol } from 'pmtiles'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import type { Camera, StyleLayerSpec } from '../../domain/config'
 import type { LngLat } from '../../domain/format'
-import type { CompareOptions, MapClick, MapEngine, Padding, ScreenPoint } from '../../ports/map-engine'
+import type { CompareOptions, FeatureHit, MapClick, MapEngine, Padding, ScreenPoint } from '../../ports/map-engine'
 
 let protocolAdded = false
 
@@ -125,17 +125,37 @@ export class MapLibreEngine implements MapEngine {
     return !!this.map.getLayer(id) && this.map.getLayoutProperty(id, 'visibility') !== 'none'
   }
 
+  setFilter(id: string, filter: unknown[] | null): void {
+    if (this.map.getLayer(id)) {
+      this.map.setFilter(id, filter as maplibregl.FilterSpecification | null)
+      return
+    }
+    const entry = this.lazy.get(id)
+    if (entry) entry.layer = { ...entry.layer, filter: filter ?? undefined }
+  }
+
   setGeoJSON(sourceId: string, data: unknown): void {
     const src = this.map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined
     src?.setData(data as GeoJSON.GeoJSON)
   }
 
-  queryAt(point: ScreenPoint, layers: string[]): { layer: string; properties: Record<string, unknown> }[] {
+  queryAt(point: ScreenPoint, layers: string[], radius = 0): FeatureHit[] {
     const present = layers.filter((l) => this.map.getLayer(l))
     if (!present.length) return []
-    return this.map
-      .queryRenderedFeatures([point.x, point.y], { layers: present })
-      .map((f: MapGeoJSONFeature) => ({ layer: f.layer.id, properties: f.properties ?? {} }))
+    const where: [number, number] | [[number, number], [number, number]] = radius
+      ? [
+          [point.x - radius, point.y - radius],
+          [point.x + radius, point.y + radius],
+        ]
+      : [point.x, point.y]
+    return this.map.queryRenderedFeatures(where, { layers: present }).map((f: MapGeoJSONFeature) => {
+      const hit: FeatureHit = { layer: f.layer.id, properties: f.properties ?? {} }
+      if (f.geometry.type === 'Point') {
+        const [lng, lat] = f.geometry.coordinates
+        hit.at = this.project({ lng, lat })
+      }
+      return hit
+    })
   }
 
   project(lngLat: LngLat): ScreenPoint {
@@ -166,10 +186,23 @@ export class MapLibreEngine implements MapEngine {
 
   // ---- camera ---------------------------------------------------------------------------------------
   /* freezeElevation: without it, terrain elevation updates can break a flight mid-way (explorer note) */
+  /** the zoom at which [w, s, e, n] fills `fill` of the map left free by the padding */
+  private boundsZoom(b: [number, number, number, number], fill: number, padding?: Padding): number {
+    const box = this.map.getContainer()
+    const p = padding ?? { top: 0, bottom: 0, left: 0, right: 0 }
+    const w = (box.clientWidth - p.left - p.right) * fill
+    const h = (box.clientHeight - p.top - p.bottom) * fill
+    const my = (lat: number) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360))
+    const sx = ((b[2] - b[0]) / 360) * 512
+    const sy = (Math.abs(my(b[3]) - my(b[1])) / (2 * Math.PI)) * 512
+    return Math.min(this.map.getMaxZoom(), Math.log2(Math.min(w / sx, h / sy)))
+  }
+
   flyTo(camera: Camera, options: { duration?: number; padding?: Padding } = {}): void {
+    const b = camera.bounds
     this.map.flyTo({
-      center: [camera.lng, camera.lat],
-      zoom: camera.zoom ?? 8,
+      center: b ? [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2] : [camera.lng, camera.lat],
+      zoom: b ? this.boundsZoom(b, camera.fill ?? 0.6, options.padding) : (camera.zoom ?? 8),
       pitch: camera.pitch ?? 0,
       bearing: camera.bearing ?? 0,
       duration: options.duration ?? 1600,

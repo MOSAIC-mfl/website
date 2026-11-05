@@ -8,7 +8,7 @@
  */
 import type { StyleSpecification } from 'maplibre-gl'
 import type { Inspection, PanelContent } from '../domain/blocks'
-import type { Camera, Chapter, ExplorerConfig, StudyCard } from '../domain/config'
+import type { Camera, Chapter, ChapterStep, ExplorerConfig, StudyCard } from '../domain/config'
 import { fmtCoord, type LngLat } from '../domain/format'
 import { formatHash, parseHash } from '../domain/hash'
 import type { LegendModel } from '../domain/legend'
@@ -59,6 +59,8 @@ export interface Scene {
   show?: string[]
   compare?: { overlay: string; left_label?: string; right_label?: string }
   openPanel?: string
+  /** the feature highlighted by story.map.focus (null: none) */
+  focus?: string | null
 }
 
 const STORY_WIDE_PADDING = 424 // the drawer (400 px) and its margin, as in the explorer
@@ -265,7 +267,7 @@ export class ExplorerController {
   /** "0.12° S, 34.50° E · Kisumu, Kenya" when the admin layer is shown */
   place(lngLat: LngLat): string {
     const a = this.adminAt(lngLat)
-    return fmtCoord(lngLat) + (a ? ` · ${a.adm2 || a.adm1}, ${a.country}` : '')
+    return fmtCoord(lngLat) + (a ? ` · ${[a.adm2 || a.adm1, a.country].filter(Boolean).join(', ')}` : '')
   }
 
   private adminAt(lngLat: LngLat): { adm1?: string; adm2?: string; country?: string; iso?: string } | null {
@@ -279,7 +281,14 @@ export class ExplorerController {
     const a1 = hits.find((h) => h.layer === l1)?.properties
     if (!a1 && !a2) return null
     const p = (a2 ?? a1)!
-    return { adm1: a1?.name as string, adm2: a2?.name as string, country: p.country as string, iso: p.iso as string }
+    const [f2, f1] = admin.name_fields ?? ['name', 'name']
+    const text = (v: unknown) => (v == null ? undefined : String(v))
+    return {
+      adm1: text(a1?.[f1]),
+      adm2: text(a2?.[f2]),
+      country: text(p.country) ?? admin.country,
+      iso: text(p.iso) ?? admin.iso,
+    }
   }
 
   // ---- commands ------------------------------------------------------------------------------------
@@ -445,6 +454,7 @@ export class ExplorerController {
     for (const id of story?.while_open ?? []) this.engine.setVisible(id, on)
     if (!on) {
       for (const ids of Object.values(story?.highlights ?? {})) for (const id of ids) this.engine.setVisible(id, false)
+      for (const id of story?.focus?.layers ?? []) this.engine.setVisible(id, false)
       if (this.engine.isComparing()) this.engine.closeCompare(true)
       this.engine.setPadding(NO_PADDING)
       this.store.set({ chapter: null })
@@ -471,6 +481,7 @@ export class ExplorerController {
     if (stale()) return
     const highlights = this.config.story?.map?.highlights ?? {}
     for (const [name, ids] of Object.entries(highlights)) for (const id of ids) this.engine.setVisible(id, (scene.show ?? []).includes(name))
+    this.setFocus(scene.focus ?? null)
     let opening: Promise<void> | null = null
     if (compare && !this.engine.isComparing()) {
       const r = this.renderers.get(compare.overlay)!
@@ -494,7 +505,7 @@ export class ExplorerController {
 
   chapterScene(ch: Chapter): Scene {
     const v = ch.visual ?? {}
-    return { layers: v.layers, time: v.time, camera: v.camera, show: v.show, compare: ch.status !== 'pending' ? v.compare : undefined }
+    return { layers: v.layers, time: v.time, camera: v.camera, show: v.show, focus: v.focus ?? null, compare: ch.status !== 'pending' ? v.compare : undefined }
   }
 
   async enterChapter(ch: Chapter): Promise<void> {
@@ -504,6 +515,30 @@ export class ExplorerController {
 
   flyStep(camera: Camera): void {
     this.engine.flyTo(camera, { padding: this.storyPadding() })
+  }
+
+  /** a chapter's chip: its layer and time, the feature it is about, then the camera */
+  async playStep(step: ChapterStep, ch: Chapter): Promise<void> {
+    if (step.layer && this.overlayAvailable(step.layer)) {
+      if (step.time) this.presetTime(step.layer, step.time)
+      await this.selectOverlay(step.layer)
+    }
+    if (step.focus) {
+      const v = ch.visual ?? {}
+      const highlights = this.config.story?.map?.highlights ?? {}
+      for (const name of v.show ?? []) for (const id of highlights[name] ?? []) this.engine.setVisible(id, true)
+      this.setFocus(step.focus)
+    }
+    if (step.camera) this.flyStep(step.camera)
+  }
+
+  private setFocus(value: string | null): void {
+    const f = this.config.story?.map?.focus
+    if (!f) return
+    for (const id of f.layers) {
+      this.engine.setFilter(id, ['==', ['get', f.field], value ?? ''])
+      this.engine.setVisible(id, value !== null && this.storyMode)
+    }
   }
 
   /** "Show me on the map": the card's state; the drawer closes so the legend and time bar are in view */

@@ -7,6 +7,7 @@ import type { Block, ChartSpec } from '../domain/blocks'
 import { Options } from '../domain/options'
 import { monthlyMeans, pick, seasonalTotals, sum, yearLabels } from '../domain/series'
 import type { DataSource } from '../ports/data'
+import { fillFields } from '../domain/template'
 
 export type ChartBuilder = (o: Options, data: DataSource) => Promise<Block[]>
 
@@ -159,7 +160,53 @@ const annualBars: ChartBuilder = async (o, data) => {
   return blocks
 }
 
+/**
+ * class-bars: one horizontal bar per class, largest first. Rows come from a list of objects
+ * (`rows_path`, `label_field`, `value_field`, `group_field`) or from a {key: value} map
+ * (`values_path`, with `labels_path` {key: label}; the key is the group). `groups` {group: {label,
+ * colour}}, `tip` a template over the row ({label}, {value}, and every field of an object row).
+ */
+const classBars: ChartBuilder = async (o, data) => {
+  const doc = await data.json(o.str('series'))
+  type Row = { label: string; value: number; group?: string; fields: Record<string, unknown> }
+  let rows: Row[]
+  if (o.has('rows_path')) {
+    const list = (pick(doc, o.strList('rows_path')) ?? []) as Record<string, unknown>[]
+    const lf = o.optStr('label_field') ?? 'label'
+    const vf = o.str('value_field')
+    const gf = o.optStr('group_field')
+    rows = list.map((r) => ({ label: String(r[lf]), value: Number(r[vf]), group: gf ? String(r[gf]) : undefined, fields: r }))
+  } else {
+    const values = (pick(doc, o.strList('values_path')) ?? {}) as Record<string, number>
+    const labels = (o.has('labels_path') ? pick(doc, o.strList('labels_path')) : {}) as Record<string, string>
+    rows = Object.entries(values).map(([k, v]) => ({ label: labels?.[k] ?? k, value: v, group: k, fields: { key: k } }))
+  }
+  const decimals = o.num('decimals', 0)
+  const unit = o.optStr('unit')
+  const format = (v: number) => `${v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}${unit ? ` ${unit}` : ''}`
+  const tip = o.optStr('tip')
+  const sorted = [...rows].sort((a, b) => b.value - a.value)
+  const spec: ChartSpec = {
+    kind: 'hbars',
+    rows: sorted.map((r) => ({
+      label: r.label,
+      value: r.value,
+      group: r.group,
+      tip: tip ? fillFields(tip, { ...r.fields, label: r.label, value: format(r.value) }) : undefined,
+    })),
+    options: {
+      format,
+      groups: (o.raw<Record<string, { label: string; colour: string }>>('groups') ?? null) as Record<string, { label: string; colour: string }> | null,
+      max: o.has('max') ? o.num('max') : null,
+    },
+  }
+  const blocks: Block[] = [chart(o.optStr('title'), spec)]
+  if (o.has('note')) blocks.push({ type: 'note', text: o.str('note') })
+  return blocks
+}
+
 export const CORE_CHART_BUILDERS: Record<string, ChartBuilder> = {
+  'class-bars': classBars,
   'seasonal-total': seasonalTotal,
   'monthly-mean': monthlyMean,
   monthly,

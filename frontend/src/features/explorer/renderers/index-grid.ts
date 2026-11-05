@@ -142,12 +142,14 @@ export class IndexGridRenderer extends BaseRenderer<Time> {
     const classes = (this.o.raw<IndexClass[]>('classes') ?? []) as IndexClass[]
     const prov = this.provisional(m)
     const short = this.o.optStr('short') ?? this.config.title
+    const area = this.o.optStr('area_name') ?? 'basin' // the profile's area (basin, department, ...)
+    const Area = area[0].toUpperCase() + area.slice(1)
     const blocks: Block[] = [
       {
         type: 'kpis',
         items: [
           { label: `${short} · ${months[m]}${prov ? ' (provisional)' : ''}`, value: cur == null ? '—' : cur.toFixed(2), sub: cur == null ? '' : classify(cur, classes), lead: true },
-          { label: 'Basin mean (land)', value: basin[m] == null ? '—' : basin[m]!.toFixed(2) },
+          { label: `${Area} mean (land)`, value: basin[m] == null ? '—' : basin[m]!.toFixed(2) },
           { label: 'Calibration', value: this.o.optStr('calibration') ?? meta.normal, size: 16 },
         ],
       },
@@ -170,7 +172,7 @@ export class IndexGridRenderer extends BaseRenderer<Time> {
     const k0 = Math.max(0, n - 180)
     blocks.push({
       type: 'chart',
-      title: 'Last 15 years, this cell vs basin land mean',
+      title: `Last 15 years, this cell vs ${area} land mean`,
       spec: {
         kind: 'line',
         legend: true,
@@ -182,7 +184,7 @@ export class IndexGridRenderer extends BaseRenderer<Time> {
           max: 3,
           series: [
             { name: 'this cell', values: Array.from(series.slice(k0)).map(val) },
-            { name: 'basin mean', values: basin.slice(k0), colour: '#8a8a8a' },
+            { name: `${area} mean`, values: basin.slice(k0), colour: '#8a8a8a' },
           ],
           today: n - k0 - 1 - p,
           todayLabel: 'provisional',
