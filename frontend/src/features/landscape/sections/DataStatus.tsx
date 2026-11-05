@@ -32,8 +32,10 @@ const FIELD_LABELS: Record<string, string> = {
   citation: 'How to cite',
   access_note: 'How to request access',
   license: 'Licence',
-  contacts: 'Contact',
-  data: 'Access point',
+  contact: 'Contact (organization, who grants the licence)',
+  themes: 'Themes',
+  access: 'Access level',
+  data: 'Data entry',
 }
 
 export function DataStatusSection({ page, base }: SectionProps) {

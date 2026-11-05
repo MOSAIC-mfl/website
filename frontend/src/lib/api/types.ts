@@ -24,7 +24,7 @@ export type ResourceDetail = Omit<S['ResourceDetail'], 'record'> & { record: Mos
 
 export type { MosaicRecord }
 export type AccessPoint = NonNullable<MosaicRecord['data']>[number]
-export type Contact = NonNullable<MosaicRecord['contacts']>[number]
+export type Contact = NonNullable<MosaicRecord['contact']>[number]
 
 export type LandscapeSummary = S['LandscapeSummaryOut']
 export type LandscapePage = S['LandscapeOut']

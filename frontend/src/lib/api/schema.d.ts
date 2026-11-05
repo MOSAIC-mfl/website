@@ -396,7 +396,7 @@ export interface components {
             local_id: string;
             /**
              * Record
-             * @description The resource as a MOSAIC standard record (see the standard's schema).
+             * @description The resource as a MOSAIC standard v0.2 record (the CGIAR Climate Data Hub core fields plus MOSAIC's; see the standard's schema).
              */
             record: {
                 [key: string]: unknown;
@@ -488,7 +488,7 @@ export interface components {
             access: string | null;
             /**
              * License
-             * @description SPDX id, or the licence text.
+             * @description SPDX expression, or the licence text when there is no SPDX code.
              */
             license?: string | null;
             /** Status */
@@ -508,7 +508,7 @@ export interface components {
             producer?: string | null;
             /**
              * Access Url
-             * @description First access point URL, public ones first.
+             * @description First data location URL, public ones first.
              */
             access_url?: string | null;
         };

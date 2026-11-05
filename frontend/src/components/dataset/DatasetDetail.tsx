@@ -60,38 +60,53 @@ function contactLine(c: Contact): string {
 }
 
 function pointOfContact(r: MosaicRecord): Contact | undefined {
-  const cs = r.contacts ?? []
+  const cs = r.contact ?? []
   return cs.find((c) => c.roles?.includes('point-of-contact')) ?? cs.find((c) => c.email)
 }
 
 function producers(r: MosaicRecord): string | null {
-  const names = (r.contacts ?? []).filter((c) => c.roles?.includes('producer')).map((c) => c.organization ?? c.name)
+  const names = (r.contact ?? []).filter((c) => c.roles?.includes('producer')).map((c) => c.organization ?? c.name)
   return names.filter(Boolean).join(', ') || null
 }
 
+/** SPDX licence; for LicenseRef-… (no SPDX code) the source's own terms. */
 function licenseText(r: MosaicRecord): string | null {
-  const l = r.license
-  return l?.spdx ?? l?.text ?? null
+  if (r.license && !r.license.startsWith('LicenseRef-')) return r.license
+  return r.license_text ?? (r.license ? 'Terms of the source' : null)
+}
+
+const licenseUrl = (r: MosaicRecord): string | undefined => r.additional_links?.find((l) => l.rel === 'license')?.url
+
+/** First location of a data entry (v0.2: data[].locations[].url). */
+const urlOf = (p: AccessPoint): string | undefined => p.locations?.[0]?.url
+
+const authorName = (a: NonNullable<NonNullable<MosaicRecord['citation']>['authors']>[number]): string =>
+  'organization' in a ? a.organization : [a.family, a.given].filter(Boolean).join(', ')
+
+const yearsOf = (r: MosaicRecord): [number | null, number | null] => {
+  const t = r.temporal
+  return [toYear(t?.start_date ?? t?.date), toYear(t?.end_date ?? t?.date)]
 }
 
 function citationText(d: ResourceDetail, base: string): string {
   const c = d.record.citation
-  if (typeof c === 'string' && c.trim()) return c
-  if (c && typeof c === 'object') {
+  if (c) {
     if (c.text) return c.text
-    const authors = (c.authors ?? []).map((a) => a.organization ?? [a.family, a.given].filter(Boolean).join(', ')).join('; ')
+    const authors = (c.authors ?? []).map(authorName).join('; ')
     const parts = [authors, c.date && `(${c.date})`, c.title, c.publisher, d.record.doi && `https://doi.org/${d.record.doi}`]
     const text = parts.filter(Boolean).join('. ')
     if (text) return text
   }
-  const year = d.record.temporal?.end ?? new Date().getFullYear()
+  const year = yearsOf(d.record)[1] ?? new Date().getFullYear()
   return `${producers(d.record) ?? 'CGIAR'} (${year}). ${d.record.title ?? d.local_id}. MOSAIC — CGIAR MFL Science Programme. Retrieved from ${location.origin}${datasetHref(base, d.id)}`
 }
+
+const toYear = (v: string | null | undefined) => (v ? Number(String(v).slice(0, 4)) : null)
 
 function Facts({ d }: { d: ResourceDetail }) {
   const r = d.record
   const contact = pointOfContact(r)
-  const access = r.data?.find((p) => p.url && (p.access ?? r.access) === 'public') ?? r.data?.find((p) => p.url)
+  const access = r.data?.find((p) => urlOf(p) && (p.access ?? r.access) === 'public') ?? r.data?.find((p) => urlOf(p))
   const fact = (label: string, value: React.ReactNode) => (
     <div className="ds-fact">
       <span className="ds-fact-label">{label}</span>
@@ -101,18 +116,16 @@ function Facts({ d }: { d: ResourceDetail }) {
   return (
     <section className="ds-facts" aria-label="Dataset at a glance">
       {fact('Source organization', producers(r) ?? 'Not specified')}
-      {fact('Time period', periodText([toYear(r.temporal?.start), toYear(r.temporal?.end)]) ?? r.temporal?.text ?? 'Not specified')}
+      {fact('Time period', periodText(yearsOf(r)) ?? r.temporal?.text ?? 'Not specified')}
       {fact('License', licenseText(r) ?? 'Not specified')}
       {fact('Access level', r.access ? ACCESS_LABEL[r.access] : 'Not specified')}
       {fact('Metadata', COMPLETENESS_LABEL[d.quality.status] ?? d.quality.status)}
       {fact('Contact', contact?.email ? <a href={`mailto:${contact.email}`}>{contactLine(contact) || contact.email}</a> : contact ? contactLine(contact) : 'Via the MOSAIC team')}
-      {access?.url && fact('Source link', <a href={access.url} target="_blank" rel="noopener noreferrer">Go to source ↗</a>)}
+      {access && urlOf(access) && fact('Source link', <a href={urlOf(access)} target="_blank" rel="noopener noreferrer">Go to source ↗</a>)}
       {fact('Catalogue', d.provenance.source_name)}
     </section>
   )
 }
-
-const toYear = (v: string | null | undefined) => (v ? Number(v.slice(0, 4)) : null)
 
 function OverviewTable({ d, labels, base }: { d: ResourceDetail; labels: LabelBook; base: string }) {
   const r = d.record
@@ -123,6 +136,8 @@ function OverviewTable({ d, labels, base }: { d: ResourceDetail; labels: LabelBo
     </tr>
   )
   const keywords = (r.keywords ?? []).map((k) => (typeof k === 'string' ? k : k.term))
+  const freq = r.temporal?.update_frequency
+  const licUrl = licenseUrl(r)
   // each landscape links to its profile page (catalogue -> landscape profile)
   const landscapes = d.landscapes.map((c, i) => (
     <span key={c}>
@@ -136,18 +151,18 @@ function OverviewTable({ d, labels, base }: { d: ResourceDetail; labels: LabelBo
       <table className="data-table">
         <tbody>
           {row('Dataset ID', <code>{d.id}</code>)}
-          {row('Country', joinLabels(labels, 'geography', r.geography ?? [], 20) ?? 'Not specified')}
+          {row('Country', joinLabels(labels, 'geography', r.spatial?.geography ?? [], 20) ?? 'Not specified')}
           {row('Living Landscape', landscapes.length ? <>{landscapes}{d.landscapes_derived ? ' — from the dataset extent' : ''}</> : 'Not specified')}
           {row('Theme', joinLabels(labels, 'theme', r.themes ?? [], 20) ?? 'Not specified')}
           {row('Data Type', joinLabels(labels, 'data_kind', d.facets.data_kind ?? []) ?? 'Not specified')}
           {(d.facets.geometry ?? []).some((g) => g !== 'not_specified') && row('Geometry', joinLabels(labels, 'geometry', d.facets.geometry ?? []))}
           {r.spatial?.resolution && row('Spatial Resolution', r.spatial.resolution.text ?? `${r.spatial.resolution.value} ${r.spatial.resolution.unit}`)}
           {r.temporal?.text && row('Temporal Coverage', r.temporal.text)}
-          {r.update_frequency && r.update_frequency !== 'unknown' && row('Update Frequency', r.update_frequency[0].toUpperCase() + r.update_frequency.slice(1))}
+          {freq && freq !== 'unknown' && row('Update Frequency', freq[0].toUpperCase() + freq.slice(1))}
           {keywords.length > 0 && row('Keywords', keywords.join(', '))}
           {r.doi && row('DOI', <a href={`https://doi.org/${r.doi}`} target="_blank" rel="noopener noreferrer">{r.doi}</a>)}
           {row('Access Level', r.access ? ACCESS_LABEL[r.access] : 'Not specified')}
-          {row('License', r.license?.url ? <a href={r.license.url} target="_blank" rel="noopener noreferrer">{licenseText(r) ?? r.license.url}</a> : licenseText(r) ?? 'Not specified')}
+          {row('License', licUrl ? <a href={licUrl} target="_blank" rel="noopener noreferrer">{licenseText(r) ?? licUrl}</a> : licenseText(r) ?? 'Not specified')}
           {(r.funding ?? []).length > 0 && row('Funding', (r.funding ?? []).map((f) => f.name).join(', '))}
           {row('Metadata', `${COMPLETENESS_LABEL[d.quality.status] ?? d.quality.status} (${Math.round((d.quality.completeness.minimum ?? 0) * 100)}% of the MOSAIC minimum)`)}
         </tbody>
@@ -166,13 +181,13 @@ function AccessPoints({ points, recordAccess }: { points: AccessPoint[]; recordA
             <td>
               <strong>{p.name}</strong>
               {p.description && <><br /><span style={{ fontSize: 'var(--text-sm)' }}>{p.description}</span></>}
-              {(p.files || p.size) && <><br /><span style={{ fontSize: 'var(--text-xs)' }}>{[p.files, p.size].filter(Boolean).join(' · ')}</span></>}
+              {p.file_size && <><br /><span style={{ fontSize: 'var(--text-xs)' }}>{p.file_size}</span></>}
             </td>
             <td>
-              {p.url && p.method !== 'request' ? (
-                <a href={p.url} target="_blank" rel="noopener noreferrer">{METHOD_ACTION[p.method ?? 'landing_page']} ↗</a>
+              {urlOf(p) && p.access_method !== 'request' ? (
+                <a href={urlOf(p)} target="_blank" rel="noopener noreferrer">{METHOD_ACTION[p.access_method ?? 'landing_page']} ↗</a>
               ) : (
-                METHOD_ACTION[p.method ?? 'request'] ?? 'Not specified'
+                METHOD_ACTION[p.access_method ?? 'request'] ?? 'Not specified'
               )}
               {p.access && p.access !== recordAccess && <><br /><span className={ACCESS_BADGE[p.access]}>{ACCESS_LABEL[p.access]}</span></>}
             </td>
@@ -186,7 +201,7 @@ function AccessPoints({ points, recordAccess }: { points: AccessPoint[]; recordA
 function AccessPanel({ d }: { d: ResourceDetail }) {
   const r = d.record
   const contact = pointOfContact(r)
-  const spdx = r.license?.spdx
+  const spdx = r.license && !r.license.startsWith('LicenseRef-') ? r.license : undefined
   const points = r.data ?? []
   const contactP = contact && (
     <p style={{ marginTop: 'var(--space-3)' }}>
@@ -194,9 +209,10 @@ function AccessPanel({ d }: { d: ResourceDetail }) {
       {contact.email ? <a href={`mailto:${contact.email}`}>{contactLine(contact) || contact.email}</a> : contactLine(contact)}
     </p>
   )
-  const ee = points.find((p) => p.service?.service_type === 'earth-engine' && !p.url)
+  const ee = points.find((p) => p.service?.type === 'gee' && !urlOf(p))
   // The approved page has one "Go to source" button: the first public point with a URL.
-  const primary = points.find((p) => p.url && (p.access ?? r.access) === 'public')
+  const primary = points.find((p) => urlOf(p) && (p.access ?? r.access) === 'public')
+  const primaryUrl = primary && urlOf(primary)
   const others = points.filter((p) => p !== ee && p !== primary)
   return (
     <section style={S.access}>
@@ -206,27 +222,27 @@ function AccessPanel({ d }: { d: ResourceDetail }) {
           <p style={S.p4}>
             This dataset is openly available{spdx ? ` under the ${spdx} license` : ''}. MOSAIC connects to the source rather than re-hosting the data.
           </p>
-          {!spdx && r.license?.text && <p style={S.p4}><strong>Terms of use at the source:</strong> {r.license.text}</p>}
+          {!spdx && r.license_text && <p style={S.p4}><strong>Terms of use at the source:</strong> {r.license_text}</p>}
         </div>
       ) : r.access === 'restricted' ? (
         <p style={S.p4}>Access to this dataset is restricted. To request access, please contact the data steward.</p>
-      ) : r.access === 'internal' ? (
+      ) : r.access === 'non-public' ? (
         <p style={S.p4}>This dataset is for internal CGIAR use only. Contact the MOSAIC team if you believe you should have access.</p>
       ) : (
         <p style={S.p4}>The access level for this dataset has not been specified yet. Contact the data steward or the MOSAIC coordination team for details.</p>
       )}
       {r.access_note && <p style={S.p4}><strong>How to obtain it:</strong> {r.access_note}</p>}
-      {primary?.url && (
-        <a href={primary.url} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
-          {METHOD_ACTION[primary.method ?? 'landing_page'] ?? 'Go to source'}
+      {primaryUrl && (
+        <a href={primaryUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+          {METHOD_ACTION[primary?.access_method ?? 'landing_page'] ?? 'Go to source'}
         </a>
       )}
-      {!primary?.url && r.access === 'public' && (
+      {!primaryUrl && r.access === 'public' && (
         <p style={{ marginBottom: 'var(--space-2)' }}>No direct source link has been registered yet. See the contact below or the metadata record above.</p>
       )}
       {others.length > 0 && (
         <div style={{ marginTop: 'var(--space-5)' }}>
-          <p style={{ marginBottom: 'var(--space-2)' }}><strong>{primary?.url ? 'Other ways to access it' : 'Ways to access it'}</strong></p>
+          <p style={{ marginBottom: 'var(--space-2)' }}><strong>{primaryUrl ? 'Other ways to access it' : 'Ways to access it'}</strong></p>
           <AccessPoints points={others} recordAccess={r.access} />
         </div>
       )}
@@ -396,7 +412,7 @@ export function DatasetDetail({ base }: Props) {
             <tr><th>Status</th><th>Meaning</th></tr>
           </thead>
           <tbody>
-            <tr><td><span className="badge badge-validated">Complete</span></td><td>Every field of the MOSAIC minimum is filled: title, description, type, themes, keywords, geography, licence, contacts, citation or DOI, access and at least one access point.</td></tr>
+            <tr><td><span className="badge badge-validated">Complete</span></td><td>Every field of the MOSAIC minimum is filled: title, description, type, themes, licence, contacts with their organization (one of them grants the licence), access (and how to obtain it when not public) and at least one data entry (with its link when public).</td></tr>
             <tr><td><span className="badge badge-raw">Incomplete</span></td><td>Some of those fields are missing. The record is still listed; the missing fields are named above.</td></tr>
           </tbody>
         </table>

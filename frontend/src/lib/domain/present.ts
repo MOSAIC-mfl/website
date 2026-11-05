@@ -35,11 +35,11 @@ export const COMPLETENESS_TOOLTIP: Record<string, string> = {
   incomplete: 'Some fields of the MOSAIC minimum are still missing (shown on the dataset page).',
 }
 
-export const ACCESS_LABEL: Record<string, string> = { public: 'Open', restricted: 'Restricted', internal: 'Internal' }
+export const ACCESS_LABEL: Record<string, string> = { public: 'Open', restricted: 'Restricted', 'non-public': 'Not public' }
 export const ACCESS_BADGE: Record<string, string> = {
   public: 'badge badge-open',
   restricted: 'badge badge-restricted',
-  internal: 'badge badge-internal',
+  'non-public': 'badge badge-internal',
 }
 
 export function joinLabels(book: LabelBook, facet: string, values: string[], max = 3): string | null {

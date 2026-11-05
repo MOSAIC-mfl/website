@@ -9,18 +9,27 @@ const dir = resolve(here, '../contract/standard')
 const vocab = JSON.parse(readFileSync(resolve(dir, 'vocab.schema.json'), 'utf8'))
 
 // Rules that only validate (anyOf / allOf / if-then) carry no shape; dropping them gives clean types.
+// Exceptions: an anyOf whose branches are all shapes (each has a type or a $ref, e.g. a date or
+// a file size) is kept; an allOf that extends a $ref keeps the $ref; a tuple (prefixItems, e.g. a
+// bbox) becomes number[].
 const VALIDATION_ONLY = new Set(['anyOf', 'allOf', 'if', 'then', 'else', 'not'])
-const strip = (node) =>
-  Array.isArray(node)
-    ? node.map(strip)
-    : node && typeof node === 'object'
-      ? Object.fromEntries(
-          Object.entries(node)
-            .filter(([k]) => !VALIDATION_ONLY.has(k) && !k.startsWith('x-'))
-            .map(([k, v]) => (k === 'prefixItems' ? ['items', { type: 'number' }] : [k, strip(v)])),
-        )
-      : node
+const strip = (node) => {
+  if (Array.isArray(node)) return node.map(strip)
+  if (!node || typeof node !== 'object') return node
+  const out = {}
+  const base = Array.isArray(node.allOf) ? node.allOf.find((s) => s && s.$ref) : undefined
+  if (base) out.$ref = base.$ref
+  for (const [k, v] of Object.entries(node)) {
+    const shapes = k === 'anyOf' && Array.isArray(v) && v.every((b) => b && (b.type || b.$ref))
+    if ((VALIDATION_ONLY.has(k) && !shapes) || k.startsWith('x-')) continue
+    if (k === 'prefixItems') out.items = { type: 'number' }
+    else if (k === 'items' && 'prefixItems' in node) continue
+    else out[k] = strip(v)
+  }
+  return out
+}
 const record = strip(JSON.parse(readFileSync(resolve(dir, 'record.schema.json'), 'utf8')))
+record.title = 'MosaicRecord' // the root type's name, whatever the schema's title says
 
 const ts = await compile(record, 'MosaicRecord', {
   cwd: dir,
@@ -43,6 +52,6 @@ const out = ts.replace(/\bexport type Date = /, 'export type IsoDate = ').replac
   .replace(/\| Date\b/g, '| IsoDate').replace(/\(Date\b/g, '(IsoDate').replace(/: Date \|/g, ': IsoDate |')
 writeFileSync(
   resolve(here, '../src/lib/api/record.d.ts'),
-  out + '\n/** A record in the MOSAIC metadata standard (ResourceDetail.record). */\nexport type MosaicRecord = MOSAICMetadataRecordStructure\n',
+  out,
 )
 console.log('src/lib/api/record.d.ts written')
