@@ -20,20 +20,23 @@ pages (Astro)  ──▶  components (React, presentational)
      lib/catalog/repository.ts  ── CatalogRepository (port)
               ▲                 ▲
    static-repository.ts   live-repository.ts      (adapters)
-   manifest + hashed JSON  openapi-fetch → FastAPI
+   filters + hashed JSON   openapi-fetch → FastAPI
 ```
 
 * **Domain** (`lib/domain`) has no I/O and no React: query ⇄ URL parameters (including the
   old parameter names, so old links keep working), facets, labels, text folding,
   presentation helpers. It is what the tests cover first.
-* **Port** `CatalogRepository`: `overview()`, `search(query)`, `get(id)`, `recordLinks(id)`,
+* **Port** `CatalogRepository`: `overview()`, `search(query)`, `get(id)`, `recordLink(id)`,
   `related(detail)`. Components depend only on it (dependency inversion).
 * **Adapters**:
-  * `StaticCatalogRepository` reads the export that GitHub Pages serves (`v1/manifest.json`
-    → content-hashed shards). Search and facet counts run in the browser with the same rules
+  * `StaticCatalogRepository` reads the export that GitHub Pages serves (`v1/filters.json`,
+    `v1/sources.json`, and the internal index `v1/_index/index.json` → content-hashed shards). Search and facet counts run in the browser with the same rules
     as the API. Files are fetched once and memoized; a failed fetch is retried next time.
   * `LiveCatalogRepository` calls the FastAPI routes through `openapi-fetch`, typed by
-    `schema.d.ts`; search, facets and sorting happen on the server.
+    `schema.d.ts`: `/v1/filters` and `/v1/sources` once, then `/v1/resources`; search, counts
+    and sorting happen on the server.
+* **Filters:** the four of the API (country, living landscape, theme, catalogue), from
+  `GET /v1/filters` (each option with its label and count). See mosaic-api ADR-0006.
   * Both turn network failures into `ApiError`, which `LoadState` shows with a retry button.
 * **Composition root** (`lib/catalog/index.ts`): reads `PUBLIC_MOSAIC_API_MODE` /
   `PUBLIC_MOSAIC_API_URL` and builds one repository. Adding another backend means one new
@@ -62,8 +65,8 @@ pages (Astro)  ──▶  components (React, presentational)
 
 Same pages, sections, fonts, colours and components. Adapted to the new metadata:
 completeness badge (complete / incomplete with the missing fields), access level and access
-method, source catalogue (MOSAIC, CDH), new filters (geometry, spatial, access method,
-metadata status), JSON / JSON-LD links to the record, "Other ways to access it".
+method, source catalogue (MOSAIC, CDH), the catalogue filter, a JSON link to the record,
+"Other ways to access it". The filters are the API's four (2026-11: "More filters" removed).
 Counts on the home and landscape pages are read from the API.
 
 ## 6. Quality gates

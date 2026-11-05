@@ -3,13 +3,14 @@
  * only; StaticCatalogRepository (GitHub Pages files) and LiveCatalogRepository (running API)
  * implement it. Adding another back end (a CDN, a mock for tests) means one more class, no UI change.
  */
-import type { FacetCounts, Manifest, ResourceDetail, ResourceSummary, SourceInfo } from '../api/types'
+import type { FacetCounts, FiltersInfo, ResourceDetail, ResourceSummary, SourceInfo } from '../api/types'
 import type { LabelBook } from '../domain/labels'
 import type { CatalogueQuery } from '../domain/query'
 import type { SearchResult } from '../domain/search'
 
 export interface CatalogueOverview {
-  manifest: Manifest
+  /** GET /v1/filters: versions, totals, filter options. */
+  info: FiltersInfo
   sources: SourceInfo[]
   /** Counts per facet value over the whole catalogue. */
   facets: FacetCounts
@@ -21,8 +22,8 @@ export interface CatalogRepository {
   search(query: CatalogueQuery): Promise<SearchResult>
   /** null when the resource does not exist. */
   get(id: string): Promise<ResourceDetail | null>
-  /** Machine-readable versions of a resource (MOSAIC JSON, schema.org JSON-LD). */
-  recordLinks(detail: ResourceDetail): { json: string; jsonld: string }
+  /** The resource as JSON, straight from the API. */
+  recordLink(detail: ResourceDetail): string
   /** Resources sharing landscape or theme with `detail`, best matches first. */
   related(detail: ResourceDetail, limit: number): Promise<ResourceSummary[]>
 }

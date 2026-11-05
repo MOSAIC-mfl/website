@@ -1,8 +1,8 @@
-/** The catalogue filters: one definition per facet of the API (`summary.facets`). */
-export const FACETS = [
-  'geography', 'landscape', 'theme', 'source',
-  'data_kind', 'geometry', 'spatial', 'method', 'access', 'license', 'status', 'resource_type',
-] as const
+/**
+ * The catalogue filters: the four filters of GET /v1/resources (mosaic-api ADR-0006). Each
+ * resource also carries other facet values (`summary.facets.data_kind`, `.access`…) for display.
+ */
+export const FACETS = ['geography', 'landscape', 'theme', 'source'] as const
 
 export type FacetKey = (typeof FACETS)[number]
 

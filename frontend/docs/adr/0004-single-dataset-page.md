@@ -12,5 +12,5 @@ are redirected by `404.astro`.
 
 ## Consequences
 + New records need no website rebuild.
-− Search engines see less per-record content; the API's JSON-LD endpoint is the
-  machine-readable alternative. Can be revisited with prerendering if SEO matters.
+− Search engines see less per-record content (the API's JSON-LD endpoint was removed in
+  2026-11). Can be revisited with prerendering, or JSON-LD embedded in the page, if SEO matters.

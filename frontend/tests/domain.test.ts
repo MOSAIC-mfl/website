@@ -21,15 +21,17 @@ describe('fold / key — same cases as mosaic-api tests/test_domain.py', () => {
 
 describe('URL state', () => {
   it('round-trips and keeps one parameter per value', () => {
-    const q = { ...emptyQuery(), text: 'forest', filters: { license: ['Source terms, see site'], geography: ['PER'] }, page: 2 }
+    const q = { ...emptyQuery(), text: 'forest', filters: { theme: ['Pressures, drivers'], geography: ['PER'] }, page: 2 }
     const back = fromSearchParams(toSearchParams(q))
-    expect(back.filters).toEqual({ geography: ['PER'], license: ['Source terms, see site'] })
+    expect(back.filters).toEqual({ geography: ['PER'], theme: ['Pressures, drivers'] })
+    // filters the API no longer has are ignored in links
+    expect(fromSearchParams(new URLSearchParams('access=public&license=x')).filters).toEqual({})
     expect(back).toMatchObject({ text: 'forest', sort: 'recent', page: 2 })
     expect(fromSearchParams(new URLSearchParams('q=forest')).sort).toBe('relevance')
   })
   it('reads links of the previous website', () => {
     const q = fromSearchParams(new URLSearchParams('country=Peru&living_landscape=PER-PCL&access_level=Open&landscape=GLB'))
-    expect(q.filters).toEqual({ geography: ['Peru'], landscape: ['PER-PCL', 'not_specified'], access: ['public'] })
+    expect(q.filters).toEqual({ geography: ['Peru'], landscape: ['PER-PCL', 'not_specified'] })
   })
   it('toggling a filter goes back to page 1', () => {
     const q = toggleFilter({ ...emptyQuery(), page: 4 }, 'theme', 'climate')
@@ -42,7 +44,7 @@ describe('search (static API)', () => {
   const items = [
     summary('mosaic:A', { title: 'Deforestación anual Ucayali', facets: { source: ['mosaic'], geography: ['PER'], access: ['public'] }, period: [2001, 2024] }),
     summary('cdh:B', { title: 'Annual rainfall', facets: { source: ['cdh'], geography: ['global'], access: ['public'] }, period: [1981, null] }),
-    summary('mosaic:C', { title: 'Conflicts', facets: { source: ['mosaic'], geography: ['KEN'], access: ['restricted'] }, period: [2026, 2026] }),
+    summary('mosaic:C', { title: 'Conflicts', facets: { source: ['mosaic'], geography: ['KEN'], theme: ['pressures-drivers'] }, period: [2026, 2026] }),
   ]
   const texts = Object.fromEntries(items.map((i) => [i.id, fold(i.title)]))
   const run = (over: Partial<ReturnType<typeof emptyQuery>>) => search(items, texts, { ...emptyQuery(), ...over })
@@ -54,7 +56,7 @@ describe('search (static API)', () => {
   })
   it('OR inside a filter, AND across filters, any case', () => {
     expect(run({ filters: { geography: ['per', 'KEN'] } }).total).toBe(2)
-    expect(run({ filters: { source: ['MOSAIC'], access: ['Restricted'] } }).items.map((i) => i.id)).toEqual(['mosaic:C'])
+    expect(run({ filters: { source: ['MOSAIC'], theme: ['PRESSURES-DRIVERS'] } }).items.map((i) => i.id)).toEqual(['mosaic:C'])
   })
   it('sorts and counts facets over all hits', () => {
     expect(run({ sort: 'za' }).items.map((i) => i.title)).toEqual(['Deforestación anual Ucayali', 'Conflicts', 'Annual rainfall'])
@@ -66,11 +68,21 @@ describe('search (static API)', () => {
 })
 
 describe('labels', () => {
-  const book = new LabelBook({ geography: { PER: 'Peru' }, theme: { 'pressures-drivers': 'Pressures / drivers' } }, { license: { 'CC-BY-4.0': 3 } })
+  const book = LabelBook.fromFilters({
+    api_version: '0.1.0', standard_version: '0.1.0', harvested_at: null, totals: { resources: 3 },
+    filters: {
+      geography: [{ value: 'PER', label: 'Peru', count: 1 }],
+      theme: [{ value: 'pressures-drivers', label: 'Pressures / drivers', count: 1 }],
+      source: [{ value: 'cdh', label: 'CGIAR Climate Data Hub', count: 2 }],
+      landscape: [],
+    },
+    labels: { access: { restricted: 'Restricted' } },
+  })
   it('resolves labels and codes to canonical values, and warns about unknown ones', () => {
-    expect(book.resolve({ geography: ['Perú'], theme: ['Pressures / drivers'], license: ['cc by 4.0'] }).filters).toEqual({
-      geography: ['PER'], theme: ['pressures-drivers'], license: ['CC-BY-4.0'],
+    expect(book.resolve({ geography: ['Perú'], theme: ['Pressures / drivers'], source: ['cgiar climate data hub'] }).filters).toEqual({
+      geography: ['PER'], theme: ['pressures-drivers'], source: ['cdh'],
     })
+    expect(book.label('access', 'restricted')).toBe('Restricted')
     expect(book.resolve({ theme: ['astrology'] }).warnings).toEqual(["theme='astrology' matches no value of this filter"])
     expect(book.label('theme', 'not_specified')).toBe('Not specified')
   })

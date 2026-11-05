@@ -7,7 +7,7 @@ import createClient from 'openapi-fetch'
 import type { paths } from '../api/schema'
 import type { FacetCounts, LandscapePage, LandscapeSummary, ResourceDetail, ResourceSummary } from '../api/types'
 import { FACETS } from '../domain/facets'
-import { LabelBook } from '../domain/labels'
+import { LabelBook, catalogueCounts } from '../domain/labels'
 import { SORT_TO_API, type CatalogueQuery } from '../domain/query'
 import type { SearchResult } from '../domain/search'
 import { ApiError } from './http'
@@ -44,13 +44,11 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
 
   overview(): Promise<CatalogueOverview> {
     this.cachedOverview ??= (async () => {
-      const [manifest, sources, facets, labels] = await Promise.all([
-        this.client.GET('/v1/manifest').then(LiveCatalogRepository.unwrap),
+      const [info, sources] = await Promise.all([
+        this.client.GET('/v1/filters').then(LiveCatalogRepository.unwrap),
         this.client.GET('/v1/sources').then(LiveCatalogRepository.unwrap),
-        this.client.GET('/v1/facets').then(LiveCatalogRepository.unwrap),
-        this.client.GET('/v1/labels').then(LiveCatalogRepository.unwrap),
       ])
-      return { manifest, sources, facets, labels: new LabelBook(labels.labels, facets) }
+      return { info, sources, facets: catalogueCounts(info), labels: LabelBook.fromFilters(info) }
     })()
     this.cachedOverview.catch(() => {
       this.cachedOverview = null
@@ -61,8 +59,7 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
   async search(query: CatalogueQuery): Promise<SearchResult> {
     const { sort, order } = SORT_TO_API[query.sort]
     const filters: Record<string, string> = {}
-    // The API takes comma-separated values (OR); a value containing a comma cannot be sent this
-    // way, so licence texts are resolved by the server's label matching instead.
+    // The API takes comma-separated values (OR).
     for (const facet of FACETS) {
       const values = query.filters[facet]
       if (values?.length) filters[facet] = values.join(',')
@@ -91,9 +88,8 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
     return LiveCatalogRepository.unwrap(res) as ResourceDetail
   }
 
-  recordLinks(d: ResourceDetail): { json: string; jsonld: string } {
-    const json = `${this.baseUrl}/v1/resources/${encodeURIComponent(d.source)}/${encodeURIComponent(d.local_id)}`
-    return { json, jsonld: `${json}/jsonld` }
+  recordLink(d: ResourceDetail): string {
+    return `${this.baseUrl}/v1/resources/${encodeURIComponent(d.source)}/${encodeURIComponent(d.local_id)}`
   }
 
   async related(detail: ResourceDetail, limit: number): Promise<ResourceSummary[]> {

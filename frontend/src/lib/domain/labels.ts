@@ -3,11 +3,29 @@
  * ('Perú', 'Pressures / drivers', 'cc by 4.0') into the canonical value (PER, pressures-drivers,
  * CC-BY-4.0). Same resolution as mosaic-api `CatalogService.resolve_filters`.
  */
-import type { FacetCounts, Labels } from '../api/types'
+import type { FacetCounts, FiltersInfo, Labels } from '../api/types'
 import { FACETS, type FacetKey, type Filters, NOT_SPECIFIED } from './facets'
 import { key } from './text'
 
+/** Counts per filter value over the whole catalogue, from GET /v1/filters. */
+export function catalogueCounts(info: FiltersInfo): FacetCounts {
+  const out: FacetCounts = {}
+  for (const [facet, options] of Object.entries(info.filters)) {
+    out[facet] = Object.fromEntries(options.map((o) => [o.value, o.count]))
+  }
+  return out
+}
+
 export class LabelBook {
+  /** Labels of the filter options and of the other coded values, from GET /v1/filters. */
+  static fromFilters(info: FiltersInfo): LabelBook {
+    const labels: Labels = { ...info.labels }
+    for (const [facet, options] of Object.entries(info.filters)) {
+      labels[facet] = Object.fromEntries(options.map((o) => [o.value, o.label]))
+    }
+    return new LabelBook(labels, catalogueCounts(info))
+  }
+
   private readonly aliases: Record<string, Map<string, string>> = {}
 
   constructor(

@@ -7,7 +7,7 @@ In production the API is static JSON on GitHub Pages (no server, no budget). In 
 the FastAPI server is more convenient and is the reference implementation.
 
 ## Decision
-Components depend on `CatalogRepository`. Two adapters implement it: static (manifest +
+Components depend on `CatalogRepository`. Two adapters implement it: static (filters +
 hashed files, search in the browser with the API's rules) and live (`openapi-fetch`).
 The mode is chosen by `PUBLIC_MOSAIC_API_MODE`.
 

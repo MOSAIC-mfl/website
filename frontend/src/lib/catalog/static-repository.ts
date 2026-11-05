@@ -1,21 +1,13 @@
 /**
  * Adapter: the static API that mosaic-api exports to GitHub Pages.
  *
- * Reads v1/manifest.json first, then the hashed files it lists (summaries shards, search texts),
- * once per page load. Hashed files never change, so the browser and the CDN can cache them for good.
- * Search and filters then run in the browser (domain/search.ts), with the same rules as the API.
+ * Reads v1/filters.json, v1/sources.json and the internal index v1/_index/index.json, then the
+ * hashed files the index lists (summaries shards, search texts), once per page load. Hashed files
+ * never change, so the browser and the CDN can cache them for good. Search and filters then run in
+ * the browser (domain/search.ts), with the same rules as the API.
  */
-import type {
-  FacetCounts,
-  LandscapePage,
-  LandscapeSummary,
-  Labels,
-  Manifest,
-  ResourceDetail,
-  ResourceSummary,
-  SourceInfo,
-} from '../api/types'
-import { LabelBook } from '../domain/labels'
+import type { FiltersInfo, LandscapePage, LandscapeSummary, ResourceDetail, ResourceSummary, SourceInfo } from '../api/types'
+import { LabelBook, catalogueCounts } from '../domain/labels'
 import type { CatalogueQuery } from '../domain/query'
 import { search, type SearchResult } from '../domain/search'
 import { key } from '../domain/text'
@@ -30,26 +22,21 @@ interface FileRef {
   records: number
 }
 
-interface StaticManifest extends Manifest {
-  files: {
-    sources: string
-    facets: string
-    labels: string
-    summaries: FileRef[]
-    search: FileRef
-    resource: string
-    /** absent in an export made before landscape pages existed */
-    landscapes?: string
-    landscape?: string
-  }
+/** v1/_index/index.json: internal to the static export, not part of the API contract. */
+interface SearchIndex {
+  harvested_at: string | null
+  summaries: FileRef[]
+  search: FileRef
 }
 
 interface Index {
-  manifest: StaticManifest
   overview: CatalogueOverview
   summaries: ResourceSummary[]
   texts: Record<string, string>
 }
+
+const resourcePath = (source: string, localId: string) =>
+  `v1/resources/${encodeURIComponent(source)}/${encodeURIComponent(localId)}.json`
 
 export class StaticCatalogRepository implements CatalogRepository, LandscapeRepository {
   private index: Promise<Index> | null = null
@@ -65,17 +52,17 @@ export class StaticCatalogRepository implements CatalogRepository, LandscapeRepo
 
   private load(): Promise<Index> {
     this.index ??= (async () => {
-      const manifest = await this.fetchJson<StaticManifest>(this.url('v1/manifest.json'))
-      const f = manifest.files
-      const [sources, facets, labels, texts, ...shards] = await Promise.all([
-        this.fetchJson<SourceInfo[]>(this.url(f.sources)),
-        this.fetchJson<FacetCounts>(this.url(f.facets)),
-        this.fetchJson<{ labels: Labels }>(this.url(f.labels)),
-        this.fetchJson<Record<string, string>>(this.url(f.search.path)),
-        ...f.summaries.map((s) => this.fetchJson<ResourceSummary[]>(this.url(s.path))),
+      const [info, sources, idx] = await Promise.all([
+        this.fetchJson<FiltersInfo>(this.url('v1/filters.json')),
+        this.fetchJson<SourceInfo[]>(this.url('v1/sources.json')),
+        this.fetchJson<SearchIndex>(this.url('v1/_index/index.json')),
       ])
-      const book = new LabelBook(labels.labels, facets)
-      return { manifest, overview: { manifest, sources, facets, labels: book }, summaries: shards.flat(), texts }
+      const [texts, ...shards] = await Promise.all([
+        this.fetchJson<Record<string, string>>(this.url(idx.search.path)),
+        ...idx.summaries.map((s) => this.fetchJson<ResourceSummary[]>(this.url(s.path))),
+      ])
+      const overview = { info, sources, facets: catalogueCounts(info), labels: LabelBook.fromFilters(info) }
+      return { overview, summaries: shards.flat(), texts }
     })()
     this.index.catch(() => {
       this.index = null // allow a retry after a network error
@@ -94,50 +81,41 @@ export class StaticCatalogRepository implements CatalogRepository, LandscapeRepo
   }
 
   async get(id: string): Promise<ResourceDetail | null> {
-    const { summaries, manifest } = await this.load()
+    const { summaries } = await this.load()
     // Ids are matched like the API does (case, accents, separators).
     const hit = summaries.find((s) => s.id === id) ?? summaries.find((s) => key(s.id) === key(id))
     if (!hit) return null
-    const path = manifest.files.resource
-      .replace('{source}', encodeURIComponent(hit.source))
-      .replace('{local_id}', encodeURIComponent(hit.local_id))
     try {
-      return await this.fetchJson<ResourceDetail>(this.url(path))
+      return await this.fetchJson<ResourceDetail>(this.url(resourcePath(hit.source, hit.local_id)))
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) return null
       throw err
     }
   }
 
-  recordLinks(d: ResourceDetail): { json: string; jsonld: string } {
-    const json = this.url(`v1/resources/${encodeURIComponent(d.source)}/${encodeURIComponent(d.local_id)}.json`)
-    return { json, jsonld: json.replace(/\.json$/, '.jsonld') }
+  recordLink(d: ResourceDetail): string {
+    return this.url(resourcePath(d.source, d.local_id))
   }
 
   async related(detail: ResourceDetail, limit: number): Promise<ResourceSummary[]> {
     return rankRelated(detail, (await this.load()).summaries, limit)
   }
 
-  private manifestOnly: Promise<StaticManifest> | null = null
+  private landscapeIndex: Promise<LandscapeSummary[]> | null = null
 
-  /** landscape pages only need the manifest, not the whole catalogue index */
-  private manifest(): Promise<StaticManifest> {
-    this.manifestOnly ??= this.fetchJson<StaticManifest>(this.url('v1/manifest.json'))
-    this.manifestOnly.catch(() => (this.manifestOnly = null))
-    return this.manifestOnly
-  }
-
+  /** landscape pages only need v1/landscapes.json, not the whole catalogue index */
   async landscapes(): Promise<LandscapeSummary[]> {
-    const m = await this.manifest()
-    return m.files.landscapes ? this.fetchJson<LandscapeSummary[]>(this.url(m.files.landscapes)) : []
+    this.landscapeIndex ??= this.fetchJson<LandscapeSummary[]>(this.url('v1/landscapes.json')).catch((err) => {
+      this.landscapeIndex = null
+      if (err instanceof ApiError && err.status === 404) return [] // an export without landscape pages
+      throw err
+    })
+    return this.landscapeIndex
   }
 
   async landscape(codeOrSlug: string): Promise<LandscapePage | null> {
-    const m = await this.manifest()
     const hit = (await this.landscapes()).find((l) => key(l.code) === key(codeOrSlug))
-    if (!hit || !m.files.landscape) return null
-    return this.fetchJson<LandscapePage>(this.url(m.files.landscape.replace('{code}', encodeURIComponent(hit.code))))
+    if (!hit) return null
+    return this.fetchJson<LandscapePage>(this.url(`v1/landscapes/${encodeURIComponent(hit.code)}.json`))
   }
 }
-
-export type { StaticManifest }

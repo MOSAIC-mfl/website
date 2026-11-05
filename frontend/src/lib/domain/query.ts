@@ -31,11 +31,8 @@ const LEGACY_PARAMS: Record<string, FacetKey> = {
   country: 'geography',
   living_landscape: 'landscape',
   mfl_theme: 'theme',
-  data_type: 'data_kind',
-  access_level: 'access',
 }
 const LEGACY_VALUES: Partial<Record<FacetKey, Record<string, string>>> = {
-  access: { Open: 'public', Restricted: 'restricted', Internal: 'internal' },
   landscape: { GLB: 'not_specified' },
 }
 

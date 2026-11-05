@@ -10,9 +10,11 @@ import type { MosaicRecord } from './record'
 type S = components['schemas']
 
 export type ResourceSummary = S['ResourceSummary']
-export type Manifest = S['Manifest']
 export type SourceInfo = S['SourceOut']
-export type Labels = S['Labels']['labels']
+/** GET /v1/filters: versions, totals, filter options (value, label, count) and other labels. */
+export type FiltersInfo = S['FiltersOut']
+export type FilterOption = S['FilterOption']
+export type Labels = Record<string, Record<string, string>>
 export type FacetCounts = Record<string, Record<string, number>>
 export type Provenance = S['ProvenanceOut']
 export type Quality = S['QualityOut']

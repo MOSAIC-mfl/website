@@ -244,7 +244,7 @@ function AccessPanel({ d }: { d: ResourceDetail }) {
   )
 }
 
-function MetadataRecord({ d, links }: { d: ResourceDetail; links: { json: string; jsonld: string } }) {
+function MetadataRecord({ d, json }: { d: ResourceDetail; json: string }) {
   return (
     <section style={S.section}>
       <h2 style={S.h2tight}>Full metadata record</h2>
@@ -257,9 +257,7 @@ function MetadataRecord({ d, links }: { d: ResourceDetail; links: { json: string
         )}
         .
         <br />
-        <a href={links.json} target="_blank" rel="noopener noreferrer" style={S.link}>MOSAIC record (JSON)</a>
-        {' · '}
-        <a href={links.jsonld} target="_blank" rel="noopener noreferrer" style={S.link}>schema.org (JSON-LD)</a>
+        <a href={json} target="_blank" rel="noopener noreferrer" style={S.link}>MOSAIC record (JSON)</a>
       </p>
       {d.same_as.length > 0 && <p style={{ color: 'var(--color-gray-600)' }}>Also described in: {d.same_as.join(', ')}.</p>}
     </section>
@@ -382,7 +380,7 @@ export function DatasetDetail({ base }: Props) {
 
       <Facts d={d} />
       <OverviewTable d={d} labels={labels} base={base} />
-      <MetadataRecord d={d} links={repo.recordLinks(d)} />
+      <MetadataRecord d={d} json={repo.recordLink(d)} />
       <AccessPanel d={d} />
       <Completeness d={d} />
 

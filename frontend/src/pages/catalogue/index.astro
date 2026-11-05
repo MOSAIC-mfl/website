@@ -9,7 +9,7 @@ import { readConfig } from '../../lib/config'
 // No catalogue data at build time: the islands below read it from mosaic-api when the page opens.
 const base = import.meta.env.BASE_URL
 const api = readConfig()
-const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/v1/manifest.json` : `${api.apiUrl}/docs`
+const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/docs/` : `${api.apiUrl}/docs`
 ---
 
 <BaseLayout

@@ -189,14 +189,16 @@ const base = import.meta.env.BASE_URL
   const repo = catalogue()
 
   async function fill() {
-    const { manifest, facets, labels } = await repo.overview()
-    const h = headline(manifest.counts.resources, facets)
+    const { info, facets, labels } = await repo.overview()
+    const h = headline(info.totals.resources, facets)
     for (const el of document.querySelectorAll<HTMLElement>('[data-stat]')) {
       el.textContent = String(h[el.dataset.stat as keyof typeof h] ?? '–')
     }
     // Featured: complete records first (the most useful to a visitor), most recent period first.
-    const complete = await repo.search({ ...emptyQuery(), filters: { status: ['complete'] }, pageSize: 3 })
-    const items = complete.items.length >= 3 ? complete.items : (await repo.search({ ...emptyQuery(), pageSize: 3 })).items
+    // (Completeness is not a filter of the API: pick the complete ones from the most recent 100.)
+    const recent = (await repo.search({ ...emptyQuery(), pageSize: 100 })).items
+    const complete = recent.filter((i) => i.status === 'complete')
+    const items = complete.length >= 3 ? complete.slice(0, 3) : recent.slice(0, 3)
     document.querySelectorAll<HTMLElement>('[data-featured]').forEach((card, i) => {
       const d = items[i]
       if (!d) return

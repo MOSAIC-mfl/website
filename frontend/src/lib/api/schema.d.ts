@@ -4,23 +4,6 @@
  */
 
 export interface paths {
-    "/v1/manifest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Manifest */
-        get: operations["manifest_v1_manifest_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/sources": {
         parameters: {
             query?: never;
@@ -30,7 +13,8 @@ export interface paths {
         };
         /**
          * Sources
-         * @description Catalogues MOSAIC reads from, with the date and outcome of the last harvest.
+         * @description The catalogues MOSAIC reads (MOSAIC, CGIAR Climate Data Hub, ...): how many records each
+         *     one has, and the date and outcome of the last harvest.
          */
         get: operations["sources_v1_sources_get"];
         put?: never;
@@ -41,7 +25,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/facets": {
+    "/v1/filters": {
         parameters: {
             query?: never;
             header?: never;
@@ -49,30 +33,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Facets
-         * @description Counts per filter value over the whole catalogue. Facets: source, resource_type, theme, landscape, geography, data_kind, geometry, spatial, method, access, license, status
+         * Filters
+         * @description Read once before searching: versions and totals, the filters of GET /v1/resources with
+         *     every option (value, label, count), and display labels for the other coded values.
          */
-        get: operations["facets_v1_facets_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/labels": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Labels
-         * @description Display labels for facet values (from the MOSAIC vocabularies).
-         */
-        get: operations["labels_v1_labels_get"];
+        get: operations["filters_v1_filters_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -90,7 +55,8 @@ export interface paths {
         };
         /**
          * List Resources
-         * @description Search and filter. OR inside one filter (comma-separated), AND across filters.
+         * @description The catalogue: search and filter. OR inside one filter (comma-separated), AND across
+         *     filters. Values are case-, accent- and symbol-insensitive, and a label works as well as its id.
          */
         get: operations["list_resources_v1_resources_get"];
         put?: never;
@@ -110,49 +76,10 @@ export interface paths {
         };
         /**
          * Get Resource
-         * @description One resource: the full record in the MOSAIC model, its provenance and its quality.
+         * @description One resource, by catalogue and id: the full record in the MOSAIC model, where it comes from
+         *     (provenance) and how complete it is (quality).
          */
         get: operations["get_resource_v1_resources__source_id___local_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/resources/{source_id}/{local_id}/jsonld": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Resource Jsonld
-         * @description schema.org Dataset (JSON-LD), for search engines and FAIR harvesters.
-         */
-        get: operations["get_resource_jsonld_v1_resources__source_id___local_id__jsonld_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/summaries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Summaries
-         * @description Every resource as a light card (what the static site loads for in-browser search).
-         */
-        get: operations["summaries_v1_summaries_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -242,12 +169,54 @@ export interface components {
                 [key: string]: number;
             };
         };
+        /** FilterOption */
+        FilterOption: {
+            /**
+             * Value
+             * @description What goes in the query, e.g. theme=water.
+             */
+            value: string;
+            /**
+             * Label
+             * @description What people read, from the MOSAIC vocabularies.
+             */
+            label: string;
+            /**
+             * Count
+             * @description Resources with this value in the whole catalogue.
+             */
+            count: number;
+        };
         /**
-         * Labels
-         * @description Display labels for facet values, per facet (from the MOSAIC vocabularies).
+         * FiltersOut
+         * @description Everything a client needs before searching: versions, totals, the filters of
+         *     GET /v1/resources with their options, and display labels for the other coded values.
          */
-        Labels: {
-            /** Labels */
+        FiltersOut: {
+            /** Api Version */
+            api_version: string;
+            /** Standard Version */
+            standard_version: string;
+            /** Harvested At */
+            harvested_at: string | null;
+            /**
+             * Totals
+             * @description resources, complete, incomplete.
+             */
+            totals: {
+                [key: string]: number;
+            };
+            /**
+             * Filters
+             * @description One entry per filter of GET /v1/resources (source, theme, landscape, geography): the values present in the catalogue, most frequent first.
+             */
+            filters: {
+                [key: string]: components["schemas"]["FilterOption"][];
+            };
+            /**
+             * Labels
+             * @description Display labels of the other coded values a resource shows (resource_type, data_kind, access, method, geometry, spatial, license, status).
+             */
             labels: {
                 [key: string]: {
                     [key: string]: string;
@@ -356,28 +325,6 @@ export interface components {
              */
             records: string[];
         };
-        /** Manifest */
-        Manifest: {
-            /** Api Version */
-            api_version: string;
-            /** Standard Version */
-            standard_version: string;
-            /** Harvested At */
-            harvested_at: string | null;
-            /** Counts */
-            counts: {
-                [key: string]: number;
-            };
-            /** Sources */
-            sources: string[];
-            /**
-             * Files
-             * @description Static export only: file paths with hashes.
-             */
-            files?: {
-                [key: string]: unknown;
-            };
-        };
         /**
          * Order
          * @enum {string}
@@ -479,7 +426,7 @@ export interface components {
             page_size: number;
             /**
              * Facets
-             * @description Counts over ALL results of the query.
+             * @description With include_facets: counts per filter value over ALL results of the query.
              */
             facets?: {
                 [key: string]: {
@@ -626,44 +573,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    manifest_v1_manifest_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Manifest"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
     sources_v1_sources_get: {
         parameters: {
             query?: never;
@@ -702,7 +611,7 @@ export interface operations {
             };
         };
     };
-    facets_v1_facets_get: {
+    filters_v1_filters_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -717,49 +626,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: {
-                            [key: string]: number;
-                        };
-                    };
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    labels_v1_labels_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Labels"];
+                    "application/json": components["schemas"]["FiltersOut"];
                 };
             };
             /** @description Not Found */
@@ -787,39 +654,20 @@ export interface operations {
             query?: {
                 /** @description Words to search (all must match). */
                 q?: string;
-                /** @description Comma-separated values (OR). */
+                /** @description Catalogue, e.g. mosaic, cdh. Comma-separated values (OR). Values and labels: GET /v1/filters. */
                 source?: string | null;
-                /** @description Comma-separated values (OR). */
-                resource_type?: string | null;
-                /** @description Comma-separated values (OR). */
+                /** @description Theme, e.g. water. Comma-separated values (OR). Values and labels: GET /v1/filters. */
                 theme?: string | null;
-                /** @description Comma-separated values (OR). */
+                /** @description Living landscape, e.g. KEN-LVB. Comma-separated values (OR). Values and labels: GET /v1/filters. */
                 landscape?: string | null;
-                /** @description Comma-separated values (OR). */
+                /** @description Country or region, e.g. KEN. Comma-separated values (OR). Values and labels: GET /v1/filters. */
                 geography?: string | null;
-                /** @description Comma-separated values (OR). */
-                data_kind?: string | null;
-                /** @description Comma-separated values (OR). */
-                geometry?: string | null;
-                /** @description Comma-separated values (OR). */
-                spatial?: string | null;
-                /** @description Comma-separated values (OR). */
-                method?: string | null;
-                /** @description Comma-separated values (OR). */
-                access?: string | null;
-                /** @description Comma-separated values (OR). */
-                license?: string | null;
-                /** @description Comma-separated values (OR). */
-                status?: string | null;
-                /** @description west,south,east,north */
-                bbox?: string | null;
-                year_from?: number | null;
-                year_to?: number | null;
                 sort?: components["schemas"]["Sort"];
                 /** @description asc | desc; default: the sort's natural order. */
                 order?: components["schemas"]["Order"] | null;
                 page?: number;
                 page_size?: number;
+                /** @description Also return the count of each filter value over all the results. */
                 include_facets?: boolean;
             };
             header?: never;
@@ -876,85 +724,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResourceDetail"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    get_resource_jsonld_v1_resources__source_id___local_id__jsonld_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                source_id: string;
-                local_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    summaries_v1_summaries_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResourceSummary"][];
                 };
             };
             /** @description Not Found */

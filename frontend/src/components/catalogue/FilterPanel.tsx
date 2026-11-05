@@ -3,7 +3,7 @@ import type { FacetCounts } from '../../lib/api/types'
 import type { FacetKey, Filters } from '../../lib/domain/facets'
 import type { LabelBook } from '../../lib/domain/labels'
 import { FilterGroup } from './FilterGroup'
-import { MORE_FILTERS, PRIMARY_FILTERS, type FilterDef } from './filters'
+import { PRIMARY_FILTERS, type FilterDef } from './filters'
 
 interface Props {
   catalogueFacets: FacetCounts
@@ -18,7 +18,6 @@ interface Props {
 
 export function FilterPanel({ catalogueFacets, resultFacets, filters, labels, activeCount, canClear, onToggle, onClearAll }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [showMore, setShowMore] = useState(() => MORE_FILTERS.some((f) => (filters[f.key] ?? []).length > 0))
   const group = (def: FilterDef) => (
     <FilterGroup
       key={def.key}
@@ -53,13 +52,6 @@ export function FilterPanel({ catalogueFacets, resultFacets, filters, labels, ac
 
         <div className="filter-panel-body">
           {PRIMARY_FILTERS.map(group)}
-          {showMore && MORE_FILTERS.map(group)}
-          <button className="filter-more-btn" onClick={() => setShowMore((s) => !s)}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              {showMore ? <line x1="5" y1="12" x2="19" y2="12" /> : <><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></>}
-            </svg>
-            {showMore ? 'Fewer filters' : 'More filters'}
-          </button>
         </div>
       </div>
     </aside>
