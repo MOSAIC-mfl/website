@@ -2,7 +2,7 @@
  * How resources are shown: small pure helpers shared by the cards, the detail page and the home page.
  * They turn MOSAIC values into the words the approved design uses.
  */
-import type { ResourceSummary } from '../api/types'
+import type { RecordSummary } from '../api/types'
 import type { LabelBook } from './labels'
 import { NOT_SPECIFIED } from './facets'
 
@@ -55,7 +55,7 @@ export function datasetHref(base: string, id: string): string {
   return `${base}/catalogue/dataset/?id=${encodeURIComponent(id).replace(/%3A/gi, ':')}`
 }
 
-export function primarySpecs(r: ResourceSummary, book: LabelBook): string[] {
+export function primarySpecs(r: RecordSummary, book: LabelBook): string[] {
   const kinds = joinLabels(book, 'data_kind', r.facets.data_kind ?? [])
   const geometry = joinLabels(book, 'geometry', r.facets.geometry ?? [])
   return [kinds, geometry, periodText(r.period)].filter((x): x is string => !!x)

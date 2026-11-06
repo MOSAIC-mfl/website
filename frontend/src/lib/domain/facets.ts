@@ -1,6 +1,6 @@
 /**
- * The catalogue filters: the four filters of GET /v1/resources (mosaic-api ADR-0006). Each
- * resource also carries other facet values (`summary.facets.data_kind`, `.access`…) for display.
+ * The catalogue filters: the four filters of GET /v1/records (mosaic-api ADR-0007). Each
+ * record also carries other facet values (`summary.facets.data_kind`, `.access`…) for display.
  */
 export const FACETS = ['geography', 'landscape', 'theme', 'source'] as const
 

@@ -29,14 +29,17 @@ pages (Astro)  ──▶  components (React, presentational)
 * **Port** `CatalogRepository`: `overview()`, `search(query)`, `get(id)`, `recordLink(id)`,
   `related(detail)`. Components depend only on it (dependency inversion).
 * **Adapters**:
-  * `StaticCatalogRepository` reads the export that GitHub Pages serves (`v1/filters.json`,
-    `v1/sources.json`, and the internal index `v1/_index/index.json` → content-hashed shards). Search and facet counts run in the browser with the same rules
+  * `StaticCatalogRepository` reads the export that GitHub Pages serves (`v1/sources.json`,
+    and the internal index `v1/_index/index.json` → content-hashed shards). Search and facet counts run in the browser with the same rules
     as the API. Files are fetched once and memoized; a failed fetch is retried next time.
   * `LiveCatalogRepository` calls the FastAPI routes through `openapi-fetch`, typed by
-    `schema.d.ts`: `/v1/filters` and `/v1/sources` once, then `/v1/resources`; search, counts
-    and sorting happen on the server.
-* **Filters:** the four of the API (country, living landscape, theme, catalogue), from
-  `GET /v1/filters` (each option with its label and count). See mosaic-api ADR-0006.
+    `schema.d.ts`: `/v1/sources` and one page of `/v1/records?include_facets=true` (the counts)
+    once, then `/v1/records`; search, counts and sorting happen on the server.
+* **Filters:** the four of the API (country, living landscape, theme, catalogue). The API has no
+  filters endpoint (mosaic-api ADR-0007): the labels are the website's own
+  (`lib/domain/vocab-labels.ts`, generated from the standard's vocabularies by
+  `npm run gen:labels -- <mosaic-standard>/vocab`; catalogue names from `/v1/sources`), and the counts
+  are made over the records.
   * Both turn network failures into `ApiError`, which `LoadState` shows with a retry button.
 * **Composition root** (`lib/catalog/index.ts`): reads `PUBLIC_MOSAIC_API_MODE` /
   `PUBLIC_MOSAIC_API_URL` and builds one repository. Adding another backend means one new

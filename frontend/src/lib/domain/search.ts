@@ -6,20 +6,20 @@
  *    static summaries carry no keywords, so the order of equally good hits may differ slightly).
  * Pure functions: no fetch, no DOM, no React.
  */
-import type { FacetCounts, ResourceSummary } from '../api/types'
+import type { FacetCounts, RecordSummary } from '../api/types'
 import { FACETS, type Filters } from './facets'
 import { SORT_TO_API, type CatalogueQuery } from './query'
 import { fold, key } from './text'
 
 export interface SearchResult {
-  items: ResourceSummary[]
+  items: RecordSummary[]
   total: number
   /** Counts per facet value over ALL matching resources (not only this page). */
   facets: FacetCounts
   warnings: string[]
 }
 
-export function matches(r: ResourceSummary, words: string[], filters: Filters, text: string): boolean {
+export function matches(r: RecordSummary, words: string[], filters: Filters, text: string): boolean {
   if (words.length && !words.every((w) => text.includes(w))) return false
   for (const facet of FACETS) {
     const wanted = filters[facet]
@@ -30,14 +30,14 @@ export function matches(r: ResourceSummary, words: string[], filters: Filters, t
   return true
 }
 
-function score(r: ResourceSummary, words: string[]): number {
+function score(r: RecordSummary, words: string[]): number {
   const title = fold(r.title)
   return words.reduce((s, w) => s + 1 + (title.includes(w) ? 3 : 0), 0)
 }
 
-const endYear = (r: ResourceSummary) => r.period?.[1] ?? r.period?.[0] ?? 0
+const endYear = (r: RecordSummary) => r.period?.[1] ?? r.period?.[0] ?? 0
 
-export function countFacets(items: ResourceSummary[]): FacetCounts {
+export function countFacets(items: RecordSummary[]): FacetCounts {
   const out: FacetCounts = {}
   for (const facet of FACETS) out[facet] = {}
   for (const r of items) {
@@ -49,7 +49,7 @@ export function countFacets(items: ResourceSummary[]): FacetCounts {
 }
 
 export function search(
-  all: ResourceSummary[],
+  all: RecordSummary[],
   texts: Record<string, string>,
   q: CatalogueQuery,
   warnings: string[] = [],
@@ -58,7 +58,7 @@ export function search(
   const hits = all.filter((r) => matches(r, words, q.filters, texts[r.id] ?? fold(r.title)))
   const { sort, order } = SORT_TO_API[q.sort]
   const dir = order === 'desc' ? -1 : 1
-  const byTitle = (a: ResourceSummary, b: ResourceSummary) => fold(a.title).localeCompare(fold(b.title))
+  const byTitle = (a: RecordSummary, b: RecordSummary) => fold(a.title).localeCompare(fold(b.title))
   if (sort === 'relevance') hits.sort((a, b) => score(b, words) - score(a, words) || byTitle(a, b))
   else if (sort === 'title') hits.sort((a, b) => dir * byTitle(a, b))
   else hits.sort((a, b) => dir * (endYear(a) - endYear(b)) || byTitle(a, b))

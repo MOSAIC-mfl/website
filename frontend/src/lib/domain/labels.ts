@@ -3,27 +3,28 @@
  * ('Perú', 'Pressures / drivers', 'cc by 4.0') into the canonical value (PER, pressures-drivers,
  * CC-BY-4.0). Same resolution as mosaic-api `CatalogService.resolve_filters`.
  */
-import type { FacetCounts, FiltersInfo, Labels } from '../api/types'
+import type { FacetCounts, Labels, SourceInfo } from '../api/types'
 import { FACETS, type FacetKey, type Filters, NOT_SPECIFIED } from './facets'
 import { key } from './text'
+import { VOCAB_LABELS } from './vocab-labels'
 
-/** Counts per filter value over the whole catalogue, from GET /v1/filters. */
-export function catalogueCounts(info: FiltersInfo): FacetCounts {
-  const out: FacetCounts = {}
-  for (const [facet, options] of Object.entries(info.filters)) {
-    out[facet] = Object.fromEntries(options.map((o) => [o.value, o.count]))
-  }
-  return out
+/** Labels of values that are not in a vocabulary (as mosaic-api FIXED_LABELS). */
+const FIXED_LABELS: Labels = {
+  spatial: { yes: 'Spatial', no: 'Not spatial' },
+  geometry: { point: 'Points', line: 'Lines', polygon: 'Polygons', mixed: 'Mixed' },
+  status: { complete: 'Complete', incomplete: 'Incomplete' },
+  license: { other: 'Other licence' },
 }
 
 export class LabelBook {
-  /** Labels of the filter options and of the other coded values, from GET /v1/filters. */
-  static fromFilters(info: FiltersInfo): LabelBook {
-    const labels: Labels = { ...info.labels }
-    for (const [facet, options] of Object.entries(info.filters)) {
-      labels[facet] = Object.fromEntries(options.map((o) => [o.value, o.label]))
-    }
-    return new LabelBook(labels, catalogueCounts(info))
+  /**
+   * The website's own labels (the API has no filters endpoint): the standard's vocabularies
+   * (vocab-labels.ts), fixed labels, and the catalogue names from GET /v1/sources. `counts` are the
+   * values present in the catalogue, so a value typed or linked by its code is always known.
+   */
+  static of(sources: SourceInfo[], counts: FacetCounts = {}): LabelBook {
+    const labels: Labels = { ...FIXED_LABELS, ...VOCAB_LABELS, source: Object.fromEntries(sources.map((s) => [s.id, s.name])) }
+    return new LabelBook(labels, counts)
   }
 
   private readonly aliases: Record<string, Map<string, string>> = {}

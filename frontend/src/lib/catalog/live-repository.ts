@@ -5,9 +5,9 @@
  */
 import createClient from 'openapi-fetch'
 import type { paths } from '../api/schema'
-import type { FacetCounts, LandscapePage, LandscapeSummary, ResourceDetail, ResourceSummary } from '../api/types'
+import type { FacetCounts, LandscapePage, LandscapeSummary, RecordDetail, RecordSummary } from '../api/types'
 import { FACETS } from '../domain/facets'
-import { LabelBook, catalogueCounts } from '../domain/labels'
+import { LabelBook } from '../domain/labels'
 import { SORT_TO_API, type CatalogueQuery } from '../domain/query'
 import type { SearchResult } from '../domain/search'
 import { ApiError } from './http'
@@ -44,11 +44,13 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
 
   overview(): Promise<CatalogueOverview> {
     this.cachedOverview ??= (async () => {
-      const [info, sources] = await Promise.all([
-        this.client.GET('/v1/filters').then(LiveCatalogRepository.unwrap),
+      // No filters endpoint: the counts over the whole catalogue come with one page of records.
+      const [all, sources] = await Promise.all([
+        this.client.GET('/v1/records', { params: { query: { page_size: 1, include_facets: true } } }).then(LiveCatalogRepository.unwrap),
         this.client.GET('/v1/sources').then(LiveCatalogRepository.unwrap),
       ])
-      return { info, sources, facets: catalogueCounts(info), labels: LabelBook.fromFilters(info) }
+      const facets = (all.facets ?? {}) as FacetCounts
+      return { total: all.total, sources, facets, labels: LabelBook.of(sources, facets) }
     })()
     this.cachedOverview.catch(() => {
       this.cachedOverview = null
@@ -65,7 +67,7 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
       if (values?.length) filters[facet] = values.join(',')
     }
     const page = LiveCatalogRepository.unwrap(
-      await this.client.GET('/v1/resources', {
+      await this.client.GET('/v1/records', {
         params: {
           query: { q: query.text, sort, order, page: query.page, page_size: query.pageSize, include_facets: true, ...filters },
         },
@@ -79,20 +81,20 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
     }
   }
 
-  async get(id: string): Promise<ResourceDetail | null> {
+  async get(id: string): Promise<RecordDetail | null> {
     const [source, ...rest] = id.split(':')
-    const res = await this.client.GET('/v1/resources/{source_id}/{local_id}', {
+    const res = await this.client.GET('/v1/records/{source_id}/{local_id}', {
       params: { path: { source_id: source, local_id: rest.join(':') } },
     })
     if (res.response.status === 404) return null
-    return LiveCatalogRepository.unwrap(res) as ResourceDetail
+    return LiveCatalogRepository.unwrap(res) as RecordDetail
   }
 
-  recordLink(d: ResourceDetail): string {
-    return `${this.baseUrl}/v1/resources/${encodeURIComponent(d.source)}/${encodeURIComponent(d.local_id)}`
+  recordLink(d: RecordDetail): string {
+    return `${this.baseUrl}/v1/records/${encodeURIComponent(d.source)}/${encodeURIComponent(d.local_id)}`
   }
 
-  async related(detail: ResourceDetail, limit: number): Promise<ResourceSummary[]> {
+  async related(detail: RecordDetail, limit: number): Promise<RecordSummary[]> {
     // Candidates: same landscape(s) or theme(s), fetched in one page each, ranked locally.
     const ask = async (facet: 'landscape' | 'theme', values: string[]) =>
       values.length

@@ -9,18 +9,15 @@ import type { MosaicRecord } from './record'
 
 type S = components['schemas']
 
-export type ResourceSummary = S['ResourceSummary']
+export type RecordSummary = S['RecordSummary']
 export type SourceInfo = S['SourceOut']
-/** GET /v1/filters: versions, totals, filter options (value, label, count) and other labels. */
-export type FiltersInfo = S['FiltersOut']
-export type FilterOption = S['FilterOption']
 export type Labels = Record<string, Record<string, string>>
 export type FacetCounts = Record<string, Record<string, number>>
 export type Provenance = S['ProvenanceOut']
 export type Quality = S['QualityOut']
 
-/** ResourceDetail with `record` typed as a MOSAIC standard record. */
-export type ResourceDetail = Omit<S['ResourceDetail'], 'record'> & { record: MosaicRecord }
+/** RecordDetail with `record` typed as a MOSAIC standard record. */
+export type RecordDetail = Omit<S['RecordDetail'], 'record'> & { record: MosaicRecord }
 
 export type { MosaicRecord }
 export type AccessPoint = NonNullable<MosaicRecord['data']>[number]

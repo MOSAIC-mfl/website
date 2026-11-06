@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { SourceInfo } from '../src/lib/api/types'
 import { LabelBook } from '../src/lib/domain/labels'
 import { dataTypeIcon, datasetHref, periodText } from '../src/lib/domain/present'
 import { emptyQuery, fromSearchParams, toSearchParams, toggleFilter } from '../src/lib/domain/query'
@@ -68,16 +69,8 @@ describe('search (static API)', () => {
 })
 
 describe('labels', () => {
-  const book = LabelBook.fromFilters({
-    api_version: '0.1.0', standard_version: '0.1.0', harvested_at: null, totals: { resources: 3 },
-    filters: {
-      geography: [{ value: 'PER', label: 'Peru', count: 1 }],
-      theme: [{ value: 'pressures-drivers', label: 'Pressures / drivers', count: 1 }],
-      source: [{ value: 'cdh', label: 'CGIAR Climate Data Hub', count: 2 }],
-      landscape: [],
-    },
-    labels: { access: { restricted: 'Restricted' } },
-  })
+  // the website's own labels: the standard's vocabularies, fixed labels and the catalogue names
+  const book = LabelBook.of([{ id: 'cdh', name: 'CGIAR Climate Data Hub' } as SourceInfo], { source: { mosaic: 2, cdh: 1 } })
   it('resolves labels and codes to canonical values, and warns about unknown ones', () => {
     expect(book.resolve({ geography: ['Perú'], theme: ['Pressures / drivers'], source: ['cgiar climate data hub'] }).filters).toEqual({
       geography: ['PER'], theme: ['pressures-drivers'], source: ['cdh'],

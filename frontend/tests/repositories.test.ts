@@ -7,12 +7,7 @@ import { summary } from './fixtures'
 
 const BASE = 'https://api.example'
 const files: Record<string, unknown> = {
-  [`${BASE}/v1/filters.json`]: {
-    api_version: '0.1.0', standard_version: '0.1.0', harvested_at: null, totals: { resources: 2 },
-    filters: { geography: [{ value: 'PER', label: 'Peru', count: 1 }, { value: 'global', label: 'Global', count: 1 }], source: [], theme: [], landscape: [] },
-    labels: {},
-  },
-  [`${BASE}/v1/sources.json`]: [],
+  [`${BASE}/v1/sources.json`]: [{ id: 'mosaic', name: 'MOSAIC' }, { id: 'cdh', name: 'CGIAR Climate Data Hub' }],
   [`${BASE}/v1/_index/index.json`]: {
     harvested_at: null,
     summaries: [{ path: 'v1/_index/summaries/aaa.json', sha256: 'a', records: 2 }],
@@ -23,7 +18,7 @@ const files: Record<string, unknown> = {
     summary('cdh:esa-worldcover-2021', { title: 'WorldCover', facets: { geography: ['global'] } }),
   ],
   [`${BASE}/v1/_index/search/bbb.json`]: { 'mosaic:MFL-2026-079': 'forest loss', 'cdh:esa-worldcover-2021': 'worldcover land cover' },
-  [`${BASE}/v1/resources/mosaic/MFL-2026-079.json`]: { id: 'mosaic:MFL-2026-079', record: { title: 'Forest loss' } },
+  [`${BASE}/v1/records/mosaic/MFL-2026-079.json`]: { id: 'mosaic:MFL-2026-079', record: { title: 'Forest loss' } },
 }
 
 function fakeFetcher(log: string[]): JsonFetcher {
@@ -35,18 +30,19 @@ function fakeFetcher(log: string[]): JsonFetcher {
 }
 
 describe('StaticCatalogRepository', () => {
-  it('loads filters, sources and the hashed index files once, then searches in the browser', async () => {
+  it('loads sources and the hashed index files once, then searches in the browser', async () => {
     const log: string[] = []
     const repo = new StaticCatalogRepository(BASE, fakeFetcher(log))
     const res = await repo.search({ ...emptyQuery(), filters: { geography: ['Perú'] } })
     expect(res.items.map((i) => i.id)).toEqual(['mosaic:MFL-2026-079'])
     expect(res.warnings).toEqual([])
     await repo.search({ ...emptyQuery(), text: 'land cover' })
-    expect(log.filter((u) => u.endsWith('filters.json'))).toHaveLength(1)
+    expect(log.filter((u) => u.endsWith('sources.json'))).toHaveLength(1)
+    expect(log.some((u) => u.includes('filters'))).toBe(false) // no filters endpoint (mosaic-api ADR-0007)
     expect(log.filter((u) => u.endsWith('index.json'))).toHaveLength(1)
   })
 
-  it('gets a resource by id, case-insensitively, and null when unknown', async () => {
+  it('gets a record by id, case-insensitively, and null when unknown', async () => {
     const repo = new StaticCatalogRepository(BASE, fakeFetcher([]))
     expect((await repo.get('MOSAIC:mfl-2026-079'))?.id).toBe('mosaic:MFL-2026-079')
     expect(await repo.get('mosaic:NOPE')).toBeNull()
@@ -63,8 +59,11 @@ describe('StaticCatalogRepository', () => {
     }
     const repo = new StaticCatalogRepository(BASE, flaky)
     await expect(repo.overview()).rejects.toThrow('offline')
-    expect((await repo.overview()).info.totals.resources).toBe(2)
-    expect((await repo.overview()).labels.label('geography', 'PER')).toBe('Peru')
+    const o = await repo.overview()
+    expect(o.total).toBe(2)
+    expect(o.facets.geography).toEqual({ PER: 1, global: 1 }) // counted in the browser
+    expect(o.labels.label('geography', 'PER')).toBe('Peru') // the website's own labels
+    expect(o.labels.label('source', 'cdh')).toBe('CGIAR Climate Data Hub')
   })
 })
 

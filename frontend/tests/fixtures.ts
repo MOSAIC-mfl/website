@@ -1,6 +1,6 @@
-import type { ResourceSummary } from '../src/lib/api/types'
+import type { RecordSummary } from '../src/lib/api/types'
 
-export function summary(id: string, over: Partial<ResourceSummary> = {}): ResourceSummary {
+export function summary(id: string, over: Partial<RecordSummary> = {}): RecordSummary {
   const [source, local_id] = id.split(':')
   return {
     id, source, local_id, title: local_id, description: null, resource_type: 'dataset',

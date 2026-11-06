@@ -1,10 +1,10 @@
-import type { ResourceSummary } from '../../lib/api/types'
+import type { RecordSummary } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { DatasetCard } from './DatasetCard'
 import type { ViewMode } from './ResultsToolbar'
 
 interface Props {
-  datasets: ResourceSummary[]
+  datasets: RecordSummary[]
   base: string
   labels: LabelBook
   viewMode?: ViewMode

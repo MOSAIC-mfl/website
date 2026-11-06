@@ -5,7 +5,7 @@ export interface FilterDef {
   label: string
 }
 
-/** The four filters of the API (GET /v1/resources), shown open as in the approved design. */
+/** The four filters of the API (GET /v1/records), shown open as in the approved design. */
 export const PRIMARY_FILTERS: FilterDef[] = [
   { key: 'geography', label: 'Country' },
   { key: 'landscape', label: 'Living Landscape' },

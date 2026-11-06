@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "gen:api": "openapi-typescript contract/openapi.json -o src/lib/api/schema.d.ts && node scripts/gen-record-types.mjs",
-    "api:static": "node scripts/serve-static-api.mjs"
+    "api:static": "node scripts/serve-static-api.mjs",
+    "gen:labels": "node scripts/gen-labels.mjs"
   },
   "dependencies": {
     "@astrojs/react": "3.6.0",

@@ -189,8 +189,8 @@ const base = import.meta.env.BASE_URL
   const repo = catalogue()
 
   async function fill() {
-    const { info, facets, labels } = await repo.overview()
-    const h = headline(info.totals.resources, facets)
+    const { total, facets, labels } = await repo.overview()
+    const h = headline(total, facets)
     for (const el of document.querySelectorAll<HTMLElement>('[data-stat]')) {
       el.textContent = String(h[el.dataset.stat as keyof typeof h] ?? '–')
     }

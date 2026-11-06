@@ -25,7 +25,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/filters": {
+    "/v1/records": {
         parameters: {
             query?: never;
             header?: never;
@@ -33,32 +33,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Filters
-         * @description Read once before searching: versions and totals, the filters of GET /v1/resources with
-         *     every option (value, label, count), and display labels for the other coded values.
-         */
-        get: operations["filters_v1_filters_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/resources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Resources
-         * @description The catalogue: search and filter. OR inside one filter (comma-separated), AND across
+         * List Records
+         * @description The records of every catalogue: search and filter. OR inside one filter (comma-separated), AND across
          *     filters. Values are case-, accent- and symbol-insensitive, and a label works as well as its id.
          */
-        get: operations["list_resources_v1_resources_get"];
+        get: operations["list_records_v1_records_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -67,7 +46,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/resources/{source_id}/{local_id}": {
+    "/v1/records/{source_id}/{local_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -75,11 +54,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Resource
-         * @description One resource, by catalogue and id: the full record in the MOSAIC model, where it comes from
+         * Get Record
+         * @description One record, by catalogue and id: the full record in the MOSAIC model, where it comes from
          *     (provenance) and how complete it is (quality).
          */
-        get: operations["get_resource_v1_resources__source_id___local_id__get"];
+        get: operations["get_record_v1_records__source_id___local_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -97,7 +76,7 @@ export interface paths {
         };
         /**
          * List Landscapes
-         * @description Every living landscape with its page sections and how many resources cover it.
+         * @description Every living landscape with its page sections and how many records cover it.
          */
         get: operations["list_landscapes_v1_landscapes_get"];
         put?: never;
@@ -169,60 +148,6 @@ export interface components {
                 [key: string]: number;
             };
         };
-        /** FilterOption */
-        FilterOption: {
-            /**
-             * Value
-             * @description What goes in the query, e.g. theme=water.
-             */
-            value: string;
-            /**
-             * Label
-             * @description What people read, from the MOSAIC vocabularies.
-             */
-            label: string;
-            /**
-             * Count
-             * @description Resources with this value in the whole catalogue.
-             */
-            count: number;
-        };
-        /**
-         * FiltersOut
-         * @description Everything a client needs before searching: versions, totals, the filters of
-         *     GET /v1/resources with their options, and display labels for the other coded values.
-         */
-        FiltersOut: {
-            /** Api Version */
-            api_version: string;
-            /** Standard Version */
-            standard_version: string;
-            /** Harvested At */
-            harvested_at: string | null;
-            /**
-             * Totals
-             * @description resources, complete, incomplete.
-             */
-            totals: {
-                [key: string]: number;
-            };
-            /**
-             * Filters
-             * @description One entry per filter of GET /v1/resources (source, theme, landscape, geography): the values present in the catalogue, most frequent first.
-             */
-            filters: {
-                [key: string]: components["schemas"]["FilterOption"][];
-            };
-            /**
-             * Labels
-             * @description Display labels of the other coded values a resource shows (resource_type, data_kind, access, method, geometry, spatial, license, status).
-             */
-            labels: {
-                [key: string]: {
-                    [key: string]: string;
-                };
-            };
-        };
         /** LandscapeOut */
         LandscapeOut: {
             /**
@@ -279,7 +204,7 @@ export interface components {
              * Linked
              * @description Named records that cover the landscape.
              */
-            linked: components["schemas"]["ResourceSummary"][];
+            linked: components["schemas"]["RecordSummary"][];
         };
         /** LandscapeSummaryOut */
         LandscapeSummaryOut: {
@@ -384,10 +309,10 @@ export interface components {
             missing_minimum: string[];
         };
         /**
-         * ResourceDetail
+         * RecordDetail
          * @description The full resource in the MOSAIC model, plus where it came from and how complete it is.
          */
-        ResourceDetail: {
+        RecordDetail: {
             /** Id */
             id: string;
             /** Source */
@@ -414,10 +339,10 @@ export interface components {
             /** Same As */
             same_as: string[];
         };
-        /** ResourcePage */
-        ResourcePage: {
+        /** RecordPage */
+        RecordPage: {
             /** Items */
-            items: components["schemas"]["ResourceSummary"][];
+            items: components["schemas"]["RecordSummary"][];
             /** Total */
             total: number;
             /** Page */
@@ -440,10 +365,10 @@ export interface components {
             warnings?: string[];
         };
         /**
-         * ResourceSummary
+         * RecordSummary
          * @description A light card for lists and maps.
          */
-        ResourceSummary: {
+        RecordSummary: {
             /**
              * Id
              * @description Global id <source>:<local id>, e.g. mosaic:MFL-2026-079.
@@ -611,56 +536,18 @@ export interface operations {
             };
         };
     };
-    filters_v1_filters_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FiltersOut"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    list_resources_v1_resources_get: {
+    list_records_v1_records_get: {
         parameters: {
             query?: {
                 /** @description Words to search (all must match). */
                 q?: string;
-                /** @description Catalogue, e.g. mosaic, cdh. Comma-separated values (OR). Values and labels: GET /v1/filters. */
+                /** @description Catalogue, e.g. mosaic, cdh. Comma-separated values (OR); an id or its label. */
                 source?: string | null;
-                /** @description Theme, e.g. water. Comma-separated values (OR). Values and labels: GET /v1/filters. */
+                /** @description Theme, e.g. water. Comma-separated values (OR); an id or its label. */
                 theme?: string | null;
-                /** @description Living landscape, e.g. KEN-LVB. Comma-separated values (OR). Values and labels: GET /v1/filters. */
+                /** @description Living landscape, e.g. KEN-LVB. Comma-separated values (OR); an id or its label. */
                 landscape?: string | null;
-                /** @description Country or region, e.g. KEN. Comma-separated values (OR). Values and labels: GET /v1/filters. */
+                /** @description Country or region, e.g. KEN. Comma-separated values (OR); an id or its label. */
                 geography?: string | null;
                 sort?: components["schemas"]["Sort"];
                 /** @description asc | desc; default: the sort's natural order. */
@@ -682,7 +569,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResourcePage"];
+                    "application/json": components["schemas"]["RecordPage"];
                 };
             };
             /** @description Not Found */
@@ -705,7 +592,7 @@ export interface operations {
             };
         };
     };
-    get_resource_v1_resources__source_id___local_id__get: {
+    get_record_v1_records__source_id___local_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -723,7 +610,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResourceDetail"];
+                    "application/json": components["schemas"]["RecordDetail"];
                 };
             };
             /** @description Not Found */

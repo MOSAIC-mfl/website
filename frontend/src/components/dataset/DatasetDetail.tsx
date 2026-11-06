@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import type { AccessPoint, Contact, MosaicRecord, ResourceDetail, ResourceSummary } from '../../lib/api/types'
+import type { AccessPoint, Contact, MosaicRecord, RecordDetail, RecordSummary } from '../../lib/api/types'
 import { catalogue } from '../../lib/catalog'
 import type { LabelBook } from '../../lib/domain/labels'
 import {
@@ -88,7 +88,7 @@ const yearsOf = (r: MosaicRecord): [number | null, number | null] => {
   return [toYear(t?.start_date ?? t?.date), toYear(t?.end_date ?? t?.date)]
 }
 
-function citationText(d: ResourceDetail, base: string): string {
+function citationText(d: RecordDetail, base: string): string {
   const c = d.record.citation
   if (c) {
     if (c.text) return c.text
@@ -103,7 +103,7 @@ function citationText(d: ResourceDetail, base: string): string {
 
 const toYear = (v: string | null | undefined) => (v ? Number(String(v).slice(0, 4)) : null)
 
-function Facts({ d }: { d: ResourceDetail }) {
+function Facts({ d }: { d: RecordDetail }) {
   const r = d.record
   const contact = pointOfContact(r)
   const access = r.data?.find((p) => urlOf(p) && (p.access ?? r.access) === 'public') ?? r.data?.find((p) => urlOf(p))
@@ -127,7 +127,7 @@ function Facts({ d }: { d: ResourceDetail }) {
   )
 }
 
-function OverviewTable({ d, labels, base }: { d: ResourceDetail; labels: LabelBook; base: string }) {
+function OverviewTable({ d, labels, base }: { d: RecordDetail; labels: LabelBook; base: string }) {
   const r = d.record
   const row = (label: string, value: React.ReactNode) => (
     <tr>
@@ -198,7 +198,7 @@ function AccessPoints({ points, recordAccess }: { points: AccessPoint[]; recordA
   )
 }
 
-function AccessPanel({ d }: { d: ResourceDetail }) {
+function AccessPanel({ d }: { d: RecordDetail }) {
   const r = d.record
   const contact = pointOfContact(r)
   const spdx = r.license && !r.license.startsWith('LicenseRef-') ? r.license : undefined
@@ -260,7 +260,7 @@ function AccessPanel({ d }: { d: ResourceDetail }) {
   )
 }
 
-function MetadataRecord({ d, json }: { d: ResourceDetail; json: string }) {
+function MetadataRecord({ d, json }: { d: RecordDetail; json: string }) {
   return (
     <section style={S.section}>
       <h2 style={S.h2tight}>Full metadata record</h2>
@@ -280,7 +280,7 @@ function MetadataRecord({ d, json }: { d: ResourceDetail; json: string }) {
   )
 }
 
-function Completeness({ d }: { d: ResourceDetail }) {
+function Completeness({ d }: { d: RecordDetail }) {
   const missing = d.quality.missing_minimum
   return (
     <section style={S.section}>
@@ -320,7 +320,7 @@ function Breadcrumb({ crumbs }: { crumbs: { label: string; href?: string }[] }) 
   )
 }
 
-function Related({ items, base, labels }: { items: ResourceSummary[]; base: string; labels: LabelBook }) {
+function Related({ items, base, labels }: { items: RecordSummary[]; base: string; labels: LabelBook }) {
   if (items.length === 0) return null
   return (
     <section style={S.section}>

@@ -1,15 +1,16 @@
 /**
  * Adapter: the static API that mosaic-api exports to GitHub Pages.
  *
- * Reads v1/filters.json, v1/sources.json and the internal index v1/_index/index.json, then the
- * hashed files the index lists (summaries shards, search texts), once per page load. Hashed files
+ * Reads v1/sources.json and the internal index v1/_index/index.json, then the hashed files the
+ * index lists (record cards in shards, search texts), once per page load. The filter labels are the
+ * website's own (domain/labels.ts) and the counts are made here, over the cards. Hashed files
  * never change, so the browser and the CDN can cache them for good. Search and filters then run in
  * the browser (domain/search.ts), with the same rules as the API.
  */
-import type { FiltersInfo, LandscapePage, LandscapeSummary, ResourceDetail, ResourceSummary, SourceInfo } from '../api/types'
-import { LabelBook, catalogueCounts } from '../domain/labels'
+import type { LandscapePage, LandscapeSummary, RecordDetail, RecordSummary, SourceInfo } from '../api/types'
+import { LabelBook } from '../domain/labels'
 import type { CatalogueQuery } from '../domain/query'
-import { search, type SearchResult } from '../domain/search'
+import { countFacets, search, type SearchResult } from '../domain/search'
 import { key } from '../domain/text'
 import { ApiError, type JsonFetcher } from './http'
 import { rankRelated } from './related'
@@ -31,12 +32,12 @@ interface SearchIndex {
 
 interface Index {
   overview: CatalogueOverview
-  summaries: ResourceSummary[]
+  summaries: RecordSummary[]
   texts: Record<string, string>
 }
 
-const resourcePath = (source: string, localId: string) =>
-  `v1/resources/${encodeURIComponent(source)}/${encodeURIComponent(localId)}.json`
+const recordPath = (source: string, localId: string) =>
+  `v1/records/${encodeURIComponent(source)}/${encodeURIComponent(localId)}.json`
 
 export class StaticCatalogRepository implements CatalogRepository, LandscapeRepository {
   private index: Promise<Index> | null = null
@@ -52,17 +53,18 @@ export class StaticCatalogRepository implements CatalogRepository, LandscapeRepo
 
   private load(): Promise<Index> {
     this.index ??= (async () => {
-      const [info, sources, idx] = await Promise.all([
-        this.fetchJson<FiltersInfo>(this.url('v1/filters.json')),
+      const [sources, idx] = await Promise.all([
         this.fetchJson<SourceInfo[]>(this.url('v1/sources.json')),
         this.fetchJson<SearchIndex>(this.url('v1/_index/index.json')),
       ])
       const [texts, ...shards] = await Promise.all([
         this.fetchJson<Record<string, string>>(this.url(idx.search.path)),
-        ...idx.summaries.map((s) => this.fetchJson<ResourceSummary[]>(this.url(s.path))),
+        ...idx.summaries.map((s) => this.fetchJson<RecordSummary[]>(this.url(s.path))),
       ])
-      const overview = { info, sources, facets: catalogueCounts(info), labels: LabelBook.fromFilters(info) }
-      return { overview, summaries: shards.flat(), texts }
+      const summaries = shards.flat()
+      const facets = countFacets(summaries)
+      const overview = { total: summaries.length, sources, facets, labels: LabelBook.of(sources, facets) }
+      return { overview, summaries, texts }
     })()
     this.index.catch(() => {
       this.index = null // allow a retry after a network error
@@ -80,24 +82,24 @@ export class StaticCatalogRepository implements CatalogRepository, LandscapeRepo
     return search(summaries, texts, { ...query, filters }, warnings)
   }
 
-  async get(id: string): Promise<ResourceDetail | null> {
+  async get(id: string): Promise<RecordDetail | null> {
     const { summaries } = await this.load()
     // Ids are matched like the API does (case, accents, separators).
     const hit = summaries.find((s) => s.id === id) ?? summaries.find((s) => key(s.id) === key(id))
     if (!hit) return null
     try {
-      return await this.fetchJson<ResourceDetail>(this.url(resourcePath(hit.source, hit.local_id)))
+      return await this.fetchJson<RecordDetail>(this.url(recordPath(hit.source, hit.local_id)))
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) return null
       throw err
     }
   }
 
-  recordLink(d: ResourceDetail): string {
-    return this.url(resourcePath(d.source, d.local_id))
+  recordLink(d: RecordDetail): string {
+    return this.url(recordPath(d.source, d.local_id))
   }
 
-  async related(detail: ResourceDetail, limit: number): Promise<ResourceSummary[]> {
+  async related(detail: RecordDetail, limit: number): Promise<RecordSummary[]> {
     return rankRelated(detail, (await this.load()).summaries, limit)
   }
 

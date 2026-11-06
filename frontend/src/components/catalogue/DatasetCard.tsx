@@ -1,4 +1,4 @@
-import type { ResourceSummary } from '../../lib/api/types'
+import type { RecordSummary } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import {
   COMPLETENESS_BADGE,
@@ -12,7 +12,7 @@ import {
 import { DatasetTypeIcon } from './DatasetTypeIcon'
 
 interface Props {
-  dataset: ResourceSummary
+  dataset: RecordSummary
   base: string
   labels: LabelBook
 }

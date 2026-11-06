@@ -1,8 +1,8 @@
-import type { ResourceDetail, ResourceSummary } from '../api/types'
+import type { RecordDetail, RecordSummary } from '../api/types'
 import { NOT_SPECIFIED } from '../domain/facets'
 
 /** Same landscape scores 2, same theme 1 (as on the previous website); the resource itself is left out. */
-export function rankRelated(detail: ResourceDetail, candidates: ResourceSummary[], limit: number): ResourceSummary[] {
+export function rankRelated(detail: RecordDetail, candidates: RecordSummary[], limit: number): RecordSummary[] {
   const landscapes = new Set(detail.landscapes)
   const themes = new Set(detail.facets.theme?.filter((t) => t !== NOT_SPECIFIED) ?? [])
   return candidates
