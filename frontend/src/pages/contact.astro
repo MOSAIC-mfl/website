@@ -1,21 +1,6 @@
 ---
-/* The Contact page was merged into About on 2026-11-09.
-   This stub keeps old /contact links (emails, bookmarks) working by sending
-   visitors to the "Get in touch" section of /about. */
-const target = `${import.meta.env.BASE_URL}/about#contact`
+/* Merged into About on 2026-11-09 — forwards to the "Get in touch" section. */
+import RedirectStub from '../components/layout/RedirectStub.astro'
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Contact — MOSAIC</title>
-    <meta name="robots" content="noindex" />
-    <link rel="canonical" href={target} />
-    <meta http-equiv="refresh" content={`0; url=${target}`} />
-    <script is:inline define:vars={{ target }}>location.replace(target)</script>
-  </head>
-  <body>
-    <p>This page has moved to <a href={target}>About MOSAIC — Get in touch</a>.</p>
-  </body>
-</html>
+<RedirectStub to="about#contact" label="About MOSAIC — Get in touch" />
