@@ -12,6 +12,7 @@ interface Props {
     | 'building'
   size?: number
   class?: string
+  'aria-hidden'?: boolean | 'true' | 'false'
 }
 
 const { name, size = 20, class: className = '' } = Astro.props
