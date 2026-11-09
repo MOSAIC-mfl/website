@@ -34,7 +34,7 @@ const recommended = [
 const faqs = [
   { q: 'Do I need to upload my data files?', a: 'Not for now. Today MOSAIC is a catalogue: your data stays wherever it is hosted (a CGIAR data portal, an institutional server, a drive) and the record describes it and points to it. In a later phase, the plan is to make the open datasets themselves directly available through MOSAIC — datasets that already have a home will keep being linked at their source.' },
   { q: 'Can I register a dataset before the data is publicly available?', a: 'Yes. Register it with Internal or Restricted access: the dataset becomes discoverable while access itself stays managed through your centre\'s normal procedures.' },
-  { q: 'What if my dataset doesn\'t fit the controlled vocabulary?', a: 'Contact the MOSAIC team via the Contact page. The controlled vocabularies are reviewed periodically and new values can be proposed.' },
+  { q: 'What if my dataset doesn\'t fit the controlled vocabulary?', a: 'Contact the MOSAIC team (see Get in touch on the About page). The controlled vocabularies are reviewed periodically and new values can be proposed.' },
   { q: 'What does quality control check?', a: 'After acceptance, the MOSAIC team opens and reads the data, checks the coordinate reference system, and confirms the spatial extent and time period against the record. The current stage shows as the readiness status on each dataset page. If issues appear, you are tagged on a GitHub issue — a dataset is never removed without notifying the contributor.' },
   { q: 'Can I update a dataset after it is published?', a: 'Yes. Open an update issue describing the change — or, if you use Git, edit the dataset\'s record file and open a pull request. Every change is validated before going live and each record\'s history stays visible.' },
   { q: 'Who owns the data — and the license?', a: 'Ownership stays with the contributing centre or organisation, now and in any future phase. Each record carries the license the contributor declares, and access-level decisions are the contributor\'s. (The website\'s own content is CC BY 4.0.)' },
@@ -51,7 +51,7 @@ const faqs = [
   >
     <div class="hero-actions">
       <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a new dataset</a>
-      <a class="btn btn-secondary" href={`${base}/contact`}>Ask before contributing</a>
+      <a class="btn btn-secondary" href={`${base}/about#contact`}>Ask before contributing</a>
     </div>
     <p class="hero-note">4 required fields · about 2 minutes · via GitHub or plain email</p>
   </PageHero>
@@ -104,7 +104,7 @@ const faqs = [
       <ul class="bullets">
         <li>
           <strong>No GitHub account?</strong> Email the four required fields (title, landscape, country,
-          contact) to the <a href={`${base}/contact`}>MOSAIC coordinator</a> — we register it for you and
+          contact) to the <a href={`${base}/about#contact`}>MOSAIC coordinator</a> — we register it for you and
           send back the published link.
         </li>
         <li>
@@ -114,7 +114,7 @@ const faqs = [
         </li>
         <li>
           <strong>Many datasets at once?</strong> Send your centre's inventory (a spreadsheet is fine) to the
-          <a href={`${base}/contact`}>MOSAIC coordinator</a> — we run a scripted import and return draft records for your review.
+          <a href={`${base}/about#contact`}>MOSAIC coordinator</a> — we run a scripted import and return draft records for your review.
         </li>
         <li>
           <strong>Updating an existing dataset?</strong> <a href={updateIssueUrl} target="_blank" rel="noopener noreferrer">Open an update issue</a> describing the change.
@@ -145,7 +145,7 @@ const faqs = [
     title="Put your dataset on the map."
     body="Every record makes the landscapes' shared evidence base stronger — and your work citable and findable."
     primaryCta={{ label: 'Register a new dataset', href: newDatasetUrl, target: '_blank' }}
-    secondaryCta={{ label: 'Contact the MOSAIC team', href: `${base}/contact` }}
+    secondaryCta={{ label: 'Contact the MOSAIC team', href: `${base}/about#contact` }}
   >
     <img slot="art" src={`${base}/illustrations/seedling.png`} alt="" />
     <StickyNote slot="sticky" tint="amber" rotate={3}>Thank you for being part of the MOSAIC community!</StickyNote>
