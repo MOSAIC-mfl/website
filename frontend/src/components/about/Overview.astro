@@ -1,0 +1,53 @@
+---
+/* About › Overview — what MOSAIC is and who it serves. */
+import ContentCard from '../ui/ContentCard.astro'
+
+const base = import.meta.env.BASE_URL
+---
+
+<div class="ov-split">
+  <div class="ov-text">
+    <p>
+      MOSAIC is a catalogue and set of connectors that show what geospatial data exists for living
+      landscapes, who produced it, at what resolution and time period, and how to access it. Its
+      guiding principle is to connect, not duplicate: it links the global data services the world
+      already maintains with the local datasets only CGIAR holds.
+    </p>
+    <p>
+      Data files stay with the institution that produced them and are linked from each catalogue
+      entry. Every entry carries a readiness status, from first registration through to
+      analytics-ready.
+    </p>
+  </div>
+  <div class="ov-art" aria-hidden="true">
+    <img src={`${base}/illustrations/network-diagram.png`} alt="" />
+  </div>
+</div>
+
+<h3 class="ov-h3">Who it serves</h3>
+<p class="ov-lead">Anyone working with data for living landscapes — research institutions, universities, public agencies, NGOs, landscape initiatives and independent researchers.</p>
+<div class="ov-cards">
+  <ContentCard icon="users" title="Data users" tint="teal">
+    Researchers, GIS analysts, decision-makers and landscape teams who need to know what data
+    exists for a landscape and how to get it.
+  </ContentCard>
+  <ContentCard icon="upload" title="Data contributors" tint="amber">
+    Data stewards and focal points who want their datasets to be findable, documented and
+    reusable. <a href="#contribute">How to contribute &rarr;</a>
+  </ContentCard>
+</div>
+
+<style>
+  .ov-split { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-8); align-items: center; margin-bottom: var(--space-12); }
+  .ov-text p { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-4); }
+  .ov-text p:last-child { margin-bottom: 0; }
+  .ov-art img { display: block; width: 100%; height: auto; }
+  .ov-h3 { font-size: var(--text-2xl); margin: 0 0 var(--space-3); }
+  .ov-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; line-height: 1.6; }
+  .ov-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .ov-cards a { color: var(--mosaic-teal); font-weight: 600; }
+  :global([data-theme='dark']) .ov-cards a { color: var(--mosaic-light-teal); }
+  @media (max-width: 767px) {
+    .ov-split, .ov-cards { grid-template-columns: 1fr; }
+  }
+</style>

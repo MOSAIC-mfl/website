@@ -1,0 +1,57 @@
+---
+/* About › Get in touch (the former Contact page; /contact redirects here). */
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import ContentCard from '../ui/ContentCard.astro'
+import CoordinatorCard from '../ui/CoordinatorCard.astro'
+
+const base = import.meta.env.BASE_URL
+const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
+// Dataset records live in the catalog repo — dataset corrections go there.
+const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
+const siteUrl = 'https://mosaic-mfl.github.io/website/'
+
+// Show the photo only if the file is actually present; otherwise CoordinatorCard
+// renders the "LL" initials fallback.
+const hasPhoto = existsSync(fileURLToPath(new URL('../../../public/illustrations/lizeth-llanos.jpg', import.meta.url)))
+
+const issueCards = [
+  { icon: 'alert-circle', title: 'Report a problem', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
+  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalogue entry.' },
+  { icon: 'file', title: 'Fix content', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
+  { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
+] as const
+
+const contactRows = [
+  // Email intentionally a clearly-marked placeholder — do not invent an address.
+  { icon: 'mail', label: 'Email', value: 'Contact email — to be confirmed' },
+  { icon: 'globe', label: 'Website', value: 'mosaic-mfl.github.io/website', href: siteUrl },
+]
+---
+
+<p class="gt-lead">The fastest way to reach the team is a GitHub issue — pick the one that fits:</p>
+<div class="gt-cards">
+  {issueCards.map((c) => (
+    <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
+      {c.body}
+    </ContentCard>
+  ))}
+</div>
+<p class="gt-lead gt-direct-lead">For anything else, contact the MOSAIC coordinator:</p>
+<div class="gt-direct">
+  <CoordinatorCard
+    name="Lizeth Llanos"
+    role="MFL Geospatial Coordinator"
+    orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Programme"]}
+    photo={hasPhoto ? `${base}/illustrations/lizeth-llanos.jpg` : undefined}
+    rows={contactRows}
+  />
+</div>
+
+<style>
+  .gt-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; line-height: 1.6; }
+  .gt-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .gt-direct-lead { margin-top: var(--space-12); margin-bottom: var(--space-4); }
+  .gt-direct { max-width: 640px; }
+  @media (max-width: 600px) { .gt-cards { grid-template-columns: 1fr; } }
+</style>

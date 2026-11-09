@@ -1,0 +1,27 @@
+---
+/* A page that only forwards an old address to its new home, so links already
+   shared (emails, bookmarks, other sites) keep working. Not indexed. */
+interface Props {
+  /** Path after the base, e.g. "about#contact". */
+  to: string
+  /** Name of the destination, shown if the redirect does not happen. */
+  label: string
+}
+const { to, label } = Astro.props
+const target = `${import.meta.env.BASE_URL}/${to}`
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{label} — MOSAIC</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={target} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script is:inline define:vars={{ target }}>location.replace(target)</script>
+  </head>
+  <body>
+    <p>This page has moved to <a href={target}>{label}</a>.</p>
+  </body>
+</html>
