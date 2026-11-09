@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
 import { CatalogueFilter } from '../../components/catalogue/CatalogueFilter'
-import LandscapeLocatorMap from '../../components/catalogue/LandscapeLocatorMap.astro'
 import { loadDatasets } from '../../utils/loadDatasets'
 import { countCountries } from '../../utils/countries'
 
@@ -49,6 +48,7 @@ const countries   = countCountries(datasets)
         <span class="catalogue-stat-value">{countries}</span>
         <span class="catalogue-stat-label">countries</span>
       </span>
+      <a class="catalogue-maplink" href={`${base}/landscapes`}>See the landscapes on a map &rarr;</a>
     </p>
 
     <!-- ── Search + Filters + Results (primary task) ─────────── -->
@@ -63,11 +63,6 @@ const countries   = countCountries(datasets)
       </div>
     </noscript>
     <CatalogueFilter client:visible datasets={datasets} base={base} />
-
-    <!-- ── Locator map (supporting context) ──────────────────── -->
-    <div class="catalogue-locator-wrap">
-      <LandscapeLocatorMap />
-    </div>
 
     <!-- ── Technical access (secondary, for advanced users) ──── -->
     <p class="catalogue-band catalogue-tech-access">

@@ -1,0 +1,279 @@
+{
+  "_meta": {
+    "status": "draft — pending review by Lizeth Llanos",
+    "drafted": "2026-11-09",
+    "note": "Short landscape descriptions for the Landscapes page. Only public web sources are listed here; the full source list (incl. internal programme documents) is kept out of the public website code.",
+    "revised": "2026-11-09 — 'why_it_matters' rewritten to one pattern (what the place provides, then what threatens it); programme-work clauses removed; COL-CUM summary drops the unconfirmed reserve clause; KEN-LEI shows its summary only until a focal point confirms."
+  },
+  "profiles": {
+    "CIV-NZ": {
+      "summary": "The N'Zi river basin, the largest left-bank tributary of the Bandama, flowing south from the Ferkessédougou area through central Côte d'Ivoire.",
+      "ecosystem": "Forest–savanna transition zone along the N'Zi river and its lowland valleys.",
+      "livelihoods": "Smallholder farming, including lowland and irrigated rice.",
+      "why_it_matters": "Inland valleys support lowland rice farming, but the basin swings between severe low flows and floods.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://en.wikipedia.org/wiki/Nzi_River",
+          "note": "N'Zi is a tributary of the Bandama"
+        },
+        {
+          "field": "summary",
+          "source": "https://ajol.info/index.php/rafea/article/view/240313/227189",
+          "note": "Sub-basin of the Bandama; rises near Ferkessédougou, flows north to south; largest left-bank tributary"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://core.ac.uk/download/478275034.pdf",
+          "note": "M'Bahiakro dam serves irrigated rice in the N'Zi basin"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://ajol.info/index.php/rafea/article/view/240313/227189",
+          "note": "Low-flow vulnerability across the watershed; significant recent floods"
+        }
+      ]
+    },
+    "COL-CUM": {
+      "summary": "A high Andean area of Cumbal municipality in Nariño, near the Ecuador border.",
+      "ecosystem": "Andean highlands and páramo around the Cumbal volcano.",
+      "livelihoods": "Dairy cattle, potato farming and traditional 'shagra' plots with Andean tubers.",
+      "why_it_matters": "Its páramo supplies water, and family plots keep neglected Andean crops such as oca and mashua in use.",
+      "confidence": "high",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://en.wikipedia.org/wiki/Cumbal",
+          "note": "Municipality in Nariño; town at ~3,172 m; Pasto indigenous homeland; resguardos"
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://en.wikipedia.org/wiki/Cumbal",
+          "note": "Cumbal and Chiles volcanoes; cold and páramo thermal zones"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://es.mongabay.com/2026/09/custodios-agua-paramo-cumbal-colombia/",
+          "note": "Páramo partly replaced by small family farms for dairy cattle and potato"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://es.mongabay.com/2026/09/custodios-agua-paramo-cumbal-colombia/",
+          "note": "Páramo as water source ('custodians of water')"
+        }
+      ]
+    },
+    "ETH-OG": {
+      "summary": "Ethiopia's Omo-Gibe river basin, draining from the southwestern highlands south to Lake Turkana on the Kenya border.",
+      "ecosystem": "Highland-to-lowland mosaic of farmland, river corridors and national parks (Omo, Mago).",
+      "livelihoods": "Crop–livestock farming; flood-recession farming along the lower Omo.",
+      "why_it_matters": "The Omo supplies most of Lake Turkana's water and feeds the Gibe hydropower dams, but land degradation is a key concern.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://en.wikipedia.org/wiki/Omo_River",
+          "note": "Omo formed by Gibe and Gojeb; flows to Lake Turkana"
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://en.wikipedia.org/wiki/Omo_River",
+          "note": "River passes Mago and Omo National Parks"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://en.wikipedia.org/wiki/Omo_River",
+          "note": "Lower Omo peoples depend on flood-retreat cultivation"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://en.wikipedia.org/wiki/Omo_River",
+          "note": "~90% of Lake Turkana inflow; Gibe I/II/III hydropower; overgrazing and deforestation raise silt"
+        }
+      ]
+    },
+    "IND-CH": {
+      "summary": "Six districts of central India — Jhansi in Uttar Pradesh and Tikamgarh, Chhatarpur, Damoh, Jabalpur and Mandla in Madhya Pradesh — partly within Bundelkhand.",
+      "ecosystem": "Rainfed cropland, forests and open natural ecosystems on a hot, sub-humid upland.",
+      "livelihoods": "Rainfed smallholder farming, livestock keeping and use of common lands.",
+      "why_it_matters": "Rainfed farms and common lands sustain rural livelihoods, but recurrent drought, erratic rainfall and degraded commons strain farming and water.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://www.understandupsc.com/bundelkhand-region/",
+          "note": "Jhansi, Tikamgarh, Chhatarpur, Damoh are Bundelkhand districts (Mandla and Jabalpur are not)"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://www.downtoearth.org.in/environment/bundelkhands-cycle-of-droughts-is-it-manmade-44677",
+          "note": "Bundelkhand agriculture predominantly rainfed"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://www.downtoearth.org.in/environment/bundelkhands-cycle-of-droughts-is-it-manmade-44677",
+          "note": "Recurrent drought in Bundelkhand"
+        }
+      ]
+    },
+    "KEN-LEI": {
+      "summary": "Four Kenyan counties around Nairobi — Kajiado, Kiambu, Machakos and Makueni — including the semi-arid rangelands of southern Kenya.",
+      "ecosystem": null,
+      "livelihoods": null,
+      "why_it_matters": null,
+      "confidence": "low",
+      "sources": [
+        {
+          "field": "ecosystem",
+          "source": "https://link.springer.com/content/pdf/10.1007%2F978-1-4020-4906-4_9.pdf",
+          "note": "Kajiado/Amboseli rangelands converting to cropland and settlements"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://www.ilri.org/news/local-pastoralist-institutions-can-regenerate-rangelands-through-better-organized-management",
+          "note": "Pastoralist rangeland institutions in Kenya"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://frontierspartnerships.org/journals/pastoralism-research-policy-and-practice/articles/10.1186/s13570-016-0070-0/full",
+          "note": "Land-use change, subdivision and drought in Kajiado rangelands"
+        }
+      ]
+    },
+    "KEN-LVB": {
+      "summary": "Four densely settled counties of western Kenya — Kakamega, Kisumu, Siaya and Vihiga — draining into Lake Victoria.",
+      "ecosystem": "Small-farm cropland mosaic, Lake Victoria shoreline and remnant forest.",
+      "livelihoods": "Smallholder maize and beans, sugarcane and tea, and lake fishing.",
+      "why_it_matters": "Small farms and Lake Victoria's fishery support a very dense population, but land degradation and a stressed fishery put both under pressure.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://en.wikipedia.com/wiki/West_Kenya",
+          "note": "Vihiga most densely populated rural area in Kenya; tea"
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://cgspace.cgiar.org/server/api/core/bitstreams/5d1bf666-6b4d-4eba-80ef-3746e663a7d2/content",
+          "note": "Kakamega maize and sugarcane zones; degradation (Kakamega/Siaya brief)"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://repository.maseno.ac.ke/handle/123456789/307",
+          "note": "Smallholder agriculture in West Kenya"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://cgspace.cgiar.org/server/api/core/bitstreams/5d1bf666-6b4d-4eba-80ef-3746e663a7d2/content",
+          "note": "Land degradation in Kakamega and Siaya"
+        }
+      ]
+    },
+    "MEK-3S": {
+      "summary": "The Sekong, Sesan and Srepok river basins, Mekong tributaries shared by Laos, Cambodia and Vietnam.",
+      "ecosystem": "Forested uplands, rivers and floodplains, with rice fields and hydropower reservoirs.",
+      "livelihoods": "Rice farming and river fishing.",
+      "why_it_matters": "About 10% of the Mekong watershed but nearly 40% of Lower Mekong fish species, and dams are changing its flows and fisheries.",
+      "confidence": "high",
+      "sources": [
+        {
+          "field": "ecosystem",
+          "source": "https://www.nature.com/articles/s41598-023-35665-9",
+          "note": "Hydropower dams in the 3S basins"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://www.nature.com/articles/s41598-023-35665-9",
+          "note": "3S = 10% of Mekong watershed, ~40% of LMB fish species; dams reduce fish biodiversity"
+        }
+      ]
+    },
+    "PER-PCL": {
+      "summary": "Lowland Amazon area around Pucallpa in Ucayali, covering districts of Coronel Portillo and Padre Abad provinces along the Pucallpa–Aguaytía corridor.",
+      "ecosystem": "Amazon rainforest, secondary forest, pasture and cropland.",
+      "livelihoods": "Cattle ranching, oil palm, cacao, coffee, plantain and fish farming.",
+      "why_it_matters": "Amazon forest is being cleared on a frontier driven by pasture and oil palm expansion.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "livelihoods",
+          "source": "https://amazonconservation.org/maap-synthesis-2-patterns-and-drivers-of-deforestation-in-the-peruvian-amazon",
+          "note": "Cattle pasture and oil palm in Ucayali"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://core.ac.uk/download/132677326.pdf",
+          "note": "Deforestation drivers around Pucallpa: logging, shifting cultivation, pasture, oil palm"
+        }
+      ]
+    },
+    "SEN-FK": {
+      "summary": "Fatick Department in west-central Senegal, a Sudano-Sahelian farming area in the former Sine-Saloum region.",
+      "ecosystem": "Rainfed cropland with scattered trees, and salt-affected land along the Sine River.",
+      "livelihoods": "Rainfed millet and groundnut, livestock, fishing and salt production.",
+      "why_it_matters": "Its farmland and trees underpin local food production, but declining rainfall, soil salinization and falling fertility threaten them.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "ecosystem",
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8036228",
+          "note": "Salinization in Fatick / Sine-Saloum (search summary; verify)"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://agritrop.cirad.fr/611371/8/611371eng.pdf",
+          "note": "Rainfed millet, groundnut, cowpea; sylvopastoral livestock; fishing; saliculture"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://agritrop.cirad.fr/611371/8/611371eng.pdf",
+          "note": "Salinization, soil fertility decline, rainfall decline since 1970s"
+        }
+      ]
+    },
+    "TUN-NW": {
+      "summary": "Seven rural sectors of Le Kef and Siliana governorates in semi-arid northwestern Tunisia.",
+      "ecosystem": "Rainfed cereal land, olive groves, rangeland and forest patches on erosion-prone hills.",
+      "livelihoods": "Small mixed farms: cereals, olives and sheep and goats.",
+      "why_it_matters": "Its hills carry cereals, olives and grazing for small farms, but water erosion is stripping their thin soils.",
+      "confidence": "high",
+      "sources": [
+        {
+          "field": "ecosystem",
+          "source": "https://cgiar.org/news-events/news/in-northwest-tunisia-the-co-creation-of-agroecological-innovations-and-capacity-building-in-soil-conservation-are-leading-to-improved-agricultural-systems",
+          "note": "Olive and rainfed cereals; erosion"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://www.cgiar.org/initiative/agroecology/where-we-work/Tunisia",
+          "note": "El Kef-Siliana: semi-arid, mixed cereal–tree–small ruminant systems"
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://www.ifpri.org/blog/conservation-and-restoration-actions-in-a-multifunctional-landscape-lessons-from-tunisia/",
+          "note": "Water erosion as main degradation"
+        }
+      ]
+    },
+    "ZWE-MB": {
+      "summary": "Four districts of Zimbabwe's Zambezi Valley — Mbire, Muzarabani, Mount Darwin and Hurungwe — a semi-arid crop, livestock and wildlife landscape.",
+      "ecosystem": "Cropland, shrubland, forest and rivers, alongside wildlife areas.",
+      "livelihoods": "Cotton, sorghum and finger millet farming; cattle and goats.",
+      "why_it_matters": "Farms and wildlife areas share the valley, so crop damage and human–wildlife conflict weigh on both.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "livelihoods",
+          "source": "https://zela.org/land-use-planning-and-human-wildlife-conflict-in-the-zambezi-valley/",
+          "note": "Cotton, finger millet and sorghum most common in Mbire; conservancies"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://agris.fao.org/search/en/records/65dfaf300f3e94b9e5db58da",
+          "note": "Shift from cotton to cattle and goats in Mbire (2022 study; verify citation)"
+        }
+      ]
+    }
+  }
+}

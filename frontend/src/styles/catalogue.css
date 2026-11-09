@@ -42,7 +42,7 @@
   gap: 0.4rem;
 }
 
-.catalogue-stat:not(:last-child)::after {
+.catalogue-stat:not(:last-of-type)::after {
   content: "·";
   margin-left: 1.15rem;
   color: var(--color-gray-400);
@@ -62,6 +62,17 @@
   font-size: var(--text-sm);
   color: var(--color-muted);
 }
+
+/* Link to the Landscapes page, which took over the locator map (2026-11-09). */
+.catalogue-maplink {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mosaic-teal);
+  text-decoration: none;
+}
+.catalogue-maplink:hover { text-decoration: underline; }
+[data-theme="dark"] .catalogue-maplink { color: var(--mosaic-light-teal); }
 
 /* ── Layout ──────────────────────────────────────────────────── */
 .catalogue-locator-wrap {
