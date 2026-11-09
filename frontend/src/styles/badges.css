@@ -23,7 +23,7 @@
      Open (green) · Restricted (terracotta) · Internal (grey)          */
 
 /* Readiness status */
-.badge-raw,       .status-raw         { background: #ECEAE3; color: #6B7A85; }  /* neutral — just registered      */
+.badge-raw,       .status-raw         { background: #ECEAE3; color: #5A6872; }  /* neutral — just registered      */
 .badge-processed, .status-processed   { background: #F6E6CE; color: #99590F; }  /* amber — being processed        */
 .badge-validated, .status-validated   { background: #D6EEF2; color: #0D5C6B; }  /* teal  — validated / trusted    */
 /* Legacy status classes retained for any older references */
