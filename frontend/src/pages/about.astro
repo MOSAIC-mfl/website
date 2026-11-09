@@ -1,18 +1,36 @@
 ---
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import PageHero from '../components/ui/PageHero.astro'
-import IconChip from '../components/ui/IconChip.astro'
 import ContentCard from '../components/ui/ContentCard.astro'
-import InfoCallout from '../components/ui/InfoCallout.astro'
+import CoordinatorCard from '../components/ui/CoordinatorCard.astro'
 
 const base = import.meta.env.BASE_URL
 
-const pillars = [
-  { icon: 'link', label: 'Connect', caption: 'Linking global data with local datasets across landscapes.', tint: 'teal' },
-  { icon: 'users', label: 'Collaborate', caption: 'Bringing together people, centres and data.', tint: 'amber' },
-  { icon: 'search', label: 'Discover', caption: 'Find the right data, at the right time, with confidence.', tint: 'light-teal' },
-  { icon: 'sparkles', label: 'Create impact', caption: 'Turning spatial information into better decisions for people and nature.', tint: 'terracotta' },
+/* Get in touch — merged here from the former Contact page (2026-11-09);
+   /contact now redirects to /about#contact. */
+const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
+// Dataset records live in the catalog repo — dataset corrections go there.
+const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
+const siteUrl = 'https://mosaic-mfl.github.io/website/'
+
+// Show the photo only if the file is actually present; otherwise CoordinatorCard
+// renders the "LL" initials fallback.
+const hasPhoto = existsSync(fileURLToPath(new URL('../../public/illustrations/lizeth-llanos.jpg', import.meta.url)))
+
+const issueCards = [
+  { icon: 'alert-circle', title: 'Report a problem', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
+  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalogue entry.' },
+  { icon: 'file', title: 'Fix content', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
+  { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
 ] as const
+
+const contactRows = [
+  // Email intentionally a clearly-marked placeholder — do not invent an address.
+  { icon: 'mail', label: 'Email', value: 'Contact email — to be confirmed' },
+  { icon: 'globe', label: 'Website', value: 'mosaic-mfl.github.io/website', href: siteUrl },
+]
 
 /* Acknowledgements — official CGIAR / Science Programme lockups, used as supplied
    and always on a white plate so they show in CGIAR's own colours in both themes
@@ -44,22 +62,14 @@ const acknowledgements = [
 
 ---
 
-<BaseLayout title="About" description="About MOSAIC — what it is and who it serves.">
+<BaseLayout title="About" description="About MOSAIC — what it is, who it serves and how to get in touch.">
   <PageHero
     variant="light"
     compact
     contours
     title="About MOSAIC"
-    subtitle="An open geospatial data network for living landscapes."
-    subtitle2="MOSAIC helps institutions, researchers and landscape initiatives connect datasets, improve discoverability and support evidence-based decisions — with support from the CGIAR Multifunctional Landscapes Science Programme."
+    subtitle="An open geospatial data network for living landscapes, with support from the CGIAR Multifunctional Landscapes Science Programme."
   />
-
-  <!-- Pillars -->
-  <div class="container about-pillars">
-    {pillars.map((p) => (
-      <IconChip icon={p.icon} label={p.label} caption={p.caption} tint={p.tint} align="center" />
-    ))}
-  </div>
 
   <div class="container about-body">
 
@@ -68,27 +78,15 @@ const acknowledgements = [
       <div class="about-split-text">
         <h2 class="about-h2">What MOSAIC is<svg class="wavy" width="64" height="8" viewBox="0 0 64 8" fill="none" aria-hidden="true"><path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></h2>
         <p>
-          MOSAIC is an open geospatial data network for living landscapes — a catalogue and set of
-          connectors that make it easier to discover, compare and use spatial data from many sources.
-          It is built by the CGIAR Multifunctional Landscapes Science Programme and open to the wider
-          community working on living landscapes.
+          MOSAIC is a catalogue and set of connectors that show what geospatial data exists for living
+          landscapes, who produced it, at what resolution and time period, and how to access it. Its
+          guiding principle is to connect, not duplicate: it links the global data services the world
+          already maintains with the local datasets only CGIAR holds.
         </p>
         <p>
-          It is the data discovery and contribution layer for the CGIAR Multifunctional Landscapes
-          Science Programme. Its guiding principle is to connect, not duplicate: linking to the
-          global data services the world already maintains and combining them with the local datasets
-          only CGIAR holds.
-        </p>
-        <p>
-          MOSAIC makes it possible to find out what geospatial data exists across the programme, who
-          produced it, at what resolution and time period, and how to access it. Each dataset entry
-          carries a readiness status that tells you how far along the quality control process it is —
-          from first registration through to analytics-ready.
-        </p>
-        <p>
-          MOSAIC is a catalogue, not a file repository. Data files remain hosted by the contributing
-          CGIAR centre and are linked from the catalogue entry. This keeps data ownership and
-          maintenance with the people who know the data best.
+          Data files stay with the institution that produced them and are linked from each catalogue
+          entry. Every entry carries a readiness status, from first registration through to
+          analytics-ready.
         </p>
       </div>
       <div class="about-split-art" aria-hidden="true">
@@ -99,28 +97,41 @@ const acknowledgements = [
     <!-- Who it serves -->
     <section class="about-serves">
       <h2 class="about-h2">Who it serves<svg class="wavy" width="64" height="8" viewBox="0 0 64 8" fill="none" aria-hidden="true"><path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></h2>
-      <p class="about-lead">MOSAIC serves anyone working with data for living landscapes — across institutions, disciplines and roles. Two groups use it most:</p>
+      <p class="about-lead">Anyone working with data for living landscapes — research institutions, universities, public agencies, NGOs, landscape initiatives and independent researchers.</p>
       <div class="about-cards">
         <ContentCard icon="users" title="Data users" tint="teal">
-          Researchers, GIS analysts, decision-makers and landscape teams who need to know what
-          geospatial data exists for a landscape, whether it is available, and how to get it.
+          Researchers, GIS analysts, decision-makers and landscape teams who need to know what data
+          exists for a landscape and how to get it.
         </ContentCard>
         <ContentCard icon="upload" title="Data contributors" tint="amber">
-          Institutions, data stewards and focal points — at CGIAR centres, universities, agencies,
-          NGOs and landscape initiatives — who produce datasets and want to make them findable,
-          documented and reusable.
+          Data stewards and focal points who want their datasets to be findable, documented and
+          reusable. <a href={`${base}/contribute`}>How to contribute &rarr;</a>
         </ContentCard>
       </div>
     </section>
 
-    <!-- Open to the wider community -->
-    <InfoCallout variant="note-teal" icon="leaf">
-      MOSAIC is open to the wider community working on living landscapes — research institutions,
-      universities, public agencies, NGOs, landscape initiatives and independent researchers.
-      Appropriately licensed datasets can be discovered, cited and reused, with access managed by
-      each data owner.
-      <img slot="art" src={`${base}/illustrations/hand-with-sprout.png`} alt="" />
-    </InfoCallout>
+    <!-- Get in touch (formerly the Contact page) -->
+    <section class="about-contact" id="contact">
+      <h2 class="about-h2">Get in touch<svg class="wavy" width="64" height="8" viewBox="0 0 64 8" fill="none" aria-hidden="true"><path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></h2>
+      <p class="about-lead">The fastest way to reach the team is a GitHub issue — pick the one that fits:</p>
+      <div class="contact-cards">
+        {issueCards.map((c) => (
+          <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
+            {c.body}
+          </ContentCard>
+        ))}
+      </div>
+      <p class="about-lead contact-direct-lead">For anything else, contact the MOSAIC coordinator:</p>
+      <div class="contact-direct">
+        <CoordinatorCard
+          name="Lizeth Llanos"
+          role="MFL Geospatial Coordinator"
+          orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Programme"]}
+          photo={hasPhoto ? `${base}/illustrations/lizeth-llanos.jpg` : undefined}
+          rows={contactRows}
+        />
+      </div>
+    </section>
 
     <!-- Acknowledgements -->
     <section class="about-ack" id="acknowledgements">
@@ -149,28 +160,8 @@ const acknowledgements = [
 </BaseLayout>
 
 <style>
-  /* Pillars */
-  .about-pillars {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-6);
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-4);
-  }
-
-  /* Short colour line under each pillar, tinted to match its icon
-     (kept identical to the former home pillars). */
-  .about-pillars :global(.icon-chip)::after {
-    content: "";
-    width: 36px;
-    height: 3px;
-    margin-top: var(--space-4);
-    border-radius: var(--radius-full);
-    background: var(--chip-fg);
-  }
-
   .about-body {
-    padding-top: var(--space-8);
+    padding-top: var(--space-12);
     padding-bottom: var(--space-16);
     display: flex;
     flex-direction: column;
@@ -199,6 +190,12 @@ const acknowledgements = [
   /* Who it serves */
   .about-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 60ch; }
   .about-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+
+  /* Get in touch */
+  .about-contact { scroll-margin-top: var(--space-16); }
+  .contact-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+  .contact-direct-lead { margin-top: var(--space-8); margin-bottom: var(--space-4); }
+  .contact-direct { max-width: 640px; }
 
   /* Acknowledgements */
   .ack-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
@@ -245,15 +242,14 @@ const acknowledgements = [
   :global([data-theme="dark"]) .about-ack-note a { color: var(--mosaic-light-teal); }
 
   @media (max-width: 1023px) {
-    .ack-cards { grid-template-columns: 1fr 1fr; }
+    .ack-cards, .contact-cards { grid-template-columns: 1fr 1fr; }
   }
 
   @media (max-width: 767px) {
-    .about-pillars { grid-template-columns: 1fr 1fr; }
     .ack-cards { grid-template-columns: 1fr; }
     .about-split, .about-cards { grid-template-columns: 1fr; }
   }
-  @media (max-width: 480px) {
-    .about-pillars { grid-template-columns: 1fr; }
+  @media (max-width: 520px) {
+    .contact-cards { grid-template-columns: 1fr; }
   }
 </style>

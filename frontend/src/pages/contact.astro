@@ -1,123 +1,21 @@
 ---
-import { existsSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import BaseLayout from '../layouts/BaseLayout.astro'
-import PageHero from '../components/ui/PageHero.astro'
-import ContentCard from '../components/ui/ContentCard.astro'
-import CtaBand from '../components/ui/CtaBand.astro'
-import CoordinatorCard from '../components/ui/CoordinatorCard.astro'
-import StickyNote from '../components/ui/StickyNote.astro'
-
-const base = import.meta.env.BASE_URL
-const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
-// Dataset records live in the catalog repo — dataset corrections go there.
-const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
-const siteUrl = 'https://mosaic-mfl.github.io/website/'
-
-// Show the photo only if the file is actually present; otherwise CoordinatorCard
-// renders the "LL" initials fallback. (Lizeth can drop lizeth-llanos.jpg in later.)
-const hasPhoto = existsSync(fileURLToPath(new URL('../../public/illustrations/lizeth-llanos.jpg', import.meta.url)))
-
-const issueCards = [
-  { icon: 'alert-circle', title: 'Report a broken page or incorrect data', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: "Let us know if you found something that's not working or looks wrong." },
-  { icon: 'file-text', title: 'Request a dataset update or correction', tint: 'amber', href: catalogIssueUrl, body: 'Suggest changes to improve existing dataset information.' },
-  { icon: 'file', title: 'Suggest a content or documentation fix', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Help us improve guides, descriptions, or any content on the site.' },
-  { icon: 'sparkles', title: 'Propose a new feature or improvement', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: "Have an idea to make MOSAIC even better? We'd love to hear it!" },
-] as const
-
-const contactRows = [
-  // Email intentionally a clearly-marked placeholder — do not invent an address.
-  { icon: 'mail', label: 'Email', value: 'Contact email — to be confirmed' },
-  { icon: 'globe', label: 'Website', value: 'mosaic-mfl.github.io/website', href: siteUrl },
-  { icon: 'map-pin', label: 'Location', value: 'Global' },
-]
+/* The Contact page was merged into About on 2026-11-09.
+   This stub keeps old /contact links (emails, bookmarks) working by sending
+   visitors to the "Get in touch" section of /about. */
+const target = `${import.meta.env.BASE_URL}/about#contact`
 ---
 
-<BaseLayout title="Contact" description="Get in touch with the MOSAIC team.">
-  <PageHero
-    variant="light"
-    compact
-    contours
-    title="Contact"
-    subtitle="Questions, corrections, or contributions — we want to hear from you."
-    subtitle2="Together we can keep MOSAIC accurate, useful, and growing for everyone."
-  />
-
-  <div class="container contact-body">
-
-    <!-- Report an issue -->
-    <section class="contact-issues">
-      <h2 class="contact-h2">Report an issue or request a feature</h2>
-      <p class="contact-lead">The fastest way to reach the MOSAIC team is through GitHub Issues. Use the appropriate template:</p>
-      <div class="contact-cards">
-        {issueCards.map((c) => (
-          <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
-            {c.body}
-          </ContentCard>
-        ))}
-      </div>
-    </section>
-  </div>
-
-  <!-- Contribute a dataset -->
-  <CtaBand
-    variant="soft"
-    tint="teal"
-    title="Contribute a dataset"
-    body="If you are a CGIAR data steward or focal point with a dataset to register, start at the How to contribute page. It walks you through what you need and what to expect."
-    primaryCta={{ label: 'Go to How to contribute', href: `${base}/contribute` }}
-  >
-    <img slot="art" src={`${base}/illustrations/seedling.png`} alt="" />
-    <StickyNote slot="sticky" tint="amber" rotate={3}>Your data makes a difference!</StickyNote>
-  </CtaBand>
-
-  <div class="container contact-body">
-    <!-- Direct contact -->
-    <section class="contact-direct">
-      <h2 class="contact-h2">Direct contact</h2>
-      <p class="contact-lead">For enquiries that do not fit the above, contact the MOSAIC coordinator:</p>
-      <CoordinatorCard
-        name="Lizeth Llanos"
-        role="MFL Geospatial Coordinator"
-        orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Programme"]}
-        photo={hasPhoto ? `${base}/illustrations/lizeth-llanos.jpg` : undefined}
-        rows={contactRows}
-      />
-    </section>
-  </div>
-
-  <!-- We're here to help -->
-  <CtaBand
-    variant="soft"
-    tint="sand"
-    title="We're here to help"
-    body="Whether you have a question, found an issue, or want to get involved, the MOSAIC team is happy to support you."
-  >
-    <img slot="art" src={`${base}/illustrations/paper-plane.png`} alt="" />
-    <img slot="sticky" src={`${base}/illustrations/people-talking.png`} alt="" style="width: 180px; height: auto;" />
-  </CtaBand>
-</BaseLayout>
-
-<style>
-  .contact-body {
-    padding-top: var(--space-12);
-    padding-bottom: var(--space-4);
-  }
-  .contact-h2 { margin: 0 0 var(--space-3); }
-  .contact-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 60ch; }
-
-  .contact-cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-6);
-  }
-
-  .contact-direct { max-width: 640px; }
-
-  @media (max-width: 900px) {
-    .contact-cards { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 520px) {
-    .contact-cards { grid-template-columns: 1fr; }
-  }
-</style>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Contact — MOSAIC</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={target} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script is:inline define:vars={{ target }}>location.replace(target)</script>
+  </head>
+  <body>
+    <p>This page has moved to <a href={target}>About MOSAIC — Get in touch</a>.</p>
+  </body>
+</html>
