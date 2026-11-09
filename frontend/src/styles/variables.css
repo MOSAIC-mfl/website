@@ -28,7 +28,11 @@
   --mosaic-light-teal:  #D6EEF2;   /* Light Teal  — background highlight, reverse logo */
   --mosaic-sand:        #F7F4EF;   /* Warm Sand   — page & section backgrounds  */
   --mosaic-ink:         #1C2B3A;   /* Near-black  — body text, dark sections    */
-  --mosaic-grey:        #6B7A85;   /* Muted Grey  — captions, secondary text    */
+  --mosaic-grey:        #6B7A85;   /* Muted Grey  — brand swatch (see below)    */
+  /* The brand's Muted Grey is 4.42:1 on white and 4.03:1 on Warm Sand — below the 4.5:1
+     WCAG AA floor for normal text. Text therefore uses --color-muted (#5A6872), the same
+     hue darkened until it clears AA on every background in use. Keep the swatch above as
+     the brand reference; use it only for large text, rules and non-text marks. */
 
   /* Header & footer "bookend" colour — deeper Ocean Teal (brand request).
      Defined once so the two MOSAIC bookends always match; change here only. */
@@ -69,7 +73,7 @@
   --color-gray-100:     #F1EFEA;
   --color-gray-200:     #E2E0D9;
   --color-gray-400:     #9CA3AF;
-  --color-gray-500:     #6B7A85;   /* MOSAIC Muted Grey */
+  --color-gray-500:     #5A6872;   /* MOSAIC Muted Grey, darkened for AA text contrast */
   --color-gray-600:     #4B5563;
   --color-gray-700:     #36424B;
   --color-gray-800:     #1F2937;
@@ -83,7 +87,7 @@
   --color-surface:       #FFFFFF;
   --color-border:        #E2E0D9;
   --color-text:          #1C2B3A;
-  --color-muted:         #6B7A85;
+  --color-muted:         #5A6872;   /* Muted Grey darkened for AA — see the note above */
   --shadow-card:         0 10px 30px rgba(28, 43, 58, 0.08);
   --shadow-card-hover:   0 16px 40px rgba(28, 43, 58, 0.14);
   --radius-card:         1rem;
