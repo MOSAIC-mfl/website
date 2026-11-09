@@ -1,37 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
-import IconChip from '../../components/ui/IconChip.astro'
-import LandscapeCard from '../../components/catalogue/LandscapeCard.astro'
+import LandscapeExplorer from '../../components/landscapes/LandscapeExplorer.astro'
 import CtaBand from '../../components/ui/CtaBand.astro'
-import landscapes from '../../../data/landscapes.json'
-import datasets from '../../../data/datasets.json'
 import boundaries from '../../../data/landscape_boundaries.json'
 
 const base = import.meta.env.BASE_URL
 
 const fileSize = (bytes: number) =>
   bytes < 1e6 ? `${Math.round(bytes / 1e3)} KB` : `${(bytes / 1e6).toFixed(1)} MB`
-const boundaryByCode = new Map(
-  boundaries.landscapes.map((b) => [
-    b.code,
-    { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) },
-  ]),
-)
-
-const landscapesWithCounts = landscapes
-  .map((l) => ({
-    ...l,
-    count: datasets.filter((d) => d.living_landscape === l.code).length,
-  }))
-  .sort((a, b) => b.count - a.count)
-
-const pillars = [
-  { icon: 'map-pin', label: 'Place-based', caption: 'Real-world landscapes where we work', tint: 'teal' },
-  { icon: 'users', label: 'Collaborative', caption: 'Multiple CGIAR centres working together', tint: 'amber' },
-  { icon: 'bar-chart', label: 'Outcome-driven', caption: 'Measurable impact for people and nature', tint: 'light-teal' },
-  { icon: 'eye', label: 'Monitored', caption: 'Continuous learning and improvement', tint: 'terracotta' },
-] as const
 ---
 
 <BaseLayout title="Living Landscapes" description="Overview of the MFL Living Landscapes — the flagship landscapes where CGIAR centres work together.">
@@ -40,61 +17,14 @@ const pillars = [
     compact
     contours
     title="Living Landscapes"
-    subtitle="Flagship landscapes where CGIAR centres are working together to restore, sustain, and monitor multifunctional landscapes."
+    subtitle="The real places where CGIAR centres work together for people and nature. Pick one to see where it is, what it is like and what data exists for it."
   />
 
+  <div class="lp-wide">
+    <LandscapeExplorer />
+  </div>
+
   <div class="container lp-body">
-
-    <!-- Intro + pillars -->
-    <section class="lp-intro">
-      <div class="lp-intro-text">
-        <p>
-          Living Landscapes are the geographies where the MFL Science Programme focuses its work.
-          Each landscape is a real place — a watershed, a highland, a valley — where multiple CGIAR
-          centres are active and where the programme aims to achieve measurable outcomes for people and nature.
-        </p>
-        <div class="lp-intro-links">
-          <a href={`${base}/about`} class="lp-approach-link">About our approach &rarr;</a>
-          <a href="#download" class="lp-approach-link">Download the boundaries &darr;</a>
-        </div>
-      </div>
-      <div class="lp-chips">
-        {pillars.map((p) => (
-          <IconChip icon={p.icon} label={p.label} caption={p.caption} tint={p.tint} align="center" />
-        ))}
-      </div>
-    </section>
-
-    <!-- Search toolbar -->
-    <div class="lp-tools">
-      <div class="lp-search-wrap">
-        <span class="lp-search-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </span>
-        <label for="lp-search" class="sr-only">Search landscapes</label>
-        <input id="lp-search" type="search" class="lp-search" placeholder="Search landscapes by name, code or country…" />
-      </div>
-      <span id="lp-count" class="lp-count">Showing all landscapes</span>
-    </div>
-
-    <!-- Landscape grid -->
-    <ul class="lp-grid" id="lp-grid">
-      {landscapesWithCounts.map((l) => (
-        <li class="lp-item" data-search={`${l.name} ${l.code} ${l.country}`.toLowerCase()}>
-          <LandscapeCard
-            code={l.code}
-            name={l.name}
-            country={l.country}
-            count={l.count}
-            pending={'pending' in l && l.pending === true}
-            href={`${base}/catalogue?landscape=${l.code}`}
-            download={boundaryByCode.get(l.code)}
-          />
-        </li>
-      ))}
-    </ul>
-    <p id="lp-empty" class="lp-empty" hidden>No landscapes match your search.</p>
-
     <!-- Boundary downloads (files attached to a release of the catalog repository on GitHub) -->
     <section id="download" class="lp-download" aria-labelledby="lp-download-title">
       <h2 id="lp-download-title" class="lp-download-title">Download the boundaries</h2>
@@ -102,7 +32,7 @@ const pillars = [
         The outlines MOSAIC uses for the {boundaries.landscapes.length} living landscapes, at full detail,
         in WGS&nbsp;84 (EPSG:4326). Each source has its own terms: keep the credit with the data and in any map
         made from it. Every download includes a README with the source, licence and full credit.
-        Download all landscapes here, or one landscape from the <strong>Boundary</strong> button on its card.
+        Download all landscapes here, or one landscape with <strong>Download boundary</strong> above.
       </p>
 
       <div class="lp-download-all">
@@ -137,98 +67,18 @@ const pillars = [
 </BaseLayout>
 
 <style>
+  .lp-wide {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6) 0;
+  }
+  @media (max-width: 640px) {
+    .lp-wide { padding: var(--space-6) var(--space-4) 0; }
+  }
+
   .lp-body {
-    padding-top: var(--space-12);
+    padding-top: 0;
     padding-bottom: var(--space-16);
-  }
-
-  /* Intro + pillars */
-  .lp-intro {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: var(--space-8);
-    align-items: center;
-    margin-bottom: var(--space-12);
-  }
-  .lp-intro-text p {
-    font-size: var(--text-lg);
-    color: var(--color-muted);
-    line-height: 1.7;
-    margin: 0 0 var(--space-4);
-  }
-  .lp-approach-link {
-    font-weight: 600;
-    color: var(--mosaic-teal);
-    text-decoration: none;
-  }
-  .lp-chips {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
-  }
-
-  /* Toolbar */
-  .lp-tools {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-6);
-  }
-  .lp-search-wrap {
-    position: relative;
-    flex: 1;
-    min-width: 260px;
-    max-width: 460px;
-  }
-  .lp-search-icon {
-    position: absolute;
-    left: var(--space-3);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-muted);
-    display: inline-flex;
-  }
-  .lp-search {
-    width: 100%;
-    padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-6) + var(--space-2));
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    font-size: var(--text-base);
-    font-family: var(--font-body);
-  }
-  .lp-search:focus-visible {
-    outline: 2px solid var(--mosaic-teal);
-    outline-offset: 1px;
-    border-color: var(--mosaic-teal);
-  }
-  .lp-count {
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-  }
-
-  /* Grid */
-  .lp-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-6);
-  }
-  .lp-empty {
-    margin: var(--space-8) 0 0;
-    color: var(--color-muted);
-    font-size: var(--text-base);
-  }
-
-  .lp-intro-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
   }
 
   /* Boundary downloads */
@@ -275,44 +125,4 @@ const pillars = [
     outline-offset: 2px;
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  @media (max-width: 767px) {
-    .lp-intro { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 480px) {
-    .lp-chips { grid-template-columns: 1fr; }
-  }
 </style>
-
-<script>
-  // Lightweight client-side landscape filter (no dependency, no React island).
-  const input = document.getElementById('lp-search') as HTMLInputElement | null
-  const items = Array.from(document.querySelectorAll<HTMLElement>('.lp-item'))
-  const countEl = document.getElementById('lp-count')
-  const emptyEl = document.getElementById('lp-empty')
-  const total = items.length
-
-  function apply() {
-    const q = (input?.value ?? '').trim().toLowerCase()
-    let shown = 0
-    for (const li of items) {
-      const hay = li.getAttribute('data-search') ?? ''
-      const match = !q || hay.includes(q)
-      li.style.display = match ? '' : 'none'
-      if (match) shown++
-    }
-    if (countEl) countEl.textContent = q ? `Showing ${shown} of ${total} landscapes` : 'Showing all landscapes'
-    if (emptyEl) emptyEl.hidden = shown !== 0
-  }
-
-  input?.addEventListener('input', apply)
-</script>
