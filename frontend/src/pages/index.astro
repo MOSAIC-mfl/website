@@ -80,7 +80,7 @@ const steps = [
     <div class="container">
       <div class="stats-card">
         <div class="stat-item">
-          <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="database" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{totalDatasets}</span>
             <span class="stat-label">Datasets catalogued</span>
@@ -88,7 +88,7 @@ const steps = [
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="green" aria-hidden="true"><Icon name="mountains" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="mountains" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{landscapes}</span>
             <span class="stat-label">Landscapes with data</span>
@@ -96,7 +96,7 @@ const steps = [
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="amber" aria-hidden="true"><Icon name="globe" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="globe" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{countries}</span>
             <span class="stat-label">Countries with data</span>
@@ -180,12 +180,12 @@ const steps = [
         </svg>
       </div>
       <ul class="who-grid">
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
       </ul>
     </div>
   </section>
@@ -325,11 +325,11 @@ const steps = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-white);
+    /* neutral icons on this page (Lizeth 2026-11-10): grey disc, dark grey icon;
+       both tokens remap in the dark theme */
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-700);
   }
-  .stat-icon[data-tint="teal"]  { background-color: var(--mosaic-teal); }
-  .stat-icon[data-tint="green"] { background-color: #6F8F5F; }
-  .stat-icon[data-tint="amber"] { background-color: var(--mosaic-amber); }
   .stat-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .stat-number {
     font-family: var(--font-title);
@@ -388,9 +388,7 @@ const steps = [
     align-items: center;
     justify-content: center;
   }
-  .who-ico[data-tint="teal"]      { background: #D6EEF2; color: var(--mosaic-teal); }
-  .who-ico[data-tint="amber"]     { background: #F6E6CE; color: var(--mosaic-amber); }
-  .who-ico[data-tint="terracotta"]{ background: #F3DED6; color: var(--mosaic-terracotta); }
+  .who-ico { background-color: var(--color-gray-100); color: var(--color-gray-700); }
   @media (max-width: 900px) { .who-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
@@ -448,7 +446,7 @@ const steps = [
   .how-ico {
     width: 44px; height: 44px; border-radius: var(--radius-full);
     display: inline-flex; align-items: center; justify-content: center;
-    background-color: var(--tint); color: var(--color-white);
+    background-color: var(--color-gray-100); color: var(--color-gray-700);
   }
   .how-title { margin: var(--space-2) 0 0; font-size: var(--text-xl); }
   .how-body { margin: 0; color: var(--color-muted); line-height: 1.6; flex: 1; }
