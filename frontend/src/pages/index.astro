@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import ContentCard from '../components/ui/ContentCard.astro'
 import Icon from '../components/ui/Icon.astro'
 import { loadDatasets } from '../utils/loadDatasets'
 import { countCountries } from '../utils/countries'
@@ -12,6 +11,43 @@ const totalDatasets = datasets.length
 // 'Global' and regional values of `country` are not countries.
 const countries = countCountries(datasets)
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
+
+// "What is a living landscape?" — counts come from the landscape boundaries,
+// photos from the open-licence set used on the Landscapes page. Both files are
+// optional: without them the block keeps its text and drops the photos.
+interface Photo { file: string; width: number; height: number; alt: string; caption: string; author: string; licence: string; licence_url: string; source_url: string }
+const optional = import.meta.glob<{ default: Record<string, unknown> }>(
+  '../../data/landscape_{geo,photos}.json',
+  { eager: true },
+)
+const pick = (name: string) =>
+  Object.entries(optional).find(([k]) => k.endsWith(name))?.[1]?.default ?? {}
+const geo = (pick('landscape_geo.json') as { landscapes?: Record<string, { countries: string[] }> }).landscapes ?? {}
+const allLandscapes = Object.keys(geo).length
+const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).size
+const photoMap = (pick('landscape_photos.json') as { photos?: Record<string, Photo[]> }).photos ?? {}
+// a coast, a farm and a mountain: three very different living landscapes
+const llPhotos = ['landscapes/SEN-FK-1.jpg', 'landscapes/KEN-LVB-3.jpg', 'landscapes/COL-CUM-1.jpg']
+  .map((f) => Object.values(photoMap).flat().find((p) => p.file === f))
+  .filter((p): p is Photo => !!p)
+
+const steps = [
+  {
+    num: '1', icon: 'search', tint: 'teal', title: 'Find what exists',
+    body: 'Pick a landscape or search by topic to see which datasets are available for a place, who produced them and how recent they are.',
+    href: `${base}/catalogue`, link: 'Search the catalogue',
+  },
+  {
+    num: '2', icon: 'link', tint: 'amber', title: 'Go to the source',
+    body: 'Each entry tells you how to get the data and links to where it is kept, at the organisation that produced it. MOSAIC describes and connects — it does not keep copies.',
+    href: `${base}/about#overview`, link: 'More about MOSAIC',
+  },
+  {
+    num: '3', icon: 'upload', tint: 'terracotta', title: 'Add your own',
+    body: 'Register a dataset in a few minutes so others can find it. Open to anyone working on these places. Research and knowledge resources are coming next.',
+    href: `${base}/about#contribute`, link: 'How to contribute',
+  },
+] as const
 ---
 
 <BaseLayout title="Home">
@@ -23,13 +59,13 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data, tools and research for living landscapes — connected</h1>
         <p class="hero-sub">
-          MOSAIC connects datasets, tools, research and local knowledge from institutions and
-          landscape initiatives, so what is known about each living landscape is easier to
-          discover, compare and use.
+          MOSAIC is an open network that brings together what is known about places where
+          farming, nature and people meet — maps, datasets, tools and research from many
+          organisations — and shows you where to find each one.
         </p>
         <p class="hero-support">
-          Explore what exists for a landscape, see where it applies, and add your own work from
-          your institution, project or initiative.
+          Whether you work in research, government, an NGO or a local initiative, you can see
+          what exists for a place and add your own.
         </p>
         <div class="hero-actions">
           <a href={`${base}/landscapes`} class="btn btn-hero-primary">
@@ -77,32 +113,75 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     </div>
   </section>
 
-  <!-- ── Entry points ──────────────────────────────────────────────── -->
+  <!-- ── What is a living landscape? ───────────────────────────────── -->
   <section class="section-subtle">
+    <div class="container ll">
+      <div class="ll-text">
+        <p class="section-eyebrow">New to living landscapes?</p>
+        <h2 class="ll-title">What is a living landscape?</h2>
+        <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
+          <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <p class="ll-lead">
+          A living landscape is a real place — a river basin, a mountain range, a coastal delta —
+          where farms, forests, water and the people who depend on them are looked at together,
+          not one at a time.
+        </p>
+        <p class="ll-body">
+          The CGIAR Multifunctional Landscapes Science Programme works with local communities,
+          governments and partners in {allLandscapes > 0 ? `${allLandscapes} of these landscapes, in ${allCountries} countries` : 'these landscapes'} across
+          Latin America, Africa and Asia. Each covers tens of thousands of hectares or more, and is
+          where solutions are tried on the ground to learn what works, where and why.
+        </p>
+        <a class="ll-link" href={`${base}/landscapes`}>
+          Meet the landscapes <Icon name="arrow-right" size={16} aria-hidden="true" />
+        </a>
+      </div>
+      {llPhotos.length === 3 && (
+        <figure class="ll-photos">
+          <div class="ll-grid">
+            {llPhotos.map((ph, i) => (
+              <img class={`ll-img ll-img-${i + 1}`} src={`${base}/${ph.file}`} alt={ph.alt} width={ph.width} height={ph.height} loading="lazy" decoding="async" />
+            ))}
+          </div>
+          <figcaption class="ll-credit">
+            {llPhotos.map((ph, i) => (
+              <span>{i > 0 && ' · '}{ph.caption} — <a href={ph.source_url} target="_blank" rel="noopener noreferrer">{ph.author}</a>, <a href={ph.licence_url} target="_blank" rel="noopener noreferrer">{ph.licence}</a></span>
+            ))}
+          </figcaption>
+        </figure>
+      )}
+    </div>
+  </section>
+
+  <!-- ── How MOSAIC works ──────────────────────────────────────────── -->
+  <section class="section-white">
     <div class="container">
       <div class="section-head">
-        <p class="section-eyebrow">Three ways in</p>
-        <h2 class="section-title-center">Choose what you need</h2>
+        <p class="section-eyebrow section-eyebrow--amber">In three steps</p>
+        <h2 class="section-title-center">How MOSAIC works</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <div class="home-entry">
-        <ContentCard icon="map-pin" title="Explore a landscape" href={`${base}/landscapes`} tint="teal" arrow>
-          See what is known about each living landscape: where it is, what it is like, and the data, tools and research around it.
-        </ContentCard>
-        <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="amber" arrow>
-          Search the catalogue by place, theme, source or readiness status.
-        </ContentCard>
-        <ContentCard icon="upload" title="Share your work" href={`${base}/about#contribute`} tint="terracotta" arrow>
-          Register a dataset today — research and knowledge resources are coming next.
-        </ContentCard>
-      </div>
+      <ol class="how">
+        {steps.map((st) => (
+          <li class="how-step" data-tint={st.tint}>
+            <span class="how-top">
+              <span class="how-num" aria-hidden="true">{st.num}</span>
+              <span class="how-ico" aria-hidden="true"><Icon name={st.icon} size={22} /></span>
+            </span>
+            <h3 class="how-title">{st.title}</h3>
+            <p class="how-body">{st.body}</p>
+            <a class="how-link" href={st.href}>{st.link} <Icon name="arrow-right" size={16} aria-hidden="true" /></a>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
   <!-- ── Who is MOSAIC for? ────────────────────────────────────────── -->
-  <section class="section-white">
+  <section class="section-subtle">
     <div class="container">
       <div class="section-head">
         <p class="section-eyebrow section-eyebrow--amber">Open to all</p>
@@ -119,30 +198,6 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
         <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
       </ul>
-    </div>
-  </section>
-
-  <!-- ── Closing CTA — grow the network ────────────────────────────── -->
-  <section class="grow-cta">
-    <div class="container">
-      <div class="grow-card">
-        <div class="grow-art" aria-hidden="true">
-          <img src={`${base}/illustrations/seedling.png`} alt="" />
-        </div>
-        <div class="grow-main">
-          <h2 class="grow-title">Help grow the MOSAIC network</h2>
-          <p class="grow-body">Your data, tools and research could help researchers, landscape teams and decision-makers across many countries. Datasets can be registered today; research and knowledge resources are coming next.</p>
-          <ul class="grow-features">
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="users" size={18} /></span><span>Strengthen collaboration</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="database" size={18} /></span><span>Make knowledge easier to find</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="sparkles" size={18} /></span><span>Drive better decisions</span></li>
-          </ul>
-        </div>
-        <a class="grow-btn" href={`${base}/about#contribute`}>
-          Contribute
-          <Icon name="arrow-right" size={18} aria-hidden="true" />
-        </a>
-      </div>
     </div>
   </section>
 
@@ -319,8 +374,6 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
   .section-eyebrow--amber { color: var(--mosaic-amber); }
 
 
-  .home-entry { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-
   /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */
   .who-grid {
     list-style: none;
@@ -353,155 +406,73 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
   @media (max-width: 900px) { .who-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
-  /* ── "Find your way in" action cards ───────────────────────────
-     Rounded card with a topographic contour texture rising from the
-     bottom-right corner, one hue per card (teal / amber / terracotta)
-     to follow the MOSAIC graphic line. Scoped to .home-entry so other
-     ContentCard uses are untouched. */
-  .home-entry :global(.content-card) {
-    --contour: 8, 90, 117;            /* teal (default) */
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-radius: 24px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
+  /* ── What is a living landscape? ───────────────────────────── */
+  .ll {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: var(--space-12);
+    align-items: center;
   }
-  .home-entry :global(.content-card[data-tint="amber"])      { --contour: 201, 125, 27; }
-  .home-entry :global(.content-card[data-tint="terracotta"]) { --contour: 181, 77, 47; }
-
-  /* Keep the card content above the contour layer */
-  .home-entry :global(.content-card) > * { position: relative; z-index: 1; }
-
-  /* Contour texture lives on a masked layer so it stays in the bottom-right
-     corner and fades out before it reaches the title/body. */
-  .home-entry :global(.content-card)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(ellipse at bottom right, rgba(var(--contour), 0.12), transparent 50%),
-      repeating-radial-gradient(
-        ellipse at bottom right,
-        rgba(var(--contour), 0.14) 0,
-        rgba(var(--contour), 0.14) 1px,
-        transparent 1px,
-        transparent 14px
-      );
-    -webkit-mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
-    mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
+  .ll-title { margin: 0 0 var(--space-2); }
+  .ll-lead { font-size: var(--text-lg); color: var(--color-text); line-height: 1.6; margin: var(--space-6) 0 var(--space-4); }
+  .ll-body { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-6); }
+  .ll-link, .how-link {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    color: var(--mosaic-teal); font-weight: 600; text-decoration: none;
   }
+  .ll-link:hover, .how-link:hover { text-decoration: underline; }
+  :global([data-theme='dark']) .ll-link,
+  :global([data-theme='dark']) .how-link { color: var(--mosaic-light-teal); }
 
-  .home-entry :global(.content-card--link:hover) {
-    box-shadow: 0 20px 45px rgba(8, 90, 117, 0.16);
+  .ll-photos { margin: 0; }
+  .ll-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: var(--space-3);
+    aspect-ratio: 4 / 3;
   }
+  .ll-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg); min-height: 0; }
+  .ll-img-1 { grid-row: 1 / 3; }
+  .ll-credit { margin-top: var(--space-2); font-size: var(--text-xs); color: var(--color-muted); line-height: 1.5; }
+  .ll-credit a { color: inherit; }
 
-  /* ── Closing CTA — grow the network ────────────────────────── */
-  .grow-cta {
+  /* ── How MOSAIC works ──────────────────────────────────────── */
+  .how {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6);
+  }
+  .how-step {
+    --tint: var(--mosaic-teal);
+    display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-8) var(--space-6);
     background-color: var(--color-surface);
-    padding: var(--space-16) 0;
-  }
-  .grow-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    gap: var(--space-8);
-    flex-wrap: wrap;
-    background-color: var(--mosaic-sand);
     border: 1px solid var(--color-border);
-    border-radius: 28px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
-    padding: var(--space-8) var(--space-12);
+    border-top: 4px solid var(--tint);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
   }
-  /* Faint dot texture on the right, fading toward the left */
-  .grow-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(8, 90, 117, 0.12) 1.4px, transparent 1.6px);
-    background-size: 18px 18px;
-    -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-    mask-image: linear-gradient(to left, #000 0%, transparent 38%);
+  .how-step[data-tint='amber'] { --tint: var(--mosaic-amber); }
+  .how-step[data-tint='terracotta'] { --tint: var(--mosaic-terracotta); }
+  .how-top { display: flex; align-items: center; justify-content: space-between; }
+  .how-num {
+    font-family: var(--font-title); font-size: 2.25rem; font-weight: 700; line-height: 1;
+    color: var(--tint);
   }
-  .grow-art, .grow-main, .grow-btn { position: relative; z-index: 1; }
-
-  .grow-art { flex-shrink: 0; width: 280px; align-self: stretch; }
-  .grow-art img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 16px;
+  /* Ocean Teal is too dark on the dark surface: use its light tint there */
+  :global([data-theme='dark']) .how-step[data-tint='teal'] .how-num { color: var(--mosaic-light-teal); }
+  .how-ico {
+    width: 44px; height: 44px; border-radius: var(--radius-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--tint); color: var(--color-white);
   }
-
-  .grow-main {
-    flex: 1;
-    min-width: 280px;
-    padding-left: var(--space-8);
-    border-left: 1px solid var(--color-border);
-  }
-  .grow-title { margin: 0 0 var(--space-2); color: var(--mosaic-ink); }
-  .grow-body { margin: 0 0 var(--space-6); color: #4B5563; max-width: 52ch; line-height: 1.6; }
-
-  .grow-features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: var(--space-6);
-    flex-wrap: wrap;
-  }
-  .grow-features li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--mosaic-ink);
-    max-width: 17ch;
-    line-height: 1.25;
-  }
-  .grow-feat-icon {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-full);
-    background-color: var(--tint-teal-bg);
-    color: var(--mosaic-teal);
-  }
-
-  .grow-btn {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    background-color: var(--color-bookend);
-    color: var(--color-white);
-    font-weight: 600;
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: background-color 0.15s;
-    white-space: nowrap;
-  }
-  .grow-btn:hover { background-color: var(--mosaic-teal-dark); color: var(--color-white); }
+  .how-title { margin: var(--space-2) 0 0; font-size: var(--text-xl); }
+  .how-body { margin: 0; color: var(--color-muted); line-height: 1.6; flex: 1; }
+  .how-link { margin-top: var(--space-2); }
 
   @media (max-width: 900px) {
-    .grow-card { gap: var(--space-6); padding: var(--space-8); }
-    .grow-main { border-left: none; padding-left: 0; }
-    .grow-btn { width: 100%; justify-content: center; }
-  }
-  @media (max-width: 640px) {
-    .grow-art { display: none; }
+    .ll { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
+    .how { grid-template-columns: minmax(0, 1fr); }
   }
 
   /* ── Responsive ────────────────────────────────────────────── */
@@ -510,7 +481,6 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     .hero-content { max-width: 460px; }
   }
   @media (max-width: 900px) {
-    .home-entry { grid-template-columns: 1fr; }
     .stats-card { flex-wrap: wrap; }
     .stat-item { flex: 1 1 40%; }
     .stat-divider { display: none; }
