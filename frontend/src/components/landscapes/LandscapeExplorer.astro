@@ -127,8 +127,6 @@ const items = landscapes
       livelihoods: p.livelihoods ?? null,
       why: p.why_it_matters ?? null,
       catalogue: `${base}/catalogue?landscape=${l.code}`,
-      // Placeholder page for now; it will link to the landscape's analytics.
-      analytics: `${base}/analytics?landscape=${l.code}`,
       boundary: b ? { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) } : null,
     }
   })
@@ -377,10 +375,7 @@ const labelData = {
 
     <footer class="lx-foot">
       <div class="lx-actions">
-        <a class="btn btn-primary" data-f="analytics" href={first.analytics}>
-          <Icon name="bar-chart" size={18} /> Explore analytics <Icon name="arrow-right" size={16} />
-        </a>
-        <a class="btn btn-secondary" data-f="catalogue-btn" href={first.catalogue}>
+        <a class="btn btn-primary" data-f="catalogue-btn" href={first.catalogue}>
           <Icon name="layers" size={18} /> Browse datasets <Icon name="arrow-right" size={16} />
         </a>
         <a class="btn btn-secondary" data-f="boundary" href={first.boundary?.href ?? '#download'}>
@@ -832,7 +827,7 @@ const labelData = {
     covThemes: string; covList: string; covOpen: string
     countries: string[]; view: number[]; bbox: number[]; lon: number; lat: number; photos: Photo[]
     summary: string | null; ecosystem: string | null; livelihoods: string | null; why: string | null
-    catalogue: string; analytics: string; boundary: { href: string; size: string } | null
+    catalogue: string; boundary: { href: string; size: string } | null
   }
   type Labels = {
     places: (string | number)[][]
@@ -1250,7 +1245,6 @@ const labelData = {
       field('summary').textContent = it.summary ?? ''
       ;(field('catalogue') as HTMLAnchorElement).href = it.catalogue
       ;(field('catalogue-btn') as HTMLAnchorElement).href = it.catalogue
-      ;(field('analytics') as HTMLAnchorElement).href = it.analytics
       const bl = field('boundary') as HTMLAnchorElement
       bl.href = it.boundary?.href ?? '#download'
       field('boundary-size').textContent = it.boundary?.size ?? ''
