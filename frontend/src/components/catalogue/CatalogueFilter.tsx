@@ -154,6 +154,9 @@ export function CatalogueFilter({ datasets, base }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
+  // Filter groups fold away; all start closed (also in the static HTML, so
+  // hydration matches). Groups with a filter from the URL open on their own.
+  const [openGroups, setOpenGroups] = useState<Set<FilterKey>>(() => new Set())
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
@@ -178,6 +181,9 @@ export function CatalogueFilter({ datasets, base }: Props) {
 
   useEffect(() => {
     const initial = readInitialState(datasets)
+    const active = FILTER_KEYS.filter((k) => (initial.filters[k] as string[]).length > 0)
+    setOpenGroups(new Set(active))
+    if (active.some((k) => MORE_FILTERS.includes(k))) setShowMore(true)
     setFilters(initial.filters)
     setSearchText(initial.search)
     setSortKey(initial.sort)
@@ -230,15 +236,34 @@ export function CatalogueFilter({ datasets, base }: Props) {
 
   const hasActiveFilters = activeChips.length > 0 || searchText.trim().length > 0
 
+  function toggleGroup(key: FilterKey) {
+    setOpenGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
   function renderFilterSection(key: FilterKey) {
     const options = getOptions(datasets, key)
     if (options.length === 0) return null
+    const open = openGroups.has(key)
+    const nSelected = (filters[key] as string[]).length
+    const bodyId = `fg-${key}`
     return (
-      <fieldset key={key} className="filter-group">
-        <legend className="filter-group-legend">
-          <span className={`filter-group-icon filter-group-icon--${key}`}>{FILTER_ICON[key]}</span>
-          {FILTER_LABELS[key]}
-        </legend>
+      <div key={key} className="filter-group" data-open={open}>
+        <h3 className="filter-group-head">
+          <button type="button" className="filter-group-toggle" aria-expanded={open} aria-controls={bodyId} onClick={() => toggleGroup(key)}>
+            <span className={`filter-group-icon filter-group-icon--${key}`}>{FILTER_ICON[key]}</span>
+            <span className="filter-group-label">{FILTER_LABELS[key]}</span>
+            {nSelected > 0 && <span className="filter-group-count" aria-label={`${nSelected} selected`}>{nSelected}</span>}
+            <svg className="filter-group-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+        </h3>
+        <div className="filter-group-body" id={bodyId}>
+        <fieldset className="filter-group-inner">
+        <legend className="sr-only">{FILTER_LABELS[key]}</legend>
         <ul className="filter-options">
           {options.map((opt) => {
             const inputId = `f-${key}-${opt.replace(/\s+/g, '-').toLowerCase()}`
@@ -259,7 +284,9 @@ export function CatalogueFilter({ datasets, base }: Props) {
             )
           })}
         </ul>
-      </fieldset>
+        </fieldset>
+        </div>
+      </div>
     )
   }
 

@@ -197,3 +197,27 @@ code, pre, kbd {
   }
   .ds-card:hover { transform: none; }
 }
+
+/* ── Page transitions (2026-11-10) ───────────────────────────────────────
+   1. Between pages: a short cross-fade, done by the browser itself
+      (cross-document view transitions; browsers without support simply
+      load the page as before).
+   2. On a page: each block of <main>, and the children of any element
+      marked [data-reveal-stagger], fades and rises into place as it comes
+      into view. BaseLayout adds .js-reveal to <html> before first paint
+      only when JavaScript runs and reduced motion is not requested, and
+      removes it again after 3 s if the reveal script never started — so
+      content is never left hidden. */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.3s; }
+
+html.js-reveal main > *:not(.is-revealed),
+html.js-reveal [data-reveal-stagger] > *:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
