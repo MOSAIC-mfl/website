@@ -12,24 +12,16 @@ const totalDatasets = datasets.length
 const countries = countCountries(datasets)
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
 
-// "What is a living landscape?" — counts come from the landscape boundaries,
-// photos from the open-licence set used on the Landscapes page. Both files are
-// optional: without them the block keeps its text and drops the photos.
-interface Photo { file: string; width: number; height: number; alt: string; caption: string; author: string; licence: string; licence_url: string; source_url: string }
+// "What is a living landscape?" — counts come from the landscape boundaries
+// (optional file: without it the sentence drops the numbers).
 const optional = import.meta.glob<{ default: Record<string, unknown> }>(
-  '../../data/landscape_{geo,photos}.json',
+  '../../data/landscape_geo.json',
   { eager: true },
 )
-const pick = (name: string) =>
-  Object.entries(optional).find(([k]) => k.endsWith(name))?.[1]?.default ?? {}
-const geo = (pick('landscape_geo.json') as { landscapes?: Record<string, { countries: string[] }> }).landscapes ?? {}
+const geoFile = (Object.values(optional)[0]?.default ?? {}) as { landscapes?: Record<string, { countries: string[] }> }
+const geo = geoFile.landscapes ?? {}
 const allLandscapes = Object.keys(geo).length
 const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).size
-const photoMap = (pick('landscape_photos.json') as { photos?: Record<string, Photo[]> }).photos ?? {}
-// a coast, a farm and a mountain: three very different living landscapes
-const llPhotos = ['landscapes/SEN-FK-1.jpg', 'landscapes/KEN-LVB-3.jpg', 'landscapes/COL-CUM-1.jpg']
-  .map((f) => Object.values(photoMap).flat().find((p) => p.file === f))
-  .filter((p): p is Photo => !!p)
 
 const steps = [
   {
@@ -137,20 +129,16 @@ const steps = [
           Meet the landscapes <Icon name="arrow-right" size={16} aria-hidden="true" />
         </a>
       </div>
-      {llPhotos.length === 3 && (
-        <figure class="ll-photos">
-          <div class="ll-grid">
-            {llPhotos.map((ph, i) => (
-              <img class={`ll-img ll-img-${i + 1}`} src={`${base}/${ph.file}`} alt={ph.alt} width={ph.width} height={ph.height} loading="lazy" decoding="async" />
-            ))}
-          </div>
-          <figcaption class="ll-credit">
-            {llPhotos.map((ph, i) => (
-              <span>{i > 0 && ' · '}{ph.caption} — <a href={ph.source_url} target="_blank" rel="noopener noreferrer">{ph.author}</a>, <a href={ph.licence_url} target="_blank" rel="noopener noreferrer">{ph.licence}</a></span>
-            ))}
-          </figcaption>
-        </figure>
-      )}
+      <div class="ll-art">
+        <img
+          src={`${base}/illustrations/living-landscape.webp`}
+          alt="Illustration of a living landscape — hills, a river, forest, farmland and a farmhouse — ringed by the parts it brings together: water, forests, biodiversity, people and livelihoods, agriculture, land and soils, and climate. Together they form a connected socio-ecological system."
+          width="1323"
+          height="847"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   </section>
 
@@ -424,18 +412,14 @@ const steps = [
   :global([data-theme='dark']) .ll-link,
   :global([data-theme='dark']) .how-link { color: var(--mosaic-light-teal); }
 
-  .ll-photos { margin: 0; }
-  .ll-grid {
-    display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: var(--space-3);
-    aspect-ratio: 4 / 3;
+  .ll-art img { display: block; width: 100%; height: auto; }
+  /* The illustration has a transparent background and dark labels: in dark
+     mode it sits on a white plate (never-remapped --color-white) so they stay readable. */
+  :global([data-theme='dark']) .ll-art {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
   }
-  .ll-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg); min-height: 0; }
-  .ll-img-1 { grid-row: 1 / 3; }
-  .ll-credit { margin-top: var(--space-2); font-size: var(--text-xs); color: var(--color-muted); line-height: 1.5; }
-  .ll-credit a { color: inherit; }
 
   /* ── How MOSAIC works ──────────────────────────────────────── */
   .how {
