@@ -201,9 +201,9 @@ const steps = [
     /* Tall enough that the text sits in the open sky above the hills: the
        banner is ~1.83:1 and its hills start ~70% down on the left. */
     min-height: clamp(720px, 54.7vw, 880px);
-    /* the banner's own sky colour (a touch rosier than Warm Sand), so the
-       band above the shifted banner shows no seam */
-    background-color: #F3EAE6;
+    /* the banner's sky is Warm Sand too, so the band above the shifted
+       banner shows no seam */
+    background-color: var(--mosaic-sand);
     color: var(--mosaic-ink);
     padding: 3.5rem 0 6.5rem;
     overflow: hidden;
