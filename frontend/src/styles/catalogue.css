@@ -136,31 +136,64 @@
 
 .filter-panel-body { display: flex; flex-direction: column; }
 
-/* ── Filter group ────────────────────────────────────────────── */
-.filter-group {
-  border: none;
-  margin: 0;
-  padding: 0 0 1.1rem;
-}
+/* ── Filter group (folding, 2026-11-10) ──────────────────────── */
+.filter-group { margin: 0; padding: 0; }
 
-.filter-group + .filter-group {
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--color-border);
-}
+.filter-group + .filter-group { border-top: 1px solid var(--color-border); }
 
-.filter-group-legend {
+.filter-group-head { margin: 0; font-size: inherit; }
+
+.filter-group-toggle {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  width: 100%;
+  padding: 0.8rem 0.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
   font-family: var(--font-body);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--color-text);
-  margin-bottom: 0.65rem;
-  padding: 0;
+  border-radius: var(--radius-sm);
 }
+.filter-group-toggle:hover { color: var(--color-primary); }
+.filter-group-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.filter-group-label { flex: 1; }
+.filter-group-count {
+  min-width: 1.4rem; padding: 1px 7px; border-radius: var(--radius-full);
+  background: var(--color-primary); color: var(--color-white);
+  font-size: 0.72rem; letter-spacing: 0; text-align: center;
+}
+.filter-group-chev { flex-shrink: 0; color: var(--color-muted); transition: transform 0.25s ease; }
+.filter-group[data-open="true"] .filter-group-chev { transform: rotate(180deg); }
+
+/* Folding body: animates its height (0fr → 1fr); a closed group's options are
+   hidden from the tab order and from screen readers via visibility. */
+.filter-group-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.filter-group[data-open="true"] .filter-group-body { grid-template-rows: 1fr; }
+.filter-group-inner {
+  min-height: 0;
+  overflow: hidden;
+  border: none;
+  margin: 0;
+  padding: 0;
+  visibility: hidden;
+  transition: visibility 0s linear 0.28s;
+}
+.filter-group[data-open="true"] .filter-group-inner {
+  visibility: visible;
+  transition-delay: 0s;
+}
+.filter-group-inner .filter-options { padding: 0.1rem 0.1rem 1rem; }
 
 .filter-group-icon {
   display: flex;

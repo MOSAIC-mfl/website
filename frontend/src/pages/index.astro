@@ -48,7 +48,7 @@ const steps = [
   <!-- ── Hero ──────────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="container hero-inner">
-      <div class="hero-content">
+      <div class="hero-content" data-reveal-stagger>
         <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data, tools and research for living landscapes — connected</h1>
         <p class="hero-sub">
@@ -78,7 +78,7 @@ const steps = [
   <!-- ── Stats bar (floating card) ─────────────────────────────────── -->
   <section class="stats-section">
     <div class="container">
-      <div class="stats-card">
+      <div class="stats-card" data-reveal-stagger>
         <div class="stat-item">
           <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
@@ -153,7 +153,7 @@ const steps = [
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <ol class="how">
+      <ol class="how" data-reveal-stagger>
         {steps.map((st) => (
           <li class="how-step" data-tint={st.tint}>
             <span class="how-top">
@@ -179,7 +179,7 @@ const steps = [
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <ul class="who-grid">
+      <ul class="who-grid" data-reveal-stagger>
         <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
         <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
         <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
