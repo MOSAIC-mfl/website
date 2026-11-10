@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import ContentCard from '../components/ui/ContentCard.astro'
 import Icon from '../components/ui/Icon.astro'
+import HeroMosaic from '../components/home/HeroMosaic.astro'
 import { loadDatasets } from '../utils/loadDatasets'
 import { countCountries } from '../utils/countries'
 
@@ -12,6 +12,35 @@ const totalDatasets = datasets.length
 // 'Global' and regional values of `country` are not countries.
 const countries = countCountries(datasets)
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
+
+// "What is a living landscape?" — counts come from the landscape boundaries
+// (optional file: without it the sentence drops the numbers).
+const optional = import.meta.glob<{ default: Record<string, unknown> }>(
+  '../../data/landscape_geo.json',
+  { eager: true },
+)
+const geoFile = (Object.values(optional)[0]?.default ?? {}) as { landscapes?: Record<string, { countries: string[] }> }
+const geo = geoFile.landscapes ?? {}
+const allLandscapes = Object.keys(geo).length
+const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).size
+
+const steps = [
+  {
+    num: '1', icon: 'search', tint: 'teal', title: 'Find what exists',
+    body: 'Pick a landscape or search by topic to see which datasets are available for a place, who produced them and how recent they are.',
+    href: `${base}/catalogue`, link: 'Search the catalogue',
+  },
+  {
+    num: '2', icon: 'link', tint: 'amber', title: 'Go to the source',
+    body: 'Each entry tells you how to get the data and links to where it is kept, at the organisation that produced it. MOSAIC describes and connects — it does not keep copies.',
+    href: `${base}/about#overview`, link: 'More about MOSAIC',
+  },
+  {
+    num: '3', icon: 'upload', tint: 'terracotta', title: 'Add your own',
+    body: 'Register a dataset in a few minutes so others can find it. Open to anyone working on these places. Research and knowledge resources are coming next.',
+    href: `${base}/about#contribute`, link: 'How to contribute',
+  },
+] as const
 ---
 
 <BaseLayout title="Home">
@@ -23,13 +52,13 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data, tools and research for living landscapes — connected</h1>
         <p class="hero-sub">
-          MOSAIC connects datasets, tools, research and local knowledge from institutions and
-          landscape initiatives, so what is known about each living landscape is easier to
-          discover, compare and use.
+          MOSAIC is an open network that brings together what is known about places where
+          farming, nature and people meet — maps, datasets, tools and research from many
+          organisations — and shows you where to find each one.
         </p>
         <p class="hero-support">
-          Explore what exists for a landscape, see where it applies, and add your own work from
-          your institution, project or initiative.
+          Whether you work in research, government, an NGO or a local initiative, you can see
+          what exists for a place and add your own.
         </p>
         <div class="hero-actions">
           <a href={`${base}/landscapes`} class="btn btn-hero-primary">
@@ -42,7 +71,7 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
       </div>
     </div>
     <div class="hero-art" aria-hidden="true">
-      <img src={`${base}/illustrations/hero-home.jpg`} alt="" />
+      <HeroMosaic />
     </div>
   </section>
 
@@ -51,7 +80,7 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     <div class="container">
       <div class="stats-card">
         <div class="stat-item">
-          <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="database" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{totalDatasets}</span>
             <span class="stat-label">Datasets catalogued</span>
@@ -59,7 +88,7 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="green" aria-hidden="true"><Icon name="mountains" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="mountains" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{landscapes}</span>
             <span class="stat-label">Landscapes with data</span>
@@ -67,7 +96,7 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </div>
         <div class="stat-divider" aria-hidden="true"></div>
         <div class="stat-item">
-          <span class="stat-icon" data-tint="amber" aria-hidden="true"><Icon name="globe" size={24} /></span>
+          <span class="stat-icon" aria-hidden="true"><Icon name="globe" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{countries}</span>
             <span class="stat-label">Countries with data</span>
@@ -77,32 +106,71 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     </div>
   </section>
 
-  <!-- ── Entry points ──────────────────────────────────────────────── -->
+  <!-- ── What is a living landscape? ───────────────────────────────── -->
   <section class="section-subtle">
-    <div class="container">
-      <div class="section-head">
-        <p class="section-eyebrow">Three ways in</p>
-        <h2 class="section-title-center">Choose what you need</h2>
+    <div class="container ll">
+      <div class="ll-text">
+        <p class="section-eyebrow">New to living landscapes?</p>
+        <h2 class="ll-title">What is a living landscape?</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
+        <p class="ll-lead">
+          A living landscape is a real place — a river basin, a mountain range, a coastal delta —
+          where farms, forests, water and the people who depend on them are looked at together,
+          not one at a time.
+        </p>
+        <p class="ll-body">
+          The CGIAR Multifunctional Landscapes Science Programme works with local communities,
+          governments and partners in {allLandscapes > 0 ? `${allLandscapes} of these landscapes, in ${allCountries} countries` : 'these landscapes'} across
+          Latin America, Africa and Asia. Each covers tens of thousands of hectares or more, and is
+          where solutions are tried on the ground to learn what works, where and why.
+        </p>
+        <a class="ll-link" href={`${base}/landscapes`}>
+          Meet the landscapes <Icon name="arrow-right" size={16} aria-hidden="true" />
+        </a>
       </div>
-      <div class="home-entry">
-        <ContentCard icon="map-pin" title="Explore a landscape" href={`${base}/landscapes`} tint="teal" arrow>
-          See what is known about each living landscape: where it is, what it is like, and the data, tools and research around it.
-        </ContentCard>
-        <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="amber" arrow>
-          Search the catalogue by place, theme, source or readiness status.
-        </ContentCard>
-        <ContentCard icon="upload" title="Share your work" href={`${base}/about#contribute`} tint="terracotta" arrow>
-          Register a dataset today — research and knowledge resources are coming next.
-        </ContentCard>
+      <div class="ll-art">
+        <img
+          src={`${base}/illustrations/living-landscape.webp`}
+          alt="Illustration of a living landscape — hills, a river, forest, fields with grazing cattle and a farmhouse — ringed by the parts it brings together: water, forests, biodiversity, people and livelihoods, agriculture, land and soils, and climate. Together they form a connected socio-ecological system."
+          width="1387"
+          height="745"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </div>
   </section>
 
-  <!-- ── Who is MOSAIC for? ────────────────────────────────────────── -->
+  <!-- ── How MOSAIC works ──────────────────────────────────────────── -->
   <section class="section-white">
+    <div class="container">
+      <div class="section-head">
+        <p class="section-eyebrow section-eyebrow--amber">In three steps</p>
+        <h2 class="section-title-center">How MOSAIC works</h2>
+        <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
+          <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <ol class="how">
+        {steps.map((st) => (
+          <li class="how-step" data-tint={st.tint}>
+            <span class="how-top">
+              <span class="how-num" aria-hidden="true">{st.num}</span>
+              <span class="how-ico" aria-hidden="true"><Icon name={st.icon} size={22} /></span>
+            </span>
+            <h3 class="how-title">{st.title}</h3>
+            <p class="how-body">{st.body}</p>
+            <a class="how-link" href={st.href}>{st.link} <Icon name="arrow-right" size={16} aria-hidden="true" /></a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Who is MOSAIC for? ────────────────────────────────────────── -->
+  <section class="section-subtle">
     <div class="container">
       <div class="section-head">
         <p class="section-eyebrow section-eyebrow--amber">Open to all</p>
@@ -112,37 +180,13 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </svg>
       </div>
       <ul class="who-grid">
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
+        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
       </ul>
-    </div>
-  </section>
-
-  <!-- ── Closing CTA — grow the network ────────────────────────────── -->
-  <section class="grow-cta">
-    <div class="container">
-      <div class="grow-card">
-        <div class="grow-art" aria-hidden="true">
-          <img src={`${base}/illustrations/seedling.png`} alt="" />
-        </div>
-        <div class="grow-main">
-          <h2 class="grow-title">Help grow the MOSAIC network</h2>
-          <p class="grow-body">Your data, tools and research could help researchers, landscape teams and decision-makers across many countries. Datasets can be registered today; research and knowledge resources are coming next.</p>
-          <ul class="grow-features">
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="users" size={18} /></span><span>Strengthen collaboration</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="database" size={18} /></span><span>Make knowledge easier to find</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="sparkles" size={18} /></span><span>Drive better decisions</span></li>
-          </ul>
-        </div>
-        <a class="grow-btn" href={`${base}/about#contribute`}>
-          Contribute
-          <Icon name="arrow-right" size={18} aria-hidden="true" />
-        </a>
-      </div>
     </div>
   </section>
 
@@ -152,38 +196,37 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
   /* ── Hero (light) ──────────────────────────────────────────── */
   .hero {
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    /* Tall enough that the text sits in the open sky above the hills: the
+       banner is ~1.83:1 and its hills start ~70% down on the left. */
+    min-height: clamp(720px, 54.7vw, 880px);
+    /* the banner's sky is Warm Sand too, so the band above the shifted
+       banner shows no seam */
     background-color: var(--mosaic-sand);
     color: var(--mosaic-ink);
-    padding: 4.5rem 0 6.5rem;
+    padding: 3.5rem 0 6.5rem;
     overflow: hidden;
   }
 
   .hero-inner {
     position: relative;
     z-index: 2;
+    width: 100%;
   }
-  .hero-content { max-width: 540px; }
+  /* wide enough for a 3-line headline, narrow enough to stop before the tree */
+  .hero-content { max-width: 620px; }
 
-  /* Full-bleed art anchored to the right edge of the viewport */
+  /* Full-bleed landscape banner behind the text, kept to its bottom-right
+     corner (route and MOSAIC mark) when the hero is narrower than the image;
+     HeroMosaic's SVG does the cover/right-bottom fit itself. */
   .hero-art {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 58%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    /* shifted down so the hills start below the buttons; the gap above is
+       the hero background, which matches the banner's sky */
+    inset: 6rem 0 -6rem;
     pointer-events: none;
     z-index: 1;
-  }
-  .hero-art img {
-    display: block;
-    width: 100%;
-    height: auto;
-    /* Soft blend of the image's left edge into the sand background */
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 16%);
-    mask-image: linear-gradient(to right, transparent 0%, #000 16%);
   }
 
   .hero-eyebrow {
@@ -209,14 +252,14 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
        themes, so the subtitle must stay dark-on-sand and never invert. */
     color: #4B5563;
     line-height: 1.7;
-    max-width: 470px;
+    max-width: 560px;
     margin-bottom: var(--space-4);
   }
   .hero-support {
     font-size: var(--text-base);
     color: #5B6B72;
     line-height: 1.65;
-    max-width: 470px;
+    max-width: 560px;
     margin: 0 0 var(--space-8);
   }
   .hero-actions { display: flex; gap: var(--space-4); flex-wrap: wrap; }
@@ -282,11 +325,11 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-white);
+    /* neutral icons on this page (Lizeth 2026-11-10): grey disc, dark grey icon;
+       both tokens remap in the dark theme */
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-700);
   }
-  .stat-icon[data-tint="teal"]  { background-color: var(--mosaic-teal); }
-  .stat-icon[data-tint="green"] { background-color: #6F8F5F; }
-  .stat-icon[data-tint="amber"] { background-color: var(--mosaic-amber); }
   .stat-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .stat-number {
     font-family: var(--font-title);
@@ -319,8 +362,6 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
   .section-eyebrow--amber { color: var(--mosaic-amber); }
 
 
-  .home-entry { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-
   /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */
   .who-grid {
     list-style: none;
@@ -347,187 +388,101 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
     align-items: center;
     justify-content: center;
   }
-  .who-ico[data-tint="teal"]      { background: #D6EEF2; color: var(--mosaic-teal); }
-  .who-ico[data-tint="amber"]     { background: #F6E6CE; color: var(--mosaic-amber); }
-  .who-ico[data-tint="terracotta"]{ background: #F3DED6; color: var(--mosaic-terracotta); }
+  .who-ico { background-color: var(--color-gray-100); color: var(--color-gray-700); }
   @media (max-width: 900px) { .who-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
-  /* ── "Find your way in" action cards ───────────────────────────
-     Rounded card with a topographic contour texture rising from the
-     bottom-right corner, one hue per card (teal / amber / terracotta)
-     to follow the MOSAIC graphic line. Scoped to .home-entry so other
-     ContentCard uses are untouched. */
-  .home-entry :global(.content-card) {
-    --contour: 8, 90, 117;            /* teal (default) */
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    border-radius: 24px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
+  /* ── What is a living landscape? ───────────────────────────── */
+  .ll {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: var(--space-12);
+    align-items: center;
   }
-  .home-entry :global(.content-card[data-tint="amber"])      { --contour: 201, 125, 27; }
-  .home-entry :global(.content-card[data-tint="terracotta"]) { --contour: 181, 77, 47; }
+  .ll-title { margin: 0 0 var(--space-2); }
+  .ll-lead { font-size: var(--text-lg); color: var(--color-text); line-height: 1.6; margin: var(--space-6) 0 var(--space-4); }
+  .ll-body { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-6); }
+  .ll-link, .how-link {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    color: var(--mosaic-teal); font-weight: 600; text-decoration: none;
+  }
+  .ll-link:hover, .how-link:hover { text-decoration: underline; }
+  :global([data-theme='dark']) .ll-link,
+  :global([data-theme='dark']) .how-link { color: var(--mosaic-light-teal); }
 
-  /* Keep the card content above the contour layer */
-  .home-entry :global(.content-card) > * { position: relative; z-index: 1; }
-
-  /* Contour texture lives on a masked layer so it stays in the bottom-right
-     corner and fades out before it reaches the title/body. */
-  .home-entry :global(.content-card)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(ellipse at bottom right, rgba(var(--contour), 0.12), transparent 50%),
-      repeating-radial-gradient(
-        ellipse at bottom right,
-        rgba(var(--contour), 0.14) 0,
-        rgba(var(--contour), 0.14) 1px,
-        transparent 1px,
-        transparent 14px
-      );
-    -webkit-mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
-    mask-image: radial-gradient(ellipse 85% 85% at bottom right, #000 0%, transparent 58%);
+  .ll-art img { display: block; width: 100%; height: auto; }
+  /* The illustration has a transparent background and dark labels: in dark
+     mode it sits on a white plate (never-remapped --color-white) so they stay readable. */
+  :global([data-theme='dark']) .ll-art {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
   }
 
-  .home-entry :global(.content-card--link:hover) {
-    box-shadow: 0 20px 45px rgba(8, 90, 117, 0.16);
+  /* ── How MOSAIC works ──────────────────────────────────────── */
+  .how {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6);
   }
-
-  /* ── Closing CTA — grow the network ────────────────────────── */
-  .grow-cta {
+  .how-step {
+    --tint: var(--mosaic-teal);
+    display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-8) var(--space-6);
     background-color: var(--color-surface);
-    padding: var(--space-16) 0;
-  }
-  .grow-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    gap: var(--space-8);
-    flex-wrap: wrap;
-    background-color: var(--mosaic-sand);
     border: 1px solid var(--color-border);
-    border-radius: 28px;
-    box-shadow: 0 14px 35px rgba(8, 90, 117, 0.08);
-    padding: var(--space-8) var(--space-12);
+    border-top: 4px solid var(--tint);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
   }
-  /* Faint dot texture on the right, fading toward the left */
-  .grow-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(8, 90, 117, 0.12) 1.4px, transparent 1.6px);
-    background-size: 18px 18px;
-    -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-    mask-image: linear-gradient(to left, #000 0%, transparent 38%);
+  .how-step[data-tint='amber'] { --tint: var(--mosaic-amber); }
+  .how-step[data-tint='terracotta'] { --tint: var(--mosaic-terracotta); }
+  .how-top { display: flex; align-items: center; justify-content: space-between; }
+  .how-num {
+    font-family: var(--font-title); font-size: 2.25rem; font-weight: 700; line-height: 1;
+    color: var(--tint);
   }
-  .grow-art, .grow-main, .grow-btn { position: relative; z-index: 1; }
-
-  .grow-art { flex-shrink: 0; width: 280px; align-self: stretch; }
-  .grow-art img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-radius: 16px;
+  /* Ocean Teal is too dark on the dark surface: use its light tint there */
+  :global([data-theme='dark']) .how-step[data-tint='teal'] .how-num { color: var(--mosaic-light-teal); }
+  .how-ico {
+    width: 44px; height: 44px; border-radius: var(--radius-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--color-gray-100); color: var(--color-gray-700);
   }
-
-  .grow-main {
-    flex: 1;
-    min-width: 280px;
-    padding-left: var(--space-8);
-    border-left: 1px solid var(--color-border);
-  }
-  .grow-title { margin: 0 0 var(--space-2); color: var(--mosaic-ink); }
-  .grow-body { margin: 0 0 var(--space-6); color: #4B5563; max-width: 52ch; line-height: 1.6; }
-
-  .grow-features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: var(--space-6);
-    flex-wrap: wrap;
-  }
-  .grow-features li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--mosaic-ink);
-    max-width: 17ch;
-    line-height: 1.25;
-  }
-  .grow-feat-icon {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-full);
-    background-color: var(--tint-teal-bg);
-    color: var(--mosaic-teal);
-  }
-
-  .grow-btn {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    background-color: var(--color-bookend);
-    color: var(--color-white);
-    font-weight: 600;
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: background-color 0.15s;
-    white-space: nowrap;
-  }
-  .grow-btn:hover { background-color: var(--mosaic-teal-dark); color: var(--color-white); }
+  .how-title { margin: var(--space-2) 0 0; font-size: var(--text-xl); }
+  .how-body { margin: 0; color: var(--color-muted); line-height: 1.6; flex: 1; }
+  .how-link { margin-top: var(--space-2); }
 
   @media (max-width: 900px) {
-    .grow-card { gap: var(--space-6); padding: var(--space-8); }
-    .grow-main { border-left: none; padding-left: 0; }
-    .grow-btn { width: 100%; justify-content: center; }
-  }
-  @media (max-width: 640px) {
-    .grow-art { display: none; }
+    .ll { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
+    .how { grid-template-columns: minmax(0, 1fr); }
   }
 
   /* ── Responsive ────────────────────────────────────────────── */
-  @media (max-width: 992px) {
-    .hero-art { width: 50%; }
+  @media (max-width: 1100px) {
     .hero-content { max-width: 460px; }
+    /* narrower screens bring the hills up under the text: soften them there */
+    .hero-art::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(247, 244, 239, 0.88) 0%, rgba(247, 244, 239, 0.6) 45%, transparent 70%);
+    }
   }
   @media (max-width: 900px) {
-    .home-entry { grid-template-columns: 1fr; }
     .stats-card { flex-wrap: wrap; }
     .stat-item { flex: 1 1 40%; }
     .stat-divider { display: none; }
   }
   @media (max-width: 767px) {
-    .hero { padding: 3.5rem 0 5rem; }
+    /* text first, then the banner below it, edge to edge */
+    .hero { display: block; min-height: 0; padding: 3.5rem 0 0; }
     .hero-content { max-width: none; }
-    .hero-art {
-      position: static;
-      width: 100%;
-      margin-top: var(--space-8);
-      justify-content: center;
-    }
-    .hero-art img {
-      -webkit-mask-image: none;
-      mask-image: none;
-      border-radius: var(--radius-lg);
+    .hero-art { position: static; margin-top: var(--space-6); }
+    .hero-art::after { display: none; }
+    .hero-art :global(svg) {
+      height: auto;
+      aspect-ratio: 4 / 3;
+      /* blend the banner's sky into the band above it */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
     }
   }
   @media (max-width: 640px) {
