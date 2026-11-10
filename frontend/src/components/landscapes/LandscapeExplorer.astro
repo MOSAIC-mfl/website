@@ -135,6 +135,29 @@ const items = landscapes
   .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
 
 const first = items[0]
+
+// Left-hand section menu. Only Overview has content today; the others show an
+// "under construction" notice until their content exists.
+const sectionList = [
+  { id: 'overview', label: 'Overview', icon: 'grid', ready: true },
+  { id: 'map', label: 'Map visualization', icon: 'globe', ready: false },
+  { id: 'knowledge-hub', label: 'Knowledge hub', icon: 'link', ready: false },
+  { id: 'resources', label: 'Other resources', icon: 'folder', ready: false },
+] as const
+const soon: Record<string, { title: string; text: string }> = {
+  map: {
+    title: 'Map visualization',
+    text: 'Interactive maps of this landscape — its datasets as layers you can switch on and compare — are on their way. In the meantime, the Overview has a locator map, and the catalogue lists the datasets already registered here.',
+  },
+  'knowledge-hub': {
+    title: 'Knowledge hub',
+    text: 'Evidence, actions and lessons from this landscape, connected to the data behind them, are on their way. In the meantime, the catalogue lists the datasets already registered here.',
+  },
+  resources: {
+    title: 'Other resources',
+    text: 'Reports, tools and useful links for this landscape will be gathered here. In the meantime, you can download its boundary or browse its datasets.',
+  },
+}
 const globeCountries = Object.entries(geoCountries).map(([iso, c]) => ({ iso, rings: c.globe }))
 const mapCountries = Object.entries(geoCountries).filter(([, c]) => c.d)
 // Label data for the client: places [name, x, y, minZoom, capital]; river label
@@ -149,40 +172,72 @@ const labelData = {
 <section class="lx" data-lx aria-label="Living landscape explorer">
   <script type="application/json" data-lx-data set:html={JSON.stringify({ items, globe: globeCountries, labels: labelData })} />
 
-  <!-- Selector -->
-  <aside class="lx-side">
-    <h2 class="lx-side-title">Select a living landscape</h2>
-    <div class="lx-search">
-      <Icon name="search" size={18} />
-      <label for="lx-search" class="sr-only">Search landscapes by name or country</label>
-      <input id="lx-search" type="search" placeholder="Search by name or country…" autocomplete="off" />
+  <!-- Landscape selector (a filter for the whole panel) -->
+  <div class="lx-top">
+    <span class="lx-top-label" id="lx-pick-label">Living landscape</span>
+    <div class="lx-pick" data-pick>
+      <button type="button" class="lx-pick-btn" data-pick-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lx-pick-label lx-pick-value">
+        <span class="lx-item-pin"><Icon name="map-pin" size={18} /></span>
+        <span class="lx-pick-value" id="lx-pick-value">
+          <span class="lx-pick-name" data-pick-name>{first.name}</span>
+          <span class="lx-pick-country" data-pick-country>{first.country}</span>
+        </span>
+        <span class="lx-pick-chev" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
+      </button>
+      <div class="lx-pop" data-pop hidden>
+        <div class="lx-search">
+          <Icon name="search" size={18} />
+          <label for="lx-search" class="sr-only">Search landscapes by name or country</label>
+          <input id="lx-search" type="search" placeholder="Search by name or country…" autocomplete="off" />
+        </div>
+        <ul class="lx-list" role="listbox" aria-label="Living landscapes">
+          {items.map((it, i) => (
+            <li
+              class="lx-item"
+              role="option"
+              tabindex="-1"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-code={it.code}
+              data-search={`${it.name} ${it.country} ${it.code}`.toLowerCase()}
+            >
+              <span class="lx-item-pin"><Icon name="map-pin" size={18} /></span>
+              <span class="lx-item-text">
+                <span class="lx-item-name">{it.name}</span>
+                <span class="lx-item-country">{it.country}</span>
+              </span>
+              <span class="lx-item-count" aria-label={`${it.count} datasets`}>{it.count}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="lx-empty" hidden>No landscapes match your search.</p>
+      </div>
     </div>
-    <ul class="lx-list" role="listbox" aria-label="Living landscapes">
-      {items.map((it, i) => (
-        <li
-          class="lx-item"
-          role="option"
-          tabindex={i === 0 ? 0 : -1}
-          aria-selected={i === 0 ? 'true' : 'false'}
-          data-code={it.code}
-          data-search={`${it.name} ${it.country} ${it.code}`.toLowerCase()}
-        >
-          <span class="lx-item-pin"><Icon name="map-pin" size={18} /></span>
-          <span class="lx-item-text">
-            <span class="lx-item-name">{it.name}</span>
-            <span class="lx-item-country">{it.country}</span>
-          </span>
-          <span class="lx-item-count" aria-label={`${it.count} datasets`}>{it.count}</span>
-          <span class="lx-item-chev"><Icon name="chevron-right" size={16} /></span>
-        </li>
-      ))}
-    </ul>
-    <p class="lx-empty" hidden>No landscapes match your search.</p>
     <a class="lx-all" href="#download">Download all boundaries <Icon name="arrow-right" size={16} /></a>
-  </aside>
+  </div>
 
+  <div class="lx-body">
+    <!-- Section menu -->
+    <nav class="lx-secnav" data-secnav aria-label="Landscape sections">
+      <div class="lx-secnav-head">
+        <span class="lx-secnav-title">Sections</span>
+        <button type="button" class="lx-secnav-toggle" data-secnav-toggle aria-label="Collapse the section menu" aria-expanded="true">«</button>
+      </div>
+      <ul>
+        {sectionList.map((sec, i) => (
+          <li>
+            <a href={`#${first.code}/${sec.id}`} data-sec={sec.id} aria-current={i === 0 ? 'true' : undefined} title={sec.label}>
+              <Icon name={sec.icon} size={20} />
+              <span class="lx-sec-label">{sec.label}</span>
+              {!sec.ready && <span class="lx-sec-soon">Soon</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="lx-content">
   <!-- Detail -->
-  <article class="lx-main" aria-live="polite">
+  <article class="lx-main" data-panel="overview" aria-live="polite">
     <header class="lx-head">
       <div class="lx-anim">
         <h2 class="lx-title" data-f="name">{first.name}</h2>
@@ -334,25 +389,133 @@ const labelData = {
       </div>
     </footer>
   </article>
+
+      {sectionList.filter((sec) => !sec.ready).map((sec) => (
+        <article class="lx-main lx-soon" data-panel={sec.id} hidden>
+          <span class="lx-soon-ic"><Icon name={sec.icon} size={32} /></span>
+          <p class="lx-soon-tag">Under construction</p>
+          <h2 class="lx-soon-title">{soon[sec.id].title} <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-soon-text">{soon[sec.id].text}</p>
+          <div class="lx-soon-actions">
+            <a class="btn btn-primary" data-soon-catalogue href={first.catalogue}><Icon name="layers" size={18} /> Browse datasets</a>
+            {sec.id === 'resources'
+              ? <a class="btn btn-secondary" data-soon-boundary href={first.boundary?.href ?? '#download'}><Icon name="download" size={18} /> Download boundary</a>
+              : <a class="btn btn-secondary" href={`#${first.code}/overview`} data-sec-link="overview">Back to overview</a>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
 </section>
 
 <style>
-  .lx {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: var(--space-6);
-    align-items: start;
+  .lx { display: flex; flex-direction: column; gap: var(--space-6); }
+
+  /* ---------- landscape selector (top) ---------- */
+  .lx-top { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .lx-top-label { font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-pick { position: relative; }
+  .lx-pick-btn {
+    display: flex; align-items: center; gap: var(--space-3); min-width: 340px;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface); color: var(--color-text);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+    font: inherit; cursor: pointer; text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .lx-pick-btn:hover, .lx-pick-btn[aria-expanded='true'] { border-color: var(--mosaic-teal); }
+  .lx-pick-btn:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 2px; }
+  .lx-pick-value { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .lx-pick-name { font-family: var(--font-title); font-weight: 700; font-size: var(--text-lg); line-height: 1.2; }
+  .lx-pick-country { font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-pick-chev { display: flex; color: var(--mosaic-teal); transform: rotate(90deg); transition: transform 0.2s; }
+  .lx-pick-btn[aria-expanded='true'] .lx-pick-chev { transform: rotate(-90deg); }
+  .lx-pop {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; width: 400px; max-width: calc(100vw - 2rem);
+    padding: var(--space-3); background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card-hover);
+    animation: lx-pop 0.18s ease;
+  }
+  .lx-pop[hidden] { display: none; }
+  @keyframes lx-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .lx-top .lx-all { margin: 0 0 0 auto; }
+
+  /* ---------- section menu (left) ---------- */
+  .lx-body { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: var(--space-6); align-items: start; transition: grid-template-columns 0.25s ease; }
+  .lx-body.is-collapsed { grid-template-columns: 64px minmax(0, 1fr); }
+  .lx-secnav {
+    position: sticky; top: calc(var(--space-16) + var(--space-2));
+    padding: var(--space-4) var(--space-3);
+    background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+  }
+  .lx-secnav-head { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-2) var(--space-3); }
+  .lx-secnav-title { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-secnav-toggle {
+    width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--radius-md);
+    background: transparent; color: var(--color-muted); font-size: var(--text-xl); line-height: 1; cursor: pointer;
+    transition: transform 0.25s, background-color 0.2s;
+  }
+  .lx-secnav-toggle:hover { background: var(--color-surface); color: var(--color-text); }
+  .lx-secnav-toggle:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 1px; }
+  .lx-body.is-collapsed .lx-secnav-toggle { transform: rotate(180deg); }
+  .lx-body.is-collapsed .lx-secnav-title, .lx-body.is-collapsed .lx-sec-label, .lx-body.is-collapsed .lx-sec-soon { display: none; }
+  .lx-body.is-collapsed .lx-secnav-head { justify-content: center; padding: 0 0 var(--space-3); }
+  .lx-secnav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+  .lx-secnav a {
+    position: relative; display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3); border-radius: var(--radius-lg);
+    color: var(--color-text); font-weight: 600; text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .lx-body.is-collapsed .lx-secnav a { justify-content: center; }
+  .lx-secnav a :global(svg) { flex-shrink: 0; color: var(--color-muted); }
+  .lx-secnav a:hover { background: var(--color-surface); }
+  .lx-secnav a:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
+  .lx-secnav a[aria-current='true'] { background: var(--mosaic-light-teal); color: var(--mosaic-teal); }
+  .lx-secnav a[aria-current='true'] :global(svg) { color: var(--mosaic-teal); }
+  .lx-secnav a[aria-current='true']::before {
+    content: ''; position: absolute; left: -12px; top: 12%; bottom: 12%; width: 4px;
+    border-radius: var(--radius-full); background: var(--mosaic-amber);
+  }
+  .lx-sec-label { flex: 1; min-width: 0; white-space: nowrap; }
+  .lx-sec-soon {
+    padding: 0.05rem var(--space-2); border-radius: var(--radius-full);
+    background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+    font-size: var(--text-xs); font-weight: 700;
   }
 
-  /* ---------- selector ---------- */
-  .lx-side, .lx-main {
+  /* ---------- panels ---------- */
+  .lx-content { min-width: 0; }
+  .lx-content > [hidden] { display: none; }
+  .lx-content > .is-entering { animation: lx-panel 0.3s ease; }
+  @keyframes lx-panel { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .lx-soon { text-align: center; padding: var(--space-16) var(--space-8); }
+  .lx-soon-ic {
+    width: 72px; height: 72px; margin: 0 auto var(--space-4); display: grid; place-items: center;
+    border-radius: var(--radius-full); background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+  }
+  .lx-soon-tag {
+    display: inline-block; margin: 0 0 var(--space-3); padding: 0.1rem var(--space-3); border-radius: var(--radius-full);
+    background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+    font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .lx-soon-title { font-size: var(--text-3xl); margin: 0 0 var(--space-3); }
+  .lx-soon-for { display: block; font-size: var(--text-lg); color: var(--color-muted); font-weight: 400; margin-top: var(--space-2); }
+  .lx-soon-text { color: var(--color-muted); line-height: 1.7; max-width: 60ch; margin: 0 auto var(--space-6); }
+  .lx-soon-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+  .lx-soon-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
+  :global([data-theme='dark']) .lx-soon-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
+  :global([data-theme='dark']) .lx-secnav a[aria-current='true'] { background: rgba(214, 238, 242, 0.12); color: var(--mosaic-light-teal); }
+  :global([data-theme='dark']) .lx-secnav a[aria-current='true'] :global(svg),
+  :global([data-theme='dark']) .lx-pick-chev { color: var(--mosaic-light-teal); }
+
+  /* ---------- shared surfaces ---------- */
+  .lx-pop, .lx-main {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
   }
-  .lx-side { padding: var(--space-6) var(--space-4); position: sticky; top: var(--space-16); }
-  .lx-side-title { font-size: var(--text-xl); margin: 0 var(--space-2) var(--space-4); }
   .lx-search {
     display: flex; align-items: center; gap: var(--space-2);
     margin: 0 var(--space-2) var(--space-4);
@@ -365,7 +528,7 @@ const labelData = {
   .lx-search:focus-within { border-color: var(--mosaic-teal); box-shadow: 0 0 0 3px var(--color-accent-light); }
   .lx-search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; color: var(--color-text); outline: none; }
 
-  .lx-list { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); max-height: 560px; overflow-y: auto; }
+  .lx-list { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); max-height: 380px; overflow-y: auto; }
   .lx-item {
     position: relative;
     display: grid;
@@ -377,6 +540,7 @@ const labelData = {
     cursor: pointer;
     transition: background-color 0.25s ease, transform 0.25s ease;
   }
+  .lx-item[hidden] { display: none; } /* search filter — .lx-item's display: grid would override [hidden] */
   .lx-item:hover { background: var(--color-bg); }
   .lx-item:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
   .lx-item[aria-selected='true'] { background: var(--mosaic-light-teal); }
@@ -396,8 +560,6 @@ const labelData = {
     font-weight: 700; text-align: center; font-size: var(--text-sm);
   }
   .lx-item[aria-selected='true'] .lx-item-count { background: var(--color-white); }
-  .lx-item-chev { color: var(--mosaic-teal); display: flex; opacity: 0; transform: translateX(-4px); transition: opacity 0.25s, transform 0.25s; }
-  .lx-item[aria-selected='true'] .lx-item-chev { opacity: 1; transform: none; }
   .lx-empty { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-3) var(--space-2); }
   .lx-all {
     display: inline-flex; align-items: center; gap: var(--space-2);
@@ -630,7 +792,6 @@ const labelData = {
   :global([data-theme='dark']) .lx-badge,
   :global([data-theme='dark']) .lx-item[aria-selected='true'] { background: rgba(214, 238, 242, 0.12); color: var(--mosaic-light-teal); }
   :global([data-theme='dark']) .lx-item-pin,
-  :global([data-theme='dark']) .lx-item-chev,
   :global([data-theme='dark']) .lx-item-count,
   :global([data-theme='dark']) .lx-all,
   :global([data-theme='dark']) .lx-country :global(svg) { color: var(--mosaic-light-teal); }
@@ -639,15 +800,17 @@ const labelData = {
   :global([data-theme='dark']) .lx-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
 
   @media (max-width: 900px) {
-    /* minmax(0, …) + min-width: 0 so the side-scrolling list can't widen the page */
-    .lx { grid-template-columns: minmax(0, 1fr); }
-    .lx-side { min-width: 0; }
-    .lx-side { position: static; }
-    .lx-list { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: var(--space-2); scroll-snap-type: x mandatory; }
-    .lx-item { flex: 0 0 auto; scroll-snap-align: start; border: 1px solid var(--color-border); }
-    .lx-item-chev { display: none; }
-    .lx-all { display: none; }
-    .lx-actions { justify-content: flex-start; }
+    /* the section menu becomes a row of chips above the content */
+    .lx-body, .lx-body.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+    .lx-secnav { position: static; padding: var(--space-2); }
+    .lx-secnav-head { display: none; }
+    .lx-secnav ul { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+    .lx-secnav a { white-space: nowrap; padding: var(--space-2) var(--space-3); }
+    .lx-secnav a[aria-current='true']::before { display: none; }
+    .lx-body.is-collapsed .lx-sec-label, .lx-body.is-collapsed .lx-sec-soon { display: inline; }
+    .lx-top .lx-all { display: none; }
+    .lx-pick, .lx-pick-btn { width: 100%; min-width: 0; }
+    .lx-pop { width: 100%; }
   }
   @media (max-width: 640px) {
     .lx-main { padding: var(--space-4); }
@@ -1119,7 +1282,15 @@ const labelData = {
         if (on && opts.focus) li.focus()
         if (on) revealInList(li)
       })
-      if (opts.push !== false) history.replaceState(null, '', `#${code}`)
+      // selector button, section links and the "under construction" panels
+      $('[data-pick-name]').textContent = it.name
+      $('[data-pick-country]').textContent = it.country
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec]').forEach((a) => { a.href = `#${code}/${a.dataset.sec}` })
+      root.querySelectorAll('[data-soon-name]').forEach((e) => { e.textContent = it.name })
+      root.querySelectorAll<HTMLAnchorElement>('[data-soon-catalogue]').forEach((a) => { a.href = it.catalogue })
+      root.querySelectorAll<HTMLAnchorElement>('[data-soon-boundary]').forEach((a) => { a.href = it.boundary?.href ?? '#download' })
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec-link]').forEach((a) => { a.href = `#${code}/${a.dataset.secLink}` })
+      if (opts.push !== false) writeHash()
 
       // map
       svg.querySelectorAll('.lx-ls').forEach((p) => p.classList.toggle('is-on', (p as SVGElement).dataset.ls === code))
@@ -1142,20 +1313,41 @@ const labelData = {
       renderPhotos(it)
     }
 
-    list.forEach((li, i) => {
-      li.addEventListener('click', () => select(li.dataset.code!))
+    /* ---------- selector dropdown ---------- */
+    const pickBtn = $<HTMLButtonElement>('[data-pick-btn]')
+    const pop = $('[data-pop]')
+    function openPick() {
+      pop.hidden = false
+      pickBtn.setAttribute('aria-expanded', 'true')
+      const sel = list.find((li) => li.getAttribute('aria-selected') === 'true')
+      if (sel) revealInList(sel)
+      $<HTMLInputElement>('#lx-search').focus()
+    }
+    function closePick(focusBtn = false) {
+      pop.hidden = true
+      pickBtn.setAttribute('aria-expanded', 'false')
+      if (focusBtn) pickBtn.focus()
+    }
+    pickBtn.addEventListener('click', () => (pop.hidden ? openPick() : closePick()))
+    document.addEventListener('click', (e) => {
+      if (!pop.hidden && !(e.target as Element).closest('[data-pick]')) closePick()
+    })
+    $('[data-pick]').addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { e.preventDefault(); closePick(true) } })
+
+    const choose = (code: string) => { closePick(true); select(code) }
+    list.forEach((li) => {
+      li.addEventListener('click', () => choose(li.dataset.code!))
       li.addEventListener('keydown', (e) => {
         const visible = list.filter((x) => !x.hidden)
         const k = visible.indexOf(li)
         let next: HTMLElement | undefined
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = visible[k + 1]
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = visible[k - 1]
+        if (e.key === 'ArrowDown') next = visible[k + 1]
+        if (e.key === 'ArrowUp') { if (k === 0) { e.preventDefault(); $<HTMLInputElement>('#lx-search').focus(); return } next = visible[k - 1] }
         if (e.key === 'Home') next = visible[0]
         if (e.key === 'End') next = visible[visible.length - 1]
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(li.dataset.code!) }
-        if (next) { e.preventDefault(); select(next.dataset.code!, { focus: true }) }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(li.dataset.code!) }
+        if (next) { e.preventDefault(); next.focus() }
       })
-      void i
     })
 
     // search
@@ -1165,6 +1357,67 @@ const labelData = {
       let n = 0
       list.forEach((li) => { const hit = !q || li.dataset.search!.includes(q); li.hidden = !hit; if (hit) n++ })
       $('.lx-empty').hidden = n > 0
+    })
+    input.addEventListener('keydown', (e) => {
+      const firstVisible = list.find((x) => !x.hidden)
+      if (e.key === 'ArrowDown' && firstVisible) { e.preventDefault(); firstVisible.focus() }
+      if (e.key === 'Enter' && firstVisible) { e.preventDefault(); choose(firstVisible.dataset.code!) }
+    })
+
+    /* ---------- sections ---------- */
+    const secIds = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]')).map((p) => p.dataset.panel!)
+    let section = 'overview'
+    function writeHash() {
+      const h = section === 'overview' ? `#${current.code}` : `#${current.code}/${section}`
+      history.replaceState(null, '', h)
+    }
+    function showSection(id: string, opts: { push?: boolean; scroll?: boolean } = {}) {
+      if (!secIds.includes(id)) id = 'overview'
+      const changed = id !== section
+      section = id
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => {
+        const on = p.dataset.panel === id
+        p.hidden = !on
+        if (on && changed && !reduce) { p.classList.remove('is-entering'); void p.offsetWidth; p.classList.add('is-entering') }
+      })
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec]').forEach((a) => {
+        if (a.dataset.sec === id) a.setAttribute('aria-current', 'true')
+        else a.removeAttribute('aria-current')
+      })
+      // on phones the menu is a scrolling row: keep the active chip visible
+      const chip = root.querySelector<HTMLElement>(`[data-sec="${id}"]`)
+      const row = chip?.closest('ul')
+      if (chip && row && row.scrollWidth > row.clientWidth) row.scrollTo({ left: chip.offsetLeft - row.offsetLeft - 8, behavior: reduce ? 'auto' : 'smooth' })
+      // the map was hidden: re-measure it now that it is visible again
+      if (id === 'overview') { placePin(); updateScale(); queueLabels() }
+      // a short panel can leave the reader looking at the footer: bring the panel's top back into view
+      if (opts.scroll && changed) {
+        const top = $('.lx-body').getBoundingClientRect().top
+        if (top < 80) window.scrollTo({ top: top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
+      }
+      if (opts.push !== false) writeHash()
+    }
+    root.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest<HTMLAnchorElement>('[data-sec], [data-sec-link]')
+      if (!a) return
+      e.preventDefault()
+      showSection(a.dataset.sec ?? a.dataset.secLink!, { scroll: true })
+    })
+
+    // collapse / expand the section menu (remembered on this device only)
+    const lxBody = $('.lx-body')
+    const toggle = $<HTMLButtonElement>('[data-secnav-toggle]')
+    const setCollapsed = (on: boolean) => {
+      lxBody.classList.toggle('is-collapsed', on)
+      toggle.setAttribute('aria-expanded', String(!on))
+      toggle.setAttribute('aria-label', on ? 'Expand the section menu' : 'Collapse the section menu')
+      requestAnimationFrame(() => { placePin(); updateScale(); queueLabels() })
+    }
+    try { if (localStorage.getItem('mosaic.lx.collapsed') === '1') setCollapsed(true) } catch { /* storage unavailable */ }
+    toggle.addEventListener('click', () => {
+      const on = !lxBody.classList.contains('is-collapsed')
+      setCollapsed(on)
+      try { localStorage.setItem('mosaic.lx.collapsed', on ? '1' : '0') } catch { /* storage unavailable */ }
     })
 
     /* ---------- zoom & pan ---------- */
@@ -1242,12 +1495,13 @@ const labelData = {
     restartAuto(current)
     new ResizeObserver(() => { placePin(); updateScale(); queueLabels() }).observe(svg)
 
-    // deep link: /landscapes#COL-CUM
-    const fromHash = decodeURIComponent(location.hash.slice(1))
-    if (byCode.has(fromHash)) select(fromHash, { push: false })
-    window.addEventListener('hashchange', () => {
-      const c = decodeURIComponent(location.hash.slice(1))
+    // deep links: /landscapes#COL-CUM and /landscapes#COL-CUM/knowledge-hub
+    function fromHash() {
+      const [c, sec] = decodeURIComponent(location.hash.slice(1)).split('/')
       if (byCode.has(c)) select(c, { push: false })
-    })
+      showSection(sec || 'overview', { push: false })
+    }
+    fromHash()
+    window.addEventListener('hashchange', fromHash)
   }
 </script>
