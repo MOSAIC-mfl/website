@@ -1,10 +1,10 @@
 ---
-/* Home hero art (2026-11-10): Lizeth's landscape banner with the MOSAIC tiles
-   as live SVG. The tiles drawn in her artwork were erased from the raster
-   (illustrations/hero-home-mosaic.webp) and redrawn here at the same places,
-   in image pixels (viewBox = the image, 1694 × 928). On load they travel along
-   the banner's dotted route and assemble into the official six-tile mark
-   (public/mosaic-mark.svg geometry and colours) at its end.
+/* Home hero art (2026-11-10): Lizeth's landscape banner (illustrations/
+   hero-home-mosaic.webp, a tile-free version of her artwork) with the MOSAIC
+   tiles as live SVG, in image pixels (viewBox = the image, 1695 × 928). The
+   tiles start on the banner's route nodes, as in her tiled version; on load
+   they travel along the dotted route and assemble into the official six-tile
+   mark (public/mosaic-mark.svg geometry and colours) over its last node.
    Without JavaScript, or with reduced motion, the mark is shown assembled.
    The SVG is sliced like `object-fit: cover; object-position: right bottom`
    (xMaxYMax slice), so the image and the tiles always stay aligned. */
@@ -16,8 +16,8 @@ type Slot = 'T1' | 'A1' | 'R1' | 'R2' | 'T2' | 'A2'
 // Official mark, viewBox 102 × 66 (mosaic-mark.svg), scaled and placed at the
 // end of the route on the teal hill.
 const S = 1.1
-const OX = 1540
-const OY = 515
+const OX = 1530
+const OY = 512
 const mark: Record<Slot, { hue: Hue; x: number; y: number; w: number; h: number }> = {
   T1: { hue: 'teal', x: 1.5, y: 1.5, w: 34, h: 30 },
   A1: { hue: 'amber', x: 38.5, y: 1.5, w: 27, h: 30 },
@@ -31,45 +31,43 @@ const slot = (s: Slot) => {
   return { x: OX + m.x * S, y: OY + m.y * S, w: m.w * S, h: m.h * S }
 }
 
-// The 12 tiles of the artwork (measured from it), each sent to a slot of its colour.
-// [x0, y0, x1, y1] are the tile's own pixels; `node` is the stop it leaves from.
-const pieces: { hue: Hue; box: [number, number, number, number]; slot: Slot; node: number }[] = [
-  { hue: 'teal', box: [687, 643, 704, 661], slot: 'T1', node: 0 },
-  { hue: 'terracotta', box: [853, 598, 866, 611], slot: 'R1', node: 1 },
-  { hue: 'teal', box: [926, 590, 952, 608], slot: 'T2', node: 2 },
-  { hue: 'amber', box: [955, 590, 973, 608], slot: 'A1', node: 2 },
-  { hue: 'teal', box: [1072, 621, 1089, 639], slot: 'T1', node: 3 },
-  { hue: 'amber', box: [1092, 621, 1110, 639], slot: 'A2', node: 3 },
-  { hue: 'terracotta', box: [1092, 643, 1117, 661], slot: 'R2', node: 3 },
-  { hue: 'amber', box: [1216, 583, 1231, 598], slot: 'A1', node: 4 },
-  { hue: 'teal', box: [1271, 566, 1297, 584], slot: 'T2', node: 5 },
-  { hue: 'amber', box: [1301, 566, 1318, 585], slot: 'A2', node: 5 },
-  { hue: 'terracotta', box: [1283, 588, 1300, 606], slot: 'R1', node: 5 },
-  { hue: 'teal', box: [1304, 588, 1330, 606], slot: 'T2', node: 5 },
+// 12 tiles in the clusters of Lizeth's tiled version, re-anchored on this
+// banner's nodes (695,654 · 957,594 · 1089,658 · 1288,586) and on the route
+// between them; each is sent to a slot of its colour. [x0, y0, x1, y1] in image px.
+const pieces: { hue: Hue; box: [number, number, number, number]; slot: Slot }[] = [
+  { hue: 'teal', box: [688, 644, 705, 662], slot: 'T1' },
+  { hue: 'terracotta', box: [853, 611, 866, 624], slot: 'R1' },
+  { hue: 'teal', box: [944, 585, 970, 603], slot: 'T2' },
+  { hue: 'amber', box: [973, 585, 991, 603], slot: 'A1' },
+  { hue: 'teal', box: [1057, 627, 1074, 645], slot: 'T1' },
+  { hue: 'amber', box: [1077, 627, 1095, 645], slot: 'A2' },
+  { hue: 'terracotta', box: [1077, 649, 1102, 667], slot: 'R2' },
+  { hue: 'amber', box: [1216, 594, 1231, 609], slot: 'A1' },
+  { hue: 'teal', box: [1268, 555, 1294, 573], slot: 'T2' },
+  { hue: 'amber', box: [1298, 555, 1315, 574], slot: 'A2' },
+  { hue: 'terracotta', box: [1280, 577, 1297, 595], slot: 'R1' },
+  { hue: 'teal', box: [1301, 577, 1327, 595], slot: 'T2' },
 ]
-// Stops on the dotted route (where tiles sat) and the route itself.
-const nodes: [number, number][] = [[695, 652], [859, 604], [950, 599], [1094, 641], [1223, 590], [1300, 586]]
+// The dotted route as drawn in the banner, first node to last.
 const route: [number, number][] = [
-  [706, 645], [760, 617], [810, 611], [860, 605], [895, 607], [924, 600], [975, 600], [1010, 620],
-  [1050, 645], [1090, 655], [1125, 647], [1160, 625], [1210, 597], [1223, 590], [1260, 585],
-  [1300, 582], [1331, 585], [1370, 590], [1410, 590], [1460, 575], [1510, 557], [1540, 550],
+  [696, 654], [725, 635], [760, 620], [795, 614], [830, 616], [870, 618], [910, 610], [957, 594],
+  [980, 603], [1010, 620], [1040, 640], [1065, 653], [1089, 658], [1120, 650], [1160, 630],
+  [1200, 610], [1240, 595], [1288, 586], [1320, 586], [1360, 591], [1400, 592], [1440, 588],
+  [1480, 575], [1520, 555], [1550, 546], [1580, 544],
 ]
 const r1 = (n: number) => Math.round(n * 10) / 10
 ---
 
 <svg
   class="hm"
-  viewBox="0 0 1694 928"
+  viewBox="0 0 1695 928"
   preserveAspectRatio="xMaxYMax slice"
   data-hero-mosaic
   data-route={JSON.stringify(route)}
   aria-hidden="true"
   focusable="false"
 >
-  <image href={`${base}/illustrations/hero-home-mosaic.webp`} x="0" y="0" width="1694" height="928" />
-  <g class="hm-nodes">
-    {nodes.map(([x, y]) => <circle class="hm-node" cx={x} cy={y} r="5" />)}
-  </g>
+  <image href={`${base}/illustrations/hero-home-mosaic.webp`} x="0" y="0" width="1695" height="928" />
   <g class="hm-mark">
     {pieces.map((p) => {
       const s = slot(p.slot)
@@ -77,7 +75,6 @@ const r1 = (n: number) => Math.round(n * 10) / 10
       return (
         <rect
           class={`hm-tile hm-${p.hue}`}
-          data-node={p.node}
           data-start={`${x0 - 1},${y0 - 1},${x1 - x0 + 2},${y1 - y0 + 2}`}
           x={r1(s.x)}
           y={r1(s.y)}
@@ -96,7 +93,6 @@ const r1 = (n: number) => Math.round(n * 10) / 10
   .hm-teal { fill: var(--mosaic-tile-teal); }
   .hm-amber { fill: var(--mosaic-tile-amber); }
   .hm-terracotta { fill: var(--mosaic-tile-terracotta); }
-  .hm-node { fill: var(--mosaic-sand); }
   /* a small "settle" once the last tile is in place */
   .hm-mark { transform-box: fill-box; transform-origin: center; }
   .hm-mark.is-done { animation: hm-pop 0.5s ease-out; }
@@ -110,7 +106,6 @@ const r1 = (n: number) => Math.round(n * 10) / 10
     type P = [number, number]
     const route = JSON.parse(svg.dataset.route ?? '[]') as P[]
     const mark = svg.querySelector<SVGGElement>('.hm-mark')!
-    const nodeEls = Array.from(svg.querySelectorAll<SVGCircleElement>('.hm-node'))
     const num = (el: Element, a: string) => Number(el.getAttribute(a))
 
     const tiles = Array.from(svg.querySelectorAll<SVGRectElement>('.hm-tile')).map((el) => {
@@ -126,7 +121,7 @@ const r1 = (n: number) => Math.round(n * 10) / 10
       const line: P[] = [from, ...route.slice(near + 1), to]
       const cum = [0]
       for (let i = 1; i < line.length; i++) cum.push(cum[i - 1] + Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]))
-      return { el, sw, sh, end, line, cum, node: Number(el.dataset.node), startX: from[0] }
+      return { el, sw, sh, end, line, cum, startX: from[0] }
     })
 
     const at = (t: (typeof tiles)[number], d: number): P => {
@@ -149,7 +144,6 @@ const r1 = (n: number) => Math.round(n * 10) / 10
     const total = HOLD + (order.length - 1) * STAGGER + DUR
 
     const draw = (ms: number) => {
-      const leave = nodeEls.map(() => 0)
       for (const t of tiles) {
         const p = Math.min(Math.max((ms - delay.get(t)!) / DUR, 0), 1)
         const e = ease(p)
@@ -161,9 +155,7 @@ const r1 = (n: number) => Math.round(n * 10) / 10
         t.el.setAttribute('y', (cy - h / 2).toFixed(1))
         t.el.setAttribute('width', w.toFixed(1))
         t.el.setAttribute('height', h.toFixed(1))
-        leave[t.node] = Math.max(leave[t.node], Math.min(p * 6, 1))
       }
-      nodeEls.forEach((n, i) => n.style.setProperty('opacity', String(leave[i])))
     }
 
     draw(0)
