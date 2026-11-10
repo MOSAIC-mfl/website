@@ -20,22 +20,23 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-content">
-        <p class="hero-eyebrow">Open geospatial data for living landscapes</p>
-        <h1 class="hero-headline">Find and share geospatial data for living landscapes</h1>
+        <p class="hero-eyebrow">An open network for living landscapes</p>
+        <h1 class="hero-headline">Data, tools and research for living landscapes — connected</h1>
         <p class="hero-sub">
-          MOSAIC connects datasets, institutions and local knowledge to make landscape
-          information easier to discover, compare and use.
+          MOSAIC connects datasets, tools, research and local knowledge from institutions and
+          landscape initiatives, so what is known about each living landscape is easier to
+          discover, compare and use.
         </p>
         <p class="hero-support">
-          Use MOSAIC to explore trusted geospatial datasets, understand where they apply, and
-          contribute data from your institution, project or landscape initiative.
+          Explore what exists for a landscape, see where it applies, and add your own work from
+          your institution, project or initiative.
         </p>
         <div class="hero-actions">
-          <a href={`${base}/catalogue`} class="btn btn-hero-primary">
-            <Icon name="search" size={18} aria-hidden="true" /> Explore datasets
+          <a href={`${base}/landscapes`} class="btn btn-hero-primary">
+            <Icon name="map-pin" size={18} aria-hidden="true" /> Explore the landscapes
           </a>
           <a href={`${base}/about#contribute`} class="btn btn-hero-ghost">
-            <Icon name="database" size={18} aria-hidden="true" /> Contribute a dataset
+            <Icon name="upload" size={18} aria-hidden="true" /> Contribute
           </a>
         </div>
       </div>
@@ -72,14 +73,6 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
             <span class="stat-label">Countries with data</span>
           </span>
         </div>
-        <div class="stat-divider" aria-hidden="true"></div>
-        <div class="stat-item">
-          <span class="stat-icon" data-tint="teal" aria-hidden="true"><Icon name="building" size={24} /></span>
-          <span class="stat-text">
-            <span class="stat-number">10</span>
-            <span class="stat-label">CGIAR centres</span>
-          </span>
-        </div>
       </div>
     </div>
   </section>
@@ -95,14 +88,14 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </svg>
       </div>
       <div class="home-entry">
-        <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="teal" arrow>
-          Search datasets by place, theme, source or readiness status.
+        <ContentCard icon="map-pin" title="Explore a landscape" href={`${base}/landscapes`} tint="teal" arrow>
+          See what is known about each living landscape: where it is, what it is like, and the data, tools and research around it.
         </ContentCard>
-        <ContentCard icon="upload" title="Share data" href={`${base}/about#contribute`} tint="amber" arrow>
-          Register a dataset so others can discover, cite or request access to it.
+        <ContentCard icon="search" title="Find data" href={`${base}/catalogue`} tint="amber" arrow>
+          Search the catalogue by place, theme, source or readiness status.
         </ContentCard>
-        <ContentCard icon="map-pin" title="Use data for decisions" href={`${base}/landscapes`} tint="terracotta" arrow>
-          Explore landscape evidence for planning, restoration, monitoring and research.
+        <ContentCard icon="upload" title="Share your work" href={`${base}/about#contribute`} tint="terracotta" arrow>
+          Register a dataset today — research and knowledge resources are coming next.
         </ContentCard>
       </div>
     </div>
@@ -119,11 +112,11 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </svg>
       </div>
       <ul class="who-grid">
-        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape datasets</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing geospatial evidence</span></li>
+        <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
+        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
         <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
         <li class="who-item"><span class="who-ico" data-tint="teal" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
-        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> improving discoverability and reuse</span></li>
+        <li class="who-item"><span class="who-ico" data-tint="amber" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
         <li class="who-item"><span class="who-ico" data-tint="terracotta" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
       </ul>
     </div>
@@ -138,15 +131,15 @@ const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GL
         </div>
         <div class="grow-main">
           <h2 class="grow-title">Help grow the MOSAIC network</h2>
-          <p class="grow-body">Your dataset could help researchers, landscape teams and decision-makers across multiple countries.</p>
+          <p class="grow-body">Your data, tools and research could help researchers, landscape teams and decision-makers across many countries. Datasets can be registered today; research and knowledge resources are coming next.</p>
           <ul class="grow-features">
             <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="users" size={18} /></span><span>Strengthen collaboration</span></li>
-            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="database" size={18} /></span><span>Increase data discoverability</span></li>
+            <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="database" size={18} /></span><span>Make knowledge easier to find</span></li>
             <li><span class="grow-feat-icon" aria-hidden="true"><Icon name="sparkles" size={18} /></span><span>Drive better decisions</span></li>
           </ul>
         </div>
         <a class="grow-btn" href={`${base}/about#contribute`}>
-          Contribute a dataset
+          Contribute
           <Icon name="arrow-right" size={18} aria-hidden="true" />
         </a>
       </div>
