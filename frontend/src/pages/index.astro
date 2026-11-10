@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/ui/Icon.astro'
+import HeroMosaic from '../components/home/HeroMosaic.astro'
 import { loadDatasets } from '../utils/loadDatasets'
 import { countCountries } from '../utils/countries'
 
@@ -70,7 +71,7 @@ const steps = [
       </div>
     </div>
     <div class="hero-art" aria-hidden="true">
-      <img src={`${base}/illustrations/hero-home-landscape.webp`} alt="" width="1695" height="928" fetchpriority="high" />
+      <HeroMosaic />
     </div>
   </section>
 
@@ -200,9 +201,9 @@ const steps = [
     /* Tall enough that the text sits in the open sky above the hills: the
        banner is ~1.83:1 and its hills start ~70% down on the left. */
     min-height: clamp(720px, 54.7vw, 880px);
-    /* the banner's own sky colour (a touch warmer than Warm Sand), so the
+    /* the banner's own sky colour (a touch rosier than Warm Sand), so the
        band above the shifted banner shows no seam */
-    background-color: #F5EFE9;
+    background-color: #F0E8E5;
     color: var(--mosaic-ink);
     padding: 3.5rem 0 6.5rem;
     overflow: hidden;
@@ -217,7 +218,8 @@ const steps = [
   .hero-content { max-width: 620px; }
 
   /* Full-bleed landscape banner behind the text, kept to its bottom-right
-     corner (tree and hills) when the hero is narrower than the image. */
+     corner (route and MOSAIC mark) when the hero is narrower than the image;
+     HeroMosaic's SVG does the cover/right-bottom fit itself. */
   .hero-art {
     position: absolute;
     /* shifted down so the hills start below the buttons; the gap above is
@@ -225,13 +227,6 @@ const steps = [
     inset: 6rem 0 -6rem;
     pointer-events: none;
     z-index: 1;
-  }
-  .hero-art img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: right bottom;
   }
 
   .hero-eyebrow {
@@ -484,7 +479,7 @@ const steps = [
     .hero-content { max-width: none; }
     .hero-art { position: static; margin-top: var(--space-6); }
     .hero-art::after { display: none; }
-    .hero-art img {
+    .hero-art :global(svg) {
       height: auto;
       aspect-ratio: 4 / 3;
       /* blend the banner's sky into the band above it */
