@@ -181,12 +181,14 @@ const labelData = {
 
 <section class="lx" data-lx aria-label="Living landscape explorer">
   <script type="application/json" data-lx-data set:html={JSON.stringify({ items, globe: globeCountries, labels: labelData })} />
-  <!-- Before first paint: with no landscape in the address, start on the
-       "Select a landscape" screen (CSS keys off .is-intro). Without JavaScript
+  <!-- Before first paint: .is-live shows the world map (start screen, then a
+       compact strip that stays as the thread); with no landscape in the address,
+       .is-intro starts on the "Select a landscape" screen. Without JavaScript
        the first landscape is shown, as before. -->
   <script is:inline define:vars={{ codes }}>
     var lxRoot = document.currentScript.parentElement
     var lxCode = decodeURIComponent(location.hash.slice(1)).split('/')[0]
+    lxRoot.classList.add('is-live')
     if (codes.indexOf(lxCode) === -1) lxRoot.classList.add('is-intro')
   </script>
 
@@ -234,14 +236,16 @@ const labelData = {
     <a class="lx-all" href="#download">Download all boundaries <Icon name="arrow-right" size={16} /></a>
   </div>
 
-  <!-- Start screen: pick a landscape on the map or from the list -->
+  <!-- World map: the start screen (map + list), then a compact strip above the
+       chosen landscape, its pin highlighted, so the global view stays in sight -->
   <div class="lx-intro" data-intro>
     <div class="lx-intro-head">
       <h2 class="lx-intro-title">Select a landscape</h2>
       <p class="lx-intro-lead">{items.length} living landscapes in {introCountries.length} countries. Choose one on the map or below to see its overview.</p>
     </div>
+    <div class="lx-gm-row">
     <div class="lx-intro-map">
-      <svg viewBox={introView.join(' ')} preserveAspectRatio="xMidYMid meet" role="group" aria-label="Map of the living landscapes">
+      <svg data-world viewBox={introView.join(' ')} preserveAspectRatio="xMidYMid meet" role="group" aria-label="Map of the living landscapes">
         <path class="lx-land" d={world.d} />
         {mapCountries.map(([iso, c]) => (
           <path class:list={['lx-ctry', { 'is-home': introCountries.includes(iso) }]} d={c.d} fill-rule="evenodd" vector-effect="non-scaling-stroke" />
@@ -258,6 +262,13 @@ const labelData = {
           </a>
         ))}
       </svg>
+    </div>
+    <div class="lx-gm-side">
+      <p class="lx-gm-kicker">Living landscapes</p>
+      <p class="lx-gm-count">{items.length} landscapes in {introCountries.length} countries</p>
+      <p class="lx-gm-hint">Pick another pin on the map to switch.</p>
+      <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
+    </div>
     </div>
     <ul class="lx-intro-list" data-reveal-stagger>
       {items.map((it) => (
@@ -497,7 +508,29 @@ const labelData = {
   /* ---------- section menu (left) ---------- */
   /* ── "Select a landscape" start screen ── */
   .lx-intro { display: none; }
-  .lx.is-intro .lx-intro { display: block; animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx.is-live .lx-intro { display: block; margin-bottom: var(--space-6); }
+  .lx.is-intro .lx-intro { animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  /* title and list belong to the start screen only */
+  .lx:not(.is-intro) .lx-intro-head,
+  .lx:not(.is-intro) .lx-intro-list { display: none; }
+  /* compact strip once a landscape is chosen */
+  .lx-gm-row { display: flex; align-items: center; gap: var(--space-8); }
+  .lx-gm-row .lx-intro-map { flex: 1 1 auto; max-width: 100%; transition: max-width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx.is-live:not(.is-intro) .lx-intro-map { max-width: 540px; }
+  .lx-gm-side { display: none; }
+  .lx.is-live:not(.is-intro) .lx-gm-side { display: block; animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx-gm-kicker { margin: 0; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-gm-count { margin: var(--space-1) 0 0; font-family: var(--font-title); font-size: var(--text-xl); font-weight: 700; color: var(--color-text); }
+  .lx-gm-hint { margin: var(--space-1) 0 var(--space-3); color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-gm-all { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--mosaic-teal); font-weight: 600; text-decoration: none; }
+  .lx-gm-all:hover { text-decoration: underline; }
+  :global([data-theme='dark']) .lx-gm-all { color: var(--mosaic-light-teal); }
+  /* the chosen landscape's pin */
+  .lx-ip.is-on .lx-ip-halo { fill: var(--mosaic-terracotta); opacity: 0.3; }
+  .lx-ip.is-on .lx-ip-dot { fill: var(--mosaic-terracotta); }
+  .lx-ip.is-on .lx-ip-body { transform: scale(1.6); }
+  .lx-ip.is-on .lx-ip-name { opacity: 1; }
+  .lx.is-live:not(.is-intro) .lx-ip-name { font-size: 5px; stroke-width: 1.4px; }
   .lx.is-intro .lx-body { display: none; }
   .lx-pick-prompt { display: none; font-family: var(--font-title); font-weight: 700; font-size: var(--text-lg); line-height: 1.2; }
   .lx.is-intro .lx-pick-prompt { display: block; }
@@ -513,7 +546,7 @@ const labelData = {
   .lx-ip { cursor: pointer; outline: none; }
   .lx-ip-body {
     transform-box: fill-box; transform-origin: center;
-    animation: lx-ip-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: lx-ip-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; /* not "both": a held end state would override the hover / chosen scale */
     animation-delay: calc(var(--i) * 70ms + 250ms);
     transition: transform 0.2s ease;
   }
@@ -550,6 +583,10 @@ const labelData = {
   .lx-body.is-arriving { animation: lx-arrive 0.55s cubic-bezier(0.2, 0.7, 0.2, 1); }
   @keyframes lx-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (max-width: 767px) {
+    .lx-gm-row { flex-direction: column; align-items: stretch; gap: var(--space-3); }
+    .lx.is-live:not(.is-intro) .lx-intro-map { max-width: none; }
+    .lx-gm-side { text-align: left; }
+    .lx-gm-hint { display: none; }
     .lx-intro-map svg { aspect-ratio: 1.8 / 1; }
     .lx-ip-halo { r: 4.5px; }
     .lx-ip-dot { r: 2.2px; }
@@ -1393,11 +1430,23 @@ const labelData = {
         li.tabIndex = on ? 0 : -1
       })
     }
+    // the world map's pins: the chosen landscape's is highlighted
+    const worldSvg = root.querySelector<SVGSVGElement>('[data-world]')
+    const worldView = (() => {
+      const b = worldSvg?.viewBox.baseVal
+      return b ? [b.x, b.y, b.x + b.width, b.y + b.height] : null
+    })()
+    function markOn(code: string | null) {
+      root.querySelectorAll('[data-ip]').forEach((p) => p.classList.toggle('is-on', (p as HTMLElement).dataset.ip === code))
+    }
     function enterIntro() {
       if (intro) return
       intro = true
       root.classList.add('is-intro')
       markListed(null)
+      markOn(null)
+      const top = root.getBoundingClientRect().top
+      if (top < 0) window.scrollTo({ top: top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
     }
     // leaves the start screen; true when it was showing
     function leaveIntro() {
@@ -1406,6 +1455,8 @@ const labelData = {
       root.classList.remove('is-intro')
       const b = $('.lx-body')
       if (!reduce) { b.classList.remove('is-arriving'); void b.offsetWidth; b.classList.add('is-arriving') }
+      // the locator map starts from the world view and flies to the landscape
+      if (worldView) setView(worldView)
       requestAnimationFrame(() => { placePin(); updateScale(); queueLabels() })
       // chosen from the list further down: bring the explorer's top back into view
       const top = root.getBoundingClientRect().top
@@ -1416,8 +1467,13 @@ const labelData = {
       const it = byCode.get(code)
       if (!it) return
       const fromIntro = leaveIntro()
+      markOn(code)
       if (it === current) {
-        if (fromIntro) { markListed(code); if (opts.push !== false) writeHash() }
+        if (fromIntro) {
+          markListed(code)
+          flyTo(it)
+          if (opts.push !== false) writeHash()
+        }
         return
       }
       current = it
@@ -1653,6 +1709,14 @@ const labelData = {
     if (intro) markListed(null)
     else fromHash()
     window.addEventListener('hashchange', fromHash)
+
+    // "See all landscapes": back to the start screen (a history entry, so Back returns)
+    root.querySelector('[data-gm-all]')?.addEventListener('click', (e) => {
+      e.preventDefault()
+      history.pushState(null, '', location.pathname + location.search)
+      enterIntro()
+    })
+    window.addEventListener('popstate', () => { if (!location.hash) enterIntro() })
 
     // start screen: a chip and its map pin light up together
     root.querySelectorAll<HTMLElement>('[data-chip]').forEach((chip) => {
