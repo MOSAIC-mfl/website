@@ -6,7 +6,10 @@
       "Dougga: geotag ~12 km outside the TUN-NW boundary",
       "Zambezi at Kanyemba: geotag outside the ZWE-MB boundary (Zambian bank)"
     ],
-    "location_rule": "Every photo is geotagged inside the landscape's canonical boundary (MOSAIC_catalog/boundaries/<CODE>.geojson), checked by point-in-polygon."
+    "location_rule": "Every photo is geotagged inside the landscape's canonical boundary (MOSAIC_catalog/boundaries/<CODE>.geojson), checked by point-in-polygon.",
+    "removed_2026-11-10": [
+      "Kakamega Forest National Reserve: Kakamega county left the KEN-LVB boundary on 2026-11-10 (geotag ~10 km outside); replaced by a Kericho tea-estate photo"
+    ]
   },
   "photos": {
     "CIV-NZ": [],
@@ -142,14 +145,14 @@
       {
         "file": "landscapes/KEN-LVB-1.jpg",
         "width": 1200,
-        "height": 797,
-        "alt": "Rainforest canopy of Kakamega Forest stretching to distant hills",
-        "caption": "Kakamega Forest National Reserve",
-        "author": "Josep M. Gracia",
-        "licence": "CC BY-SA 4.0",
-        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-        "source_url": "https://commons.wikimedia.org/wiki/File:KAKA_-_General_view_of_Kakamega_Forest_National_Reserve,_Kenya,_2012.jpg",
-        "verified_by": "geotag 0.292,34.856 inside landscape boundary"
+        "height": 728,
+        "alt": "Tea plantation in the foreground with forest patches and rolling green hills beyond, near Kericho",
+        "caption": "Tea estates near Kericho",
+        "author": "Bjørn Christian Tørrissen",
+        "licence": "CC BY-SA 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Kenya-Tealand-Near-Kericho-2012.JPG",
+        "verified_by": "geotag -0.345,35.314 inside landscape boundary"
       },
       {
         "file": "landscapes/KEN-LVB-2.jpg",

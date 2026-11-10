@@ -2327,8 +2327,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Ecosystem condition",
     "data_type": "Raster",
@@ -2385,8 +2385,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Ecosystem services",
     "data_type": "Vector",
@@ -2414,8 +2414,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Ecosystem condition",
     "data_type": "Vector",
@@ -2443,8 +2443,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Degradation / land health",
     "data_type": "Vector",
@@ -2472,8 +2472,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Ecosystem condition",
     "data_type": "Vector",
@@ -2501,8 +2501,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Socio-economic / livelihoods",
     "data_type": "Vector",
@@ -2530,8 +2530,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Socio-economic / livelihoods",
     "data_type": "Vector",
@@ -2559,8 +2559,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Pressures / drivers",
     "data_type": "Vector",
@@ -2588,8 +2588,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Decision-support outputs",
     "data_type": "Vector",
@@ -2881,8 +2881,8 @@
     "landscape_name": "Lake Victoria Basin (Kenya)",
     "coverage": "landscape",
     "centroid": [
-      34.5623,
-      0.0264
+      34.8223,
+      -0.0661
     ],
     "mfl_theme": "Boundaries / admin units",
     "data_type": "Vector",
@@ -2891,15 +2891,15 @@
     "source": "Alliance Bioversity-CIAT (MOSAIC)",
     "contact": "l.llanos@cgiar.org",
     "access_level": "Open",
-    "license": "Source terms (https://gadm.org/license.html)",
+    "license": "CC-BY-3.0-IGO",
     "readiness_status": "Processed",
     "formats": [
       "ZIP"
     ],
-    "description": "Canonical MOSAIC delineation of the Lake Victoria Basin (Kenya) living landscape (KEN-LVB), used to define the landscape across the catalogue. Source: GADM 4.1, level 1: counties Kakamega (KEN.11_1), Kisumu (KEN.17_1), Siaya (KEN.38_1) and Vihiga (KEN.45_1), unmodified. Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-10-14 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
-    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-10-14/KEN-LVB_Lake_Victoria_Basin_Kenya_boundary_2026-10-14.zip",
+    "description": "Canonical MOSAIC delineation of the Lake Victoria Basin (Kenya) living landscape (KEN-LVB), used to define the landscape across the catalogue. Source: OCHA COD-AB Kenya (IEBC), admin level 1: counties Kericho, Kisumu, Nandi, Siaya and Vihiga, dissolved into one outline (replaced the 4-county GADM outline on 2026-11-10). Full-detail Shapefile and GeoPackage in the dated release boundaries-2026-11-10 of MOSAIC-mfl/catalog; a simplified outline is attached to the landscape's STAC collection.",
+    "download_url": "https://github.com/MOSAIC-mfl/catalog/releases/download/boundaries-2026-11-10/KEN-LVB_Lake_Victoria_Basin_Kenya_boundary_2026-11-10.zip",
     "metadata_url": "https://mosaic-mfl.github.io/catalog/stac/collections/KEN-LVB/items/MFL-2026-102.json",
-    "citation": "County boundaries: GADM version 4.1 (gadm.org).",
+    "citation": "Contains data from 'Kenya - Subnational Administrative Boundaries' (COD-AB), source: IEBC, published by UN OCHA on HDX (https://data.humdata.org/dataset/cod-ab-ken), licensed under CC BY-IGO 3.0.",
     "gee_asset_id": null
   },
   {
