@@ -28,16 +28,19 @@ const audiences = [
 
 <div class="ov-split">
   <div class="ov-text">
-    <p>
-      MOSAIC is a catalogue and set of connectors that show what geospatial data exists for living
-      landscapes, who produced it, at what resolution and time period, and how to access it. Its
-      guiding principle is to connect, not duplicate: it links the global data services the world
-      already maintains with the local datasets only CGIAR holds.
+    <p class="ov-intro">
+      MOSAIC is an open network for living landscapes — the places where farming, nature and people
+      meet. It brings together what is known about each one: maps, datasets, tools and research from
+      many organisations, and shows you where to find each piece.
     </p>
     <p>
-      Data files stay with the institution that produced them and are linked from each catalogue
-      entry. Every entry carries a readiness status, from first registration through to
-      analytics-ready.
+      Its guiding principle is to connect, not duplicate. MOSAIC links the global data services the
+      world already maintains with the local knowledge held by CGIAR centres and their partners.
+      Everything stays with the organisation that produced it: each catalogue entry describes it,
+      points to it and shows how ready it is to use.
+    </p>
+    <p>
+      Datasets can be found and registered today; research and knowledge resources are coming next.
     </p>
   </div>
   <div class="ov-art">
@@ -69,6 +72,7 @@ const audiences = [
   .ov-split { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-12); align-items: center; margin-bottom: var(--space-16); }
   .ov-text p { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-4); }
   .ov-text p:last-child { margin-bottom: 0; }
+  .ov-text .ov-intro { font-size: var(--text-lg); color: var(--color-text); }
 
   .ov-who { padding-top: var(--space-12); border-top: 1px solid var(--color-border); }
   .ov-who-head { max-width: 62ch; margin-bottom: var(--space-8); }
