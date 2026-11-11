@@ -256,7 +256,7 @@ const labelData = {
   <div class="lx-intro" data-intro>
     <div class="lx-intro-head">
       <h2 class="lx-intro-title">Select a landscape</h2>
-      <p class="lx-intro-lead">{items.length} living landscapes in {introCountries.length} countries. Choose one on the map or below to see its overview.</p>
+      <p class="lx-intro-lead">{items.length} living landscapes in {introCountries.length} countries. Choose one on the map, or from the list at the top, to see its overview.</p>
     </div>
     <div class="lx-gm-row">
     <div class="lx-intro-map">
@@ -285,17 +285,6 @@ const labelData = {
       <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
     </div>
     </div>
-    <ul class="lx-intro-list" data-reveal-stagger>
-      {items.map((it) => (
-        <li>
-          <a class="lx-intro-chip" href={`#${it.code}`} data-chip={it.code}>
-            <span class="lx-intro-chip-name">{it.name}</span>
-            <span class="lx-intro-chip-country">{it.country}</span>
-            <span class="lx-intro-chip-count" aria-label={`${it.count} datasets`}>{it.count}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
   </div>
 
   <div class="lx-body">
@@ -556,9 +545,8 @@ const labelData = {
   .lx-intro { display: none; }
   .lx.is-live .lx-intro { display: block; margin-bottom: var(--space-6); }
   .lx.is-intro .lx-intro { animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  /* title and list belong to the start screen only */
-  .lx:not(.is-intro) .lx-intro-head,
-  .lx:not(.is-intro) .lx-intro-list { display: none; }
+  /* the title belongs to the start screen only */
+  .lx:not(.is-intro) .lx-intro-head { display: none; }
   /* compact strip once a landscape is chosen */
   .lx-gm-row { display: flex; align-items: center; gap: var(--space-8); }
   .lx-gm-row .lx-intro-map { flex: 1 1 auto; max-width: 100%; transition: max-width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
@@ -603,29 +591,10 @@ const labelData = {
     paint-order: stroke; stroke: rgba(255, 255, 255, 0.92); stroke-width: 0.9px; stroke-linejoin: round;
     opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
   }
-  .lx-ip:hover .lx-ip-body, .lx-ip:focus-visible .lx-ip-body, .lx-ip.is-hot .lx-ip-body { transform: scale(1.5); }
-  .lx-ip:hover .lx-ip-name, .lx-ip:focus-visible .lx-ip-name, .lx-ip.is-hot .lx-ip-name { opacity: 1; }
+  .lx-ip:hover .lx-ip-body, .lx-ip:focus-visible .lx-ip-body { transform: scale(1.5); }
+  .lx-ip:hover .lx-ip-name, .lx-ip:focus-visible .lx-ip-name { opacity: 1; }
   .lx-ip:focus-visible .lx-ip-halo { opacity: 0.45; }
   @keyframes lx-ip-in { from { transform: scale(0); opacity: 0; } 60% { transform: scale(1.3); opacity: 1; } to { transform: none; opacity: 1; } }
-  .lx-intro-list {
-    list-style: none; margin: var(--space-4) 0 0; padding: 0;
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: var(--space-2);
-  }
-  .lx-intro-chip {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-3); align-items: center;
-    padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md);
-    background: var(--color-surface); color: var(--color-text); text-decoration: none;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-  }
-  .lx-intro-chip:hover, .lx-intro-chip:focus-visible { border-color: var(--mosaic-teal); background: var(--mosaic-light-teal); }
-  .lx-intro-chip-name { font-weight: 700; line-height: 1.25; }
-  .lx-intro-chip-country { grid-row: 2; font-size: var(--text-sm); color: var(--color-muted); }
-  .lx-intro-chip-count {
-    grid-row: 1 / 3; grid-column: 2; min-width: 2rem; text-align: center; font-weight: 700; font-size: var(--text-sm);
-    padding: 2px 8px; border-radius: var(--radius-full); background: var(--color-gray-100); color: var(--color-text);
-  }
-  :global([data-theme='dark']) .lx-intro-chip:hover,
-  :global([data-theme='dark']) .lx-intro-chip:focus-visible { background: rgba(214, 238, 242, 0.12); border-color: var(--mosaic-light-teal); }
   .lx-body.is-arriving { animation: lx-arrive 0.55s cubic-bezier(0.2, 0.7, 0.2, 1); }
   @keyframes lx-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (max-width: 767px) {
@@ -1816,15 +1785,5 @@ const labelData = {
       enterIntro()
     })
     window.addEventListener('popstate', () => { if (!location.hash) enterIntro() })
-
-    // start screen: a chip and its map pin light up together
-    root.querySelectorAll<HTMLElement>('[data-chip]').forEach((chip) => {
-      const ip = root.querySelector(`[data-ip="${chip.dataset.chip}"]`)
-      const on = (v: boolean) => ip?.classList.toggle('is-hot', v)
-      chip.addEventListener('mouseenter', () => on(true))
-      chip.addEventListener('mouseleave', () => on(false))
-      chip.addEventListener('focus', () => on(true))
-      chip.addEventListener('blur', () => on(false))
-    })
   }
 </script>
