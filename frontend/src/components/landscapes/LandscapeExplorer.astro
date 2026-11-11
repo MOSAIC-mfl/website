@@ -42,11 +42,25 @@ interface Photo {
   licence_url?: string | null
   source_url: string
 }
+interface Resource {
+  title: string
+  type?: string | null
+  authors?: string | null
+  org?: string | null
+  year?: number | null
+  extent?: string | null
+  licence?: string | null
+  url: string
+  note?: string | null
+}
 interface Profile {
   summary?: string | null
   ecosystem?: string | null
   livelihoods?: string | null
   why_it_matters?: string | null
+  // Published work about the landscape, shown in "Other resources". A landscape
+  // with none keeps the "under construction" card.
+  resources?: Resource[]
 }
 
 // Optional inputs: the page builds without them (empty photo slot, facts only).
@@ -126,6 +140,7 @@ const items = landscapes
       ecosystem: p.ecosystem ?? null,
       livelihoods: p.livelihoods ?? null,
       why: p.why_it_matters ?? null,
+      resources: p.resources ?? [],
       catalogue: `${base}/catalogue?landscape=${l.code}`,
       boundary: b ? { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) } : null,
     }
@@ -296,7 +311,9 @@ const labelData = {
             <a href={`#${first.code}/${sec.id}`} data-sec={sec.id} aria-current={i === 0 ? 'true' : undefined} title={sec.label}>
               <Icon name={sec.icon} size={20} />
               <span class="lx-sec-label">{sec.label}</span>
-              {!sec.ready && <span class="lx-sec-soon">Soon</span>}
+              {!sec.ready && (
+                <span class="lx-sec-soon" data-sec-soon={sec.id} hidden={sec.id === 'resources' && first.resources.length > 0}>Soon</span>
+              )}
             </a>
           </li>
         ))}
@@ -455,7 +472,7 @@ const labelData = {
     </footer>
   </article>
 
-      {sectionList.filter((sec) => !sec.ready).map((sec) => (
+      {sectionList.filter((sec) => !sec.ready && sec.id !== 'resources').map((sec) => (
         <article class="lx-main lx-soon" data-panel={sec.id} hidden>
           <span class="lx-soon-ic"><Icon name={sec.icon} size={32} /></span>
           <p class="lx-soon-tag">Under construction</p>
@@ -463,12 +480,41 @@ const labelData = {
           <p class="lx-soon-text">{soon[sec.id].text}</p>
           <div class="lx-soon-actions">
             <a class="btn btn-primary" data-soon-catalogue href={first.catalogue}><Icon name="layers" size={18} /> Browse datasets</a>
-            {sec.id === 'resources'
-              ? <a class="btn btn-secondary" data-soon-boundary href={first.boundary?.href ?? '#download'}><Icon name="download" size={18} /> Download boundary</a>
-              : <a class="btn btn-secondary" href={`#${first.code}/overview`} data-sec-link="overview">Back to overview</a>}
+            <a class="btn btn-secondary" href={`#${first.code}/overview`} data-sec-link="overview">Back to overview</a>
           </div>
         </article>
       ))}
+
+      <!-- Other resources: the list when the landscape has any, the notice when it
+           has none. Both states live in one panel; renderResources() picks one. -->
+      <article class="lx-main" data-panel="resources" hidden>
+        <div data-res-has hidden>
+          <h2 class="lx-res-title">Other resources <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-res-sub">Published work about this landscape. Each item stays with its publisher &mdash; MOSAIC links to it.</p>
+          <ul class="lx-res-list" data-res-list></ul>
+        </div>
+        <div class="lx-soon" data-res-soon>
+          <span class="lx-soon-ic"><Icon name="folder" size={32} /></span>
+          <p class="lx-soon-tag">Under construction</p>
+          <h2 class="lx-soon-title">{soon.resources.title} <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-soon-text">{soon.resources.text}</p>
+          <div class="lx-soon-actions">
+            <a class="btn btn-primary" data-soon-catalogue href={first.catalogue}><Icon name="layers" size={18} /> Browse datasets</a>
+            <a class="btn btn-secondary" data-soon-boundary href={first.boundary?.href ?? '#download'}><Icon name="download" size={18} /> Download boundary</a>
+          </div>
+        </div>
+        <template data-res-tpl>
+          <li class="lx-res">
+            <span class="lx-res-ic"><Icon name="file-text" size={22} /></span>
+            <div class="lx-res-body">
+              <a class="lx-res-link" target="_blank" rel="noopener"></a>
+              <p class="lx-res-meta"></p>
+              <p class="lx-res-note"></p>
+              <p class="lx-res-foot"></p>
+            </div>
+          </li>
+        </template>
+      </article>
     </div>
   </div>
 </section>
@@ -656,6 +702,24 @@ const labelData = {
   .lx-soon-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
   .lx-soon-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
   :global([data-theme='dark']) .lx-soon-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
+
+  /* ---------- other resources ---------- */
+  .lx-res-title { font-size: var(--text-2xl); margin: 0 0 var(--space-2); }
+  .lx-res-title .lx-soon-for { display: inline; font-size: var(--text-lg); margin: 0; }
+  .lx-res-sub { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 70ch; line-height: 1.6; }
+  .lx-res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+  .lx-res {
+    display: flex; gap: var(--space-4); padding: var(--space-4);
+    border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface);
+  }
+  .lx-res-ic { flex: none; color: var(--color-primary); line-height: 0; }
+  .lx-res-body { min-width: 0; }
+  .lx-res-link { font-weight: 600; color: var(--color-text); text-decoration: none; }
+  .lx-res-link:hover, .lx-res-link:focus-visible { color: var(--color-primary); text-decoration: underline; }
+  .lx-res-meta { margin: var(--space-1) 0 0; color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-res-note { margin: var(--space-2) 0 0; line-height: 1.6; }
+  .lx-res-foot { margin: var(--space-2) 0 0; color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-res-meta:empty, .lx-res-note:empty, .lx-res-foot:empty { display: none; }
   :global([data-theme='dark']) .lx-secnav a[aria-current='true'] { background: rgba(214, 238, 242, 0.12); color: var(--mosaic-light-teal); }
   :global([data-theme='dark']) .lx-secnav a[aria-current='true'] :global(svg),
   :global([data-theme='dark']) .lx-pick-chev { color: var(--mosaic-light-teal); }
@@ -984,6 +1048,12 @@ const labelData = {
     countries: string[]; view: number[]; bbox: number[]; lon: number; lat: number; photos: Photo[]
     summary: string | null; ecosystem: string | null; livelihoods: string | null; why: string | null
     catalogue: string; boundary: { href: string; size: string } | null
+    resources: Res[]
+  }
+  type Res = {
+    title: string; url: string
+    type?: string | null; authors?: string | null; org?: string | null
+    year?: number | null; extent?: string | null; licence?: string | null; note?: string | null
   }
   type Labels = {
     places: (string | number)[][]
@@ -1407,6 +1477,34 @@ const labelData = {
       bl.href = it.boundary?.href ?? '#download'
       field('boundary-size').textContent = it.boundary?.size ?? ''
       svg.setAttribute('aria-label', `Map of ${it.name}`)
+      renderResources(it)
+    }
+
+    /* ---------- other resources ---------- */
+    // One panel, two states: the list for a landscape that has resources, the
+    // "under construction" notice for one that does not. Rows are cloned from a
+    // <template> so the icon markup lives in one place.
+    const resPanel = root.querySelector<HTMLElement>('[data-panel="resources"]')
+    const resTpl = resPanel?.querySelector<HTMLTemplateElement>('[data-res-tpl]') ?? null
+    function renderResources(it: Item) {
+      if (!resPanel || !resTpl) return
+      const has = it.resources.length > 0
+      resPanel.querySelector<HTMLElement>('[data-res-has]')!.hidden = !has
+      resPanel.querySelector<HTMLElement>('[data-res-soon]')!.hidden = has
+      const chip = root.querySelector<HTMLElement>('[data-sec-soon="resources"]')
+      if (chip) chip.hidden = has
+      const list = resPanel.querySelector<HTMLElement>('[data-res-list]')!
+      list.textContent = ''
+      for (const r of it.resources) {
+        const li = resTpl.content.firstElementChild!.cloneNode(true) as HTMLElement
+        const a = li.querySelector<HTMLAnchorElement>('.lx-res-link')!
+        a.href = r.url
+        a.textContent = r.title
+        li.querySelector('.lx-res-meta')!.textContent = [r.type, r.org, r.year, r.extent].filter(Boolean).join(' \u00b7 ')
+        li.querySelector('.lx-res-note')!.textContent = r.note ?? ''
+        li.querySelector('.lx-res-foot')!.textContent = [r.authors, r.licence].filter(Boolean).join(' \u00b7 ')
+        list.appendChild(li)
+      }
     }
 
     /* ---------- select ---------- */
@@ -1690,6 +1788,7 @@ const labelData = {
     })
 
     // first paint
+    renderResources(current)
     setView(restView(current))
     updateZoomButtons()
     for (const g of globePaths) g.el.classList.toggle('is-home', current.countries.includes(g.iso))
