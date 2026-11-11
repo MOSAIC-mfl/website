@@ -24,20 +24,21 @@ const geo = geoFile.landscapes ?? {}
 const allLandscapes = Object.keys(geo).length
 const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).size
 
+// The journey, in the language of About › What MOSAIC is (connect / integrate / support).
 const steps = [
   {
     num: '1', icon: 'search', tint: 'teal', title: 'Find what exists',
-    body: 'Pick a landscape or search by topic to see which datasets are available for a place, who produced them and how recent they are.',
+    body: 'Pick a landscape or search by topic. What is scattered across centres, projects and partners becomes one picture: what exists for a place, who made it and how ready it is to use.',
     href: `${base}/catalogue`, link: 'Search the catalogue',
   },
   {
     num: '2', icon: 'link', tint: 'amber', title: 'Go to the source',
-    body: 'Each entry tells you how to get the data and links to where it is kept, at the organisation that produced it. MOSAIC describes and connects — it does not keep copies.',
+    body: 'Each entry links to where the data is kept, at the organisation that produced it. MOSAIC connects, it does not duplicate: no copies are kept here.',
     href: `${base}/about#overview`, link: 'More about MOSAIC',
   },
   {
     num: '3', icon: 'upload', tint: 'terracotta', title: 'Add your own',
-    body: 'Register a dataset in a few minutes so others can find it. Open to anyone working on these places. Research and knowledge resources are coming next.',
+    body: 'Register a dataset in a few minutes so others can find it and build on it. Open to anyone working on these places. Research and knowledge resources are coming next.',
     href: `${base}/about#contribute`, link: 'How to contribute',
   },
 ] as const
@@ -52,13 +53,12 @@ const steps = [
         <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data, tools and research for living landscapes — connected</h1>
         <p class="hero-sub">
-          MOSAIC is an open network that brings together what is known about places where
-          farming, nature and people meet — maps, datasets, tools and research from many
-          organisations — and shows you where to find each one.
+          MOSAIC is where everything about a living landscape comes together — the entry point
+          to the data, tools and research produced around it, by many organisations.
         </p>
         <p class="hero-support">
-          Whether you work in research, government, an NGO or a local initiative, you can see
-          what exists for a place and add your own.
+          Each piece stays with whoever produced it: MOSAIC describes it, links to it and shows
+          how ready it is to use.
         </p>
         <div class="hero-actions">
           <a href={`${base}/landscapes`} class="btn btn-hero-primary">
