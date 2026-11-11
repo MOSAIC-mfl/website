@@ -12,7 +12,8 @@ interface Props {
 
 const {
   title,
-  description = 'MOSAIC — an open network for living landscapes. It connects datasets, tools, research and local knowledge, with support from the CGIAR Multifunctional Landscapes Science Programme.',
+  // Same framing as About › What MOSAIC is: an entry point, never a store.
+  description = 'MOSAIC — an open network for living landscapes: the entry point to the data, tools and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Programme.',
   ogImage = '/website/og-image.png',
 } = Astro.props
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
