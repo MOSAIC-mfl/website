@@ -3,7 +3,7 @@
     "status": "draft — pending review by Lizeth Llanos",
     "drafted": "2026-11-09",
     "note": "Short landscape descriptions for the Landscapes page. Only public web sources are listed here; the full source list (incl. internal programme documents) is kept out of the public website code.",
-    "revised": "2026-11-09 — 'why_it_matters' rewritten to one pattern (what the place provides, then what threatens it); programme-work clauses removed; COL-CUM summary drops the unconfirmed reserve clause; KEN-LEI shows its summary only until a focal point confirms."
+    "revised": "2026-11-11 — ETH-OG rewritten from the Omo-Gibe landscape characterization (Tibebe et al., CGIAR, Oct 2026, CC BY 4.0, https://hdl.handle.net/10568/186292), replacing text drafted from Wikipedia; confidence medium → high. Profiles may now carry a `resources` list, shown in the Landscapes page's \"Other resources\" section. Before that, 2026-11-09 — 'why_it_matters' rewritten to one pattern (what the place provides, then what threatens it); programme-work clauses removed; COL-CUM summary drops the unconfirmed reserve clause; KEN-LEI shows its summary only until a focal point confirms."
   },
   "profiles": {
     "CIV-NZ": {
@@ -65,31 +65,44 @@
       ]
     },
     "ETH-OG": {
-      "summary": "Ethiopia's Omo-Gibe river basin, draining from the southwestern highlands south to Lake Turkana on the Kenya border.",
-      "ecosystem": "Highland-to-lowland mosaic of farmland, river corridors and national parks (Omo, Mago).",
-      "livelihoods": "Crop–livestock farming; flood-recession farming along the lower Omo.",
-      "why_it_matters": "The Omo supplies most of Lake Turkana's water and feeds the Gibe hydropower dams, but land degradation is a key concern.",
-      "confidence": "medium",
+      "summary": "Ethiopia's Omo-Gibe river basin — about 79,700 km² across four regions, running some 550 km from the south-western highlands to the Omo delta at Lake Turkana. A strong north–south gradient separates humid, densely settled highlands from semi-arid pastoral lowlands.",
+      "ecosystem": "Forest (31%), shrubland (29%) and grassland (20%) still cover four fifths of the basin; 23 protected and conserved sites take in about 35% of it, from the wild Arabica coffee forests of the south-west to the Omo–Tama–Mago park complex in the lower valley.",
+      "livelihoods": "Some 14–16 million people: coffee, enset and cereals in the densely settled highlands, maize and root crops in the crowded middle basin, and herding, flood-recession cropping and fishing in the southern lowlands.",
+      "why_it_matters": "It drives the Gibe hydropower cascade and supplies more than 80% of Lake Turkana's inflow, but nearly half the basin saw some deforestation between 1985 and 2020, and the regulated river no longer floods the lower Omo, where recession farming and fishing depended on it.",
+      "confidence": "high",
       "sources": [
         {
           "field": "summary",
-          "source": "https://en.wikipedia.org/wiki/Omo_River",
-          "note": "Omo formed by Gibe and Gojeb; flows to Lake Turkana"
+          "source": "https://hdl.handle.net/10568/186292",
+          "note": "Omo-Gibe landscape characterization (Tibebe et al., CGIAR/Alliance, Oct 2026) §2.1: 79,693 km²; ~550 km from the Gibe headwaters near Wenchi to the Omo delta; 34% South Ethiopia, 31% Southwest Ethiopia, 25% Oromia, 10% Central Ethiopia. Abstract: north–south gradient from humid highlands to semi-arid pastoral lowlands."
         },
         {
           "field": "ecosystem",
-          "source": "https://en.wikipedia.org/wiki/Omo_River",
-          "note": "River passes Mago and Omo National Parks"
+          "source": "https://hdl.handle.net/10568/186292",
+          "note": "Omo-Gibe landscape characterization (Tibebe et al., CGIAR/Alliance, Oct 2026) §6.1 (ESA WorldCover 2021): forest 31.4%, shrubland 29.2%, grassland 20.0%, cropland 17.3%. §8.2: 23 sites, ~27,600 km² = 35% of the basin; Kafa Biosphere Reserve in the wild Arabica coffee forests; Omo–Tama–Mago complex ~16,500 km²."
         },
         {
           "field": "livelihoods",
-          "source": "https://en.wikipedia.org/wiki/Omo_River",
-          "note": "Lower Omo peoples depend on flood-retreat cultivation"
+          "source": "https://hdl.handle.net/10568/186292",
+          "note": "Omo-Gibe landscape characterization (Tibebe et al., CGIAR/Alliance, Oct 2026) §1.1: 13.7–16.1 million people. §7.3 (livelihood zones, FEWS NET): coffee–cereal–chat and enset–cereal zones in the north; Wolaita and Gamo–Gofa maize and root crop zones in the middle basin; South Omo pastoral and flood-recession zones in the south."
         },
         {
           "field": "why_it_matters",
-          "source": "https://en.wikipedia.org/wiki/Omo_River",
-          "note": "~90% of Lake Turkana inflow; Gibe I/II/III hydropower; overgrazing and deforestation raise silt"
+          "source": "https://hdl.handle.net/10568/186292",
+          "note": "Omo-Gibe landscape characterization (Tibebe et al., CGIAR/Alliance, Oct 2026) §1.1: more than 80% of Lake Turkana's inflow; Gibe cascade ~2.5 GW installed, Koysha 2,160 MW under construction. §8.4: 48.8% of the basin with some deforestation 1985–2020; erosion hotspots on the middle-basin escarpments draining to Gibe III and Koysha. §4.4: Gibe III removed the flood pulse that supported recession farming and fishing."
+        }
+      ],
+      "resources": [
+        {
+          "title": "Omo-Gibe landscape characterization: an integrated biophysical and socio-economic assessment of the Omo-Gibe Landscape, Ethiopia",
+          "type": "Report",
+          "authors": "Degefie Tibebe, Getachew Tesfaye, Yonas Getaneh, Habtamu Sewnet, Meron Awoke, Kalkidan Mulatu, Kifle Woldearegay, Zenebe Adimassu, Wuletawu Abera",
+          "org": "Alliance of Bioversity International and CIAT, for the CGIAR Multifunctional Landscapes Science Programme",
+          "year": 2026,
+          "extent": "51 p.",
+          "licence": "CC BY 4.0",
+          "url": "https://hdl.handle.net/10568/186292",
+          "note": "Spatial baseline for the basin: climate, water, terrain and soils, land cover and land-use change, farming and livelihood systems, biodiversity and protected areas, degradation and hazards, and socio-economic conditions — with four entry points for integrated landscape management."
         }
       ]
     },
