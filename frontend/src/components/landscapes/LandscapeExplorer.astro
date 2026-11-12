@@ -28,6 +28,7 @@
  * dropped for visitors who ask for reduced motion.
  */
 import Icon from '../ui/Icon.astro'
+import { ProfileMapPanel } from '../../features/landscape/ProfileMapPanel'
 import landscapes from '../../../data/landscapes.json'
 import outlineData from '../../../data/landscape_outlines.json'
 import centroidData from '../../../data/landscape_centroids.json'
@@ -528,8 +529,8 @@ const codes = items.map((it) => it.code)
         </article>
       ))}
 
-      <!-- Map visualization: the landscape's map profile, mounted by the controller
-           when the panel opens. Two ways to see it, side by side while we choose:
+      <!-- Map visualization: the landscape's map profile, drawn by a React island
+           when the panel opens (the controller tells it which landscape). Two ways to see it, side by side while we choose:
            (a) embedded here, (b) on its own page, full screen. -->
       <article class="lx-main lx-mapviz" data-panel="map" hidden>
         <header class="lx-mapviz-head">
@@ -541,7 +542,7 @@ const codes = items.map((it) => it.code)
             <Icon name="globe" size={18} /> Open full screen <Icon name="arrow-right" size={16} />
           </a>
         </header>
-        <div class="lx-mapviz-frame" data-map-embed></div>
+        <div class="lx-mapviz-frame" data-map-embed><ProfileMapPanel client:idle base={base} /></div>
       </article>
 
       <!-- Other resources: the list when the landscape has any, the notice when it

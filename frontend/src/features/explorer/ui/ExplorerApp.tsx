@@ -181,7 +181,8 @@ export default function ExplorerApp(props: ExplorerProps) {
           onTerrain={(v) => controller?.setExaggeration(v)}
           onAbout={() => controller?.setFloating(floating === 'about' ? 'none' : 'about')}
         />
-        <main className="canvas" ref={canvasRef}>
+        {/* not <main>: the page has its own, and the site's reveal-on-scroll styles hide the children of any main */}
+        <div className="canvas" ref={canvasRef}>
           <div className="map" ref={mapRef} role="application" aria-label={`Map: ${config.title}`} />
           {error && <div className="notice">The explorer could not start: {error}</div>}
           {s && controller && (
@@ -233,7 +234,7 @@ export default function ExplorerApp(props: ExplorerProps) {
               )}
             </>
           )}
-        </main>
+        </div>
       </div>
     </div>
   )

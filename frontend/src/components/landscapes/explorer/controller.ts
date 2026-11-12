@@ -8,6 +8,7 @@
  */
 import { byDatasetCount, datasetWord, type LandscapeIndexEntry, type LandscapeInsights } from '../../../lib/domain/landscape-insights'
 import type { ExplorerData } from '../../../lib/ui/landscape-explorer-data'
+import { MAP_CODE_EVENT } from '../../../features/landscape/map-events'
 
 type Photo = { src: string; alt: string; caption?: string | null; author: string; licence: string; licence_url?: string | null; source_url: string; width?: number; height?: number }
 type Item = {
@@ -756,28 +757,17 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
   })
 
   /* ---------- map visualization ---------- */
-  // The landscape's map profile (map, story, studies), embedded in the panel. React, MapLibre and
-  // the explorer load the first time the panel opens; the map is unmounted when the panel closes or
-  // another landscape is chosen, so only one WebGL map is alive at a time.
+  // The landscape's map profile (map, story, studies) is drawn by a React island inside the panel
+  // (features/landscape/ProfileMapPanel). The controller only tells it which landscape to show; an
+  // empty code unmounts the map when the panel closes, so only one WebGL map is alive at a time.
   const mapEmbed = $('[data-map-embed]')
-  let mapCode: string | null = null
-  let disposeMap: (() => void) | null = null
-  function mountMap(code: string) {
-    if (mapCode === code) return
-    unmountMap()
-    mapCode = code
-    import('../../../features/landscape/mount').then(
-      ({ mountProfileMap }) => {
-        if (mapCode === code && section === 'map') disposeMap = mountProfileMap(mapEmbed, code, base)
-      },
-      () => { mapCode = null },
-    )
+  function showMapOf(code: string) {
+    if (mapEmbed.dataset.code === code) return
+    mapEmbed.dataset.code = code
+    mapEmbed.dispatchEvent(new Event(MAP_CODE_EVENT))
   }
-  function unmountMap() {
-    disposeMap?.()
-    disposeMap = null
-    mapCode = null
-  }
+  const mountMap = (code: string) => showMapOf(code)
+  const unmountMap = () => showMapOf('')
   // Menu entry, full-screen link and panel follow the selected landscape.
   function updateMapSection() {
     const show = hasMap(current.code)
