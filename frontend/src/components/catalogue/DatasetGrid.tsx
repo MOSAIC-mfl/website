@@ -8,7 +8,7 @@ interface Props {
   onClearAll?: () => void
 }
 
-export function DatasetGrid({ datasets, base, viewMode = 'list', onClearAll }: Props) {
+export function DatasetGrid({ datasets, base, viewMode = 'card', onClearAll }: Props) {
   if (datasets.length === 0) {
     return (
       <div className="empty-state">
@@ -26,7 +26,7 @@ export function DatasetGrid({ datasets, base, viewMode = 'list', onClearAll }: P
   return (
     <div className={`ds-results ${viewMode === 'card' ? 'ds-results--grid' : 'ds-results--list'}`}>
       {datasets.map((d) => (
-        <DatasetCard key={d.id} dataset={d} base={base} />
+        <DatasetCard key={d.id} dataset={d} base={base} variant={viewMode} />
       ))}
     </div>
   )

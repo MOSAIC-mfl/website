@@ -1,6 +1,7 @@
 import type { Dataset } from '../../utils/types'
 import { DatasetTypeIcon } from './DatasetTypeIcon'
 import { READINESS_MEANING } from '../../utils/readiness'
+import { isSpdxLicense } from '../../utils/license'
 
 const STATUS_BADGE: Record<string, string> = {
   'Raw':       'badge badge-raw',
@@ -11,10 +12,13 @@ const STATUS_BADGE: Record<string, string> = {
 interface Props {
   dataset: Dataset
   base: string
+  // 'card' = a tile in the grid (the default view); 'list' = the compact row.
+  variant?: 'card' | 'list'
 }
 
-export function DatasetCard({ dataset, base }: Props) {
+export function DatasetCard({ dataset, base, variant = 'list' }: Props) {
   const detailUrl = `${base}/catalogue/${dataset.id}`
+  if (variant === 'card') return <DatasetTile dataset={dataset} detailUrl={detailUrl} />
   const isOpen = dataset.access_level === 'Open' && !!dataset.download_url
   const formats = dataset.formats ?? []
 
@@ -93,6 +97,48 @@ export function DatasetCard({ dataset, base }: Props) {
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </span>
+    </article>
+  )
+}
+
+// Grid tile: what kind of data, what it is called, who it is from, what it is,
+// and — under a rule, in the mono face — where, how fine, how open, when, on what terms.
+// The whole tile is the link; the source link lives on the dataset's own page.
+function DatasetTile({ dataset, detailUrl }: { dataset: Dataset; detailUrl: string }) {
+  const where = dataset.landscape_name ?? dataset.living_landscape ?? dataset.country
+  const resolution = dataset.spatial_resolution && dataset.spatial_resolution !== 'N/A' ? dataset.spatial_resolution : null
+  // An SPDX id is short enough to show; any other wording is the source's own
+  // and is given in full on the dataset's page.
+  const terms = dataset.license ? (isSpdxLicense(dataset.license) ? dataset.license : 'Terms at the source') : null
+  const line1 = [where, resolution].filter(Boolean) as string[]
+  const line2 = [dataset.access_level, dataset.temporal_coverage, terms].filter(Boolean) as string[]
+
+  return (
+    <article className="ds-tile">
+      <p className="ds-tile-top">
+        <span className="ds-tile-type">
+          <DatasetTypeIcon type={dataset.data_type} />
+          {dataset.data_type ?? 'Dataset'}
+        </span>
+        <span
+          className={STATUS_BADGE[dataset.readiness_status] ?? 'badge badge-raw'}
+          title={READINESS_MEANING[dataset.readiness_status]}
+        >
+          {dataset.readiness_status}
+        </span>
+      </p>
+
+      <h3 className="ds-tile-title">
+        <a href={detailUrl} className="ds-card-title-link">{dataset.title}</a>
+      </h3>
+
+      {dataset.source && <p className="ds-tile-by">By {dataset.source}</p>}
+      {dataset.description && <p className="ds-tile-desc">{dataset.description}</p>}
+
+      <div className="ds-tile-foot">
+        {line1.length > 0 && <p>{line1.join(' \u00b7 ')}</p>}
+        {line2.length > 0 && <p>{line2.join(' \u00b7 ')}</p>}
+      </div>
     </article>
   )
 }
