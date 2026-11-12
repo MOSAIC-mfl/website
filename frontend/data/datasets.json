@@ -729,7 +729,7 @@
     "title": "Crop damage mapping",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -758,7 +758,7 @@
     "title": "District/ward boundaries",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -787,7 +787,7 @@
     "title": "LULC classification",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -816,7 +816,7 @@
     "title": "LULC classification training points",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -845,7 +845,7 @@
     "title": "Ecosystem services mapping",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -1512,7 +1512,7 @@
     "title": "Crop fields (2025) - focus on NUS crops",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "national",
     "centroid": [
       -75.0,
@@ -1541,7 +1541,7 @@
     "title": "Crop fields (2023)  focus on \tPotatoes, Oca, Mashua and andean fruit trees",
     "country": "Colombia",
     "living_landscape": "COL-CUM",
-    "landscape_name": "Cumbal (Narino)",
+    "landscape_name": "Cumbal (Nariño)",
     "coverage": "national",
     "centroid": [
       -73.0,
@@ -1802,7 +1802,7 @@
     "title": "Soil health status and texture",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
@@ -2005,7 +2005,7 @@
     "title": "Provinces and Districts",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2034,7 +2034,7 @@
     "title": "National Protected Natural Areas",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2063,7 +2063,7 @@
     "title": "Regional Conservation Areas",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2092,7 +2092,7 @@
     "title": "Indigenous Territories",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2121,7 +2121,7 @@
     "title": "National Ecosystem Map",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2150,7 +2150,7 @@
     "title": "Human Footprint map",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2179,7 +2179,7 @@
     "title": "Physical Vulnerability map",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2208,7 +2208,7 @@
     "title": "Forest/Non-forest 2000/Forest loss 2001-2024",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2237,7 +2237,7 @@
     "title": "Annual deforestation",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2266,7 +2266,7 @@
     "title": "Land Cover and Land Use",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2295,7 +2295,7 @@
     "title": "Accumulated Burned Area 2013-2024",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2791,7 +2791,7 @@
     "title": "Cumbal (Nariño) living landscape boundary",
     "country": "Colombia",
     "living_landscape": "COL-CUM",
-    "landscape_name": "Cumbal (Narino)",
+    "landscape_name": "Cumbal (Nariño)",
     "coverage": "landscape",
     "centroid": [
       -77.9096,
@@ -2907,7 +2907,7 @@
     "title": "Pucallpa – Ucayali living landscape boundary",
     "country": "Peru",
     "living_landscape": "PER-PCL",
-    "landscape_name": "Pucallpa - Ucayali",
+    "landscape_name": "Pucallpa – Ucayali",
     "coverage": "landscape",
     "centroid": [
       -75.2342,
@@ -2965,7 +2965,7 @@
     "title": "Mbire – Lower Zambezi Valley living landscape boundary",
     "country": "Zimbabwe",
     "living_landscape": "ZWE-MB",
-    "landscape_name": "Mbire - Lower Zambezi Valley",
+    "landscape_name": "Mbire – Lower Zambezi Valley",
     "coverage": "landscape",
     "centroid": [
       30.1731,
