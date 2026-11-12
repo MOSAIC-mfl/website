@@ -1,0 +1,57 @@
+---
+/**
+ * The map profile of a living landscape on its own page, edge to edge (/landscapes/ken-lvb/map/).
+ * One page is built per landscape in the site's list; whether a landscape has a map profile, and the
+ * profile itself, are read from mosaic-api when the page opens, so a new profile needs no rebuild.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Breadcrumb from '../../../components/ui/Breadcrumb.astro'
+import { ProfileMap } from '../../../features/landscape/ProfileMap'
+import landscapes from '../../../../data/landscapes.json'
+
+export function getStaticPaths() {
+  return landscapes.map((l) => ({ params: { code: l.code.toLowerCase() }, props: { landscape: l } }))
+}
+
+const { landscape } = Astro.props as { landscape: { code: string; name: string; country: string } }
+const base = import.meta.env.BASE_URL
+---
+
+<BaseLayout
+  title={`${landscape.name} — map`}
+  description={`Map profile of the ${landscape.name} living landscape (${landscape.country}): layers, story and studies.`}
+>
+  <div class="container lpm-head">
+    <Breadcrumb
+      crumbs={[
+        { label: 'Home', href: `${base}/` },
+        { label: 'Living Landscapes', href: `${base}/landscapes/` },
+        { label: landscape.name, href: `${base}/landscapes#${landscape.code}` },
+        { label: 'Map visualization' },
+      ]}
+    />
+  </div>
+  <div class="lpm-map">
+    <ProfileMap client:only="react" code={landscape.code} base={base} />
+  </div>
+  <noscript>
+    <div class="container"><p>The map needs JavaScript to load the landscape profile from the MOSAIC API.</p></div>
+  </noscript>
+</BaseLayout>
+
+<script>
+  // the explorer fills the screen below the sticky site header and the breadcrumb
+  const root = document.documentElement
+  const measure = () => {
+    const header = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0
+    const crumb = document.querySelector<HTMLElement>('.lpm-head')?.offsetHeight ?? 0
+    root.style.setProperty('--site-header-h', `${header + crumb}px`)
+  }
+  measure()
+  window.addEventListener('resize', measure)
+</script>
+
+<style>
+  .lpm-head { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+  .lpm-head :global(nav) { margin: 0; }
+</style>

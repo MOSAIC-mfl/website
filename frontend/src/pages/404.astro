@@ -84,9 +84,13 @@ const ways = [
   :global([data-theme='dark']) .nf-way:hover { border-color: var(--mosaic-light-teal); }
 </style>
 
+<!-- Old addresses: dataset pages (/catalogue/MFL-2026-001/) and landscape pages (/landscapes/ken-lvb/) -->
 <script is:inline define:vars={{ base }}>
   ;(function () {
     var m = window.location.pathname.match(/\/catalogue\/(MFL-\d{4}-\d{3,})\/?$/i)
-    if (m) window.location.replace(base + '/catalogue/dataset/?id=' + encodeURIComponent('mosaic:' + m[1].toUpperCase()))
+    if (m) return window.location.replace(base + '/catalogue/dataset/?id=' + encodeURIComponent('mosaic:' + m[1].toUpperCase()))
+    // former landscape pages (/landscapes/ken-lvb/) now open in the Landscapes explorer
+    var l = window.location.pathname.match(/\/landscapes\/([a-z]{3}-[a-z0-9]+)\/?$/i)
+    if (l) window.location.replace(base + '/landscapes#' + l[1].toUpperCase())
   })()
 </script>

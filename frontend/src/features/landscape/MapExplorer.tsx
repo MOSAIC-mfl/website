@@ -1,13 +1,13 @@
-/** kind: map-explorer - the profile's map explorer (loaded on demand: MapLibre is only fetched here). */
+/** A profile's map explorer (section kind map-explorer). MapLibre and the explorer load only here. */
 import { lazy, Suspense, useMemo } from 'react'
-import { parseExplorerConfig } from '../../explorer/domain/config'
-import { readConfig } from '../../../lib/config'
-import { datasetHref } from '../../../lib/domain/present'
-import type { SectionProps } from './types'
+import { parseExplorerConfig } from '../explorer/domain/config'
+import { readConfig } from '../../lib/config'
+import { datasetHref } from '../../lib/domain/present'
+import type { LandscapePage, LandscapeSection } from '../../lib/api/types'
 
-const ExplorerApp = lazy(() => import('../../explorer/ui/ExplorerApp'))
+const ExplorerApp = lazy(() => import('../explorer/ui/ExplorerApp'))
 
-export function MapExplorerSection({ page, section, base }: SectionProps) {
+export function MapExplorer({ page, section, base }: { page: LandscapePage; section: LandscapeSection; base: string }) {
   const parsed = useMemo(() => {
     try {
       return { config: parseExplorerConfig(section.config) }

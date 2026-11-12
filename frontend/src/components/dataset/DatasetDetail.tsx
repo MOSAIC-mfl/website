@@ -142,7 +142,7 @@ function OverviewTable({ d, labels, base }: { d: RecordDetail; labels: LabelBook
   const landscapes = d.landscapes.map((c, i) => (
     <span key={c}>
       {i > 0 && ', '}
-      <a href={`${base}/landscapes/${c.toLowerCase()}/`}>{labels.label('landscape', c)}</a> ({c})
+      <a href={`${base}/landscapes#${c}`}>{labels.label('landscape', c)}</a> ({c})
     </span>
   ))
   return (
