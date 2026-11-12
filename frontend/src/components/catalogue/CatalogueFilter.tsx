@@ -68,7 +68,8 @@ const FILTER_ICON: Record<FilterKey, ReactNode> = {
   ),
 }
 
-const PER_PAGE_OPTIONS = [10, 25, 50]
+// Multiples of six, so a page fills whole rows of two or three tiles.
+const PER_PAGE_OPTIONS = [12, 24, 48]
 
 const FILTER_KEYS: FilterKey[] = ['country', 'living_landscape', 'mfl_theme', 'readiness_status', 'data_type', 'access_level', 'license']
 const SORT_KEYS: SortKey[] = ['recent', 'oldest', 'az', 'za', 'status']
@@ -187,14 +188,14 @@ export function CatalogueFilter({ datasets, base }: Props) {
   const [searchText, setSearchText] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('recent')
   const [urlApplied, setUrlApplied] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [viewMode, setViewMode] = useState<ViewMode>('card')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
   // Filter groups fold away; all start closed (also in the static HTML, so
   // hydration matches). Groups with a filter from the URL open on their own.
   const [openGroups, setOpenGroups] = useState<Set<FilterKey>>(() => new Set())
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(12)
 
   // Searchable text of each record, built once.
   const searchIndex = useMemo(
@@ -439,19 +440,6 @@ export function CatalogueFilter({ datasets, base }: Props) {
             <div className="view-toggle-group" role="group" aria-label="View mode">
               <button
                 type="button"
-                className={`view-toggle-btn${viewMode === 'list' ? ' active' : ''}`}
-                onClick={() => setViewMode('list')}
-                aria-pressed={viewMode === 'list'}
-                aria-label="List view"
-                title="List view"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
-                  <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
-                </svg>
-              </button>
-              <button
-                type="button"
                 className={`view-toggle-btn${viewMode === 'card' ? ' active' : ''}`}
                 onClick={() => setViewMode('card')}
                 aria-pressed={viewMode === 'card'}
@@ -461,6 +449,19 @@ export function CatalogueFilter({ datasets, base }: Props) {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
                   <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className={`view-toggle-btn${viewMode === 'list' ? ' active' : ''}`}
+                onClick={() => setViewMode('list')}
+                aria-pressed={viewMode === 'list'}
+                aria-label="List view"
+                title="List view"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
                 </svg>
               </button>
             </div>

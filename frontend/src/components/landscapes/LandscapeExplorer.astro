@@ -61,6 +61,8 @@ interface Profile {
   // Published work about the landscape, shown in "Other resources". A landscape
   // with none keeps the "under construction" card.
   resources?: Resource[]
+  // Where each description comes from: { field, source (a public address), note }.
+  sources?: { field: string; source: string; note?: string | null }[]
 }
 
 // Optional inputs: the page builds without them (empty photo slot, facts only).
@@ -86,7 +88,9 @@ const formatHa = (ha: number) => {
 
 // Data coverage, computed from the dataset records: which of the 13 MFL themes
 // have at least one dataset here, and how many datasets are Open. Shown as
-// plain text — the shorter of "with data" / "missing" is listed.
+// a sentence plus one square per item (13 themes; one per dataset for open
+// access), so the proportion can be counted at a glance. The squares are
+// decoration for the eye: the sentences carry the same numbers for everyone.
 const themeList = themes as string[]
 function coverage(code: string) {
   const ds = datasets.filter((d) => d.living_landscape === code)
@@ -94,14 +98,58 @@ function coverage(code: string) {
   const withData = themeList.filter((t) => have.has(t))
   const missing = themeList.filter((t) => !have.has(t))
   const nOpen = ds.filter((d) => d.access_level === 'Open').length
-  if (ds.length === 0) return { covThemes: 'No datasets registered yet.', covList: '', covOpen: '' }
+  const covHave = themeList.map((t) => have.has(t))
+  if (ds.length === 0) return { covThemes: 'No datasets registered yet.', covList: '', covOpen: '', covHave, nOpen: 0 }
   return {
+    covHave,
+    nOpen,
     covThemes: `${withData.length} of ${themeList.length} MFL themes have data`,
     covList: missing.length === 0 ? 'All themes covered.'
       : withData.length <= missing.length ? `With data: ${withData.join(', ')}.`
       : `Missing: ${missing.join(', ')}.`,
     covOpen: `${nOpen} of ${ds.length} ${ds.length === 1 ? 'dataset is' : 'datasets are'} open access.`,
   }
+}
+
+// Sources of the four descriptions, one row per address: the site it is on and
+// the descriptions it backs. The working notes kept beside each source in the
+// data file are for editors and are not shown.
+const SOURCE_FIELD: Record<string, string> = {
+  summary: 'Summary',
+  ecosystem: 'Ecosystems',
+  livelihoods: 'People and livelihoods',
+  why_it_matters: 'Why it matters',
+}
+function sourceList(p: Profile) {
+  const byUrl = new Map<string, string[]>()
+  for (const s of p.sources ?? []) {
+    if (!/^https?:\/\//.test(s.source)) continue
+    const label = SOURCE_FIELD[s.field] ?? s.field
+    const seen = byUrl.get(s.source) ?? []
+    if (!seen.includes(label)) seen.push(label)
+    byUrl.set(s.source, seen)
+  }
+  return [...byUrl].map(([url, fields]) => ({
+    url,
+    host: new URL(url).hostname.replace(/^www\./, ''),
+    fields: fields.join(', '),
+  }))
+}
+
+// Where each name sits on the start map when all eleven are shown at once
+// (wide screens): above its pin unless a neighbour is in the way. x / y move
+// the label in map units; anchor is which end of the text sits at that point.
+const LABEL_AT: Record<string, { x: number; y: number; anchor: 'start' | 'end' }> = {
+  'CIV-NZ': { x: 4, y: 4.8, anchor: 'start' },
+  'ETH-OG': { x: 4, y: 4.8, anchor: 'start' },
+  'KEN-LVB': { x: -4, y: 4.8, anchor: 'end' },
+  'KEN-LEI': { x: 4, y: 5.4, anchor: 'start' },
+  'ZWE-MB': { x: 4, y: 4.8, anchor: 'start' },
+  'MEK-3S': { x: -4, y: 4.8, anchor: 'end' },
+}
+const labelStyle = (code: string) => {
+  const at = LABEL_AT[code]
+  return at ? `--lx:${at.x}px;--ly:${at.y}px;--la:${at.anchor}` : undefined
 }
 
 const geoLandscapes = geo.landscapes as Record<string, { area_ha: number; countries: string[] }>
@@ -141,6 +189,7 @@ const items = landscapes
       livelihoods: p.livelihoods ?? null,
       why: p.why_it_matters ?? null,
       resources: p.resources ?? [],
+      sources: sourceList(p),
       catalogue: `${base}/catalogue?landscape=${l.code}`,
       boundary: b ? { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) } : null,
     }
@@ -195,7 +244,7 @@ const labelData = {
 ---
 
 <section class="lx" data-lx aria-label="Living landscape explorer">
-  <script type="application/json" data-lx-data set:html={JSON.stringify({ items, globe: globeCountries, labels: labelData })} />
+  <script type="application/json" data-lx-data set:html={JSON.stringify({ items, themes: themeList, globe: globeCountries, labels: labelData })} />
   <!-- Before first paint: .is-live shows the world map (start screen, then a
        compact strip that stays as the thread); with no landscape in the address,
        .is-intro starts on the "Select a landscape" screen. Without JavaScript
@@ -271,7 +320,7 @@ const labelData = {
                 <circle class="lx-ip-halo" r="3.2" />
                 <circle class="lx-ip-dot" r="1.5" />
               </g>
-              <text class="lx-ip-name" y="-4">{it.name}</text>
+              <text class="lx-ip-name" y="-4" style={labelStyle(it.code)}>{it.name}</text>
             </g>
           </a>
         ))}
@@ -428,8 +477,14 @@ const labelData = {
             <span>
               <strong>Data coverage</strong>
               <span class="lx-cov-main" data-f="cov-themes">{first.covThemes}</span>
+              <span class="lx-sq" data-f="cov-theme-sq" aria-hidden="true">{first.count > 0 && first.covHave.map((on, i) => (
+                <i class:list={['lx-sq-i', { 'is-on': on }]} title={`${themeList[i]}: ${on ? 'has data' : 'no data yet'}`}></i>
+              ))}</span>
               <span data-f="cov-list">{first.covList}</span>
-              <span data-f="cov-open">{first.covOpen}</span>
+              <span class="lx-cov-open" data-f="cov-open">{first.covOpen}</span>
+              <span class="lx-sq" data-f="cov-open-sq" aria-hidden="true">{Array.from({ length: first.count }, (_, i) => (
+                <i class:list={['lx-sq-i', { 'is-on': i < first.nOpen }]}></i>
+              ))}</span>
             </span>
           </li>
           <li class="lx-fact" data-row="ecosystem" hidden={!first.ecosystem}>
@@ -445,6 +500,14 @@ const labelData = {
             <span><strong>Why it matters</strong><span data-f="why">{first.why}</span></span>
           </li>
         </ul>
+        <details class="lx-src" data-src hidden={first.sources.length === 0}>
+          <summary>Sources for these descriptions <span class="lx-src-n" data-src-n>({first.sources.length})</span></summary>
+          <ul class="lx-src-list" data-src-list>
+            {first.sources.map((src) => (
+              <li><a href={src.url} target="_blank" rel="noopener">{src.host}</a><span>{src.fields}</span></li>
+            ))}
+          </ul>
+        </details>
       </div>
     </div>
 
@@ -575,7 +638,7 @@ const labelData = {
     background: #DDE9E4; /* sea, as the locator map */
   }
   .lx-intro-map svg { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1; max-height: 420px; }
-  .lx-ip { cursor: pointer; outline: none; }
+  .lx-ip { cursor: pointer; outline: none; text-decoration: none; }
   .lx-ip-body {
     transform-box: fill-box; transform-origin: center;
     animation: lx-ip-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; /* not "both": a held end state would override the hover / chosen scale */
@@ -588,6 +651,15 @@ const labelData = {
     font-family: var(--font-body); font-size: 3px; font-weight: 700; text-anchor: middle; fill: var(--mosaic-ink);
     paint-order: stroke; stroke: rgba(255, 255, 255, 0.92); stroke-width: 0.9px; stroke-linejoin: round;
     opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+  }
+  /* Wide screens: the start map names all eleven, so a new visitor reads them
+     without hovering. Smaller, and moved off the pin where neighbours crowd
+     (East Africa); the compact strip keeps one name, above its pin. */
+  @media (min-width: 1024px) {
+    .lx.is-intro .lx-ip-name {
+      opacity: 1; font-size: 2.3px; stroke-width: 0.7px;
+      text-anchor: var(--la, middle); transform: translate(var(--lx, 0), var(--ly, 0));
+    }
   }
   .lx-ip:hover .lx-ip-body, .lx-ip:focus-visible .lx-ip-body { transform: scale(1.5); }
   .lx-ip:hover .lx-ip-name, .lx-ip:focus-visible .lx-ip-name { opacity: 1; }
@@ -941,7 +1013,24 @@ const labelData = {
   .t-terra { background: var(--tint-terracotta-bg); color: var(--tint-terracotta-fg); }
   .t-light { background: var(--tint-light-teal-bg); color: var(--tint-light-teal-fg); }
   .lx-cov-main { color: var(--color-text); font-weight: 600; }
-  [data-f='cov-list']:empty, [data-f='cov-open']:empty { display: none; }
+  [data-f='cov-list']:empty, [data-f='cov-open']:empty, .lx-sq:empty { display: none; }
+  /* one square per theme / per dataset: filled = has data / open access */
+  .lx-sq { display: flex; flex-flow: row wrap; gap: 3px; margin: var(--space-1) 0 var(--space-2); }
+  .lx-sq :global(.lx-sq-i) {
+    width: 12px; height: 12px; border-radius: 2px; box-sizing: border-box;
+    border: 1px solid var(--color-muted);
+  }
+  .lx-sq :global(.lx-sq-i.is-on) { background: var(--color-link); border-color: var(--color-link); }
+  .lx-cov-open { margin-top: var(--space-1); }
+
+  /* sources of the descriptions, folded away under the facts */
+  .lx-src { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-src[hidden] { display: none; }
+  .lx-src summary { cursor: pointer; width: fit-content; font-weight: 600; color: var(--color-link); }
+  .lx-src-n { font-weight: 400; color: var(--color-muted); }
+  .lx-src-list { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; gap: var(--space-2); }
+  .lx-src-list :global(li) { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+  .lx-src-list :global(a) { overflow-wrap: anywhere; }
 
   /* footer */
   .lx-foot {
@@ -1003,7 +1092,8 @@ const labelData = {
   type Photo = { src: string; alt: string; caption?: string | null; author: string; licence: string; licence_url?: string | null; source_url: string; width?: number; height?: number }
   type Item = {
     code: string; name: string; country: string; pending: boolean; count: number; area: string
-    covThemes: string; covList: string; covOpen: string
+    covThemes: string; covList: string; covOpen: string; covHave: boolean[]; nOpen: number
+    sources: { url: string; host: string; fields: string }[]
     countries: string[]; view: number[]; bbox: number[]; lon: number; lat: number; photos: Photo[]
     summary: string | null; ecosystem: string | null; livelihoods: string | null; why: string | null
     catalogue: string; boundary: { href: string; size: string } | null
@@ -1019,7 +1109,7 @@ const labelData = {
     rivers: { n: string; z: number; a: number[][] }[]
     lakes: { n: string; z: number; x: number; y: number }[]
   }
-  type Data = { items: Item[]; globe: { iso: string; rings: number[][][] }[]; labels: Labels }
+  type Data = { items: Item[]; themes: string[]; globe: { iso: string; rings: number[][][] }[]; labels: Labels }
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -1425,6 +1515,9 @@ const labelData = {
       field('cov-themes').textContent = it.covThemes
       field('cov-list').textContent = it.covList
       field('cov-open').textContent = it.covOpen
+      squares('cov-theme-sq', it.count > 0 ? it.covHave : [], (i, on) => `${data.themes[i]}: ${on ? 'has data' : 'no data yet'}`)
+      squares('cov-open-sq', Array.from({ length: it.count }, (_, i) => i < it.nOpen))
+      renderSources(it)
       for (const [row, val] of [['ecosystem', it.ecosystem], ['livelihoods', it.livelihoods], ['why', it.why]] as const) {
         $(`[data-row="${row}"]`).hidden = !val
         field(row).textContent = val ?? ''
@@ -1437,6 +1530,29 @@ const labelData = {
       field('boundary-size').textContent = it.boundary?.size ?? ''
       svg.setAttribute('aria-label', `Map of ${it.name}`)
       renderResources(it)
+    }
+
+    /* ---------- coverage squares + sources ---------- */
+    function squares(name: string, flags: boolean[], title?: (i: number, on: boolean) => string) {
+      field(name).replaceChildren(...flags.map((on, i) => {
+        const sq = document.createElement('i')
+        sq.className = on ? 'lx-sq-i is-on' : 'lx-sq-i'
+        if (title) sq.title = title(i, on)
+        return sq
+      }))
+    }
+    function renderSources(it: Item) {
+      const box = $<HTMLDetailsElement>('[data-src]')
+      box.hidden = it.sources.length === 0
+      box.open = false
+      $('[data-src-n]').textContent = `(${it.sources.length})`
+      $('[data-src-list]').replaceChildren(...it.sources.map((src) => {
+        const li = document.createElement('li')
+        const a = Object.assign(document.createElement('a'), { href: src.url, target: '_blank', rel: 'noopener', textContent: src.host })
+        const what = Object.assign(document.createElement('span'), { textContent: src.fields })
+        li.append(a, what)
+        return li
+      }))
     }
 
     /* ---------- other resources ---------- */
