@@ -13,6 +13,8 @@ const totalDatasets = datasets.length
 // 'Global' and regional values of `country` are not countries.
 const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
 const countries   = countCountries(datasets)
+// Date of this build, so a visitor can tell the catalogue is alive.
+const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 ---
 
 <BaseLayout
@@ -48,6 +50,8 @@ const countries   = countCountries(datasets)
         <span class="catalogue-stat-value">{countries}</span>
         <span class="catalogue-stat-label">countries</span>
       </span>
+      <span class="catalogue-updated">Updated {updated}</span>
+      <a class="catalogue-maplink" href={`${base}/about#contribute`}>Register a dataset &rarr;</a>
       <a class="catalogue-maplink" href={`${base}/landscapes`}>See the landscapes on a map &rarr;</a>
     </p>
 

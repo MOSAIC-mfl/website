@@ -8,6 +8,8 @@ interface Props {
   title: string
   description?: string
   ogImage?: string
+  /** Keep the page out of search results (placeholders). */
+  noindex?: boolean
 }
 
 const {
@@ -15,6 +17,7 @@ const {
   // Same framing as About › What MOSAIC is: an entry point, never a store.
   description = 'MOSAIC — an open network for living landscapes: the entry point to the data, tools and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Programme.',
   ogImage = '/website/og-image.png',
+  noindex = false,
 } = Astro.props
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const pageTitle = title === 'Home'
@@ -53,6 +56,7 @@ const base = import.meta.env.BASE_URL
       })()
     </script>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonicalURL} />

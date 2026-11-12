@@ -33,6 +33,14 @@
      WCAG AA floor for normal text. Text therefore uses --color-muted (#5A6872), the same
      hue darkened until it clears AA on every background in use. Keep the swatch above as
      the brand reference; use it only for large text, rules and non-text marks. */
+  /* Amber Land has the same limit: 2.98:1 as text on Warm Sand, and white on it is 3.26:1.
+     --mosaic-amber-text is the same hue darkened until it clears AA as text on every light
+     background in use (4.6:1 on the amber tint, 5.1:1 on Warm Sand) and as a button fill
+     under white text (5.6:1). The swatch above stays the brand reference. */
+  --mosaic-amber-text:  #935B14;
+  /* Eyebrow text that follows the theme: dark shades on light pages, lighter ones on dark. */
+  --color-amber-text:   #935B14;
+  --color-moss-text:    #5C764F;
 
   /* Header & footer "bookend" colour — deeper Ocean Teal (brand request).
      Defined once so the two MOSAIC bookends always match; change here only. */
@@ -109,7 +117,7 @@
      Shared by IconChip, ContentCard, StatCard, StepTimeline, CtaBand, etc.
      Select via data-tint="teal|amber|terracotta|light-teal". */
   --tint-teal-bg:        #D6EEF2;  --tint-teal-fg:        #0D5C6B;
-  --tint-amber-bg:       #F6E7CE;  --tint-amber-fg:       #C97D1B;
+  --tint-amber-bg:       #F6E7CE;  --tint-amber-fg:       #935B14;
   --tint-terracotta-bg:  #F1DED6;  --tint-terracotta-fg:  #B54D2F;
   --tint-light-teal-bg:  #E6F3F6;  --tint-light-teal-fg:  #0D5C6B;
 
@@ -173,6 +181,8 @@
   --color-text:     #EAF2F4;   /* body text                */
   --color-muted:    #9DB0B8;   /* captions, secondary text */
   --color-border:   #26414C;   /* hairlines, dividers      */
+  --color-amber-text: #CD801C; /* eyebrows on dark surfaces */
+  --color-moss-text:  #799B68;
 
   /* Neutral ramp remap (gray-50/100/200 become dark surfaces; the higher
      greys, used for text, become light). --color-white is intentionally NOT

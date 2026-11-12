@@ -235,3 +235,12 @@ html.js-reveal [data-reveal-stagger] > *:not(.is-revealed) {
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
 }
+
+/* Printing or saving as PDF: nothing scrolls, so nothing would be revealed. */
+@media print {
+  html.js-reveal main > *,
+  html.js-reveal [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
