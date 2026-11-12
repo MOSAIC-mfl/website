@@ -42,12 +42,12 @@ p {
 }
 
 a {
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   text-decoration: underline;
 }
 
 a:hover {
-  color: var(--mosaic-teal-dark);
+  color: var(--color-link-hover);
 }
 
 img {
@@ -105,21 +105,17 @@ img {
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--color-green-dark);
-  border-color: var(--color-green-dark);
+  color: var(--color-link);
+  border-color: var(--color-link);
 }
 
 .btn-secondary:hover {
   background-color: var(--color-green-light);
 }
 
-/* Ocean Teal is too dark to read on the dark surfaces: there the outline
-   button takes the light tint of the same brand colour, and its hover is a
-   faint wash of it instead of the solid Light Teal (which would hide the text). */
-[data-theme="dark"] .btn-secondary {
-  color: var(--mosaic-light-teal);
-  border-color: var(--mosaic-light-teal);
-}
+/* In the dark theme the outline button's text is the light tint (--color-link),
+   so its hover is a faint wash of it instead of the solid Light Teal, which
+   would hide the text. */
 
 [data-theme="dark"] .btn-secondary:hover {
   background-color: rgba(214, 238, 242, 0.12);
@@ -167,7 +163,7 @@ img {
 /* ── Focus-visible: WCAG 2.4.11 (AA) ─────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid var(--color-accent, #0D5C6B);
+  outline: 2px solid var(--color-link);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
