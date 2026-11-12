@@ -3,35 +3,50 @@
     "status": "draft — pending review by Lizeth Llanos",
     "drafted": "2026-11-09",
     "note": "Short landscape descriptions for the Landscapes page. Only public web sources are listed here; the full source list (incl. internal programme documents) is kept out of the public website code.",
-    "revised": "2026-11-11 — ETH-OG rewritten from the Omo-Gibe landscape characterization (Tibebe et al., CGIAR, Oct 2026, CC BY 4.0, https://hdl.handle.net/10568/186292), replacing text drafted from Wikipedia; confidence medium → high. Profiles may now carry a `resources` list, shown in the Landscapes page's \"Other resources\" section. Before that, 2026-11-09 — 'why_it_matters' rewritten to one pattern (what the place provides, then what threatens it); programme-work clauses removed; COL-CUM summary drops the unconfirmed reserve clause; KEN-LEI shows its summary only until a focal point confirms."
+    "revised": "2026-11-12 — CIV-NZ, IND-CH, KEN-LVB, PER-PCL, SEN-FK and ZWE-MB rewritten from published documents, each statement with its section or page: programme reports on CGSpace for KEN-LVB (10568/181854), PER-PCL (10568/181543), SEN-FK (10568/183189, 10568/183592), ZWE-MB (10568/181640, 10568/180004) and IND-CH (10568/177938; its ecosystem field is unchanged), open journal articles for CIV-NZ. KEN-LEI now has all four fields, drafted from the four County Integrated Development Plans 2023-2027 and two ILRI reports. Where a source covers only part of a landscape the text names that part. Confidence: PER-PCL and SEN-FK high; the others medium. Before that: 2026-11-11 — ETH-OG rewritten from the Omo-Gibe landscape characterization (Tibebe et al., CGIAR, Oct 2026, CC BY 4.0, https://hdl.handle.net/10568/186292), replacing text drafted from Wikipedia; confidence medium → high. Profiles may now carry a `resources` list, shown in the Landscapes page's \"Other resources\" section. Before that, 2026-11-09 — 'why_it_matters' rewritten to one pattern (what the place provides, then what threatens it); programme-work clauses removed; COL-CUM summary drops the unconfirmed reserve clause; KEN-LEI shows its summary only until a focal point confirms."
   },
   "profiles": {
     "CIV-NZ": {
-      "summary": "The N'Zi river basin, the largest left-bank tributary of the Bandama, flowing south from the Ferkessédougou area through central Côte d'Ivoire.",
-      "ecosystem": "Forest–savanna transition zone along the N'Zi river and its lowland valleys.",
-      "livelihoods": "Smallholder farming, including lowland and irrigated rice.",
-      "why_it_matters": "Inland valleys support lowland rice farming, but the basin swings between severe low flows and floods.",
+      "summary": "The N'Zi river basin, a 35,500 km² sub-basin of the Bandama in Côte d'Ivoire. The river rises near Ferkessédougou at about 400 m and flows north–south across low plateaux, from the savanna north to the forest south.",
+      "ecosystem": "Savanna in the north and centre gives way to forest in the south, across plateaux of 100–400 m broken by the Baoulé range; annual rainfall rises from under 1,200 mm to over 1,600 mm southwards.",
+      "livelihoods": "Smallholder farming: in inland valleys surveyed around Bouaké, households cultivate about 2.7 ha on average, with rice ranked the first crop and yam the second.",
+      "why_it_matters": "Its seasonally flooded inland valleys feed farm households, with rice the top-ranked crop, but river flow has fallen far more than rainfall (deficits of 52% against 16%).",
       "confidence": "medium",
       "sources": [
         {
           "field": "summary",
-          "source": "https://en.wikipedia.org/wiki/Nzi_River",
-          "note": "N'Zi is a tributary of the Bandama"
+          "source": "https://doi.org/10.1016/j.crte.2012.02.003",
+          "note": "Simulations croisées / relation pluie-débit, N'zi-Bandama (Kouassi et al., Comptes Rendus Géoscience 344(5), 2012, open access) §2 Présentation de la zone d'étude: sub-basin of the Bandama; 35 500 km2; 3°49'-5°22' W, 6°00'-9°26' N; source in the Ferkessédougou region at 400 m; flows north-south; low-relief plateaux; savanna centre/north, forest south."
         },
         {
           "field": "summary",
-          "source": "https://ajol.info/index.php/rafea/article/view/240313/227189",
-          "note": "Sub-basin of the Bandama; rises near Ferkessédougou, flows north to south; largest left-bank tributary"
+          "source": "https://doi.org/10.4000/cybergeo.23388",
+          "note": "Variabilité climatique, bassin du N'zi (Kouassi et al., Cybergeo doc. 513, 2010, CC BY 4.0) §3: same 35 500 km2 and coordinates; basin runs from the savanna region in the north to the forest zone in the south."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://doi.org/10.1016/j.crte.2012.02.003",
+          "note": "Kouassi et al. 2012 §2: plateaux 100-400 m on average, monotony broken by the chaîne Baoulé; savanna vegetation in centre and north, forest in south; rainfall <1200 mm north, 1200-1600 mm centre, >1600 mm south."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://doi.org/10.4000/cybergeo.23388",
+          "note": "Kouassi et al. 2010 §4-6: three regimes; mean annual rainfall 1951-2000 below 1200 mm north of ~8°N, 1200-1600 mm in the centre, above 1600 mm south of ~7°N."
         },
         {
           "field": "livelihoods",
-          "source": "https://core.ac.uk/download/478275034.pdf",
-          "note": "M'Bahiakro dam serves irrigated rice in the N'Zi basin"
+          "source": "https://hdl.handle.net/10568/126143",
+          "note": "Farming systems, food security and ecosystem services in inland valleys (Alemayehu et al., Frontiers in Sustainable Food Systems 6:892818, 2022, CC BY 4.0; doi 10.3389/fsufs.2022.892818) Table 3, Bouaké column (n = 226 households, 8 inland valleys): land cultivated 2.7 ± 3.8 ha; farmers growing rice 59%; use of IV bottom 68%. Results 'Main crops': rice ranked first in all regions, yam second in Bouaké. SUB-AREA: Bouaké survey region only (approx. 7°38'-7°57' N, 4°44'-5°0' W)."
         },
         {
           "field": "why_it_matters",
-          "source": "https://ajol.info/index.php/rafea/article/view/240313/227189",
-          "note": "Low-flow vulnerability across the watershed; significant recent floods"
+          "source": "https://hdl.handle.net/10568/126143",
+          "note": "Alemayehu et al. 2022, Introduction + Results: inland valleys = seasonally flooded wetlands (hydromorphic fringes and valley bottoms); food provision rated the most important service; rice ranked highest crop. Regional study, not basin-wide."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://doi.org/10.1016/j.crte.2012.02.003",
+          "note": "Kouassi et al. 2012 §5 Discussion: runoff deficits (52%) far above rainfall deficits (16%) in the N'zi basin (figure the authors cite from Kouassi et al. 2008); break in discharge series in 1968 at Fétêkro and Dimbokro."
         }
       ]
     },
@@ -107,79 +122,149 @@
       ]
     },
     "IND-CH": {
-      "summary": "Six districts of central India — Jhansi in Uttar Pradesh and Tikamgarh, Chhatarpur, Damoh, Jabalpur and Mandla in Madhya Pradesh — partly within Bundelkhand.",
+      "summary": "Six districts of central India — Jhansi in Uttar Pradesh and Tikamgarh, Chhatarpur, Damoh, Jabalpur and Mandla in Madhya Pradesh. The first four lie in Bundelkhand, a fragile dryland with shallow, low-fertility soils, poor water retention and highly erratic rainfall.",
       "ecosystem": "Rainfed cropland, forests and open natural ecosystems on a hot, sub-humid upland.",
-      "livelihoods": "Rainfed smallholder farming, livestock keeping and use of common lands.",
-      "why_it_matters": "Rainfed farms and common lands sustain rural livelihoods, but recurrent drought, erratic rainfall and degraded commons strain farming and water.",
+      "livelihoods": "In Bundelkhand, households depend heavily on rainfed farming and livestock; cropping intensity is often no more than 110%, poverty is widespread, and many people migrate to cities, leaving the elderly and children behind.",
+      "why_it_matters": "Rainfed farms and livestock sustain rural livelihoods, but in Bundelkhand annual rainfall has fallen by nearly 250 mm over five decades, droughts are frequent, groundwater is being depleted and nearly 30% of productive farmland lies fallow in one of the two cropping seasons.",
       "confidence": "medium",
       "sources": [
         {
           "field": "summary",
-          "source": "https://www.understandupsc.com/bundelkhand-region/",
-          "note": "Jhansi, Tikamgarh, Chhatarpur, Damoh are Bundelkhand districts (Mandla and Jabalpur are not)"
+          "source": "https://hdl.handle.net/10568/177938",
+          "note": "Ecosystem Restoration through Landscape Resource Conservation: Lessons Learned from Central India (Anantha KH, Singh R, Garg KK, Venkata Radha A, Ram A, Harawa R, Jat ML; ICRISAT policy brief, October 2025) §The Context / p.2: Bundelkhand covers parts of Uttar Pradesh and Madhya Pradesh; landscape 'inherently fragile' — poor water retention capacity, shallow and low-fertile soils, highly erratic rainfall. §Summary / p.1: 'dryland' Bundelkhand region of Central India. The list of six districts and which of them are Bundelkhand districts come from the landscape boundary definition, not from the brief."
         },
         {
           "field": "livelihoods",
-          "source": "https://www.downtoearth.org.in/environment/bundelkhands-cycle-of-droughts-is-it-manmade-44677",
-          "note": "Bundelkhand agriculture predominantly rainfed"
+          "source": "https://hdl.handle.net/10568/177938",
+          "note": "Ecosystem Restoration through Landscape Resource Conservation (Anantha KH et al.; ICRISAT, 2025) §The Context / p.2: high dependency on rainfed agriculture and livestock for livelihoods; low cropping intensity, often no more than 110%; widespread distress migration to urban centres leaving elderly family members and children behind; poverty (the brief's 'over 80% below the poverty line' figure was deliberately NOT used — see problems)."
         },
         {
           "field": "why_it_matters",
-          "source": "https://www.downtoearth.org.in/environment/bundelkhands-cycle-of-droughts-is-it-manmade-44677",
-          "note": "Recurrent drought in Bundelkhand"
+          "source": "https://hdl.handle.net/10568/177938",
+          "note": "Ecosystem Restoration through Landscape Resource Conservation (Anantha KH et al.; ICRISAT, 2025) §The Context / p.2: decline in annual rainfall by nearly 250 mm over the last five decades, frequent droughts; nearly 30% of Bundelkhand's productive agricultural land left fallow in either kharif or rabi season; overdependence on groundwater has led to groundwater depletion; dependence on rainfed agriculture and livestock."
         }
       ]
     },
     "KEN-LEI": {
-      "summary": "Four Kenyan counties around Nairobi — Kajiado, Kiambu, Machakos and Makueni — including the semi-arid rangelands of southern Kenya.",
-      "ecosystem": null,
-      "livelihoods": null,
-      "why_it_matters": null,
-      "confidence": "low",
-      "sources": [
-        {
-          "field": "ecosystem",
-          "source": "https://link.springer.com/content/pdf/10.1007%2F978-1-4020-4906-4_9.pdf",
-          "note": "Kajiado/Amboseli rangelands converting to cropland and settlements"
-        },
-        {
-          "field": "livelihoods",
-          "source": "https://www.ilri.org/news/local-pastoralist-institutions-can-regenerate-rangelands-through-better-organized-management",
-          "note": "Pastoralist rangeland institutions in Kenya"
-        },
-        {
-          "field": "why_it_matters",
-          "source": "https://frontierspartnerships.org/journals/pastoralism-research-policy-and-practice/articles/10.1186/s13570-016-0070-0/full",
-          "note": "Land-use change, subdivision and drought in Kajiado rangelands"
-        }
-      ]
-    },
-    "KEN-LVB": {
-      "summary": "Five counties of western Kenya — Kericho, Kisumu, Nandi, Siaya and Vihiga — from the Lake Victoria shore to the tea highlands.",
-      "ecosystem": "Small-farm cropland mosaic, Lake Victoria shoreline and remnant forest.",
-      "livelihoods": "Smallholder maize and beans, sugarcane and tea, and lake fishing.",
-      "why_it_matters": "Small farms and Lake Victoria's fishery support a very dense population, but land degradation and a stressed fishery put both under pressure.",
+      "summary": "Four Kenyan counties near Nairobi — Kajiado, Kiambu, Machakos and Makueni. They run from Kiambu's wet, densely settled highlands on the edge of the Aberdare ranges to the semi-arid farmland of Machakos and Makueni and the pastoral rangelands of Kajiado.",
+      "ecosystem": "Kiambu's main forests lie in its wet upper highlands; Makueni is half arable, with 34% shrubland and 9% grassland; on the Athi-Kapiti plains of Kajiado and Machakos, semi-arid grassland with scattered trees links Nairobi National Park to Amboseli and Tsavo.",
+      "livelihoods": "Nearly six million people across the four counties (2019 census): tea, coffee, dairy and commuting to Nairobi in Kiambu; rain-fed maize, beans, pulses and fruit farming in Machakos and Makueni; and livestock herding, mainly by Maasai pastoralists, in rural Kajiado.",
+      "why_it_matters": "Its plains keep wildlife moving between Nairobi National Park, Amboseli and Tsavo and Kajiado's herds supply Nairobi's meat markets, but recurrent drought and the subdivision of pastoral land for settlement — Kajiado's population grew 62.6% in ten years — are shrinking grazing land and leaving water scarce.",
       "confidence": "medium",
       "sources": [
         {
           "field": "summary",
-          "source": "https://en.wikipedia.org/wiki/West_Kenya",
-          "note": "Vihiga most densely populated rural area in Kenya; tea"
+          "source": "https://repository.kippra.or.ke/handle/123456789/4520",
+          "note": "Kajiado County Integrated Development Plan 2023-2027 (County Government of Kajiado, 2023) §1.1-1.2, printed p.1 / PDF p.8: area 21,872 sq km; primarily semi-arid; livestock rearing through nomadic pastoralism in rural areas. §3.4 printed p.52 / PDF p.59: most of the county in semi-arid and arid zones."
+        },
+        {
+          "field": "summary",
+          "source": "https://repository.kippra.or.ke/handle/123456789/4431",
+          "note": "Kiambu County Integrated Development Plan 2023-2027 (County Government of Kiambu, 2023) §1.2 printed p.1 / PDF p.13: area 2,538.7 km2. §1.3.1 printed p.2 / PDF p.14: Upper Highland zone is an extension of the Aberdare ranges, very wet. Table on PDF p.22: 952 persons per km2 in 2019 (basis for 'densely settled')."
+        },
+        {
+          "field": "summary",
+          "source": "https://maarifa.cog.go.ke/sites/default/files/2024-06/MACHAKOS%20CIDP%202023-2027.pdf",
+          "note": "Machakos County Integrated Development Plan 2023-2027 (County Government of Machakos, 2023) §1.1-1.2 printed p.1 / PDF p.19: land area 6,037.3 km2; county is semi-arid and relies on rain-fed agriculture."
+        },
+        {
+          "field": "summary",
+          "source": "https://makueni.go.ke/sandbox/site/files/2024/10/CIDP-III-2023-2027-1.pdf",
+          "note": "Makueni County Integrated Development Plan 2023-2027 (Government of Makueni County, 2023) §1.2 p.13: area 8,176.7 km2; §1.3.2 p.14: largely arid and semi-arid, prone to frequent droughts. The 38,600 km2 total is OUR SUM of the four county areas (21,872 + 2,538.7 + 6,037.3 + 8,176.7 = 38,624.7), not a figure stated in any document."
         },
         {
           "field": "ecosystem",
-          "source": "https://cgspace.cgiar.org/server/api/core/bitstreams/5d1bf666-6b4d-4eba-80ef-3746e663a7d2/content",
-          "note": "Kakamega maize and sugarcane zones; degradation (Kakamega/Siaya brief)"
+          "source": "https://repository.kippra.or.ke/handle/123456789/4431",
+          "note": "Kiambu CIDP 2023-2027 §1.3.1 printed p.2 / PDF p.14: the major forests in the county (Kieni, Kinale) are in the Upper Highland zone, which is very wet and a water catchment."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://makueni.go.ke/sandbox/site/files/2024/10/CIDP-III-2023-2027-1.pdf",
+          "note": "Makueni CIDP 2023-2027 §4.1.7 p.136: 50.0% arable land, 5.5% forest cover, shrub land 34.0%, grassland 9% (the plan cites ROAM 2018)."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/178045",
+          "note": "Soils of ILRI's Kapiti Research Station and Wildlife Conservancy (Gachene et al., ILRI, 2025) Introduction p.9 and Vegetation p.11: Kapiti is in Machakos county in the Athi-Kapiti plains; semi-arid grasslands with scattered trees and shrubs; dispersal route for wildlife moving to and from Nairobi National Park, Amboseli, Tsavo. A 13,000 ha site, used only as an example of the plains."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://repository.kippra.or.ke/handle/123456789/4520",
+          "note": "Kajiado CIDP 2023-2027 §1.3.1 printed p.3 / PDF p.10: Athi-Kapiti plains are a dispersal area south and south-east of Nairobi National Park enabling seasonal wildlife movement to Amboseli and Tsavo."
         },
         {
           "field": "livelihoods",
-          "source": "https://repository.maseno.ac.ke/handle/123456789/307",
-          "note": "Smallholder agriculture in West Kenya"
+          "source": "https://repository.kippra.or.ke/handle/123456789/4431",
+          "note": "Kiambu CIDP 2023-2027 §1.1 printed p.1 / PDF p.13: residential area for many who work in Nairobi; agriculture the predominant activity. §1.3.1 PDF p.14-15: lower highland is a tea and dairy zone; soils suited to coffee and tea. §1.5 PDF p.19-20: 2019 census population 2,417,735."
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://maarifa.cog.go.ke/sites/default/files/2024-06/MACHAKOS%20CIDP%202023-2027.pdf",
+          "note": "Machakos CIDP 2023-2027 §1.1 printed p.1 / PDF p.19: 2019 census population 1,421,932; agriculture the main activity, rain-fed; maize, beans, fruits, vegetables, sorghum and millet. Fact sheet PDF p.350: food crops maize, beans, cowpeas, green grams, pigeon peas; cash crops mangoes, coffee, citrus."
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://makueni.go.ke/sandbox/site/files/2024/10/CIDP-III-2023-2027-1.pdf",
+          "note": "Makueni CIDP 2023-2027 §1.5.1 p.17: 2019 census population 987,653. §1.3.3 p.14: mango and citrus, grains, cow peas, pigeon peas, green grams, sorghum by zone. p.49: reliance on rain-fed agriculture."
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://repository.kippra.or.ke/handle/123456789/4520",
+          "note": "Kajiado CIDP 2023-2027 §1.1 printed p.1 / PDF p.8: 2019 census population 1,117,840; livestock rearing mainly through nomadic pastoralism in rural areas; Maasai dominant in rural areas. The 5.9 million total is OUR SUM of the four census figures (5,945,160)."
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://hdl.handle.net/10568/182078",
+          "note": "Red meat value chain in pastoral systems: Reconnaissance of communities in Kajiado County, Kenya (Sila et al., ILRI, 2026) p.5: production system mainly semi-nomadic pastoralism (>90%) in three wards (Matapato North, Kenyawa-Poka, Imbirikani) — supports herding in rural Kajiado; ward-level, no figure used."
         },
         {
           "field": "why_it_matters",
-          "source": "https://cgspace.cgiar.org/server/api/core/bitstreams/5d1bf666-6b4d-4eba-80ef-3746e663a7d2/content",
-          "note": "Land degradation in Kakamega and Siaya"
+          "source": "https://repository.kippra.or.ke/handle/123456789/4520",
+          "note": "Kajiado CIDP 2023-2027 §1.1 PDF p.8: 62.6 percent population increase in the last ten years. §3.1 printed p.48 / PDF p.55: population increase has led to uneconomical subdivision of pastoral and agricultural land for settlement, diminishing pastoral land. §1.3.1 PDF p.10: wildlife dispersal to Amboseli and Tsavo."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://hdl.handle.net/10568/182078",
+          "note": "Red meat value chain report (Sila et al., ILRI, 2026) p.8: most small ruminants from Kajiado markets (Kimana, Sultan Hamud, Bissil) go to Nairobi for slaughter; p.6-8: water scarcity ranked the first constraint; recurrent droughts cause feed and water shortages. Kajiado only."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://doi.org/10.1186/s13570-016-0070-0",
+          "note": "Community perceptions on spatio-temporal land use changes in the Amboseli ecosystem, southern Kenya (Kimiti et al., Pastoralism 6:24, 2016) Abstract p.1: communities in three Amboseli group ranches (Kajiado) perceive reduced grazing land over 40 years, attributed to cultivation and settlement after land tenure change. Supports 'shrinking grazing land'; no figure used."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://makueni.go.ke/sandbox/site/files/2024/10/CIDP-III-2023-2027-1.pdf",
+          "note": "Makueni CIDP 2023-2027 §1.3.2 p.14: prone to frequent droughts due to unreliable and erratic rainfall (drought beyond Kajiado)."
+        }
+      ]
+    },
+    "KEN-LVB": {
+      "summary": "Five counties of western Kenya — Kericho, Kisumu, Nandi, Siaya and Vihiga — in the Lake Victoria Basin. Lowland floodplains by the lake give way to mid-altitude mixed farms and densely populated highlands; rainfall averages 1,000–1,500 mm a year.",
+      "ecosystem": "A mosaic of farm fields, pastures, settlements and pockets of natural vegetation on low-organic-matter Acrisols and Cambisols, draining to Lake Victoria; Vihiga is predominantly hilly, while Kisumu's lake-adjacent lowlands flood repeatedly.",
+      "livelihoods": "Smallholder households combining crops — maize, beans, cassava, sweet potatoes, bananas and vegetables — with dairy cattle, goats and poultry, informal trade and wage work; Nile perch and tilapia fisheries add food and income along the lake.",
+      "why_it_matters": "Its farms and the lake's Nile perch and tilapia fisheries feed and employ a dense smallholder population, but maize yields of 2.1–2.3 t/ha in Kisumu and Vihiga sit far below the 6–8 t/ha potential, steep slopes in Vihiga erode, and farm runoff and sewage pollute the lake.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "field": "summary",
+          "source": "https://hdl.handle.net/10568/181854",
+          "note": "Synthesis report on the evidence of the multifunctional performance of LVB landscape (Kaushal, Fadda, Kidane, Nyawira, Fuchs & Geck, 2025; no centre named in the front matter) §3.1 / p.4: agroecological zones from lowland floodplains near Lake Victoria to mid-altitude mixed farming systems and densely populated highland areas. §3.2 / p.4: humid equatorial climate, bimodal rainfall, average 1,000–1,500 mm annually. County list is from the MOSAIC boundary, not the report."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/181854",
+          "note": "Same report §3.1 / p.4: land use = agricultural fields, pastures, residential areas, pockets of natural vegetation; Kisumu lake-adjacent lowlands; Vihiga predominantly hilly terrain. §3.2 / p.4: weathered Acrisols, Cambisols, low organic matter. §6 / p.9: recurrent flooding in low-lying Kisumu adjacent to the lake."
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://hdl.handle.net/10568/181854",
+          "note": "Same report §3.3 / p.7: smallholder agriculture; households rely on crop farming, livestock, informal trade, wage employment. §4 / p.7–8: maize, beans, cassava, sweet potatoes, bananas, horticultural crops (tomatoes, cabbage); dairy cattle, goats, poultry, some sheep. §3.1 / p.4: Nile perch and tilapia fisheries contribute to local diets and income."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://hdl.handle.net/10568/181854",
+          "note": "Same report §1 / p.3: high population density, smallholder-dominated agriculture. §3.1 / p.4: fisheries for diets and income. §4 / p.7 and Table 1 / p.8: maize about 2.3 t/ha in Kisumu, 2.1 t/ha in Vihiga, potential 6–8 t/ha. §6 / p.9: significant soil erosion on Vihiga's steep hills; nutrient runoff from farms, untreated sewage and industrial effluents compromise water quality, eutrophication and algal blooms in Lake Victoria."
         }
       ]
     },
@@ -203,45 +288,70 @@
       ]
     },
     "PER-PCL": {
-      "summary": "Lowland Amazon area around Pucallpa in Ucayali, covering districts of Coronel Portillo and Padre Abad provinces along the Pucallpa–Aguaytía corridor.",
-      "ecosystem": "Amazon rainforest, secondary forest, pasture and cropland.",
-      "livelihoods": "Cattle ranching, oil palm, cacao, coffee, plantain and fish farming.",
-      "why_it_matters": "Amazon forest is being cleared on a frontier driven by pasture and oil palm expansion.",
-      "confidence": "medium",
+      "summary": "Peru's Pucallpa–Aguaytía agroforestry corridor in the Amazonian region of Ucayali — about 14,000 km², linking the city of Pucallpa to the Aguaytía river basin. Amazon lowlands rise westward towards the Cordillera Azul and the Andean foothills, along a road frontier settled since the 1940s.",
+      "ecosystem": "Humid tropical rainforest — terra firme, riparian and seasonally flooded forest, with foothill forest in the west — now a mosaic of old-growth remnants, secondary forest, fallows, agro-pastoral land and agroforestry plots along the Aguaytía River, a tributary of the Ucayali.",
+      "livelihoods": "About 500,000 people, 81% of them urban; rural households, mestizo and Indigenous (chiefly Shipibo-Konibo), live from oil palm, rice, cacao, banana and cassava, extensive cattle, fish farming and Amazonian fruits such as camu camu.",
+      "why_it_matters": "Its forest mosaic stores carbon, regulates water and shelters high biodiversity while supplying cacao and oil palm to domestic and export markets, but the corridor has the highest deforestation rate in Ucayali — 40% of its forests lost in two decades to the farming frontier and infrastructure.",
+      "confidence": "high",
       "sources": [
         {
+          "field": "summary",
+          "source": "https://hdl.handle.net/10568/181543",
+          "note": "Profile of MFL Ucayali, Peru (Arce, A.; International Potato Center (CIP), 2026) §1 / PDF p.5: corridor nested in Ucayali region, links Pucallpa (Coronel Portillo) to Aguaytía river basin (Padre Abad), area 14,064.11 km²; §3 / p.6: ~1.4 million ha (14,064 km²), ~14% of Ucayali; §5 / p.7: Amazon lowlands and Amazon-Andean transition, relief increasing westward, runoff from Cordillera Azul and Andean foothills; §4 / p.6: road-frontier history, Federico Basadre highway from the 1940s, Andean migration."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/181543",
+          "note": "Profile of MFL Ucayali, Peru (Arce, A.; CIP, 2026) §5 / PDF p.7: humid tropical rainforest, terra firme, riparian and seasonally flooded forests, foothill forest to the west; Aguaytía River a major tributary of the Ucayali crossing the corridor; §3 / p.6: mosaic of old-growth remnants, secondary forests, fallows, agro-pastoral systems, agroforestry plots. No land-cover percentages are given in the report."
+        },
+        {
           "field": "livelihoods",
-          "source": "https://amazonconservation.org/maap-synthesis-2-patterns-and-drivers-of-deforestation-in-the-peruvian-amazon",
-          "note": "Cattle pasture and oil palm in Ucayali"
+          "source": "https://hdl.handle.net/10568/181543",
+          "note": "Profile of MFL Ucayali, Peru (Arce, A.; CIP, 2026) §9 / PDF p.8: estimated population of the landscape 500,466 (INEI 2020), 81% urban; §10 / p.9: mestizo majority, Shipibo-Konibo the principal Indigenous group in both provinces; §15 / pp.11-12: Table 1 crops for Padre Abad and Coronel Portillo (oil palm, rice, cacao, banana, cassava — names only, figures not used), extensive cattle, aquaculture (paco, gamitana, paiche), camu camu and other Amazonian fruits."
         },
         {
           "field": "why_it_matters",
-          "source": "https://core.ac.uk/download/132677326.pdf",
-          "note": "Deforestation drivers around Pucallpa: logging, shifting cultivation, pasture, oil palm"
+          "source": "https://hdl.handle.net/10568/181543",
+          "note": "Profile of MFL Ucayali, Peru (Arce, A.; CIP, 2026) §2 / PDF p.5: corridor has the highest deforestation rate in Ucayali over the last two decades, 40% of its forests lost to agricultural-frontier expansion and infrastructure; §6 / p.7: ecosystem mosaic underpins high biodiversity, carbon storage, water regulation; §16 / p.12: cacao and oil palm are the most consolidated value chains linking the corridor to domestic and international markets."
         }
       ]
     },
     "SEN-FK": {
-      "summary": "Fatick Department in west-central Senegal, a Sudano-Sahelian farming area in the former Sine-Saloum region.",
-      "ecosystem": "Rainfed cropland with scattered trees, and salt-affected land along the Sine River.",
-      "livelihoods": "Rainfed millet and groundnut, livestock, fishing and salt production.",
-      "why_it_matters": "Its farmland and trees underpin local food production, but declining rainfall, soil salinization and falling fertility threaten them.",
-      "confidence": "medium",
+      "summary": "Fatick Department in west-central Senegal lies between the inland farming and grazing zones and the Sine-Saloum estuary, reaching the Atlantic to the west. It is a Sudano-Sahelian area with 500–700 mm of rain a year, highly variable from one year to the next.",
+      "ecosystem": "A mosaic of rainfed cropland, extensive grazing land, forest resources and wetlands on mainly tropical ferruginous soils, with salt-affected land in the south and near the coast; in Niakhar commune, cropland averaged 19,581 ha over 2016–2025.",
+      "livelihoods": "Rainfed farming and extensive livestock keeping are the main livelihoods; in Niakhar commune farmers grow groundnut, millet, sorghum and cowpea, herds graze the harvested fields in the dry season, and women and young people run small market gardens.",
+      "why_it_matters": "Its cropland, grazing land, forest resources and wetlands support farming and herding side by side, but soil degradation, salinization, scarcer woody biomass and growing pressure on land, sharpened by variable rainfall, are lowering yields and fuelling conflicts between farmers and herders.",
+      "confidence": "high",
       "sources": [
         {
+          "field": "summary",
+          "source": "https://hdl.handle.net/10568/183189",
+          "note": "Stakeholder platforms and governance of multifunctional landscapes in the department of Fatick (Mané & Tounkara, ISRA; Piraux, CIRAD, 2026) §3.1.2–3.1.3 / p.11 (printed p.10): department in central-western Senegal; pivot between continental agro-sylvo-pastoral zones and Sine-Saloum estuarine zones; bordered W by the Atlantic; Sudano-Sahelian zone; average annual rainfall 500–700 mm; high interannual variability"
+        },
+        {
           "field": "ecosystem",
-          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8036228",
-          "note": "Salinization in Fatick / Sine-Saloum (search summary; verify)"
+          "source": "https://hdl.handle.net/10568/183189",
+          "note": "Stakeholder platforms and governance of multifunctional landscapes in the department of Fatick (Mané & Tounkara, ISRA; Piraux, CIRAD, 2026) §3.1.3 / p.11–12: soils mainly tropical ferruginous; salinization in southern and coastal parts; landscapes interlink rain-fed agriculture, extensive livestock, forest resources and wetlands"
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/183592",
+          "note": "Analysis of the Niakhar landscape using satellite imagery (M. Dieye, O. Dieye & M. Piraux, 2026; no centre stated in front matter) §3.1.1 / p.11 and Table 2 / p.15: Niakhar municipality cultivated area averages 19,581 ha over 2016–2025 (range 14,583–23,070 ha)"
         },
         {
           "field": "livelihoods",
-          "source": "https://agritrop.cirad.fr/611371/8/611371eng.pdf",
-          "note": "Rainfed millet, groundnut, cowpea; sylvopastoral livestock; fishing; saliculture"
+          "source": "https://hdl.handle.net/10568/183189",
+          "note": "Stakeholder platforms and governance of multifunctional landscapes in the department of Fatick (Mané & Tounkara, ISRA; Piraux, CIRAD, 2026) §3.1.3 / p.12 and §4.1 / p.15: agro-sylvo-pastoral production systems; rain-fed agriculture and extensive livestock farming"
+        },
+        {
+          "field": "livelihoods",
+          "source": "https://hdl.handle.net/10568/183592",
+          "note": "Analysis of the Niakhar landscape using satellite imagery (M. Dieye, O. Dieye & M. Piraux, 2026; no centre stated in front matter) Table 1 / p.10: crops = peanuts, millet, sorghum, cowpeas; §4.5 / p.17–18: harvested plots grazed in the dry season; small market gardens mainly worked by women and young people (Niakhar only)"
         },
         {
           "field": "why_it_matters",
-          "source": "https://agritrop.cirad.fr/611371/8/611371eng.pdf",
-          "note": "Salinization, soil fertility decline, rainfall decline since 1970s"
+          "source": "https://hdl.handle.net/10568/183189",
+          "note": "Stakeholder platforms and governance of multifunctional landscapes in the department of Fatick (Mané & Tounkara, ISRA; Piraux, CIRAD, 2026) §3.1.3 / p.12: multifunctional interconnection of agriculture, livestock, forest resources, wetlands; §4.1 / p.15: soil degradation, salinization, increasing scarcity of woody biomass, pressure on agricultural and pastoral land, climate variability, declining yields, recurring farmer–herder conflicts"
         }
       ]
     },
@@ -270,21 +380,36 @@
       ]
     },
     "ZWE-MB": {
-      "summary": "Four districts of Zimbabwe's Zambezi Valley — Mbire, Muzarabani, Mount Darwin and Hurungwe — a semi-arid crop, livestock and wildlife landscape.",
-      "ecosystem": "Cropland, shrubland, forest and rivers, alongside wildlife areas.",
-      "livelihoods": "Cotton, sorghum and finger millet farming; cattle and goats.",
-      "why_it_matters": "Farms and wildlife areas share the valley, so crop damage and human–wildlife conflict weigh on both.",
+      "summary": "Four districts of Zimbabwe's Zambezi Valley — Mbire, Muzarabani, Mount Darwin and Hurungwe. Mbire district, about 250 km north of Harare on the Zambia and Mozambique borders, is a semi-arid wildlife–agriculture mosaic of about 4,700 km² with 83,724 residents (2022 census).",
+      "ecosystem": "In Mbire district, forest and woodland — mopane, miombo, Combretum–Terminalia and acacia — cover around 70%, with scrub, open grassland, riverine forest and wetlands; in Ward 2, mapped cropland is only 5–6% within a shrub, forest and grass matrix.",
+      "livelihoods": "About 80% of Mbire district's households depend on crop production — rainfed maize, sorghum, cotton, sesame and groundnuts on plots typically under 1.5 ha — alongside goats, poultry and cattle, casual labour, fishing and wild foods.",
+      "why_it_matters": "Mbire district's woodlands, rivers and floodplains sustain wildlife, flood-recession farming and non-timber products between major conservation areas, but drought is chronic, floods recur almost yearly and elephants and baboons raid crops; about 55% of rural households were estimated cereal insecure at the January–March 2025 hunger peak.",
       "confidence": "medium",
       "sources": [
         {
-          "field": "livelihoods",
-          "source": "https://zela.org/land-use-planning-and-human-wildlife-conflict-in-the-zambezi-valley/",
-          "note": "Cotton, finger millet and sorghum most common in Mbire; conservancies"
+          "field": "summary",
+          "source": "https://hdl.handle.net/10568/180004",
+          "note": "Synthesis report on the multifunctional performance of Mbire landscape (Falconnier, Sibanda & Chimonyo, 2025; CGIAR, no centre named in front matter) §Description and context, p.5: semi-arid wildlife–agriculture mosaic; Mashonaland Central; approx. 250 km north of Harare; close to Zambia and Mozambique borders (Luangwa District N, Tete Province NE, Muzarabani E, Hurungwe W); district area 4,695.87 km²; 2022 census 83,724 residents; p.8: mid-Zambezi valley. The list of four districts is the landscape boundary, not from the report."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/180004",
+          "note": "Same report §Environmental performance, p.21: vegetation types woodlands, scrub, open grasslands, riverine forests, wetlands; forest and woodland cover estimated at around 70% incl. mopane, Combretum–Terminalia, miombo, acacia (citing Uzanda et al., 2025). Mbire district only."
+        },
+        {
+          "field": "ecosystem",
+          "source": "https://hdl.handle.net/10568/181640",
+          "note": "Zimbabwe landscape characterization technical report (Sibanda, Gerard, Baudron & Chimonyo, 2025; CGIAR, no centre named in front matter) §3 Results, p.7 (printed p.6): Mbire Ward 2 LULC map — shrubland, forest and grassland roughly three-quarters; cropland 5–6% in small dispersed patches within a shrub/forest/grass matrix. One ward only."
         },
         {
           "field": "livelihoods",
-          "source": "https://agris.fao.org/search/en/records/65dfaf300f3e94b9e5db58da",
-          "note": "Shift from cotton to cattle and goats in Mbire (2022 study; verify citation)"
+          "source": "https://hdl.handle.net/10568/180004",
+          "note": "Same report §Description and context, p.7: smallholders typically <1.5 ha, largely rainfed; maize and sorghum staples; cowpeas, groundnuts; cotton and sesame for cash; goats and chickens sold; casual labour; wild foods; fishing. §Economic performance, p.17: about 80% of households depend on crop production (FNC, 2022). §Agronomic performance, p.10: goats, indigenous poultry, cattle kept. Mbire district only."
+        },
+        {
+          "field": "why_it_matters",
+          "source": "https://hdl.handle.net/10568/180004",
+          "note": "Same report p.21 (woodlands give habitat and non-timber forest products); p.24 (position between major conservation areas); p.28 (floodplains give residual moisture for flood-recession farming and livestock water); p.8 (drought chronic across all wards); p.20 (near-yearly flood occurrence); p.14 (elephants and baboons destroy fields); p.32 (ZimLAC 2024: approx. 55% of rural households cereal insecure, peak hunger period January–March 2025). Mbire district only."
         }
       ]
     }
