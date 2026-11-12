@@ -113,6 +113,18 @@ img {
   background-color: var(--color-green-light);
 }
 
+/* Ocean Teal is too dark to read on the dark surfaces: there the outline
+   button takes the light tint of the same brand colour, and its hover is a
+   faint wash of it instead of the solid Light Teal (which would hide the text). */
+[data-theme="dark"] .btn-secondary {
+  color: var(--mosaic-light-teal);
+  border-color: var(--mosaic-light-teal);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: rgba(214, 238, 242, 0.12);
+}
+
 /* Tables */
 
 .data-table {
@@ -121,9 +133,11 @@ img {
   font-size: var(--text-sm);
 }
 
-/* Let wide tables scroll horizontally on phones instead of overflowing the page */
+/* Wide tables (three columns or more: the Metadata guide's) scroll sideways on
+   phones instead of overflowing the page. A two-column table, like the one on
+   a dataset page, keeps wrapping, so no value is cut off at the edge. */
 @media (max-width: 640px) {
-  .data-table {
+  .data-table--wide {
     display: block;
     overflow-x: auto;
     white-space: nowrap;

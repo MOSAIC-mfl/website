@@ -21,6 +21,14 @@ const base = import.meta.env.BASE_URL
 // wording, shown verbatim as its terms of use.
 const spdxLicense = isSpdxLicense(dataset.license)
 
+// A citation is shown only when the record carries one. The one that used to
+// be generated here put the period the data covers where the year of
+// publication goes and the registering organisation where the author goes, so
+// it was wrong for most records. Without one, the page says how to cite and
+// gives a reference to the catalogue record itself.
+const citation = dataset.citation?.trim() || null
+const recordUrl = new URL(`${base}/catalogue/${dataset.id}/`, Astro.site).href
+
 // Related datasets: same landscape and/or theme, best matches first, excluding self.
 const allDatasets = await loadDatasets()
 const related = allDatasets
@@ -146,7 +154,7 @@ const readinessDescriptions: Record<string, string> = {
     </section>
 
     <!-- Access section -->
-    <section style="margin-bottom: var(--space-8); padding: var(--space-6); background-color: var(--mosaic-light-teal); border-radius: var(--radius-lg);">
+    <section class="ds-access" style="margin-bottom: var(--space-8); padding: var(--space-6); background-color: var(--mosaic-light-teal); border-radius: var(--radius-lg);">
       <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-3);">How to access this dataset</h2>
       {dataset.access_level === 'Open' ? (
         <div>
@@ -202,14 +210,28 @@ const readinessDescriptions: Record<string, string> = {
       <p><strong>{dataset.readiness_status}:</strong> {readinessDescriptions[dataset.readiness_status]}</p>
     </section>
 
-    <!-- Citation -->
+    <!-- Citation: the record's own when it carries one; otherwise how to cite without one -->
     <section style="margin-bottom: var(--space-8); padding: var(--space-6); background-color: var(--color-gray-50); border-left: 4px solid var(--mosaic-teal); border-radius: 0 var(--radius-md) var(--radius-md) 0;">
-      <h2 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Suggested citation</h2>
-      <p style="font-size: var(--text-sm); font-family: var(--font-mono); color: var(--color-gray-600); line-height: 1.7;">
-        {dataset.citation?.trim()
-          ? dataset.citation
-          : `${dataset.source ?? 'CGIAR'} (${dataset.temporal_coverage ?? new Date().getFullYear()}). ${dataset.title}. MOSAIC — CGIAR MFL Science Programme. Retrieved from https://mosaic-mfl.github.io/website/catalogue/${dataset.id}`}
-      </p>
+      {citation ? (
+        <>
+          <h2 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Suggested citation</h2>
+          <p style="font-size: var(--text-sm); font-family: var(--font-mono); color: var(--color-gray-600); line-height: 1.7;">{citation}</p>
+        </>
+      ) : (
+        <>
+          <h2 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">How to cite</h2>
+          <p style="font-size: var(--text-sm); margin-bottom: var(--space-3);">
+            No citation is registered for this dataset yet.
+            {dataset.download_url
+              ? ' Cite the data as its source asks (see the source link above).'
+              : ' Ask the contact above how the data should be cited.'}
+            {' '}To point to this catalogue record, use:
+          </p>
+          <p style="font-size: var(--text-sm); font-family: var(--font-mono); color: var(--color-gray-600); line-height: 1.7;">
+            {dataset.title}. MOSAIC record {dataset.id}. {recordUrl} (accessed [date]).
+          </p>
+        </>
+      )}
     </section>
 
     <!-- Status legend (collapsible) -->
@@ -262,4 +284,13 @@ const readinessDescriptions: Record<string, string> = {
 
 <style>
   @import '../../styles/catalogue.css';
+
+  /* "How to access this dataset" keeps its Light Teal background in both themes
+     (a brand colour, never remapped), so in the dark theme its text stays dark
+     too; headings and paragraphs would otherwise turn light on a light box. */
+  :global([data-theme='dark']) .ds-access,
+  :global([data-theme='dark']) .ds-access h2,
+  :global([data-theme='dark']) .ds-access p,
+  :global([data-theme='dark']) .ds-access strong,
+  :global([data-theme='dark']) .ds-access code { color: var(--mosaic-ink); }
 </style>
