@@ -20,10 +20,7 @@ function isActive(href: string, exact = false) {
 }
 ---
 
-<!-- Skip-to-content link (renderizado aquí, posicionado por CSS en BaseLayout) -->
-<a href="#main-content" class="skip-link">Skip to main content</a>
-
-<!-- Desktop nav -->
+<!-- Desktop nav (the skip-to-content link lives in Header.astro, ahead of the logo) -->
 <nav aria-label="Main navigation" class="main-nav">
   <ul class="nav-list">
     {navLinks.map(link => (
@@ -105,25 +102,6 @@ function isActive(href: string, exact = false) {
 </nav>
 
 <style>
-  /* ── Skip link ─────────────────────────────────────── */
-  .skip-link {
-    position: absolute;
-    top: -100%;
-    left: var(--space-4);
-    background: var(--color-white);
-    color: var(--color-green-dark);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    font-size: var(--text-sm);
-    z-index: 9999;
-    text-decoration: none;
-    transition: top 0.1s;
-  }
-  .skip-link:focus {
-    top: var(--space-2);
-  }
-
   /* ── Desktop nav ────────────────────────────────────── */
   .main-nav {
     display: flex;
@@ -153,9 +131,16 @@ function isActive(href: string, exact = false) {
     background-color: rgba(255, 255, 255, 0.1);
   }
 
+  /* Keyboard focus. The header bar is teal, so a ring in Ocean Teal cannot be
+     seen on it: controls on the bar take Light Teal. */
   .theme-toggle:focus-visible {
-    outline: 2px solid var(--mosaic-teal);
+    outline: 2px solid var(--mosaic-light-teal);
     outline-offset: 2px;
+  }
+  /* …and the one in the mobile menu, whose panel is white, keeps Ocean Teal. */
+  .theme-toggle-mobile:focus-visible {
+    outline-color: var(--mosaic-teal);
+    outline-offset: -2px;
   }
 
   /* Icon swap: show sun in light theme, moon in dark theme.
@@ -214,7 +199,14 @@ function isActive(href: string, exact = false) {
   .nav-link:hover,
   .nav-link:focus-visible {
     color: var(--mosaic-light-teal);
-    outline: none;
+  }
+
+  /* A ring as well as the colour: the current page's link is already white,
+     so colour alone showed nothing when it had the focus. */
+  .nav-link:focus-visible {
+    outline: 2px solid var(--mosaic-light-teal);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
   }
 
   .nav-link[aria-current="page"] {
@@ -239,7 +231,7 @@ function isActive(href: string, exact = false) {
   }
 
   .hamburger:focus-visible {
-    outline: 2px solid var(--color-cgiar-teal);
+    outline: 2px solid var(--mosaic-light-teal);
     outline-offset: 2px;
   }
 
@@ -282,7 +274,12 @@ function isActive(href: string, exact = false) {
   .mobile-nav-link:focus-visible {
     background-color: var(--color-gray-50);
     color: var(--color-cgiar-teal);
-    outline: none;
+  }
+
+  /* On the white panel the ring is Ocean Teal, drawn inside the row */
+  .mobile-nav-link:focus-visible {
+    outline: 2px solid var(--mosaic-teal);
+    outline-offset: -2px;
   }
 
   .mobile-nav-link[aria-current="page"] {
@@ -302,6 +299,25 @@ function isActive(href: string, exact = false) {
     display: block;
     height: 34px;
     width: auto;
+  }
+
+  /* ── Mobile menu in the dark theme ──────────────────────
+     The panel stays white in both themes (the CGIAR / MFL lockup is shown on
+     a white ground), but its text and its hover fill used the neutral greys,
+     which swap ends with the theme: near-white text on white, and a dark row
+     on hover. In the dark theme they keep to brand colours that never change. */
+  :global([data-theme='dark']) .mobile-nav-link,
+  :global([data-theme='dark']) .theme-toggle-mobile {
+    color: var(--mosaic-ink);
+  }
+  :global([data-theme='dark']) .mobile-nav-link:hover,
+  :global([data-theme='dark']) .mobile-nav-link:focus-visible,
+  :global([data-theme='dark']) .theme-toggle-mobile:hover {
+    background-color: var(--mosaic-sand);
+    color: var(--mosaic-teal);
+  }
+  :global([data-theme='dark']) .mobile-nav-link[aria-current='page'] {
+    color: var(--mosaic-ink);
   }
 
   /* ── Responsive: show hamburger, hide desktop nav ──── */

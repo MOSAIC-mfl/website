@@ -112,6 +112,41 @@ function getOptions(datasets: Dataset[], key: FilterKey): string[] {
   return [...new Set(values)].sort()
 }
 
+// ── Free-text search ────────────────────────────────────────────────
+// Case and accents are ignored ("narino" finds "Nariño").
+function fold(text: string): string {
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+}
+
+/** Everything a visitor might type to find a record, as one folded string. */
+function searchableText(d: Dataset): string {
+  return fold(
+    [
+      d.id,
+      d.title,
+      d.description,
+      d.source,
+      d.mfl_theme,
+      d.country,
+      d.living_landscape,
+      d.landscape_name,
+      d.data_type,
+      d.license,
+      ...(d.formats ?? []),
+    ]
+      .filter(Boolean)
+      .join(' '),
+  )
+}
+
+/** The words of a query, folded, without the punctuation around them. */
+function queryWords(query: string): string[] {
+  return fold(query)
+    .split(/\s+/)
+    .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
+    .filter(Boolean)
+}
+
 function yearOf(d: Dataset): number {
   const m = (d.temporal_coverage ?? '').match(/\d{4}/)
   return m ? parseInt(m[0], 10) : 0
@@ -160,21 +195,26 @@ export function CatalogueFilter({ datasets, base }: Props) {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
+  // Searchable text of each record, built once.
+  const searchIndex = useMemo(
+    () => new Map(datasets.map((d) => [d.id, searchableText(d)])),
+    [datasets],
+  )
+
   const filtered = useMemo(() => {
     let result = filterDatasets(datasets, filters)
-    if (searchText.trim()) {
-      const q = searchText.toLowerCase()
-      result = result.filter((d) =>
-        d.title.toLowerCase().includes(q) ||
-        d.description?.toLowerCase().includes(q) ||
-        d.source?.toLowerCase().includes(q) ||
-        d.mfl_theme?.toLowerCase().includes(q) ||
-        d.country?.toLowerCase().includes(q) ||
-        d.living_landscape.toLowerCase().includes(q)
-      )
+    // A record matches when it contains every word typed, in any order and in
+    // any of its fields: title, description, source, theme, country, landscape
+    // (code and name), record ID, data type, formats and licence.
+    const words = queryWords(searchText)
+    if (words.length > 0) {
+      result = result.filter((d) => {
+        const text = searchIndex.get(d.id) ?? ''
+        return words.every((w) => text.includes(w))
+      })
     }
     return sortDatasets(result, sortKey)
-  }, [datasets, filters, searchText, sortKey])
+  }, [datasets, filters, searchText, sortKey, searchIndex])
 
   // Reset to first page whenever the result set changes.
   useEffect(() => { setPage(1) }, [filters, searchText, sortKey, pageSize])
@@ -369,7 +409,7 @@ export function CatalogueFilter({ datasets, base }: Props) {
               type="search"
               id="dataset-search"
               className="search-input"
-              placeholder="Search by title, theme, keyword…"
+              placeholder="Search by title, landscape, theme, ID…"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />

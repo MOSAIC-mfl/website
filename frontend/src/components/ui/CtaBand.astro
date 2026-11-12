@@ -86,6 +86,9 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
   .cta-band--soft .cta-band-text { flex: 1; min-width: 260px; }
   .cta-band--soft .cta-band-title { color: var(--mosaic-ink); margin: 0 0 var(--space-2); }
   .cta-band--soft .cta-band-body { color: var(--color-gray-700); margin: 0 0 var(--space-4); max-width: 56ch; }
+  /* The soft band keeps its light brand background in both themes, so its body
+     text must stay dark too: --color-gray-700 turns light in the dark theme. */
+  :global([data-theme='dark']) .cta-band--soft .cta-band-body { color: var(--mosaic-ink); }
   .cta-band--soft .cta-band-sticky { flex-shrink: 0; }
 
   /* ── dark ─────────────────────────────────────────────── */
