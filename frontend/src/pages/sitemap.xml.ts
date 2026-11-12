@@ -2,6 +2,9 @@
    one address per dataset record. Built with the site, so it follows the
    catalogue without anyone keeping a list. The redirect pages and the
    placeholder /analytics carry noindex and are left out. */
+/// <reference types="astro/client" />
+// (the line above gives `import.meta.env` its type when `tsc` runs before Astro
+// has generated its own types, as it does in CI)
 import type { APIRoute } from 'astro'
 import { loadDatasets } from '../utils/loadDatasets'
 
