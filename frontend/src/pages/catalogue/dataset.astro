@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { DatasetDetail } from '../../components/dataset/DatasetDetail'
+import { DatasetPage } from '../../components/dataset/DatasetPage'
 
 // One page for every resource (/catalogue/dataset/?id=<source>:<id>): the resource is read from
 // mosaic-api when the page opens, so a new record needs no rebuild of the website.
@@ -13,9 +13,10 @@ const base = import.meta.env.BASE_URL
       <p>This page needs JavaScript to load the dataset from the MOSAIC API.</p>
     </div>
   </noscript>
-  <DatasetDetail client:only="react" base={base} />
+  <DatasetPage client:only="react" base={base} />
 </BaseLayout>
 
 <style is:global>
   @import '../../styles/catalogue.css';
+  @import '../../styles/dataset.css';
 </style>

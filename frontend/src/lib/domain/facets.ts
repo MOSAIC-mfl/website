@@ -1,8 +1,8 @@
 /**
- * The catalogue filters: the four filters of GET /v1/records (mosaic-api ADR-0007). Each
- * record also carries other facet values (`summary.facets.data_kind`, `.access`…) for display.
+ * The catalogue filters: the filters of GET /v1/records (mosaic-api domain/facets.py FILTERS). Each
+ * record also carries other facet values (`summary.facets.geometry`, `.status`…) for display.
  */
-export const FACETS = ['geography', 'landscape', 'theme', 'source'] as const
+export const FACETS = ['geography', 'landscape', 'theme', 'processing_status', 'data_kind', 'access', 'license', 'source'] as const
 
 export type FacetKey = (typeof FACETS)[number]
 

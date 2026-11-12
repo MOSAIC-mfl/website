@@ -11,12 +11,15 @@ interface Props {
   onClearAll?: () => void
 }
 
-export function DatasetGrid({ datasets, base, labels, viewMode = 'list', onClearAll }: Props) {
+export function DatasetGrid({ datasets, base, labels, viewMode = 'card', onClearAll }: Props) {
   if (datasets.length === 0) {
     return (
       <div className="empty-state">
         <h3>No datasets match your filters</h3>
-        <p>Try removing one filter, or search by country.</p>
+        <p>
+          Try removing one filter, or search by country. Know of a dataset that should be here?{' '}
+          <a href={`${base}/about#contribute`}>Register it</a>.
+        </p>
         {onClearAll && (
           <button type="button" className="empty-state-clear" onClick={onClearAll}>Clear all filters</button>
         )}
@@ -26,7 +29,7 @@ export function DatasetGrid({ datasets, base, labels, viewMode = 'list', onClear
   return (
     <div className={`ds-results ${viewMode === 'card' ? 'ds-results--grid' : 'ds-results--list'}`}>
       {datasets.map((d) => (
-        <DatasetCard key={d.id} dataset={d} base={base} labels={labels} />
+        <DatasetCard key={d.id} dataset={d} base={base} labels={labels} variant={viewMode} />
       ))}
     </div>
   )

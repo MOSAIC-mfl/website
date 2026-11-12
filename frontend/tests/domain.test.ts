@@ -25,14 +25,18 @@ describe('URL state', () => {
     const q = { ...emptyQuery(), text: 'forest', filters: { theme: ['Pressures, drivers'], geography: ['PER'] }, page: 2 }
     const back = fromSearchParams(toSearchParams(q))
     expect(back.filters).toEqual({ geography: ['PER'], theme: ['Pressures, drivers'] })
-    // filters the API no longer has are ignored in links
-    expect(fromSearchParams(new URLSearchParams('access=public&license=x')).filters).toEqual({})
+    // parameters that are not filters are ignored in links
+    expect(fromSearchParams(new URLSearchParams('foo=bar&utm_source=x')).filters).toEqual({})
     expect(back).toMatchObject({ text: 'forest', sort: 'recent', page: 2 })
     expect(fromSearchParams(new URLSearchParams('q=forest')).sort).toBe('relevance')
   })
   it('reads links of the previous website', () => {
     const q = fromSearchParams(new URLSearchParams('country=Peru&living_landscape=PER-PCL&access_level=Open&landscape=GLB'))
-    expect(q.filters).toEqual({ geography: ['Peru'], landscape: ['PER-PCL', 'not_specified'] })
+    expect(q.filters).toEqual({ geography: ['Peru'], landscape: ['PER-PCL', 'not_specified'], access: ['public'] })
+    expect(fromSearchParams(new URLSearchParams('readiness_status=Validated&data_type=Raster')).filters).toEqual({
+      processing_status: ['Validated'],
+      data_kind: ['Raster'],
+    })
   })
   it('toggling a filter goes back to page 1', () => {
     const q = toggleFilter({ ...emptyQuery(), page: 4 }, 'theme', 'climate')

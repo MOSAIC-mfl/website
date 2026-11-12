@@ -151,6 +151,82 @@
       "description": "Country or region, e.g. KEN. Comma-separated values (OR); an id or its label."
      },
      {
+      "name": "data_kind",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 500
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Kind of data, e.g. raster, vector. Comma-separated values (OR); an id or its label.",
+       "title": "Data Kind"
+      },
+      "description": "Kind of data, e.g. raster, vector. Comma-separated values (OR); an id or its label."
+     },
+     {
+      "name": "access",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 500
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Access, e.g. public, restricted. Comma-separated values (OR); an id or its label.",
+       "title": "Access"
+      },
+      "description": "Access, e.g. public, restricted. Comma-separated values (OR); an id or its label."
+     },
+     {
+      "name": "license",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 500
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Licence (SPDX), e.g. CC-BY-4.0; other = any other licence. Comma-separated values (OR); an id or its label.",
+       "title": "License"
+      },
+      "description": "Licence (SPDX), e.g. CC-BY-4.0; other = any other licence. Comma-separated values (OR); an id or its label."
+     },
+     {
+      "name": "processing_status",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 500
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Declared processing status: raw, processed, validated; not_specified = not stated. Comma-separated values (OR); an id or its label.",
+       "title": "Processing Status"
+      },
+      "description": "Declared processing status: raw, processed, validated; not_specified = not stated. Comma-separated values (OR); an id or its label."
+     },
+     {
       "name": "sort",
       "in": "query",
       "required": false,
@@ -1077,6 +1153,18 @@
       ],
       "title": "Access"
      },
+     "processing_status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Processing Status",
+      "description": "raw | processed | validated, as declared by the contributor; null = not stated."
+     },
      "license": {
       "anyOf": [
        {
@@ -1141,6 +1229,18 @@
       ],
       "title": "Access Url",
       "description": "First data location URL, public ones first."
+     },
+     "resolution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Resolution",
+      "description": "Spatial resolution as text, e.g. \"30 m\"."
      }
     },
     "type": "object",

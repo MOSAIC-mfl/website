@@ -1,0 +1,106 @@
+/* Dataset page (/catalogue/dataset/?id=…): Lizeth's design of 2026-11-12 (catalogue/[id].astro on
+   main), moved from the page's scoped styles to this file because the page is now drawn by React
+   (components/dataset/) from mosaic-api. */
+.dp { max-width: 1120px; padding-top: var(--space-8); padding-bottom: var(--space-16); }
+
+/* header */
+.dp-head { padding-bottom: var(--space-6); }
+.dp-title { margin: 0 0 var(--space-2); }
+.dp-by { margin: 0 0 var(--space-1); font-size: var(--text-lg); color: var(--color-text); }
+.dp-part { margin: 0 0 var(--space-4); color: var(--color-muted); }
+.dp-meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-8); margin: 0 0 var(--space-6); }
+.dp-meta div { display: flex; align-items: baseline; gap: var(--space-2); }
+.dp-meta dt, .dp-contact-role {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted);
+}
+.dp-meta dd { margin: 0; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-text); }
+.dp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); }
+.dp-action-link { font-size: var(--text-sm); font-weight: 600; }
+
+/* jump links */
+.dp-nav { border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-8); }
+.dp-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 var(--space-6); }
+.dp-nav a { display: block; padding: var(--space-3) 0; font-weight: 600; font-size: var(--text-sm); text-decoration: none; color: var(--color-muted); }
+.dp-nav a:hover { color: var(--color-link); }
+.dp-nav a { border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.dp-nav a[aria-current='true'] { color: var(--color-link); border-bottom-color: var(--color-link); }
+/* with the tabs running, the hidden sections are really hidden */
+.dp-sec[hidden] { display: none; }
+.is-tabbed .dp-sec { margin-bottom: 0; }
+
+/* two columns: sections | quick facts */
+.dp-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-12); align-items: start; }
+@media (max-width: 900px) { .dp-layout { grid-template-columns: 1fr; gap: var(--space-8); } }
+
+.dp-sec { margin-bottom: var(--space-12); scroll-margin-top: 96px; }
+.dp-sec h2 { font-size: var(--text-2xl); margin: 0 0 var(--space-4); }
+.dp-sec h3 { font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-3); }
+.dp-desc { font-size: var(--text-lg); color: var(--color-text); max-width: 68ch; margin: 0 0 var(--space-4); }
+.dp-muted { color: var(--color-muted); margin: 0 0 var(--space-3); }
+.dp-small { font-size: var(--text-sm); }
+.dp-tags { list-style: none; margin: 0 0 var(--space-6); padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dp-tags li {
+  padding: 0.1rem var(--space-3); border-radius: var(--radius-full);
+  background: var(--color-gray-100); color: var(--color-gray-700); font-size: var(--text-sm);
+}
+.dp-note { padding: var(--space-4) var(--space-6); border-left: 4px solid var(--mosaic-amber); background: var(--color-gray-50); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.dp-note h3 { margin: 0 0 var(--space-2); font-size: var(--text-base); font-family: var(--font-body); }
+.dp-note p { margin: 0 0 var(--space-2); font-size: var(--text-sm); }
+.dp-note summary { cursor: pointer; width: fit-content; font-size: var(--text-sm); font-weight: 600; color: var(--color-link); }
+.dp-note ul { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-muted); }
+
+/* label / value rows */
+.dp-kv { margin: 0; border-top: 1px solid var(--color-border); }
+.dp-kv div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+.dp-kv dt { font-weight: 600; color: var(--color-text); font-size: var(--text-sm); }
+.dp-kv dd { margin: 0; color: var(--color-muted); font-size: var(--text-sm); overflow-wrap: anywhere; }
+@media (max-width: 520px) { .dp-kv div { grid-template-columns: 1fr; gap: 2px; } }
+.dp-url { font-size: var(--text-xs); color: var(--color-muted); word-break: break-all; }
+
+/* access box */
+.ds-access { padding: var(--space-6); margin-bottom: var(--space-6); background-color: var(--mosaic-light-teal); border-radius: var(--radius-lg); }
+.ds-access p { margin: 0 0 var(--space-4); }
+.ds-access-gee { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--mosaic-teal); }
+.ds-access-gee p { margin-bottom: var(--space-2); }
+.ds-access-gee code { font-size: var(--text-xs); word-break: break-all; }
+
+/* citation and contacts */
+.dp-cite { padding: var(--space-6); background: var(--color-gray-50); border-left: 4px solid var(--mosaic-teal); border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.dp-cite h3 { margin-top: 0; }
+.dp-cite p { font-size: var(--text-sm); margin: 0 0 var(--space-3); }
+.dp-cite-text { font-family: var(--font-mono); line-height: 1.7; overflow-wrap: anywhere; }
+.dp-cite p:last-child { margin-bottom: 0; }
+.dp-contacts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-3); }
+.dp-contacts li { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); overflow-wrap: anywhere; }
+
+/* side column */
+.dp-side { display: grid; gap: var(--space-4); position: sticky; top: 96px; }
+@media (max-width: 900px) { .dp-side { position: static; } }
+.dp-card { padding: var(--space-6); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.dp-card h2 { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
+.dp-facts { margin: 0; display: grid; gap: var(--space-3); }
+.dp-facts dt { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); }
+.dp-facts dd { margin: 0; color: var(--color-text); }
+.dp-links { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); font-size: var(--text-sm); }
+.dp-links li { display: flex; flex-direction: column; gap: 2px; }
+.dp-links a { font-weight: 600; }
+.dp-links span { color: var(--color-muted); }
+
+/* "How to access this dataset" keeps its Light Teal background in both themes
+   (a brand colour, never remapped), so in the dark theme its text stays dark
+   too; headings and paragraphs would otherwise turn light on a light box. */
+[data-theme='dark'] .ds-access,
+[data-theme='dark'] .ds-access h2,
+[data-theme='dark'] .ds-access p,
+[data-theme='dark'] .ds-access strong,
+[data-theme='dark'] .ds-access code { color: var(--mosaic-ink); }
+/* …and its links keep Ocean Teal: the themed link colour is light there */
+[data-theme='dark'] .ds-access a:not(.btn) { color: var(--mosaic-teal); }
+
+/* Added with the API data (more of the standard v0.2 on the page) */
+.dp-back { display: inline-block; margin-top: var(--space-8); }
+.dp-note--meta { margin-top: var(--space-4); border-left-color: var(--mosaic-teal); }
+.dp-steps { margin: 0 0 var(--space-4); padding-left: var(--space-6); display: grid; gap: var(--space-4); }
+.dp-steps p { margin: 0 0 var(--space-1); font-size: var(--text-sm); }
+.dp-plain { margin: 0 0 var(--space-4); padding-left: var(--space-6); font-size: var(--text-sm); }
+.dp-sec .data-table { margin-bottom: var(--space-6); }

@@ -23,6 +23,7 @@ const FACET_VOCAB = {
   data_kind: 'data_kind',
   method: 'access_method',
   access: 'access',
+  processing_status: 'processing_status',
 }
 const labels = {}
 let version = ''

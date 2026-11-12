@@ -14,6 +14,7 @@ const FIXED_LABELS: Labels = {
   geometry: { point: 'Points', line: 'Lines', polygon: 'Polygons', mixed: 'Mixed' },
   status: { complete: 'Complete', incomplete: 'Incomplete' },
   license: { other: 'Other licence' },
+  processing_status: { not_specified: 'Not stated' },
 }
 
 export class LabelBook {
@@ -23,7 +24,8 @@ export class LabelBook {
    * values present in the catalogue, so a value typed or linked by its code is always known.
    */
   static of(sources: SourceInfo[], counts: FacetCounts = {}): LabelBook {
-    const labels: Labels = { ...FIXED_LABELS, ...VOCAB_LABELS, source: Object.fromEntries(sources.map((s) => [s.id, s.name])) }
+    const labels: Labels = { ...VOCAB_LABELS, source: Object.fromEntries(sources.map((s) => [s.id, s.name])) }
+    for (const [facet, fixed] of Object.entries(FIXED_LABELS)) labels[facet] = { ...labels[facet], ...fixed }
     return new LabelBook(labels, counts)
   }
 

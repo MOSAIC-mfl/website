@@ -602,6 +602,10 @@ export interface MosaicRecord {
     }[]
   ];
   /**
+   * How far the data has been processed (raw, processed, validated), as declared by whoever registers it. MOSAIC does not verify it. Optional: leave it out when unknown; it is never inferred.
+   */
+  processing_status?: "raw" | "processed" | "validated";
+  /**
    * Ordered processing/provenance steps; at least one must have id: source.
    */
   processing?: ProcessingStep[];

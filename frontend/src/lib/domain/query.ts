@@ -16,7 +16,9 @@ export interface CatalogueQuery {
 }
 
 export const SORT_KEYS: readonly SortKey[] = ['relevance', 'recent', 'oldest', 'az', 'za']
-export const PAGE_SIZES = [10, 25, 50] as const
+/** Multiples of six, so a page fills whole rows of two or three tiles (approved design). */
+export const PAGE_SIZES = [12, 24, 48] as const
+export const DEFAULT_PAGE_SIZE = 12
 
 /** API sort and order for each UI sort. */
 export const SORT_TO_API: Record<SortKey, { sort: 'relevance' | 'title' | 'year'; order: 'asc' | 'desc' }> = {
@@ -31,13 +33,18 @@ const LEGACY_PARAMS: Record<string, FacetKey> = {
   country: 'geography',
   living_landscape: 'landscape',
   mfl_theme: 'theme',
+  readiness_status: 'processing_status',
+  status: 'processing_status',
+  data_type: 'data_kind',
+  access_level: 'access',
 }
 const LEGACY_VALUES: Partial<Record<FacetKey, Record<string, string>>> = {
   landscape: { GLB: 'not_specified' },
+  access: { Open: 'public', Restricted: 'restricted', Internal: 'non-public' },
 }
 
 export function emptyQuery(): CatalogueQuery {
-  return { text: '', filters: {}, sort: 'recent', page: 1, pageSize: 10 }
+  return { text: '', filters: {}, sort: 'recent', page: 1, pageSize: DEFAULT_PAGE_SIZE }
 }
 
 export function fromSearchParams(params: URLSearchParams): CatalogueQuery {
@@ -67,7 +74,7 @@ export function toSearchParams(q: CatalogueQuery): URLSearchParams {
   const defaultSort: SortKey = q.text.trim() ? 'relevance' : 'recent'
   if (q.sort !== defaultSort) p.set('sort', q.sort)
   if (q.page > 1) p.set('page', String(q.page))
-  if (q.pageSize !== 10) p.set('per_page', String(q.pageSize))
+  if (q.pageSize !== DEFAULT_PAGE_SIZE) p.set('per_page', String(q.pageSize))
   return p
 }
 

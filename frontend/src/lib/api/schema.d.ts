@@ -412,6 +412,11 @@ export interface components {
             /** Access */
             access: string | null;
             /**
+             * Processing Status
+             * @description raw | processed | validated, as declared by the contributor; null = not stated.
+             */
+            processing_status?: string | null;
+            /**
              * License
              * @description SPDX expression, or the licence text when there is no SPDX code.
              */
@@ -436,6 +441,11 @@ export interface components {
              * @description First data location URL, public ones first.
              */
             access_url?: string | null;
+            /**
+             * Resolution
+             * @description Spatial resolution as text, e.g. "30 m".
+             */
+            resolution?: string | null;
         };
         /**
          * SectionOut
@@ -549,6 +559,14 @@ export interface operations {
                 landscape?: string | null;
                 /** @description Country or region, e.g. KEN. Comma-separated values (OR); an id or its label. */
                 geography?: string | null;
+                /** @description Kind of data, e.g. raster, vector. Comma-separated values (OR); an id or its label. */
+                data_kind?: string | null;
+                /** @description Access, e.g. public, restricted. Comma-separated values (OR); an id or its label. */
+                access?: string | null;
+                /** @description Licence (SPDX), e.g. CC-BY-4.0; other = any other licence. Comma-separated values (OR); an id or its label. */
+                license?: string | null;
+                /** @description Declared processing status: raw, processed, validated; not_specified = not stated. Comma-separated values (OR); an id or its label. */
+                processing_status?: string | null;
                 sort?: components["schemas"]["Sort"];
                 /** @description asc | desc; default: the sort's natural order. */
                 order?: components["schemas"]["Order"] | null;

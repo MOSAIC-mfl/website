@@ -25,16 +25,6 @@ export function periodText(period: (number | null)[] | null | undefined): string
   return null
 }
 
-export const COMPLETENESS_LABEL: Record<string, string> = { complete: 'Complete', incomplete: 'Incomplete' }
-export const COMPLETENESS_BADGE: Record<string, string> = {
-  complete: 'badge badge-validated',
-  incomplete: 'badge badge-raw',
-}
-export const COMPLETENESS_TOOLTIP: Record<string, string> = {
-  complete: 'The record has every field of the MOSAIC minimum.',
-  incomplete: 'Some fields of the MOSAIC minimum are still missing (shown on the dataset page).',
-}
-
 export const ACCESS_LABEL: Record<string, string> = { public: 'Open', restricted: 'Restricted', 'non-public': 'Not public' }
 export const ACCESS_BADGE: Record<string, string> = {
   public: 'badge badge-open',

@@ -7,7 +7,7 @@
    .github/ISSUE_TEMPLATE/new_dataset.yml). `key` is the name the field has in
    a record file (catalog repository, spec/record_schema.json). When the form
    or the schema changes, change these two lists with it. */
-import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER } from '../../utils/readiness'
+import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
 
 interface Field {
   label: string
@@ -169,7 +169,7 @@ const optionalFields: Field[] = [
     <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
     <tbody>
       {READINESS_ORDER.map((s) => (
-        <tr><td><span class={`badge badge-${s.toLowerCase()}`}>{s}</span></td><td>{READINESS_MEANING[s]}</td></tr>
+        <tr><td><span class={readinessBadge(s)}>{readinessLabel(s)}</span></td><td>{READINESS_MEANING[s]}</td></tr>
       ))}
     </tbody>
   </table>

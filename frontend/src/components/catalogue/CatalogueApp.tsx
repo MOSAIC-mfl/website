@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { catalogue } from '../../lib/catalog'
 import type { FacetKey } from '../../lib/domain/facets'
 import { activeFilters, emptyQuery, toggleFilter, type CatalogueQuery } from '../../lib/domain/query'
 import { useAsync } from '../../lib/ui/useAsync'
 import { useCatalogueQuery } from '../../lib/ui/useCatalogueQuery'
+import { NOT_STATED, READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
 import { ActiveChips } from './ActiveChips'
 import { DatasetGrid } from './DatasetGrid'
 import { FilterPanel } from './FilterPanel'
@@ -22,9 +23,17 @@ interface Props {
 export function CatalogueApp({ base }: Props) {
   const repo = catalogue()
   const [query, setQuery, ready] = useCatalogueQuery()
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [viewMode, setViewMode] = useState<ViewMode>('card')
   const overview = useAsync(() => repo.overview(), [repo])
   const results = useAsync(() => (ready ? repo.search(query) : new Promise<never>(() => {})), [repo, ready, query])
+
+  // Values from links are written as their labels or in any case ("Validated", "Perú"): once the labels
+  // are known, the query holds the canonical values, so checkboxes and counts match them.
+  useEffect(() => {
+    if (overview.status !== 'ok' || !ready) return
+    const { filters } = overview.data.labels.resolve(query.filters)
+    if (JSON.stringify(filters) !== JSON.stringify(query.filters)) setQuery({ ...query, filters })
+  }, [overview, ready, query, setQuery])
 
   const chips = useMemo(() => activeFilters(query), [query])
   const hasActive = chips.length > 0 || query.text.trim().length > 0
@@ -76,10 +85,13 @@ export function CatalogueApp({ base }: Props) {
             )}
 
             <details className="readiness-legend">
-              <summary>What do “Complete” and “Incomplete” mean?</summary>
+              <summary>What do “Raw”, “Processed” and “Validated” mean?</summary>
               <ul>
-                <li><span className="badge badge-validated">Complete</span> The record has every field of the MOSAIC minimum: enough to find, understand, cite and reach the data.</li>
-                <li><span className="badge badge-raw">Incomplete</span> Some of those fields are still missing; the dataset page lists them. The data itself may be fine.</li>
+                {READINESS_ORDER.map((r) => (
+                  <li key={r}><span className={readinessBadge(r)}>{readinessLabel(r)}</span> {READINESS_MEANING[r]}</li>
+                ))}
+                <li><span className={readinessBadge(null)}>{NOT_STATED}</span> The contributor did not state it, or the catalogue it comes from has no such field.</li>
+                <li>{READINESS_NOTE}</li>
               </ul>
             </details>
 

@@ -337,5 +337,10 @@ export const VOCAB_LABELS: Record<string, Record<string, string>> = {
     "public": "Public",
     "restricted": "Restricted",
     "non-public": "Non-public"
+  },
+  "processing_status": {
+    "raw": "Raw",
+    "processed": "Processed",
+    "validated": "Validated"
   }
 }
