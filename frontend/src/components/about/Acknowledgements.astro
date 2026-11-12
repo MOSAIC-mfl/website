@@ -69,10 +69,9 @@ const acknowledgements = [
   .ack-title { margin: 0; font-size: var(--text-lg); font-family: var(--font-title); color: var(--color-text); line-height: 1.3; }
   .ack-text { margin: 0; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.6; }
   .ack-note { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-6) 0 0; }
-  .ack-note a { color: var(--mosaic-teal); }
+  .ack-note a { color: var(--color-link); }
   /* Ocean Teal is too dark to read on the dark surface — use the light tint of
      the same brand colour there (the accent itself is never restyled). */
-  :global([data-theme="dark"]) .ack-note a { color: var(--mosaic-light-teal); }
   @media (max-width: 1023px) { .ack-cards { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 767px) { .ack-cards { grid-template-columns: 1fr; } }
 </style>

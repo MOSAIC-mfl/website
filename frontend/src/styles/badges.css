@@ -33,8 +33,8 @@
 .badge-analytics, .status-analytics-ready    { background: #EDE9FE; color: #5B21B6; }
 
 /* Access level */
-.badge-open,       .access-open        { background: #DCEEDF; color: #1F7A4D; }  /* green       — openly available  */
-.badge-restricted, .access-restricted  { background: #F7E4DD; color: #B54D2F; }  /* terracotta  — request required  */
+.badge-open,       .access-open        { background: #DCEEDF; color: #1A6B43; }  /* green       — openly available  */
+.badge-restricted, .access-restricted  { background: #F7E4DD; color: #A3432A; }  /* terracotta  — request required  */
 .badge-internal,   .access-internal    { background: #ECEAE3; color: #5B6770; }  /* grey        — internal only     */
 
 /* Data type — MOSAIC accent tints (teal / amber / terracotta / sand) */

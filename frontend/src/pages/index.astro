@@ -359,7 +359,7 @@ const steps = [
     text-transform: uppercase;
     color: var(--color-moss-text);
   }
-  .section-wavy { display: inline-block; color: var(--mosaic-teal); }
+  .section-wavy { display: inline-block; color: var(--color-link); }
   .section-eyebrow--amber { color: var(--color-amber-text); }
 
 
@@ -405,11 +405,9 @@ const steps = [
   .ll-body { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-6); }
   .ll-link, .how-link {
     display: inline-flex; align-items: center; gap: var(--space-2);
-    color: var(--mosaic-teal); font-weight: 600; text-decoration: none;
+    color: var(--color-link); font-weight: 600; text-decoration: none;
   }
   .ll-link:hover, .how-link:hover { text-decoration: underline; }
-  :global([data-theme='dark']) .ll-link,
-  :global([data-theme='dark']) .how-link { color: var(--mosaic-light-teal); }
 
   .ll-art img { display: block; width: 100%; height: auto; }
   /* The illustration has a transparent background and dark labels: in dark

@@ -40,6 +40,12 @@
   --mosaic-amber-text:  #935B14;
   /* Eyebrow text that follows the theme: dark shades on light pages, lighter ones on dark. */
   --color-amber-text:   #935B14;
+  /* Text and outlines in the brand teal on a surface that follows the theme: links,
+     outline buttons, small icons. Ocean Teal on light pages; on the dark theme its
+     light tint, because Ocean Teal is 2.3:1 on the dark background. Use --mosaic-teal
+     itself only where the ground is light in both themes (chips, the hero, callouts). */
+  --color-link:         #0D5C6B;
+  --color-link-hover:   #0A4753;
   --color-moss-text:    #5C764F;
 
   /* Header & footer "bookend" colour — deeper Ocean Teal (brand request).
@@ -182,6 +188,8 @@
   --color-muted:    #9DB0B8;   /* captions, secondary text */
   --color-border:   #26414C;   /* hairlines, dividers      */
   --color-amber-text: #CD801C; /* eyebrows on dark surfaces */
+  --color-link:       #D6EEF2; /* Light Teal: 14.5:1 on the dark background */
+  --color-link-hover: #FFFFFF;
   --color-moss-text:  #799B68;
 
   /* Neutral ramp remap (gray-50/100/200 become dark surfaces; the higher

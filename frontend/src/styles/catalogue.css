@@ -54,7 +54,7 @@
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   font-variant-numeric: tabular-nums;
 }
 
@@ -68,13 +68,12 @@
   margin-left: auto;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   text-decoration: none;
 }
 .catalogue-maplink:hover { text-decoration: underline; }
 .catalogue-maplink + .catalogue-maplink { margin-left: var(--space-6); }
 .catalogue-updated { font-size: var(--text-sm); color: var(--color-muted); }
-[data-theme="dark"] .catalogue-maplink { color: var(--mosaic-light-teal); }
 
 /* ── Layout ──────────────────────────────────────────────────── */
 .catalogue-locator-wrap {
@@ -163,7 +162,7 @@
   color: var(--color-text);
   border-radius: var(--radius-sm);
 }
-.filter-group-toggle:hover { color: var(--color-primary); }
+.filter-group-toggle:hover { color: var(--color-link); }
 .filter-group-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 .filter-group-label { flex: 1; }
 .filter-group-count {
@@ -246,7 +245,7 @@
   gap: 0.5rem;
 }
 
-.filter-option input:checked + label { color: var(--color-primary); font-weight: 600; }
+.filter-option input:checked + label { color: var(--color-link); font-weight: 600; }
 
 .filter-count {
   font-size: 0.78rem;
@@ -267,14 +266,15 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 9999px;
-  color: var(--color-primary);
+  color: var(--color-link);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
 
-.filter-more-btn:hover { border-color: var(--color-primary); background: var(--color-primary-light); }
+/* the hover fill is light in both themes: fixed teal text on it */
+.filter-more-btn:hover { border-color: var(--color-primary); background: var(--color-primary-light); color: var(--mosaic-teal); }
 .filter-more-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
 /* Mobile filter toggle */
@@ -453,7 +453,7 @@
   transition: color 0.15s;
 }
 
-.chip-clear-all:hover { color: var(--color-primary); text-decoration: underline; }
+.chip-clear-all:hover { color: var(--color-link); text-decoration: underline; }
 
 /* ── Results count ───────────────────────────────────────────── */
 .results-count {
@@ -471,7 +471,7 @@
 }
 .readiness-legend summary {
   cursor: pointer;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   font-weight: 600;
   width: fit-content;
 }
@@ -545,7 +545,7 @@
   z-index: 0;
 }
 
-.ds-card-title-link:hover { color: var(--color-primary); }
+.ds-card-title-link:hover { color: var(--color-link); }
 
 .ds-card-title-link:focus-visible {
   outline: 2px solid var(--color-primary);
@@ -567,7 +567,7 @@
   flex-shrink: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   background: var(--color-surface);
 }
 
@@ -639,7 +639,7 @@
   gap: 0.3rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -662,7 +662,7 @@
 
 .ds-card:hover .ds-card-arrow {
   opacity: 1;
-  color: var(--mosaic-teal);
+  color: var(--color-link);
   transform: translateX(2px);
 }
 
@@ -713,7 +713,7 @@
 }
 
 .page-num:hover:not(.active),
-.page-arrow:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+.page-arrow:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-link); }
 
 .page-num.active {
   background: var(--color-primary);
@@ -782,7 +782,7 @@
   border: 1.5px solid var(--color-primary);
   border-radius: 0.625rem;
   background: var(--color-surface);
-  color: var(--color-primary);
+  color: var(--color-link);
   font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
@@ -858,4 +858,4 @@
   font-weight: 600;
   word-break: break-word;
 }
-.ds-fact-value a { color: var(--mosaic-teal); }
+.ds-fact-value a { color: var(--color-link); }
