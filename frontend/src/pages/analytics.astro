@@ -1,0 +1,67 @@
+---
+/* Placeholder for the landscape analytics, linked from the "Explore analytics"
+   button on the Landscapes page (?landscape=<CODE>). Replace with the real
+   page when it exists; keep the URL so the button needs no change. */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageHero from '../components/ui/PageHero.astro'
+import Icon from '../components/ui/Icon.astro'
+
+const base = import.meta.env.BASE_URL
+---
+
+<BaseLayout title="Analytics" description="Landscape analytics for MOSAIC — under construction." noindex>
+  <PageHero variant="light" compact contours title="Landscape analytics" />
+
+  <div class="container an-body">
+    <div class="an-card">
+      <span class="an-icon"><Icon name="bar-chart" size={32} /></span>
+      <p class="an-tag">Under construction</p>
+      <h2 class="an-title">Analytics for each living landscape are on their way</h2>
+      <p class="an-text">
+        This section will bring together indicators and maps for each landscape. In the meantime,
+        you can browse the datasets already registered for it in the catalogue.
+      </p>
+      <div class="an-actions">
+        <a class="btn btn-primary" data-an-catalogue href={`${base}/catalogue`}>
+          <Icon name="layers" size={18} /> Browse datasets
+        </a>
+        <a class="btn btn-secondary" data-an-back href={`${base}/landscapes`}>Back to landscapes</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .an-body { padding-top: var(--space-12); padding-bottom: var(--space-16); }
+  .an-card {
+    max-width: 640px; margin: 0 auto; text-align: center;
+    padding: var(--space-12) var(--space-8);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  }
+  .an-icon {
+    width: 72px; height: 72px; margin: 0 auto var(--space-4);
+    display: grid; place-items: center; border-radius: var(--radius-full);
+    background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+  }
+  .an-tag {
+    display: inline-block; margin: 0 0 var(--space-3); padding: 0.1rem var(--space-3);
+    border-radius: var(--radius-full); background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+    font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .an-title { font-size: var(--text-2xl); margin: 0 0 var(--space-3); }
+  .an-text { color: var(--color-muted); line-height: 1.6; margin: 0 0 var(--space-6); }
+  .an-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+  .an-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
+</style>
+
+<script>
+  // Carry the landscape the visitor came from into both links.
+  const code = new URLSearchParams(location.search).get('landscape')
+  if (code && /^[A-Z]{3}-[A-Z0-9]{2,4}$/.test(code)) {
+    const cat = document.querySelector<HTMLAnchorElement>('[data-an-catalogue]')
+    const back = document.querySelector<HTMLAnchorElement>('[data-an-back]')
+    if (cat) cat.href += `?landscape=${code}`
+    if (back) back.href += `#${code}`
+  }
+</script>

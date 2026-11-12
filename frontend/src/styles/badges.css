@@ -23,7 +23,7 @@
      Open (green) · Restricted (terracotta) · Internal (grey)          */
 
 /* Readiness status */
-.badge-raw,       .status-raw         { background: #ECEAE3; color: #6B7A85; }  /* neutral — just registered      */
+.badge-raw,       .status-raw         { background: #ECEAE3; color: #5A6872; }  /* neutral — just registered      */
 .badge-processed, .status-processed   { background: #F6E6CE; color: #99590F; }  /* amber — being processed        */
 .badge-validated, .status-validated   { background: #D6EEF2; color: #0D5C6B; }  /* teal  — validated / trusted    */
 /* Legacy status classes retained for any older references */
@@ -33,8 +33,8 @@
 .badge-analytics, .status-analytics-ready    { background: #EDE9FE; color: #5B21B6; }
 
 /* Access level */
-.badge-open,       .access-open        { background: #DCEEDF; color: #1F7A4D; }  /* green       — openly available  */
-.badge-restricted, .access-restricted  { background: #F7E4DD; color: #B54D2F; }  /* terracotta  — request required  */
+.badge-open,       .access-open        { background: #DCEEDF; color: #1A6B43; }  /* green       — openly available  */
+.badge-restricted, .access-restricted  { background: #F7E4DD; color: #A3432A; }  /* terracotta  — request required  */
 .badge-internal,   .access-internal    { background: #ECEAE3; color: #5B6770; }  /* grey        — internal only     */
 
 /* Data type — MOSAIC accent tints (teal / amber / terracotta / sand) */

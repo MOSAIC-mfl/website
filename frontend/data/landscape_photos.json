@@ -1,0 +1,337 @@
+{
+  "_meta": {
+    "note": "Open-licence landscape photos from Wikimedia Commons (retrieved via the Commons API). Only CC0, public domain, CC BY and CC BY-SA files were used. Each photo's location was verified by its Commons geotag falling inside the approved MOSAIC landscape boundary (MOSAIC_catalog/boundaries/<CODE>.geojson), or by a clearly named place inside it. Images were resized to max 1200 px wide, re-encoded as progressive JPEG and stripped of EXIF. Credit the author and licence wherever a photo is shown.",
+    "retrieved": "2026-11-09",
+    "removed_2026-11-09": [
+      "Dougga: geotag ~12 km outside the TUN-NW boundary",
+      "Zambezi at Kanyemba: geotag outside the ZWE-MB boundary (Zambian bank)"
+    ],
+    "location_rule": "Every photo is geotagged inside the landscape's canonical boundary (MOSAIC_catalog/boundaries/<CODE>.geojson), checked by point-in-polygon.",
+    "removed_2026-11-10": [
+      "Kakamega Forest National Reserve: Kakamega county left the KEN-LVB boundary on 2026-11-10 (geotag ~10 km outside); replaced by a Kericho tea-estate photo"
+    ]
+  },
+  "photos": {
+    "CIV-NZ": [],
+    "COL-CUM": [
+      {
+        "file": "landscapes/COL-CUM-1.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "High-Andean páramo covered with frailejón (Espeletia) plants under a cloudy sky",
+        "caption": "Páramo de Cumbal, Nariño",
+        "author": "Yupanasimi",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Espeletia_en_el_p%C3%A1ramo_de_Cumbal_02.jpg",
+        "verified_by": "geotag 0.931,-77.852 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/COL-CUM-2.jpg",
+        "width": 1100,
+        "height": 825,
+        "alt": "Close view of frailejón (Espeletia) rosettes in the Cumbal páramo",
+        "caption": "Frailejones in the Páramo de Cumbal, Nariño",
+        "author": "Yupanasimi",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Espeletia_en_el_p%C3%A1ramo_de_Cumbal_01.jpg",
+        "verified_by": "geotag 0.931,-77.852 inside landscape boundary"
+      }
+    ],
+    "ETH-OG": [
+      {
+        "file": "landscapes/ETH-OG-1.jpg",
+        "width": 1200,
+        "height": 847,
+        "alt": "The brown Omo River curving through riverine forest in the lower Omo valley",
+        "caption": "Omo River near Duss (Karo), South Omo",
+        "author": "Bernard Gagnon",
+        "licence": "CC BY-SA 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Omo_River_02.jpg",
+        "verified_by": "geotag 4.836,36.075 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/ETH-OG-2.jpg",
+        "width": 1200,
+        "height": 900,
+        "alt": "Rocky grassy summit of Mount Damot with green highland ridges behind",
+        "caption": "Mount Damot, Wolaita highlands",
+        "author": "Anne LV",
+        "licence": "CC0",
+        "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Damot.png",
+        "verified_by": "geotag 6.904,37.779 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/ETH-OG-3.jpg",
+        "width": 1024,
+        "height": 768,
+        "alt": "Wide bend of the Omo River flanked by dense green riparian woodland",
+        "caption": "Omo River, South Omo",
+        "author": "David Stanley from Nanaimo, Canada",
+        "licence": "CC BY 2.0",
+        "licence_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Oberlauf_des_Omo_in_%C3%84thiopien.jpg",
+        "verified_by": "geotag 5.193,36.208 inside landscape boundary"
+      }
+    ],
+    "IND-CH": [
+      {
+        "file": "landscapes/IND-CH-1.jpg",
+        "width": 1200,
+        "height": 800,
+        "alt": "Dhuandhar Falls, where the Narmada River plunges into a rocky gorge",
+        "caption": "Dhuandhar Falls on the Narmada, Bhedaghat, Jabalpur",
+        "author": "Yann",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Marble_Rocks,_MP,_India.jpg",
+        "verified_by": "geotag 23.126,79.813 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/IND-CH-2.jpg",
+        "width": 1200,
+        "height": 900,
+        "alt": "The Narmada River flowing through a marble gorge lined with green vegetation",
+        "caption": "Narmada River gorge, Bhedaghat, Jabalpur",
+        "author": "Kailash Mohankar",
+        "licence": "CC BY 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Narmada_River,_Bhedaghat_-_panoramio.jpg",
+        "verified_by": "geotag 23.126,79.809 inside landscape boundary"
+      }
+    ],
+    "KEN-LEI": [
+      {
+        "file": "landscapes/KEN-LEI-1.jpg",
+        "width": 1200,
+        "height": 800,
+        "alt": "Green swamp and open plains of Amboseli beneath a cloud-covered Kilimanjaro",
+        "caption": "Amboseli National Park, Kajiado",
+        "author": "flightlog",
+        "licence": "CC BY 2.0",
+        "licence_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Landscapes_of_Kenya_07.jpg",
+        "verified_by": "geotag -2.672,37.238 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/KEN-LEI-2.jpg",
+        "width": 1200,
+        "height": 675,
+        "alt": "Grassy ridge of the Ngong Hills disappearing into low cloud",
+        "caption": "Ngong Hills, Kajiado",
+        "author": "McOkello",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mountain_Hike.jpg",
+        "verified_by": "geotag -1.397,36.638 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/KEN-LEI-3.jpg",
+        "width": 1200,
+        "height": 800,
+        "alt": "Family of elephants with a calf crossing the dry Amboseli plain",
+        "caption": "Elephants on the Amboseli rangelands, Kajiado",
+        "author": "flightlog",
+        "licence": "CC BY 2.0",
+        "licence_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Elephants_of_Kenya_06.jpg",
+        "verified_by": "geotag -2.698,37.254 inside landscape boundary"
+      }
+    ],
+    "KEN-LVB": [
+      {
+        "file": "landscapes/KEN-LVB-1.jpg",
+        "width": 1200,
+        "height": 728,
+        "alt": "Tea plantation in the foreground with forest patches and rolling green hills beyond, near Kericho",
+        "caption": "Tea estates near Kericho",
+        "author": "Bjørn Christian Tørrissen",
+        "licence": "CC BY-SA 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Kenya-Tealand-Near-Kericho-2012.JPG",
+        "verified_by": "geotag -0.345,35.314 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/KEN-LVB-2.jpg",
+        "width": 1200,
+        "height": 797,
+        "alt": "A small fishing boat silhouetted on Lake Victoria at sunset",
+        "caption": "Lake Victoria at Kisumu",
+        "author": "Josep M. Gracia",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:KISU_-_Fisherman_returning_at_sunset_on_Lake_Victoria,_Kisumu,_Kenya,_2012.jpg",
+        "verified_by": "geotag -0.092,34.768 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/KEN-LVB-3.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "Tall maize intercropped with Desmodium in a push-pull field",
+        "caption": "Push-pull maize farm, Mbita Point, Homa Bay",
+        "author": "Aneth David (SLU)",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Maize-push-pull-farm-at-ICIPE,_Mbita_Point,_Kenya.jpg",
+        "verified_by": "geotag -0.034,34.608 inside landscape boundary"
+      }
+    ],
+    "MEK-3S": [
+      {
+        "file": "landscapes/MEK-3S-1.jpg",
+        "width": 1200,
+        "height": 798,
+        "alt": "Blue crater lake surrounded by forested hills",
+        "caption": "Nong Fa Lake, Attapeu Province, Laos",
+        "author": "Aleksey Gnilenkov",
+        "licence": "CC BY 2.0",
+        "licence_url": "https://creativecommons.org/licenses/by/2.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Nong_Fa_Lake.jpg",
+        "verified_by": "geotag 15.104,107.422 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/MEK-3S-2.jpg",
+        "width": 1200,
+        "height": 600,
+        "alt": "Wide waterfalls pouring over a rock ledge into a river pool, edged by forest",
+        "caption": "Dray Sap Falls on the Srepok River, Vietnam",
+        "author": "Bich Le",
+        "licence": "CC BY 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Th%C3%A1c_Dray_Sap-Dak_N%C3%B4ng_-_panoramio.jpg",
+        "verified_by": "geotag 12.537,107.890 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/MEK-3S-3.jpg",
+        "width": 1100,
+        "height": 825,
+        "alt": "Tiered waterfall cascading over dark rocks in a forested valley",
+        "caption": "Bousra Waterfall, Mondulkiri, Cambodia",
+        "author": "Kiensvay",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bousra_Waterfall.jpg",
+        "verified_by": "geotag 12.567,107.419 inside landscape boundary"
+      }
+    ],
+    "PER-PCL": [
+      {
+        "file": "landscapes/PER-PCL-1.jpg",
+        "width": 1100,
+        "height": 734,
+        "alt": "Aerial view of flooded Amazon forest crossed by dark water channels",
+        "caption": "Campo Verde Private Conservation Area, Ucayali",
+        "author": "Bosques Amazónicos",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Fotograf%C3%ADa_sobre_el_%C3%81rea_de_Conservaci%C3%B3n_Privada_Campo_Verde_en_Ucayali_10.jpg",
+        "verified_by": "geotag -8.540,-74.618 inside landscape boundary; named place: Campo Verde, Coronel Portillo"
+      },
+      {
+        "file": "landscapes/PER-PCL-2.jpg",
+        "width": 1200,
+        "height": 801,
+        "alt": "Still lagoon reflecting storm clouds, ringed by Amazonian trees",
+        "caption": "Lagoon in the Campo Verde Private Conservation Area, Ucayali",
+        "author": "Bosques Amazónicos",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Fotograf%C3%ADa_sobre_el_%C3%81rea_de_Conservaci%C3%B3n_Privada_Campo_Verde_en_Ucayali_01.jpg",
+        "verified_by": "geotag -8.540,-74.618 inside landscape boundary; named place: Campo Verde, Coronel Portillo"
+      },
+      {
+        "file": "landscapes/PER-PCL-3.jpg",
+        "width": 1200,
+        "height": 801,
+        "alt": "Wooden canoe moving along a wetland channel lined with grasses under a cloudy sky",
+        "caption": "Wetland channel near Campo Verde, Ucayali",
+        "author": "Bosques Amazónicos",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Fotograf%C3%ADa_sobre_el_%C3%81rea_de_Conservaci%C3%B3n_Privada_Campo_Verde_en_Ucayali_15.jpg",
+        "verified_by": "geotag -8.540,-74.618 inside landscape boundary; named place: Campo Verde, Coronel Portillo"
+      }
+    ],
+    "SEN-FK": [
+      {
+        "file": "landscapes/SEN-FK-1.jpg",
+        "width": 1200,
+        "height": 798,
+        "alt": "Young mangrove trees growing in shallow tidal water, with a mangrove belt on the horizon",
+        "caption": "Palmarin nature reserve, Saloum Delta",
+        "author": "Kalamuh 045",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:La_r%C3%A9s%C3%A8rve_naturel_de_Palmarin_DSC00781_01.jpg",
+        "verified_by": "geotag 14.015,-16.740 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/SEN-FK-2.jpg",
+        "width": 1000,
+        "height": 750,
+        "alt": "A narrow water channel running between dense mangrove trees",
+        "caption": "Mangrove channel near Palmarin, Saloum Delta",
+        "author": "Amalioune",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Palmarin_mangrove%E2%80%99s_trees_in_the_middle_of_the_sea.jpg",
+        "verified_by": "geotag 14.022,-16.723 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/SEN-FK-3.jpg",
+        "width": 1200,
+        "height": 900,
+        "alt": "A mangrove islet reflected in calm water of the delta",
+        "caption": "Mangroves of the Saloum Delta near Palmarin",
+        "author": "Amalioune",
+        "licence": "CC BY-SA 4.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Tress_in_the_mangrove.jpg",
+        "verified_by": "geotag 14.021,-16.742 inside landscape boundary"
+      }
+    ],
+    "TUN-NW": [
+      {
+        "file": "landscapes/TUN-NW-2.jpg",
+        "width": 1200,
+        "height": 900,
+        "alt": "Roman arch standing among spring wildflowers with rolling hills behind",
+        "caption": "Zannfour (ancient Assuras), Siliana",
+        "author": "Astiosaurus",
+        "licence": "CC BY-SA 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Zannfour.JPG",
+        "verified_by": "geotag 35.994,9.020 inside landscape boundary"
+      },
+      {
+        "file": "landscapes/TUN-NW-3.jpg",
+        "width": 1200,
+        "height": 800,
+        "alt": "Wide green grasslands and cereal fields under a cloudy sky",
+        "caption": "Grasslands near Ellès, Kef",
+        "author": "Noomen9",
+        "licence": "CC0",
+        "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Les_prairies_de_Ellas.jpg",
+        "verified_by": "geotag 36.043,9.033 inside landscape boundary"
+      }
+    ],
+    "ZWE-MB": [
+      {
+        "file": "landscapes/ZWE-MB-2.jpg",
+        "width": 1200,
+        "height": 808,
+        "alt": "Dry sandy bed of the Gwase River lined with deciduous riparian forest",
+        "caption": "Gwase River near Mushumbi Pools, Mbire",
+        "author": "JMK",
+        "licence": "CC BY-SA 3.0",
+        "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Gwaserivier,_Mashumbi_Pools,_middel-Zambezivallei.jpg",
+        "verified_by": "geotag -16.213,30.446 inside landscape boundary"
+      }
+    ]
+  }
+}

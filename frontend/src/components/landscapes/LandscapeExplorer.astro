@@ -1,0 +1,1963 @@
+---
+/**
+ * LandscapeExplorer — the Landscapes page's main panel: a list of the living
+ * landscapes on the left, and the selected one on the right (photo carousel,
+ * animated locator map with an inset globe, key facts, dataset counter and
+ * actions).
+ *
+ * Everything is rendered from build-time data — no runtime fetch:
+ *   data/landscapes.json            names, countries, pending flag
+ *   data/datasets.json              dataset counts (via loadDatasets)
+ *   data/landscape_outlines.json    simplified canonical boundaries (map)
+ *   data/landscape_centroids.json   pin positions
+ *   data/landscape_geo.json         area + country outlines (scripts/build_landscape_geo.py)
+ *   data/world_land_path.json       land silhouette under the countries
+ *   data/landscape_labels.json      places, rivers, lakes (Natural Earth; scripts/build_map_labels.py)
+ *                                   — not in the page: served as /landscapes/map-detail.json and
+ *                                   fetched when a landscape is first opened
+ *   data/landscape_photos.json      open-licence photos with credit (optional)
+ *   data/landscape_profiles.json    short descriptions (optional)
+ *
+ * The first landscape is rendered as HTML; the component script then swaps
+ * the content when another one is selected (no framework island). Motion is
+ * dropped for visitors who ask for reduced motion.
+ */
+import Icon from '../ui/Icon.astro'
+import landscapes from '../../../data/landscapes.json'
+import outlineData from '../../../data/landscape_outlines.json'
+import centroidData from '../../../data/landscape_centroids.json'
+import geo from '../../../data/landscape_geo.json'
+import world from '../../../data/world_land_path.json'
+import boundaries from '../../../data/landscape_boundaries.json'
+import { VOCAB_LABELS } from '../../lib/domain/vocab-labels'
+
+interface Photo {
+  file: string
+  width?: number
+  height?: number
+  alt: string
+  caption?: string | null
+  author: string
+  licence: string
+  licence_url?: string | null
+  source_url: string
+}
+interface Resource {
+  title: string
+  type?: string | null
+  authors?: string | null
+  org?: string | null
+  year?: number | null
+  extent?: string | null
+  licence?: string | null
+  url: string
+  note?: string | null
+}
+interface Profile {
+  summary?: string | null
+  ecosystem?: string | null
+  livelihoods?: string | null
+  why_it_matters?: string | null
+  // Published work about the landscape, shown in "Other resources". A landscape
+  // with none keeps the "under construction" card.
+  resources?: Resource[]
+  // Where each description comes from: { field, source (a public address), note }.
+  sources?: { field: string; source: string; note?: string | null }[]
+}
+
+// Optional inputs: the page builds without them (empty photo slot, facts only).
+const optional = import.meta.glob<{ default: Record<string, unknown> }>(
+  '../../../data/landscape_{photos,profiles}.json',
+  { eager: true },
+)
+const pick = (name: string) =>
+  Object.entries(optional).find(([k]) => k.endsWith(name))?.[1]?.default ?? {}
+const photoMap = ((pick('landscape_photos.json') as { photos?: Record<string, Photo[]> }).photos ?? {})
+const profileMap = ((pick('landscape_profiles.json') as { profiles?: Record<string, Profile> }).profiles ?? {})
+
+const base = import.meta.env.BASE_URL
+// Interim (integration step 0): dataset figures move to mosaic-api in the browser in step 2.
+const datasets: { living_landscape: string; mfl_theme?: string | string[]; access_level?: string }[] = []
+const themes = Object.values(VOCAB_LABELS.theme)
+
+const fileSize = (bytes: number) =>
+  bytes < 1e6 ? `${Math.round(bytes / 1e3)} KB` : `${(bytes / 1e6).toFixed(1)} MB`
+const formatHa = (ha: number) => {
+  const digits = Math.max(0, Math.floor(Math.log10(ha)) - 2) // 3 significant figures
+  const rounded = Math.round(ha / 10 ** digits) * 10 ** digits
+  return `${rounded.toLocaleString('en-US')} ha`
+}
+
+// Data coverage, computed from the dataset records: which of the 13 MFL themes
+// have at least one dataset here, and how many datasets are Open. Shown as a
+// ring (themes with data), a figure (open-access datasets) and a fold-out list
+// of the themes still missing. The numbers are text; the ring only repeats them.
+const themeList = themes as string[]
+function coverage(code: string) {
+  const ds = datasets.filter((d) => d.living_landscape === code)
+  const have = new Set(ds.flatMap((d) => (Array.isArray(d.mfl_theme) ? d.mfl_theme : [d.mfl_theme])).filter(Boolean))
+  return {
+    covHave: themeList.map((t) => have.has(t)),
+    nOpen: ds.filter((d) => d.access_level === 'Open').length,
+  }
+}
+const firstWith = () => first.covHave.filter(Boolean).length
+
+// Sources of the four descriptions, one row per address: the site it is on and
+// the descriptions it backs. The working notes kept beside each source in the
+// data file are for editors and are not shown.
+const SOURCE_FIELD: Record<string, string> = {
+  summary: 'Summary',
+  ecosystem: 'Ecosystems',
+  livelihoods: 'People and livelihoods',
+  why_it_matters: 'Why it matters',
+}
+function sourceList(p: Profile) {
+  const byUrl = new Map<string, string[]>()
+  for (const s of p.sources ?? []) {
+    if (!/^https?:\/\//.test(s.source)) continue
+    const label = SOURCE_FIELD[s.field] ?? s.field
+    const seen = byUrl.get(s.source) ?? []
+    if (!seen.includes(label)) seen.push(label)
+    byUrl.set(s.source, seen)
+  }
+  return [...byUrl].map(([url, fields]) => ({
+    url,
+    host: new URL(url).hostname.replace(/^www\./, ''),
+    fields: fields.join(', '),
+  }))
+}
+
+// Where each name sits on the start map when all eleven are shown at once
+// (wide screens): above its pin unless a neighbour is in the way. x / y move
+// the label in map units; anchor is which end of the text sits at that point.
+const LABEL_AT: Record<string, { x: number; y: number; anchor: 'start' | 'end' }> = {
+  'CIV-NZ': { x: 4, y: 4.8, anchor: 'start' },
+  'ETH-OG': { x: 4, y: 4.8, anchor: 'start' },
+  'KEN-LVB': { x: -4, y: 4.8, anchor: 'end' },
+  'KEN-LEI': { x: 4, y: 5.4, anchor: 'start' },
+  'ZWE-MB': { x: 4, y: 4.8, anchor: 'start' },
+  'MEK-3S': { x: -4, y: 4.8, anchor: 'end' },
+}
+const labelStyle = (code: string) => {
+  const at = LABEL_AT[code]
+  return at ? `--lx:${at.x}px;--ly:${at.y}px;--la:${at.anchor}` : undefined
+}
+
+const geoLandscapes = geo.landscapes as Record<string, { area_ha: number; countries: string[] }>
+const geoCountries = geo.countries as Record<string, { name: string; d: string; bbox: number[]; globe: number[][][] }>
+const outlines = outlineData.outlines as Record<string, { d: string; bbox: number[] }>
+const centroids = new Map(centroidData.landscapes.map((c) => [c.code, c]))
+const boundaryByCode = new Map(boundaries.landscapes.map((b) => [b.code, b]))
+
+const items = landscapes
+  .map((l) => {
+    const g = geoLandscapes[l.code]
+    const c = centroids.get(l.code)
+    const b = boundaryByCode.get(l.code)
+    const p = profileMap[l.code] ?? {}
+    // Union of the landscape's countries = the map's resting view.
+    const cb = g.countries
+      .map((iso) => geoCountries[iso]?.bbox)
+      .filter(Boolean)
+      .reduce((a, v) => [Math.min(a[0], v[0]), Math.min(a[1], v[1]), Math.max(a[2], v[2]), Math.max(a[3], v[3])],
+        [Infinity, Infinity, -Infinity, -Infinity])
+    return {
+      code: l.code,
+      name: l.name,
+      country: l.country,
+      pending: 'pending' in l && l.pending === true,
+      count: datasets.filter((d) => d.living_landscape === l.code).length,
+      ...coverage(l.code),
+      area: formatHa(g.area_ha),
+      countries: g.countries,
+      view: cb,
+      bbox: outlines[l.code].bbox,
+      lon: c?.lon ?? 0,
+      lat: c?.lat ?? 0,
+      photos: (photoMap[l.code] ?? []).map((ph) => ({ ...ph, src: `${base}/${ph.file}` })),
+      summary: p.summary ?? null,
+      ecosystem: p.ecosystem ?? null,
+      livelihoods: p.livelihoods ?? null,
+      why: p.why_it_matters ?? null,
+      resources: p.resources ?? [],
+      sources: sourceList(p),
+      catalogue: `${base}/catalogue?landscape=${l.code}`,
+      boundary: b ? { href: `${boundaries.download_base}${b.file}`, size: fileSize(b.bytes) } : null,
+    }
+  })
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+
+const first = items[0]
+
+// Left-hand section menu. Only Overview has content today; the others show an
+// "under construction" notice until their content exists.
+const sectionList = [
+  { id: 'overview', label: 'Overview', icon: 'grid', ready: true },
+  { id: 'map', label: 'Map visualization', icon: 'globe', ready: false },
+  { id: 'knowledge-hub', label: 'Knowledge hub', icon: 'link', ready: false },
+  { id: 'resources', label: 'Other resources', icon: 'folder', ready: false },
+] as const
+const soon: Record<string, { title: string; text: string }> = {
+  map: {
+    title: 'Map visualization',
+    text: 'Interactive maps of this landscape — its datasets as layers you can switch on and compare — are on their way. In the meantime, the Overview has a locator map, and the catalogue lists the datasets already registered here.',
+  },
+  'knowledge-hub': {
+    title: 'Knowledge hub',
+    text: 'Evidence, actions and lessons from this landscape, connected to the data behind them, are on their way. In the meantime, the catalogue lists the datasets already registered here.',
+  },
+  resources: {
+    title: 'Other resources',
+    text: 'Reports and useful links for this landscape will be gathered here. In the meantime, the catalogue lists the datasets already registered for it.',
+  },
+}
+const globeCountries = Object.entries(geoCountries).map(([iso, c]) => ({ iso, rings: c.globe }))
+const mapCountries = Object.entries(geoCountries).filter(([, c]) => c.d)
+// Label data for the client: places [name, x, y, minZoom, capital]; river label
+// anchors; lake label points. River and lake shapes are drawn below in the SVG.
+// "Select a landscape" start screen: every landscape on one world map, framed
+// on their pins (equirectangular units, as the main map: x = lon + 180, y = 90 − lat).
+const introCountries = [...new Set(items.flatMap((it) => it.countries))]
+const introView = (() => {
+  const xs = items.map((it) => it.lon + 180)
+  const ys = items.map((it) => 90 - it.lat)
+  const x0 = Math.min(...xs) - 16, x1 = Math.max(...xs) + 16
+  const yc = (Math.min(...ys) + Math.max(...ys)) / 2
+  const h = Math.max(Math.max(...ys) - Math.min(...ys) + 24, (x1 - x0) / 3)
+  return [x0, yc - h / 2, x1 - x0, h].map((v) => Math.round(v * 10) / 10)
+})()
+const codes = items.map((it) => it.code)
+---
+
+<section class="lx" data-lx data-detail-url={`${base}/landscapes/map-detail.json`} aria-label="Living landscape explorer">
+  <script type="application/json" data-lx-data set:html={JSON.stringify({ items, themes: themeList, globe: globeCountries })} />
+  <!-- Before first paint: .is-live shows the world map (start screen, then a
+       compact strip that stays as the thread); with no landscape in the address,
+       .is-intro starts on the "Select a landscape" screen. Without JavaScript
+       the first landscape is shown, as before. -->
+  <script is:inline define:vars={{ codes }}>
+    var lxRoot = document.currentScript.parentElement
+    var lxCode = decodeURIComponent(location.hash.slice(1)).split('/')[0]
+    lxRoot.classList.add('is-live')
+    if (codes.indexOf(lxCode) === -1) lxRoot.classList.add('is-intro')
+  </script>
+
+  <!-- The world's land and the country outlines, drawn once. Both maps below
+       point at these shapes instead of carrying their own copy; colours come
+       from each map's own classes. -->
+  <svg class="lx-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <path id="lx-shape-land" d={world.d} />
+      {mapCountries.map(([iso, c]) => (
+        <path id={`lx-shape-${iso}`} d={c.d} fill-rule="evenodd" vector-effect="non-scaling-stroke" />
+      ))}
+    </defs>
+  </svg>
+
+  <!-- Landscape selector (a filter for the whole panel) -->
+  <div class="lx-top">
+    <span class="lx-top-label" id="lx-pick-label">Living landscape</span>
+    <div class="lx-pick" data-pick>
+      <button type="button" class="lx-pick-btn" data-pick-btn aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lx-pick-label lx-pick-value">
+        <span class="lx-item-pin"><Icon name="map-pin" size={18} /></span>
+        <span class="lx-pick-value" id="lx-pick-value">
+          <span class="lx-pick-prompt">Select a landscape</span>
+          <span class="lx-pick-name" data-pick-name>{first.name}</span>
+          <span class="lx-pick-country" data-pick-country>{first.country}</span>
+        </span>
+        <span class="lx-pick-chev" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
+      </button>
+      <div class="lx-pop" data-pop hidden>
+        <div class="lx-search">
+          <Icon name="search" size={18} />
+          <label for="lx-search" class="sr-only">Search landscapes by name or country</label>
+          <input id="lx-search" type="search" placeholder="Search by name or country…" autocomplete="off" />
+        </div>
+        <ul class="lx-list" role="listbox" aria-label="Living landscapes">
+          {items.map((it, i) => (
+            <li
+              class="lx-item"
+              role="option"
+              tabindex="-1"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-code={it.code}
+              data-search={`${it.name} ${it.country} ${it.code}`.toLowerCase()}
+            >
+              <span class="lx-item-pin"><Icon name="map-pin" size={18} /></span>
+              <span class="lx-item-text">
+                <span class="lx-item-name">{it.name}</span>
+                <span class="lx-item-country">{it.country}</span>
+              </span>
+              <span class="lx-item-count" aria-label={`${it.count} datasets`}>{it.count}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="lx-empty" hidden>No landscapes match your search.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- World map: the start screen (map + list), then a compact strip above the
+       chosen landscape, its pin highlighted, so the global view stays in sight -->
+  <div class="lx-intro" data-intro>
+    <div class="lx-intro-head">
+      <h2 class="lx-intro-title">{items.length} living landscapes in {introCountries.length} countries</h2>
+      <p class="lx-intro-lead">Choose one on the map, or from the list at the top, to see its overview.</p>
+    </div>
+    <div class="lx-gm-row">
+    <div class="lx-intro-map">
+      <svg data-world viewBox={introView.join(' ')} preserveAspectRatio="xMidYMid meet" role="group" aria-label="Map of the living landscapes">
+        <use class="lx-land" href="#lx-shape-land" />
+        {mapCountries.map(([iso]) => (
+          <use class:list={['lx-ctry', { 'is-home': introCountries.includes(iso) }]} href={`#lx-shape-${iso}`} />
+        ))}
+        {items.map((it, i) => (
+          <a class="lx-ip" href={`#${it.code}`} data-ip={it.code} style={`--i:${i}`} aria-label={`${it.name}, ${it.country} — ${it.count} ${it.count === 1 ? 'dataset' : 'datasets'}`}>
+            <g transform={`translate(${Math.round((it.lon + 180) * 100) / 100} ${Math.round((90 - it.lat) * 100) / 100})`}>
+              <g class="lx-ip-body">
+                <circle class="lx-ip-halo" r="3.2" />
+                <circle class="lx-ip-dot" r="1.5" />
+              </g>
+              <text class="lx-ip-name" y="-4" style={labelStyle(it.code)}>{it.name}</text>
+            </g>
+          </a>
+        ))}
+      </svg>
+    </div>
+    <div class="lx-gm-side">
+      <p class="lx-gm-kicker">Living landscapes</p>
+      <p class="lx-gm-count">{items.length} landscapes in {introCountries.length} countries</p>
+      <p class="lx-gm-hint">Pick another pin on the map to switch.</p>
+      <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
+    </div>
+    </div>
+  </div>
+
+  <div class="lx-body">
+    <!-- Section menu -->
+    <nav class="lx-secnav" data-secnav aria-label="Landscape sections">
+      <div class="lx-secnav-head">
+        <span class="lx-secnav-title">Sections</span>
+        <button type="button" class="lx-secnav-toggle" data-secnav-toggle aria-label="Collapse the section menu" aria-expanded="true">«</button>
+      </div>
+      <ul>
+        {sectionList.map((sec, i) => (
+          <li>
+            <a href={`#${first.code}/${sec.id}`} data-sec={sec.id} aria-current={i === 0 ? 'true' : undefined} title={sec.label}>
+              <Icon name={sec.icon} size={20} />
+              <span class="lx-sec-label">{sec.label}</span>
+              {!sec.ready && (
+                <span class="lx-sec-soon" data-sec-soon={sec.id} hidden={sec.id === 'resources' && first.resources.length > 0}>Soon</span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="lx-content">
+  <!-- Detail -->
+  <article class="lx-main" data-panel="overview" aria-live="polite">
+    <header class="lx-head">
+      <div class="lx-anim">
+        <h2 class="lx-title" data-f="name">{first.name}</h2>
+        <p class="lx-country">
+          <Icon name="map-pin" size={18} />
+          <span data-f="country">{first.country}</span>
+          <span class="lx-pending" data-f="pending" hidden={!first.pending}>Name pending confirmation</span>
+        </p>
+        <p class="lx-summary" data-f="summary">{first.summary ?? ''}</p>
+      </div>
+      <a class="lx-badge" data-f="catalogue" href={first.catalogue}>
+        <Icon name="layers" size={30} />
+        <span class="lx-badge-num" data-f="count">{first.count}</span>
+        <span class="lx-badge-lbl" data-f="count-label">{first.count === 1 ? 'dataset' : 'datasets'}</span>
+      </a>
+    </header>
+
+    <div class="lx-grid">
+      <!-- Photos -->
+      <figure class="lx-photo" data-photo hidden={first.photos.length === 0}>
+        <div class="lx-photo-stack" data-photo-stack>
+          {first.photos.map((ph, i) => (
+            <img
+              src={ph.src}
+              alt={ph.alt}
+              width={ph.width}
+              height={ph.height}
+              class:list={['lx-photo-img', { 'is-on': i === 0 }]}
+              loading="lazy"
+              decoding="async"
+            />
+          ))}
+        </div>
+        <button type="button" class="lx-nav lx-prev" data-photo-prev aria-label="Previous photo" hidden={first.photos.length < 2}><Icon name="chevron-right" size={20} /></button>
+        <button type="button" class="lx-nav lx-next" data-photo-next aria-label="Next photo" hidden={first.photos.length < 2}><Icon name="chevron-right" size={20} /></button>
+        <span class="lx-count" data-photo-count hidden={first.photos.length < 2}>1 / {first.photos.length}</span>
+        <div class="lx-dots" data-dots role="tablist" aria-label="Photos">
+          {first.photos.map((_, i) => (
+            <button type="button" class:list={['lx-dot', { 'is-on': i === 0 }]} aria-label={`Photo ${i + 1}`} aria-selected={i === 0 ? 'true' : 'false'} role="tab"></button>
+          ))}
+        </div>
+        <figcaption class="lx-credit" data-credit>
+          {first.photos[0] && (
+            <>
+              {first.photos[0].caption && <span>{first.photos[0].caption} · </span>}
+              Photo: <a href={first.photos[0].source_url} target="_blank" rel="noopener">{first.photos[0].author}</a>,
+              {first.photos[0].licence_url
+                ? <a href={first.photos[0].licence_url} target="_blank" rel="noopener"> {first.photos[0].licence}</a>
+                : <span> {first.photos[0].licence}</span>}
+            </>
+          )}
+        </figcaption>
+      </figure>
+
+      <!-- Map -->
+      <div class="lx-map" data-map>
+        <svg class="lx-map-svg" data-map-svg viewBox={`${first.view[0]} ${first.view[1]} ${first.view[2] - first.view[0]} ${first.view[3] - first.view[1]}`} preserveAspectRatio="xMidYMid meet" tabindex="0" role="img" aria-label={`Map of ${first.name}`}>
+          <use class="lx-land" href="#lx-shape-land" />
+          {mapCountries.map(([iso]) => (
+            <use class:list={['lx-ctry', { 'is-home': first.countries.includes(iso) }]} data-iso={iso} href={`#lx-shape-${iso}`} />
+          ))}
+          <!-- rivers and lakes: drawn by the script once map-detail.json has arrived -->
+          <g class="lx-water" data-water></g>
+          {items.map((it) => (
+            <path class:list={['lx-ls', { 'is-on': it.code === first.code }]} data-ls={it.code} d={outlines[it.code].d} fill-rule="evenodd" vector-effect="non-scaling-stroke" pathLength="1" />
+          ))}
+          <g data-pin>
+            <g class="lx-pin" data-pin-body>
+              <circle class="lx-pin-pulse" r="14" />
+              <circle class="lx-pin-ring" r="9" />
+              <circle class="lx-pin-dot" r="3.5" />
+            </g>
+          </g>
+        </svg>
+        <svg class="lx-labels" data-labels aria-hidden="true"></svg>
+        <span class="lx-map-label" data-map-label>{geoCountries[first.countries[0]]?.name}</span>
+        <button type="button" class="lx-globe-btn" data-reset title="Zoom out to the whole country" aria-label="Zoom out to the whole country">
+          <svg class="lx-globe" data-globe viewBox="-52 -52 104 104" aria-hidden="true">
+            <circle class="lx-globe-sea" r="50" />
+            <g data-globe-land></g>
+            <path class="lx-globe-view" data-globe-view d="" />
+            <circle class="lx-globe-dot" data-globe-dot r="3.2" />
+            <circle class="lx-globe-rim" r="50" />
+          </svg>
+        </button>
+        <div class="lx-zoom" role="group" aria-label="Map zoom">
+          <button type="button" data-zoom="in" aria-label="Zoom in" title="Zoom in"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg></button>
+          <button type="button" data-zoom="out" aria-label="Zoom out" title="Zoom out"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" /></svg></button>
+          <button type="button" data-zoom="fit" aria-label="Reset the view" title="Reset the view"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></svg></button>
+        </div>
+        <p class="lx-hint" data-hint aria-hidden="true">Use Ctrl / ⌘ + scroll, or pinch, to zoom</p>
+        <div class="lx-scale" aria-hidden="true">
+          <svg width="110" height="16" data-scale><line x1="2" y1="12" x2="102" y2="12" /><line x1="2" y1="7" x2="2" y2="12" /><line x1="102" y1="7" x2="102" y2="12" /></svg>
+          <span data-scale-label>—</span>
+        </div>
+        <div class="lx-north" aria-hidden="true">N<svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1 L12 13 L7 10 L2 13 Z" /></svg></div>
+      </div>
+
+      <!-- Key facts -->
+      <div class="lx-facts lx-anim">
+        <h3 class="lx-facts-title">Key insights</h3>
+        <ul class="lx-fact-list">
+          <li class="lx-fact">
+            <span class="lx-fact-ic t-teal"><Icon name="mountains" size={22} /></span>
+            <span><strong>Area</strong><span data-f="area">{first.area}</span></span>
+          </li>
+          <li class="lx-fact is-wide">
+            <span class="lx-fact-ic t-light"><Icon name="grid" size={22} /></span>
+            <div class="lx-cov">
+              <strong>Data coverage</strong>
+              <div class="lx-cov-row">
+                <div class="lx-ring">
+                  <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="lx-ring-track" cx="60" cy="60" r="50" />
+                    <circle class="lx-ring-arc" data-f="cov-arc" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray={`${(firstWith() / themeList.length) * 100} 100`} transform="rotate(-90 60 60)" />
+                  </svg>
+                  <p class="lx-ring-text"><b data-f="cov-n">{firstWith()} of {themeList.length}</b><span>MFL themes have data</span></p>
+                </div>
+                <div class="lx-cov-side">
+                  <p class="lx-cov-open" data-f="cov-open" hidden={first.count === 0}>
+                    <Icon name="folder" size={28} />
+                    <span><b data-f="cov-open-n">{first.nOpen} of {first.count}</b><span data-f="cov-open-label">{first.count === 1 ? 'dataset is' : 'datasets are'} open access</span></span>
+                  </p>
+                  <ul class="lx-cov-legend">
+                    <li><i class="is-on"></i><span>With data (<span data-f="cov-with">{firstWith()}</span>)</span></li>
+                    <li><i></i><span>Missing (<span data-f="cov-miss">{themeList.length - firstWith()}</span>)</span></li>
+                  </ul>
+                </div>
+              </div>
+              <details class="lx-cov-missing" data-cov-missing hidden={firstWith() === themeList.length}>
+                <summary>Missing themes <span data-f="cov-miss-n">({themeList.length - firstWith()})</span></summary>
+                <ul data-f="cov-missing-list">
+                  {themeList.filter((_, i) => !first.covHave[i]).map((t) => <li>{t}</li>)}
+                </ul>
+              </details>
+            </div>
+          </li>
+          <li class="lx-fact" data-row="ecosystem" hidden={!first.ecosystem}>
+            <span class="lx-fact-ic t-amber"><Icon name="leaf" size={22} /></span>
+            <span><strong>Ecosystems</strong><span data-f="ecosystem">{first.ecosystem}</span></span>
+          </li>
+          <li class="lx-fact" data-row="livelihoods" hidden={!first.livelihoods}>
+            <span class="lx-fact-ic t-terra"><Icon name="users" size={22} /></span>
+            <span><strong>People and livelihoods</strong><span data-f="livelihoods">{first.livelihoods}</span></span>
+          </li>
+          <li class="lx-fact" data-row="why" hidden={!first.why}>
+            <span class="lx-fact-ic t-light"><Icon name="sparkles" size={22} /></span>
+            <span><strong>Why it matters</strong><span data-f="why">{first.why}</span></span>
+          </li>
+        </ul>
+        <details class="lx-src" data-src hidden={first.sources.length === 0}>
+          <summary>Sources for these descriptions <span class="lx-src-n" data-src-n>({first.sources.length})</span></summary>
+          <ul class="lx-src-list" data-src-list>
+            {first.sources.map((src) => (
+              <li><a href={src.url} target="_blank" rel="noopener">{src.host}</a><span>{src.fields}</span></li>
+            ))}
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <footer class="lx-foot">
+      <div class="lx-actions">
+        <a class="btn btn-primary" data-f="catalogue-btn" href={first.catalogue}>
+          <Icon name="layers" size={18} /> Browse datasets <Icon name="arrow-right" size={16} />
+        </a>
+        <a class="btn btn-secondary" data-f="boundary" href={first.boundary?.href ?? '#download'}>
+          <Icon name="download" size={18} /> Download boundary <span class="lx-size" data-f="boundary-size">{first.boundary?.size}</span>
+        </a>
+      </div>
+    </footer>
+  </article>
+
+      {sectionList.filter((sec) => !sec.ready && sec.id !== 'resources').map((sec) => (
+        <article class="lx-main lx-soon" data-panel={sec.id} hidden>
+          <span class="lx-soon-ic"><Icon name={sec.icon} size={32} /></span>
+          <p class="lx-soon-tag">Under construction</p>
+          <h2 class="lx-soon-title">{soon[sec.id].title} <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-soon-text">{soon[sec.id].text}</p>
+          <div class="lx-soon-actions">
+            <a class="btn btn-primary" data-soon-catalogue href={first.catalogue}><Icon name="layers" size={18} /> Browse datasets</a>
+            <a class="btn btn-secondary" href={`#${first.code}/overview`} data-sec-link="overview">Back to overview</a>
+          </div>
+        </article>
+      ))}
+
+      <!-- Other resources: the list when the landscape has any, the notice when it
+           has none. Both states live in one panel; renderResources() picks one. -->
+      <article class="lx-main" data-panel="resources" hidden>
+        <div data-res-has hidden>
+          <h2 class="lx-res-title">Other resources <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-res-sub">Published work about this landscape. Each item stays with its publisher &mdash; MOSAIC links to it.</p>
+          <ul class="lx-res-list" data-res-list></ul>
+        </div>
+        <div class="lx-soon" data-res-soon>
+          <span class="lx-soon-ic"><Icon name="folder" size={32} /></span>
+          <p class="lx-soon-tag">Under construction</p>
+          <h2 class="lx-soon-title">{soon.resources.title} <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
+          <p class="lx-soon-text">{soon.resources.text}</p>
+          <div class="lx-soon-actions">
+            <a class="btn btn-primary" data-soon-catalogue href={first.catalogue}><Icon name="layers" size={18} /> Browse datasets</a>
+            <a class="btn btn-secondary" href={`#${first.code}/overview`} data-sec-link="overview">Back to overview</a>
+          </div>
+        </div>
+        <template data-res-tpl>
+          <li class="lx-res">
+            <span class="lx-res-ic"><Icon name="file-text" size={22} /></span>
+            <div class="lx-res-body">
+              <a class="lx-res-link" target="_blank" rel="noopener"></a>
+              <p class="lx-res-meta"></p>
+              <p class="lx-res-note"></p>
+              <p class="lx-res-foot"></p>
+            </div>
+          </li>
+        </template>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lx { display: flex; flex-direction: column; gap: var(--space-6); }
+
+  /* ---------- landscape selector (top) ---------- */
+  .lx-top { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .lx-top-label { font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-pick { position: relative; }
+  .lx-pick-btn {
+    display: flex; align-items: center; gap: var(--space-3); min-width: 340px;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface); color: var(--color-text);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+    font: inherit; cursor: pointer; text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .lx-pick-btn:hover, .lx-pick-btn[aria-expanded='true'] { border-color: var(--mosaic-teal); }
+  .lx-pick-btn:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 2px; }
+  .lx-pick-value { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .lx-pick-name { font-family: var(--font-title); font-weight: 700; font-size: var(--text-lg); line-height: 1.2; }
+  .lx-pick-country { font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-pick-chev { display: flex; color: var(--color-link); transform: rotate(90deg); transition: transform 0.2s; }
+  .lx-pick-btn[aria-expanded='true'] .lx-pick-chev { transform: rotate(-90deg); }
+  .lx-pop {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; width: 400px; max-width: calc(100vw - 2rem);
+    padding: var(--space-3); background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card-hover);
+    animation: lx-pop 0.18s ease;
+  }
+  .lx-pop[hidden] { display: none; }
+  @keyframes lx-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- section menu (left) ---------- */
+  /* ── "Select a landscape" start screen ── */
+  .lx-intro { display: none; }
+  .lx.is-live .lx-intro { display: block; margin-bottom: var(--space-6); }
+  .lx.is-intro .lx-intro { animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  /* the title belongs to the start screen only */
+  .lx:not(.is-intro) .lx-intro-head { display: none; }
+  /* compact strip once a landscape is chosen */
+  .lx-gm-row { display: flex; align-items: center; gap: var(--space-8); }
+  .lx-gm-row .lx-intro-map { flex: 1 1 auto; max-width: 100%; transition: max-width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx.is-live:not(.is-intro) .lx-intro-map { max-width: 540px; }
+  .lx-gm-side { display: none; }
+  .lx.is-live:not(.is-intro) .lx-gm-side { display: block; animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx-gm-kicker { margin: 0; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-gm-count { margin: var(--space-1) 0 0; font-family: var(--font-title); font-size: var(--text-xl); font-weight: 700; color: var(--color-text); }
+  .lx-gm-hint { margin: var(--space-1) 0 var(--space-3); color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-gm-all { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-link); font-weight: 600; text-decoration: none; }
+  .lx-gm-all:hover { text-decoration: underline; }
+  :global([data-theme='dark']) .lx-gm-all { color: var(--mosaic-light-teal); }
+  /* the chosen landscape's pin */
+  .lx-ip.is-on .lx-ip-halo { fill: var(--mosaic-terracotta); opacity: 0.3; }
+  .lx-ip.is-on .lx-ip-dot { fill: var(--mosaic-terracotta); }
+  .lx-ip.is-on .lx-ip-body { transform: scale(1.6); }
+  .lx-ip.is-on .lx-ip-name { opacity: 1; }
+  .lx.is-live:not(.is-intro) .lx-ip-name { font-size: 5px; stroke-width: 1.4px; }
+  .lx.is-intro .lx-body { display: none; }
+  .lx-pick-prompt { display: none; font-family: var(--font-title); font-weight: 700; font-size: var(--text-lg); line-height: 1.2; }
+  .lx.is-intro .lx-pick-prompt { display: block; }
+  .lx.is-intro .lx-pick-name, .lx.is-intro .lx-pick-country { display: none; }
+  .lx-intro-head { margin-bottom: var(--space-4); }
+  .lx-intro-title { margin: 0 0 var(--space-2); }
+  .lx-intro-lead { margin: 0; color: var(--color-muted); }
+  .lx-intro-map {
+    border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--color-border);
+    background: #DDE9E4; /* sea, as the locator map */
+  }
+  .lx-intro-map svg { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1; max-height: 420px; }
+  .lx-ip { cursor: pointer; outline: none; text-decoration: none; }
+  .lx-ip-body {
+    transform-box: fill-box; transform-origin: center;
+    animation: lx-ip-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; /* not "both": a held end state would override the hover / chosen scale */
+    animation-delay: calc(var(--i) * 70ms + 250ms);
+    transition: transform 0.2s ease;
+  }
+  .lx-ip-halo { fill: var(--mosaic-teal); opacity: 0.2; }
+  .lx-ip-dot { fill: var(--mosaic-teal); stroke: var(--color-white); stroke-width: 0.6; }
+  .lx-ip-name {
+    font-family: var(--font-body); font-size: 3px; font-weight: 700; text-anchor: middle; fill: var(--mosaic-ink);
+    paint-order: stroke; stroke: rgba(255, 255, 255, 0.92); stroke-width: 0.9px; stroke-linejoin: round;
+    opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+  }
+  /* Wide screens: the start map names all eleven, so a new visitor reads them
+     without hovering. Smaller, and moved off the pin where neighbours crowd
+     (East Africa); the compact strip keeps one name, above its pin. */
+  @media (min-width: 1024px) {
+    .lx.is-intro .lx-ip-name {
+      opacity: 1; font-size: 2.3px; stroke-width: 0.7px;
+      text-anchor: var(--la, middle); transform: translate(var(--lx, 0), var(--ly, 0));
+    }
+  }
+  .lx-ip:hover .lx-ip-body, .lx-ip:focus-visible .lx-ip-body { transform: scale(1.5); }
+  .lx-ip:hover .lx-ip-name, .lx-ip:focus-visible .lx-ip-name { opacity: 1; }
+  .lx-ip:focus-visible .lx-ip-halo { opacity: 0.45; }
+  @keyframes lx-ip-in { from { transform: scale(0); opacity: 0; } 60% { transform: scale(1.3); opacity: 1; } to { transform: none; opacity: 1; } }
+  .lx-body.is-arriving { animation: lx-arrive 0.55s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  @keyframes lx-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 767px) {
+    .lx-gm-row { flex-direction: column; align-items: stretch; gap: var(--space-3); }
+    .lx.is-live:not(.is-intro) .lx-intro-map { max-width: none; }
+    .lx-gm-side { text-align: left; }
+    .lx-gm-hint { display: none; }
+    .lx-intro-map svg { aspect-ratio: 1.8 / 1; }
+    .lx-ip-halo { r: 4.5px; }
+    .lx-ip-dot { r: 2.2px; }
+  }
+
+  .lx-body { display: grid; grid-template-columns: 284px minmax(0, 1fr); gap: var(--space-6); align-items: start; transition: grid-template-columns 0.25s ease; }
+  .lx-body.is-collapsed { grid-template-columns: 64px minmax(0, 1fr); }
+  .lx-secnav {
+    position: sticky; top: calc(var(--space-16) + var(--space-2));
+    padding: var(--space-4) var(--space-3);
+    background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+  }
+  .lx-secnav-head { display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-2) var(--space-3); }
+  .lx-secnav-title { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+  .lx-secnav-toggle {
+    width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--radius-md);
+    background: transparent; color: var(--color-muted); font-size: var(--text-xl); line-height: 1; cursor: pointer;
+    transition: transform 0.25s, background-color 0.2s;
+  }
+  .lx-secnav-toggle:hover { background: var(--color-surface); color: var(--color-text); }
+  .lx-secnav-toggle:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 1px; }
+  .lx-body.is-collapsed .lx-secnav-toggle { transform: rotate(180deg); }
+  .lx-body.is-collapsed .lx-secnav-title, .lx-body.is-collapsed .lx-sec-label, .lx-body.is-collapsed .lx-sec-soon { display: none; }
+  .lx-body.is-collapsed .lx-secnav-head { justify-content: center; padding: 0 0 var(--space-3); }
+  .lx-secnav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+  .lx-secnav a {
+    position: relative; display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3); border-radius: var(--radius-lg);
+    color: var(--color-text); font-weight: 600; text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .lx-body.is-collapsed .lx-secnav a { justify-content: center; }
+  .lx-secnav a :global(svg) { flex-shrink: 0; color: var(--color-muted); }
+  .lx-secnav a:hover { background: var(--color-surface); }
+  .lx-secnav a:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
+  .lx-secnav a[aria-current='true'] { background: var(--mosaic-light-teal); color: var(--mosaic-teal); }
+  .lx-secnav a[aria-current='true'] :global(svg) { color: var(--mosaic-teal); }
+  .lx-secnav a[aria-current='true']::before {
+    content: ''; position: absolute; left: -12px; top: 12%; bottom: 12%; width: 4px;
+    border-radius: var(--radius-full); background: var(--mosaic-amber);
+  }
+  .lx-sec-label { flex: 1; min-width: 0; white-space: nowrap; }
+  .lx-sec-soon {
+    padding: 0.05rem var(--space-2); border-radius: var(--radius-full);
+    background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+    font-size: var(--text-xs); font-weight: 700;
+  }
+
+  /* ---------- panels ---------- */
+  .lx-content { min-width: 0; }
+  .lx-content > [hidden] { display: none; }
+  .lx-content > .is-entering { animation: lx-panel 0.3s ease; }
+  @keyframes lx-panel { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .lx-soon { text-align: center; padding: var(--space-16) var(--space-8); }
+  .lx-soon-ic {
+    width: 72px; height: 72px; margin: 0 auto var(--space-4); display: grid; place-items: center;
+    border-radius: var(--radius-full); background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+  }
+  .lx-soon-tag {
+    display: inline-block; margin: 0 0 var(--space-3); padding: 0.1rem var(--space-3); border-radius: var(--radius-full);
+    background: var(--tint-amber-bg); color: var(--tint-amber-fg);
+    font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .lx-soon-title { font-size: var(--text-3xl); margin: 0 0 var(--space-3); }
+  .lx-soon-for { display: block; font-size: var(--text-lg); color: var(--color-muted); font-weight: 400; margin-top: var(--space-2); }
+  .lx-soon-text { color: var(--color-muted); line-height: 1.7; max-width: 60ch; margin: 0 auto var(--space-6); }
+  .lx-soon-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+  .lx-soon-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
+  :global([data-theme='dark']) .lx-soon-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
+
+  /* ---------- other resources ---------- */
+  .lx-res-title { font-size: var(--text-2xl); margin: 0 0 var(--space-2); }
+  .lx-res-title .lx-soon-for { display: inline; font-size: var(--text-lg); margin: 0; }
+  .lx-res-sub { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 70ch; line-height: 1.6; }
+  .lx-res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+  .lx-res {
+    display: flex; gap: var(--space-4); padding: var(--space-4);
+    border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface);
+  }
+  .lx-res-ic { flex: none; color: var(--color-link); line-height: 0; }
+  .lx-res-body { min-width: 0; }
+  .lx-res-link { font-weight: 600; color: var(--color-text); text-decoration: none; }
+  .lx-res-link:hover, .lx-res-link:focus-visible { color: var(--color-link); text-decoration: underline; }
+  .lx-res-meta { margin: var(--space-1) 0 0; color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-res-note { margin: var(--space-2) 0 0; line-height: 1.6; }
+  .lx-res-foot { margin: var(--space-2) 0 0; color: var(--color-muted); font-size: var(--text-sm); }
+  .lx-res-meta:empty, .lx-res-note:empty, .lx-res-foot:empty { display: none; }
+  :global([data-theme='dark']) .lx-secnav a[aria-current='true'] { background: rgba(214, 238, 242, 0.12); color: var(--mosaic-light-teal); }
+  :global([data-theme='dark']) .lx-secnav a[aria-current='true'] :global(svg),
+  :global([data-theme='dark']) .lx-pick-chev { color: var(--mosaic-light-teal); }
+
+  /* ---------- shared surfaces ---------- */
+  .lx-pop, .lx-main {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  .lx-search {
+    display: flex; align-items: center; gap: var(--space-2);
+    margin: 0 var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-muted);
+    background: var(--color-bg);
+  }
+  .lx-search:focus-within { border-color: var(--mosaic-teal); box-shadow: 0 0 0 3px var(--color-accent-light); }
+  .lx-search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; color: var(--color-text); outline: none; }
+
+  .lx-list { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); max-height: 380px; overflow-y: auto; }
+  .lx-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.25s ease;
+  }
+  .lx-item[hidden] { display: none; } /* search filter — .lx-item's display: grid would override [hidden] */
+  .lx-item:hover { background: var(--color-bg); }
+  .lx-item:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
+  .lx-item[aria-selected='true'] { background: var(--mosaic-light-teal); }
+  .lx-item[aria-selected='true']::before {
+    content: ''; position: absolute; left: 0; top: 18%; bottom: 18%; width: 3px;
+    border-radius: var(--radius-full); background: var(--mosaic-teal);
+    animation: lx-grow 0.35s ease;
+  }
+  .lx-item-pin { color: var(--color-link); display: flex; }
+  .lx-item-text { display: flex; flex-direction: column; min-width: 0; }
+  .lx-item-name { font-family: var(--font-title); font-weight: 700; font-size: var(--text-base); color: var(--color-text); line-height: 1.25; }
+  .lx-item-country { font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-item-count {
+    min-width: 2rem; padding: 0.15rem var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--color-bg); color: var(--color-link);
+    font-weight: 700; text-align: center; font-size: var(--text-sm);
+  }
+  .lx-item[aria-selected='true'] .lx-item-count { background: var(--color-white); }
+  .lx-empty { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-3) var(--space-2); }
+
+  /* ---------- detail ---------- */
+  .lx-main { padding: var(--space-6) var(--space-8); min-width: 0; }
+  .lx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .lx-title { font-size: var(--text-4xl); margin: 0 0 var(--space-2); line-height: 1.15; }
+  .lx-country { display: flex; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-text); font-size: var(--text-lg); flex-wrap: wrap; }
+  .lx-country :global(svg) { color: var(--color-link); }
+  .lx-pending {
+    font-size: var(--text-xs); font-weight: 600; color: var(--mosaic-amber);
+    background: var(--tint-amber-bg); padding: 0.1rem var(--space-2); border-radius: var(--radius-full);
+  }
+  .lx-badge {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--mosaic-light-teal); color: var(--mosaic-teal);
+    text-decoration: none; white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .lx-badge:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .lx-badge-num { font-family: var(--font-title); font-size: var(--text-4xl); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .lx-badge-lbl { font-size: var(--text-xl); }
+  .lx-badge.is-bump { animation: lx-bump 0.6s ease; }
+
+  /* photos | map side by side, Key insights in a full-width band below */
+  .lx-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    align-items: stretch;
+  }
+  .lx-grid:has(.lx-photo[hidden]) .lx-map { grid-column: 1 / -1; }
+
+  /* photos */
+  .lx-photo { position: relative; margin: 0; border-radius: var(--radius-lg); overflow: hidden; min-height: 380px; background: var(--color-bg); }
+  .lx-photo[hidden] { display: none; }
+  /* Images and dots are re-created by the script on every landscape change, so
+     they carry no scoped attribute: style them through :global(). */
+  .lx-photo-stack, .lx-photo :global(.lx-photo-img) { position: absolute; inset: 0; }
+  .lx-photo :global(.lx-photo-img) {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transform: scale(1.06);
+    transition: opacity 0.7s ease, transform 6s ease-out;
+  }
+  .lx-photo :global(.lx-photo-img.is-on) { opacity: 1; transform: scale(1); }
+  .lx-dots { position: absolute; left: 0; right: 0; bottom: 3.6rem; display: flex; justify-content: center; gap: var(--space-2); }
+  .lx-dots[hidden] { display: none; }
+  .lx-photo :global(.lx-dot) {
+    width: 10px; height: 10px; min-width: 0; min-height: 0; padding: 0; border-radius: var(--radius-full);
+    border: 2px solid var(--color-white); background: transparent; cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.25s, transform 0.25s;
+  }
+  .lx-photo :global(.lx-dot.is-on) { background: var(--color-white); transform: scale(1.2); }
+  .lx-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; display: grid; place-items: center; padding: 0;
+    border: 0; border-radius: var(--radius-full); cursor: pointer;
+    background: rgba(255, 255, 255, 0.85); color: var(--mosaic-ink);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    opacity: 0; transition: opacity 0.2s ease, background-color 0.2s;
+  }
+  .lx-nav[hidden] { display: none; }
+  .lx-photo:hover .lx-nav, .lx-nav:focus-visible { opacity: 1; }
+  .lx-nav:hover { background: var(--color-white); }
+  .lx-nav:focus-visible { outline: 2px solid var(--mosaic-amber); outline-offset: 2px; }
+  .lx-prev { left: var(--space-3); }
+  .lx-prev :global(svg) { transform: rotate(180deg); }
+  .lx-next { right: var(--space-3); }
+  .lx-count {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    padding: 0.1rem var(--space-2); border-radius: var(--radius-full);
+    background: rgba(28, 43, 58, 0.7); color: var(--color-white); font-size: var(--text-xs); font-weight: 600;
+  }
+  .lx-count[hidden] { display: none; }
+  /* full credit (author + licence are required), up to a few lines */
+  .lx-credit {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: var(--space-8) var(--space-3) var(--space-2);
+    font-size: var(--text-xs); line-height: 1.4; color: var(--color-white);
+    background: linear-gradient(transparent, rgba(28, 43, 58, 0.85) 45%);
+  }
+  .lx-credit :global(a) { color: var(--color-white); }
+  @media (hover: none) { .lx-nav { opacity: 1; } }
+
+  /* map */
+  .lx-map {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden; min-height: 380px;
+    background: #DDE9E4; /* sea */
+    border: 1px solid var(--color-border);
+  }
+  .lx-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-x pan-y; user-select: none; }
+  .lx-map-svg.is-dragging { cursor: grabbing; }
+  .lx-zoom {
+    position: absolute; left: var(--space-3); top: var(--space-3);
+    display: flex; flex-direction: column;
+    background: var(--color-white); border-radius: var(--radius-md); box-shadow: 0 2px 8px rgba(28, 43, 58, 0.18); overflow: hidden;
+  }
+  .lx-zoom button {
+    width: 32px; height: 32px; display: grid; place-items: center; padding: 0;
+    border: 0; background: var(--color-white); color: var(--mosaic-ink); cursor: pointer;
+  }
+  .lx-zoom button + button { border-top: 1px solid var(--color-border); }
+  .lx-zoom button:hover { background: var(--mosaic-light-teal); color: var(--mosaic-teal); }
+  .lx-zoom button:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
+  .lx-zoom button:disabled { opacity: 0.35; cursor: default; background: var(--color-white); }
+  .lx-zoom path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .lx-hint {
+    position: absolute; left: 50%; bottom: var(--space-8); transform: translateX(-50%);
+    margin: 0; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full);
+    background: rgba(28, 43, 58, 0.8); color: var(--color-white); font-size: var(--text-xs); white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .lx-hint.is-on { opacity: 1; }
+  .lx-land { fill: #E9EDE2; }
+  .lx-ctry { fill: #E3E8DA; stroke: #FFFFFF; stroke-width: 1; transition: fill 0.6s ease; }
+  .lx-ctry.is-home { fill: #FBFAF6; stroke: #B9C6BE; stroke-width: 1.2; }
+  .lx-defs { position: absolute; overflow: hidden; }
+  /* rivers and lakes are added by the script, so they carry no scope attribute */
+  .lx-water :global(.lx-lake) { fill: #BFDDE8; stroke: #8DBFD3; stroke-width: 0.6; }
+  .lx-water :global(.lx-river) { fill: none; stroke: #7FB6CC; stroke-linecap: round; stroke-linejoin: round; }
+  .lx-water :global(.lx-river.r1) { stroke-width: 1.6; }
+  .lx-water :global(.lx-river.r2) { stroke-width: 1.1; }
+  .lx-water :global(.lx-river.r3) { stroke-width: 0.7; }
+  .lx-water :global(.is-off) { display: none; }
+  .lx-water { animation: lx-water-in 0.5s ease; }
+  @keyframes lx-water-in { from { opacity: 0; } to { opacity: 1; } }
+  .lx-labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity 0.35s ease; }
+  .lx.is-flying .lx-labels { opacity: 0; }
+  .lx-labels :global(text) { font-family: var(--font-body); paint-order: stroke; stroke: rgba(255, 255, 255, 0.9); stroke-width: 3px; stroke-linejoin: round; }
+  .lx-labels :global(.l-place) { font-size: 11px; fill: #36424B; }
+  .lx-labels :global(.l-place.big) { font-size: 12.5px; font-weight: 700; fill: var(--mosaic-ink); }
+  .lx-labels :global(.l-water) { font-size: 11px; font-style: italic; fill: #2F7590; }
+  .lx-labels :global(.l-river) { font-size: 10.5px; letter-spacing: 0.04em; }
+  .lx-labels :global(.l-dot) { fill: var(--color-white); stroke: #36424B; stroke-width: 1.3; }
+  .lx-labels :global(.l-cap) { fill: var(--mosaic-ink); stroke: var(--color-white); stroke-width: 1; }
+  .lx-ls {
+    fill: rgba(13, 92, 107, 0.28); stroke: var(--mosaic-teal); stroke-width: 2;
+    stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0;
+    transition: opacity 0.4s ease, fill-opacity 0.4s ease;
+  }
+  .lx-ls.is-on { opacity: 1; animation: lx-draw 1.2s ease forwards; }
+  .lx-pin-dot { fill: var(--color-white); stroke: var(--mosaic-teal); stroke-width: 2.5; }
+  .lx-pin-ring { fill: var(--mosaic-teal); }
+  .lx-pin-pulse { fill: var(--mosaic-teal); opacity: 0.25; transform-origin: center; transform-box: fill-box; animation: lx-pulse 2s ease-out infinite; }
+  .lx-pin.is-drop { animation: lx-drop 0.5s cubic-bezier(.3,1.6,.5,1); transform-box: fill-box; }
+  .lx-map-label {
+    position: absolute; left: 50%; top: var(--space-4); transform: translateX(-50%);
+    font-size: var(--text-xs); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 700;
+    color: var(--mosaic-teal); background: rgba(255, 255, 255, 0.75); padding: 0.1rem var(--space-2); border-radius: var(--radius-sm);
+    transition: opacity 0.3s;
+  }
+  .lx-globe-btn {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    padding: 0; border: 0; background: none; border-radius: var(--radius-full); cursor: zoom-out;
+    transition: transform 0.2s ease;
+  }
+  .lx-globe-btn:hover { transform: scale(1.06); }
+  .lx-globe-btn:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 2px; }
+  .lx-globe { display: block; width: 88px; height: 88px; filter: drop-shadow(0 4px 10px rgba(28, 43, 58, 0.18)); }
+  .lx-globe-view { fill: rgba(181, 77, 47, 0.12); stroke: var(--mosaic-terracotta); stroke-width: 1.4; stroke-linejoin: round; }
+  .lx-globe-sea { fill: #CFE6EA; }
+  .lx-globe-rim { fill: none; stroke: var(--color-white); stroke-width: 3; }
+  .lx-globe :global(.g-land) { fill: #EEF1E8; stroke: #FFFFFF; stroke-width: 0.4; }
+  .lx-globe :global(.g-land.is-home) { fill: var(--mosaic-amber); }
+  .lx-globe-dot { fill: var(--mosaic-terracotta); stroke: var(--color-white); stroke-width: 1; }
+  .lx-scale { position: absolute; left: var(--space-3); bottom: var(--space-2); display: flex; flex-direction: column; font-size: var(--text-xs); color: var(--mosaic-ink); }
+  .lx-scale svg { stroke: var(--mosaic-ink); stroke-width: 1.5; }
+  .lx-north { position: absolute; right: var(--space-3); bottom: var(--space-2); display: flex; flex-direction: column; align-items: center; font-size: var(--text-xs); font-weight: 700; color: var(--mosaic-ink); }
+  .lx-north path { fill: none; stroke: var(--mosaic-ink); stroke-width: 1.5; stroke-linejoin: round; }
+
+  /* facts */
+  .lx-facts { grid-column: 1 / -1; padding-top: var(--space-2); }
+  .lx-facts-title { font-size: var(--text-2xl); margin: 0 0 var(--space-4); }
+  .lx-fact-list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-4);
+  }
+  /* row 1: Area (narrow) + Data coverage (wide); row 2: the three descriptions */
+  .lx-fact-list > .lx-fact { grid-column: span 2; }
+  .lx-fact-list > .lx-fact.is-wide { grid-column: span 4; }
+  @media (max-width: 1100px) {
+    .lx-fact-list { grid-template-columns: 1fr 1fr; }
+    .lx-fact-list > .lx-fact, .lx-fact-list > .lx-fact.is-wide { grid-column: auto; }
+  }
+  @media (max-width: 640px) {
+    .lx-fact-list { grid-template-columns: 1fr; }
+  }
+  .lx-fact {
+    padding: var(--space-4); border-radius: var(--radius-lg);
+    background: var(--color-bg); border: 1px solid var(--color-border);
+  }
+  .lx-fact { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; }
+  .lx-fact[hidden] { display: none; }
+  .lx-fact > span:last-child { display: flex; flex-direction: column; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.45; }
+  .lx-fact strong { font-family: var(--font-title); font-size: var(--text-lg); color: var(--color-text); }
+  .lx-fact-ic { width: 44px; height: 44px; border-radius: var(--radius-full); display: grid; place-items: center; }
+  .t-teal { background: var(--tint-teal-bg); color: var(--tint-teal-fg); }
+  .t-amber { background: var(--tint-amber-bg); color: var(--tint-amber-fg); }
+  .t-terra { background: var(--tint-terracotta-bg); color: var(--tint-terracotta-fg); }
+  .t-light { background: var(--tint-light-teal-bg); color: var(--tint-light-teal-fg); }
+  /* data coverage: ring + open-access figure + legend, missing themes folded below */
+  .lx-cov { min-width: 0; font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-cov-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); margin-top: var(--space-3); }
+  .lx-ring { position: relative; width: 148px; height: 148px; flex: 0 0 auto; }
+  .lx-ring svg { display: block; width: 100%; height: 100%; }
+  .lx-ring-track, .lx-ring-arc { fill: none; stroke-width: 14; }
+  .lx-ring-track { stroke: var(--color-border); }
+  .lx-ring-arc { stroke: var(--color-link); transition: stroke-dasharray 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .lx-ring-text {
+    position: absolute; inset: 0; margin: 0; padding: 0 26px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; line-height: 1.2; font-size: var(--text-xs); color: var(--color-muted);
+  }
+  .lx-ring-text b, .lx-cov-open b { font-family: var(--font-title); font-size: var(--text-xl); color: var(--color-text); line-height: 1.2; }
+  .lx-cov-side { display: flex; flex-direction: column; gap: var(--space-3); min-width: 150px; }
+  .lx-cov-open { display: flex; align-items: flex-start; gap: var(--space-3); margin: 0; padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); color: var(--color-link); line-height: 1.3; }
+  .lx-cov-open[hidden] { display: none; }
+  .lx-cov-open > span { display: flex; flex-direction: column; color: var(--color-muted); }
+  .lx-cov-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); color: var(--color-text); }
+  .lx-cov-legend li { display: flex; align-items: center; gap: var(--space-2); }
+  .lx-cov-legend i { width: 22px; height: 14px; border-radius: 3px; background: var(--color-border); }
+  .lx-cov-legend i.is-on { background: var(--color-link); }
+  .lx-cov-missing { margin-top: var(--space-4); }
+  .lx-cov-missing[hidden] { display: none; }
+  .lx-cov-missing summary { cursor: pointer; width: fit-content; font-weight: 600; color: var(--color-link); }
+  .lx-cov-missing summary span { font-weight: 400; color: var(--color-muted); }
+  .lx-cov-missing ul { list-style: disc; margin: var(--space-2) 0 0; padding-left: 1.2em; columns: 2 180px; column-gap: var(--space-6); color: var(--color-text); }
+  .lx-cov-missing ul :global(li) { break-inside: avoid; margin-bottom: 2px; }
+  @media (prefers-reduced-motion: reduce) { .lx-ring-arc { transition: none; } }
+
+  /* sources of the descriptions, folded away under the facts */
+  .lx-src { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--color-muted); }
+  .lx-src[hidden] { display: none; }
+  .lx-src summary { cursor: pointer; width: fit-content; font-weight: 600; color: var(--color-link); }
+  .lx-src-n { font-weight: 400; color: var(--color-muted); }
+  .lx-src-list { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; gap: var(--space-2); }
+  .lx-src-list :global(li) { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+  .lx-src-list :global(a) { overflow-wrap: anywhere; }
+
+  /* footer */
+  .lx-foot {
+    margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--color-border);
+  }
+  .lx-summary { margin: var(--space-3) 0 0; color: var(--color-muted); max-width: 75ch; line-height: 1.6; }
+  .lx-summary:empty { display: none; }
+  /* the three actions on one line (they wrap only on narrow screens) */
+  .lx-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: flex-start; }
+  .lx-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .lx-size { font-size: var(--text-xs); opacity: 0.75; }
+
+  /* content swap */
+  .lx-anim { transition: opacity 0.25s ease, transform 0.25s ease; }
+  .lx.is-swapping .lx-anim { opacity: 0; transform: translateY(8px); }
+
+  @keyframes lx-draw { to { stroke-dashoffset: 0; } }
+  @keyframes lx-pulse { from { transform: scale(0.6); opacity: 0.45; } to { transform: scale(2.2); opacity: 0; } }
+  @keyframes lx-drop { from { transform: translateY(-30px) scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes lx-bump { 30% { transform: scale(1.06); } 100% { transform: none; } }
+  @keyframes lx-grow { from { transform: scaleY(0); } to { transform: none; } }
+
+  /* dark theme: surfaces follow the theme; the map keeps its light cartography */
+  :global([data-theme='dark']) .lx-badge,
+  :global([data-theme='dark']) .lx-item[aria-selected='true'] { background: rgba(214, 238, 242, 0.12); color: var(--mosaic-light-teal); }
+  :global([data-theme='dark']) .lx-item-pin,
+  :global([data-theme='dark']) .lx-item-count,
+  :global([data-theme='dark']) .lx-country :global(svg) { color: var(--mosaic-light-teal); }
+  :global([data-theme='dark']) .lx-item[aria-selected='true'] .lx-item-count { background: var(--color-bg); }
+  /* the site's outline button is Ocean Teal, unreadable on the dark surface */
+  :global([data-theme='dark']) .lx-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
+
+  @media (max-width: 900px) {
+    /* the section menu becomes a row of chips above the content */
+    .lx-body, .lx-body.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+    .lx-secnav { position: static; padding: var(--space-2); }
+    .lx-secnav-head { display: none; }
+    .lx-secnav ul { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+    .lx-secnav a { white-space: nowrap; padding: var(--space-2) var(--space-3); }
+    .lx-secnav a[aria-current='true']::before { display: none; }
+    .lx-body.is-collapsed .lx-sec-label, .lx-body.is-collapsed .lx-sec-soon { display: inline; }
+    .lx-pick, .lx-pick-btn { width: 100%; min-width: 0; }
+    .lx-pop { width: 100%; }
+  }
+  @media (max-width: 640px) {
+    .lx-main { padding: var(--space-4); }
+    .lx-head { flex-direction: column; }
+    .lx-title { font-size: var(--text-3xl); }
+    .lx-grid { grid-template-columns: 1fr; }
+    .lx-photo, .lx-map { min-height: 260px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lx *, .lx *::before { animation: none !important; transition: none !important; }
+    .lx-ls.is-on { stroke-dashoffset: 0; }
+  }
+</style>
+
+<script>
+  type Photo = { src: string; alt: string; caption?: string | null; author: string; licence: string; licence_url?: string | null; source_url: string; width?: number; height?: number }
+  type Item = {
+    code: string; name: string; country: string; pending: boolean; count: number; area: string
+    covHave: boolean[]; nOpen: number
+    sources: { url: string; host: string; fields: string }[]
+    countries: string[]; view: number[]; bbox: number[]; lon: number; lat: number; photos: Photo[]
+    summary: string | null; ecosystem: string | null; livelihoods: string | null; why: string | null
+    catalogue: string; boundary: { href: string; size: string } | null
+    resources: Res[]
+  }
+  type Res = {
+    title: string; url: string
+    type?: string | null; authors?: string | null; org?: string | null
+    year?: number | null; extent?: string | null; licence?: string | null; note?: string | null
+  }
+  type Labels = {
+    places: (string | number)[][]
+    rivers: { n: string | null; z: number; a: number[][]; d: string }[]
+    lakes: { n: string | null; z: number; x: number; y: number; d: string }[]
+  }
+  type Data = { items: Item[]; themes: string[]; globe: { iso: string; rings: number[][][] }[] }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+  function animate(ms: number, step: (t: number) => void, done?: () => void) {
+    if (reduce) { step(1); done?.(); return () => {} }
+    let raf = 0
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / ms)
+      step(t)
+      if (t < 1) raf = requestAnimationFrame(tick)
+      else done?.()
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-lx]')) {
+    const data: Data = JSON.parse(root.querySelector('[data-lx-data]')!.textContent || '{}')
+    const byCode = new Map(data.items.map((i) => [i.code, i]))
+    const $ = <T extends Element = HTMLElement>(sel: string) => root.querySelector<T>(sel)!
+    const field = (name: string) => $(`[data-f="${name}"]`)
+    const list = Array.from(root.querySelectorAll<HTMLElement>('.lx-item'))
+    const svg = $<SVGSVGElement>('[data-map-svg]')
+    const pin = $<SVGGElement>('[data-pin]')
+    let current = data.items[0]
+    let view = [...current.view]
+    // "Select a landscape" start screen (set before first paint by the inline script)
+    let intro = root.classList.contains('is-intro')
+
+    /* ---------- map camera ---------- */
+    // Resting view: the landscape's country (or countries), padded; never so
+    // wide that the landscape itself shrinks below ~1/6 of the frame.
+    function restView(it: Item) {
+      const [x0, y0, x1, y1] = it.view
+      const pad = Math.max(x1 - x0, y1 - y0) * 0.12 + 0.5
+      return [x0 - pad, y0 - pad, x1 + pad, y1 + pad]
+    }
+    function setView(v: number[]) {
+      view = v
+      svg.setAttribute('viewBox', `${v[0]} ${v[1]} ${v[2] - v[0]} ${v[3] - v[1]}`)
+      placePin()
+      updateScale()
+      drawGlobeView()
+      queueLabels()
+    }
+    /* ---------- place, river and lake names ---------- */
+    // Natural Earth tags every feature with the web-map zoom from which it is
+    // worth showing (min_zoom). We work out the equivalent zoom of the current
+    // view and show what qualifies, most important first, skipping any label
+    // that would collide with one already placed.
+    const labelSvg = $<SVGSVGElement>('[data-labels]')
+    const SVGNS = 'http://www.w3.org/2000/svg'
+    // Rivers, lakes and place names arrive in their own file the first time a
+    // landscape is opened (see pages/landscapes/map-detail.json.ts). Until
+    // then, and if the request fails, the map simply shows no water or names.
+    let labels: Labels = { places: [], rivers: [], lakes: [] }
+    let waterPaths: SVGPathElement[] = []
+    let detailAsked = false
+    function loadDetail() {
+      if (detailAsked || !root.dataset.detailUrl) return
+      detailAsked = true
+      fetch(root.dataset.detailUrl)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+        .then((d: Labels) => {
+          const shape = (cls: string, z: number, path: string, evenodd: boolean) => {
+            const p = document.createElementNS(SVGNS, 'path')
+            p.setAttribute('class', cls)
+            p.dataset.z = String(z)
+            p.setAttribute('d', path)
+            if (evenodd) p.setAttribute('fill-rule', 'evenodd')
+            p.setAttribute('vector-effect', 'non-scaling-stroke')
+            return p
+          }
+          waterPaths = [
+            ...d.lakes.map((l) => shape('lx-lake', l.z, l.d, true)),
+            ...d.rivers.map((r) => shape(`lx-river ${r.z <= 3 ? 'r1' : r.z <= 5 ? 'r2' : 'r3'}`, r.z, r.d, false)),
+          ]
+          $<SVGGElement>('[data-water]').replaceChildren(...waterPaths)
+          labels = { places: d.places, rivers: d.rivers.filter((r) => r.n), lakes: d.lakes.filter((l) => l.n) }
+          queueLabels()
+        })
+        .catch(() => { detailAsked = false }) // try again the next time a landscape is opened
+    }
+    if (!intro) loadDetail() // the address already names a landscape
+    let labelQueued = false
+    function queueLabels() {
+      if (labelQueued) return
+      labelQueued = true
+      requestAnimationFrame(() => { labelQueued = false; drawLabels() })
+    }
+    function webZoom() { return Math.log2((pxPerUnit() * 360) / 256) }
+    function drawLabels() {
+      const r = svg.getBoundingClientRect()
+      if (!r.width) return
+      const z = webZoom()
+      for (const p of waterPaths) p.classList.toggle('is-off', Number(p.dataset.z) > z + 1.2)
+      if (root.classList.contains('is-flying')) return
+      const v = visible()
+      const sx = r.width / (v[2] - v[0]), sy = r.height / (v[3] - v[1])
+      const toPx = (x: number, y: number) => [(x - v[0]) * sx, (y - v[1]) * sy]
+      // keep clear of the controls, the globe, the scale bar and the pin
+      const taken: number[][] = [
+        [0, 0, 52, 120], [r.width - 104, 0, r.width, 104], [0, r.height - 40, 130, r.height], [r.width - 40, r.height - 44, r.width, r.height],
+        [r.width / 2 - 70, 0, r.width / 2 + 70, 34],
+      ]
+      const [pinX, pinY] = toPx(current.lon + 180, 90 - current.lat)
+      taken.push([pinX - 16, pinY - 16, pinX + 16, pinY + 16])
+      const free = (b: number[]) => b[0] > 2 && b[1] > 2 && b[2] < r.width - 2 && b[3] < r.height - 2 && !taken.some((t) => b[0] < t[2] && b[2] > t[0] && b[1] < t[3] && b[3] > t[1])
+      const nodes: SVGElement[] = []
+      const text = (cls: string, x: number, y: number, s: string, rot = 0, anchor = 'start') => {
+        const t = document.createElementNS(SVGNS, 'text')
+        t.setAttribute('class', cls)
+        t.setAttribute('x', x.toFixed(1)); t.setAttribute('y', y.toFixed(1))
+        t.setAttribute('text-anchor', anchor)
+        if (rot) t.setAttribute('transform', `rotate(${rot} ${x.toFixed(1)} ${y.toFixed(1)})`)
+        t.textContent = s
+        nodes.push(t)
+      }
+      const maxPlaces = Math.round((r.width * r.height) / 9000)
+      let nPlaces = 0
+      // 1) places
+      for (const [n, x, y, pz, cap] of labels.places as [string, number, number, number, number][]) {
+        if (pz > z + 1.2 || nPlaces >= maxPlaces) continue
+        if (x < v[0] || x > v[2] || y < v[1] || y > v[3]) continue
+        const [px, py] = toPx(x, y)
+        const big = cap === 1 || pz <= 3
+        const w = n.length * (big ? 6.8 : 6) + 8, h = big ? 14 : 12
+        const right = [px - 4, py - h / 2 - 1, px + w, py + h / 2 + 1]
+        const left = [px - w, py - h / 2 - 1, px + 4, py + h / 2 + 1]
+        const box = free(right) ? right : free(left) ? left : null
+        if (!box) continue
+        taken.push(box)
+        const dot = document.createElementNS(SVGNS, cap === 1 ? 'rect' : 'circle')
+        if (cap === 1) { dot.setAttribute('x', (px - 3.5).toFixed(1)); dot.setAttribute('y', (py - 3.5).toFixed(1)); dot.setAttribute('width', '7'); dot.setAttribute('height', '7') }
+        else { dot.setAttribute('cx', px.toFixed(1)); dot.setAttribute('cy', py.toFixed(1)); dot.setAttribute('r', big ? '3' : '2.3') }
+        dot.setAttribute('class', cap === 1 ? 'l-cap' : 'l-dot')
+        nodes.push(dot)
+        if (box === right) text(big ? 'l-place big' : 'l-place', px + 6, py + 4, n)
+        else text(big ? 'l-place big' : 'l-place', px - 6, py + 4, n, 0, 'end')
+        nPlaces++
+      }
+      // 2) lakes
+      for (const l of labels.lakes) {
+        if (l.z > z + 1.2 || l.x < v[0] || l.x > v[2] || l.y < v[1] || l.y > v[3]) continue
+        const [px, py] = toPx(l.x, l.y)
+        const w = l.n!.length * 6.2
+        const b = [px - w / 2, py - 7, px + w / 2, py + 7]
+        if (!free(b)) continue
+        taken.push(b); text('l-water', px, py + 4, l.n!, 0, 'middle')
+      }
+      // 3) rivers: the anchor nearest the middle of the view that fits
+      const cx = (v[0] + v[2]) / 2, cy = (v[1] + v[3]) / 2
+      for (const rv of labels.rivers) {
+        if (rv.z > z + 0.6) continue
+        const cands = rv.a.filter(([x, y]) => x > v[0] && x < v[2] && y > v[1] && y < v[3])
+          .sort((a, b) => Math.hypot(a[0] - cx, a[1] - cy) - Math.hypot(b[0] - cx, b[1] - cy))
+        for (const [x, y, ang] of cands.slice(0, 6)) {
+          const [px, py] = toPx(x, y)
+          const w = rv.n!.length * 5.8, rad = (ang * Math.PI) / 180
+          const hw = (Math.abs(Math.cos(rad)) * w + Math.abs(Math.sin(rad)) * 12) / 2
+          const hh = (Math.abs(Math.sin(rad)) * w + Math.abs(Math.cos(rad)) * 12) / 2
+          const b = [px - hw, py - hh, px + hw, py + hh]
+          if (!free(b)) continue
+          taken.push(b); text('l-water l-river', px, py - 3, rv.n!, -ang, 'middle')
+          break
+        }
+      }
+      labelSvg.replaceChildren(...nodes)
+    }
+
+    function pxPerUnit() {
+      const r = svg.getBoundingClientRect()
+      return Math.min(r.width / (view[2] - view[0]), r.height / (view[3] - view[1])) || 1
+    }
+    function placePin() {
+      const k = 1 / pxPerUnit()
+      pin.setAttribute('transform', `translate(${current.lon + 180} ${90 - current.lat}) scale(${k})`)
+    }
+    function updateScale() {
+      const kmPerPx = (111.32 * Math.cos((current.lat * Math.PI) / 180)) / pxPerUnit()
+      const raw = kmPerPx * 100
+      const p = Math.pow(10, Math.floor(Math.log10(raw)))
+      const nice = [1, 2, 5, 10].map((m) => m * p).filter((n) => n <= raw).pop() || p
+      const w = nice / kmPerPx
+      const s = $('[data-scale]')
+      s.querySelectorAll('line').forEach((l, i) => {
+        if (i === 0) l.setAttribute('x2', String(2 + w))
+        if (i === 2) { l.setAttribute('x1', String(2 + w)); l.setAttribute('x2', String(2 + w)) }
+      })
+      $('[data-scale-label]').textContent = `${nice.toLocaleString('en-US')} km`
+    }
+    // What the map really shows: the viewBox, widened on one axis by the
+    // letterboxing of preserveAspectRatio="meet".
+    function visible(v = view) {
+      const r = svg.getBoundingClientRect()
+      const k = Math.min(r.width / (v[2] - v[0]), r.height / (v[3] - v[1])) || 1
+      const cx = (v[0] + v[2]) / 2, cy = (v[1] + v[3]) / 2
+      const w = r.width / k / 2, h = r.height / k / 2
+      return [cx - w, cy - h, cx + w, cy + h]
+    }
+    let stopCam = () => {}
+    // Zoom limits: from a tenth of the landscape's width (detail) out to
+    // twice the country view.
+    const minSpan = () => Math.max(0.05, (current.bbox[2] - current.bbox[0]) / 10)
+    const maxSpan = () => { const r = restView(current); return Math.min(360, Math.max(r[2] - r[0], r[3] - r[1]) * 2) }
+    function zoomBy(f: number, ax?: number, ay?: number, ms = 280) {
+      stopCam()
+      const v = visible()
+      const span = Math.max(v[2] - v[0], v[3] - v[1])
+      const target = Math.min(maxSpan(), Math.max(minSpan(), span * f))
+      const g = target / span
+      if (Math.abs(g - 1) < 1e-3) return updateZoomButtons()
+      const x = ax ?? (v[0] + v[2]) / 2, y = ay ?? (v[1] + v[3]) / 2
+      const to = [x - (x - v[0]) * g, y - (y - v[1]) * g, x + (v[2] - x) * g, y + (v[3] - y) * g]
+      const from = [...view]
+      stopCam = animate(ms, (t) => { const e = 1 - Math.pow(1 - t, 3); setView(from.map((a, i) => lerp(a, to[i], e))) }, updateZoomButtons)
+    }
+    function panBy(dx: number, dy: number) {
+      setView([view[0] + dx, view[1] + dy, view[2] + dx, view[3] + dy])
+    }
+    function updateZoomButtons() {
+      const v = visible()
+      const span = Math.max(v[2] - v[0], v[3] - v[1])
+      ;($('[data-zoom="in"]') as HTMLButtonElement).disabled = span <= minSpan() * 1.01
+      ;($('[data-zoom="out"]') as HTMLButtonElement).disabled = span >= maxSpan() * 0.99
+    }
+    function toUnits(e: { clientX: number; clientY: number }) {
+      const r = svg.getBoundingClientRect()
+      const v = visible()
+      return [v[0] + ((e.clientX - r.left) / r.width) * (v[2] - v[0]), v[1] + ((e.clientY - r.top) / r.height) * (v[3] - v[1])]
+    }
+    function zoomIntoLandscape() {
+      stopCam()
+      const v = visible()
+      const span = Math.max(v[2] - v[0], v[3] - v[1])
+      const target = Math.max(minSpan(), span * 0.5)
+      if (target >= span * 0.999) return updateZoomButtons()
+      const b = current.bbox
+      const lx = (b[0] + b[2]) / 2, ly = (b[1] + b[3]) / 2
+      const cx = (v[0] + v[2]) / 2, cy = (v[1] + v[3]) / 2
+      // move the centre most of the way to the landscape on each step
+      const nx = lerp(cx, lx, 0.75), ny = lerp(cy, ly, 0.75)
+      const r = svg.getBoundingClientRect()
+      const hw = r.width >= r.height ? target / 2 : (target * r.width) / r.height / 2
+      const hh = r.width >= r.height ? (target * r.height) / r.width / 2 : target / 2
+      const to = [nx - hw, ny - hh, nx + hw, ny + hh]
+      const from = [...view]
+      stopCam = animate(320, (t) => { const e = 1 - Math.pow(1 - t, 3); setView(from.map((a, i) => lerp(a, to[i], e))) }, updateZoomButtons)
+    }
+    function fit() {
+      stopCam()
+      const from = [...view], to = restView(current)
+      stopCam = animate(700, (t) => { const e = ease(t); setView(from.map((a, i) => lerp(a, to[i], e))) }, updateZoomButtons)
+    }
+
+    function flyTo(it: Item) {
+      stopCam()
+      root.classList.add('is-flying')
+      const from = [...view]
+      const to = restView(it)
+      // Pull back to frame both views, then push in: a short "flight".
+      const mid = [Math.min(from[0], to[0]), Math.min(from[1], to[1]), Math.max(from[2], to[2]), Math.max(from[3], to[3])]
+      const grow = (b: number[], f: number) => {
+        const cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2, w = (b[2] - b[0]) * f, h = (b[3] - b[1]) * f
+        return [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2]
+      }
+      const peak = grow(mid, 1.15)
+      stopCam = animate(1400, (t) => {
+        const e = ease(t)
+        // quadratic Bézier through the peak view
+        const v = from.map((f, i) => (1 - e) * (1 - e) * f + 2 * (1 - e) * e * peak[i] + e * e * to[i])
+        setView(v)
+      }, () => { root.classList.remove('is-flying'); updateZoomButtons(); drawLabels() })
+    }
+
+    /* ---------- inset globe (orthographic, rotated to the landscape) ---------- */
+    const globeLand = $<SVGGElement>('[data-globe-land]')
+    const globeDot = $<SVGCircleElement>('[data-globe-dot]')
+    const R = 50
+    let rot = [current.lon, current.lat]
+    function project(lon: number, lat: number, l0: number, p0: number): [number, number, boolean] {
+      const d = Math.PI / 180
+      const la = lat * d, lo = (lon - l0) * d, ph = p0 * d
+      const cosc = Math.sin(ph) * Math.sin(la) + Math.cos(ph) * Math.cos(la) * Math.cos(lo)
+      let x = R * Math.cos(la) * Math.sin(lo)
+      let y = -R * (Math.cos(ph) * Math.sin(la) - Math.sin(ph) * Math.cos(la) * Math.cos(lo))
+      if (cosc < 0) { const n = Math.hypot(x, y) || 1; x = (x / n) * R; y = (y / n) * R } // clamp to the horizon
+      return [x, y, cosc >= 0]
+    }
+    const globePaths = data.globe.map((c) => {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      p.setAttribute('class', 'g-land')
+      globeLand.appendChild(p)
+      return { iso: c.iso, rings: c.rings, el: p }
+    })
+    function drawGlobe(l0: number, p0: number) {
+      for (const g of globePaths) {
+        let d = ''
+        for (const ring of g.rings) {
+          let any = false, s = ''
+          ring.forEach(([lo, la], i) => {
+            const [x, y, vis] = project(lo, la, l0, p0)
+            any ||= vis
+            s += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1)
+          })
+          if (any) d += s + 'Z'
+        }
+        g.el.setAttribute('d', d)
+      }
+      const [x, y] = project(current.lon, current.lat, l0, p0)
+      globeDot.setAttribute('cx', x.toFixed(1))
+      globeDot.setAttribute('cy', y.toFixed(1))
+      drawGlobeView()
+    }
+    // Outline of what the flat map currently shows, drawn on the globe.
+    const globeView = $<SVGPathElement>('[data-globe-view]')
+    function drawGlobeView() {
+      if (!globeView) return
+      const [x0, y0, x1, y1] = visible()
+      const lon = (x: number) => Math.max(-180, Math.min(180, x - 180))
+      const lat = (y: number) => Math.max(-89, Math.min(89, 90 - y))
+      const pts: number[][] = []
+      const N = 12
+      for (let i = 0; i <= N; i++) pts.push([lon(x0 + ((x1 - x0) * i) / N), lat(y0)])
+      for (let i = 1; i <= N; i++) pts.push([lon(x1), lat(y0 + ((y1 - y0) * i) / N)])
+      for (let i = 1; i <= N; i++) pts.push([lon(x1 - ((x1 - x0) * i) / N), lat(y1)])
+      for (let i = 1; i < N; i++) pts.push([lon(x0), lat(y1 - ((y1 - y0) * i) / N)])
+      const d = pts.map(([lo, la], i) => { const [x, y] = project(lo, la, rot[0], rot[1]); return (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1) }).join('') + 'Z'
+      globeView.setAttribute('d', d)
+    }
+    let stopGlobe = () => {}
+    function spinTo(it: Item) {
+      stopGlobe()
+      const from = [...rot]
+      let dl = it.lon - from[0]
+      if (dl > 180) dl -= 360
+      if (dl < -180) dl += 360
+      for (const g of globePaths) g.el.classList.toggle('is-home', it.countries.includes(g.iso))
+      stopGlobe = animate(1400, (t) => {
+        const e = ease(t)
+        rot = [from[0] + dl * e, lerp(from[1], it.lat, e)]
+        drawGlobe(rot[0], rot[1])
+      })
+    }
+
+    /* ---------- counter ---------- */
+    let stopCount = () => {}
+    function countTo(n: number) {
+      stopCount()
+      const el = field('count')
+      const from = Number(el.textContent) || 0
+      field('count-label').textContent = n === 1 ? 'dataset' : 'datasets'
+      const badge = el.closest('.lx-badge')!
+      badge.classList.remove('is-bump'); void (badge as HTMLElement).offsetWidth; badge.classList.add('is-bump')
+      stopCount = animate(900, (t) => { el.textContent = String(Math.round(lerp(from, n, 1 - Math.pow(1 - t, 3)))) })
+    }
+
+    /* ---------- photos ---------- */
+    let photoIdx = 0
+    let photoTimer = 0
+    function showPhoto(it: Item, i: number) {
+      photoIdx = i
+      const imgs = root.querySelectorAll('.lx-photo-img')
+      imgs.forEach((im, k) => im.classList.toggle('is-on', k === i))
+      root.querySelectorAll('.lx-dot').forEach((d, k) => { d.classList.toggle('is-on', k === i); d.setAttribute('aria-selected', String(k === i)) })
+      $('[data-photo-count]').textContent = `${i + 1} / ${it.photos.length}`
+      setCredit(it.photos[i])
+    }
+    // The credit (author + licence) must always match the photo on screen, so
+    // it is written synchronously, never after an animation frame.
+    function setCredit(ph: Photo | undefined) {
+      const credit = $('[data-credit]')
+      credit.replaceChildren()
+      if (!ph) return
+      if (ph.caption) credit.append(`${ph.caption} · `)
+      credit.append('Photo: ')
+      const a = Object.assign(document.createElement('a'), { href: ph.source_url, target: '_blank', rel: 'noopener', textContent: ph.author })
+      credit.append(a, ', ')
+      if (ph.licence_url) credit.append(Object.assign(document.createElement('a'), { href: ph.licence_url, target: '_blank', rel: 'noopener', textContent: ph.licence }))
+      else credit.append(ph.licence)
+    }
+    function renderPhotos(it: Item) {
+      const fig = $('[data-photo]')
+      fig.hidden = it.photos.length === 0
+      const stack = $('[data-photo-stack]')
+      const dots = $('[data-dots]')
+      stack.replaceChildren(...it.photos.map((ph) => {
+        const im = Object.assign(document.createElement('img'), { src: ph.src, alt: ph.alt, className: 'lx-photo-img', decoding: 'async' })
+        if (ph.width) im.width = ph.width
+        if (ph.height) im.height = ph.height
+        return im
+      }))
+      dots.replaceChildren(...it.photos.map((_, k) => {
+        const b = Object.assign(document.createElement('button'), { type: 'button', className: 'lx-dot' })
+        b.setAttribute('role', 'tab'); b.setAttribute('aria-label', `Photo ${k + 1}`)
+        b.addEventListener('click', () => { showPhoto(it, k); restartAuto(it) })
+        return b
+      }))
+      dots.hidden = it.photos.length < 2
+      setCredit(it.photos[0])
+      $('[data-photo-count]').textContent = `1 / ${it.photos.length}`
+      for (const sel of ['[data-photo-prev]', '[data-photo-next]', '[data-photo-count]']) $(sel).hidden = it.photos.length < 2
+      // let the new images paint at opacity 0 before fading the first one in
+      // (skipped if another landscape was selected in the meantime)
+      requestAnimationFrame(() => requestAnimationFrame(() => { if (current === it) showPhoto(it, 0) }))
+      restartAuto(it)
+    }
+    function restartAuto(it: Item) {
+      window.clearInterval(photoTimer)
+      if (reduce || it.photos.length < 2) return
+      photoTimer = window.setInterval(() => { if (current === it) showPhoto(it, (photoIdx + 1) % it.photos.length) }, 6000)
+    }
+    // wire the server-rendered dots of the first landscape
+    root.querySelectorAll<HTMLButtonElement>('.lx-dot').forEach((b, k) => b.addEventListener('click', () => { showPhoto(current, k); restartAuto(current) }))
+    $('[data-dots]').hidden = current.photos.length < 2
+    const step = (d: number) => {
+      const n = current.photos.length
+      if (n < 2) return
+      showPhoto(current, (photoIdx + d + n) % n)
+      restartAuto(current)
+    }
+    $('[data-photo-prev]').addEventListener('click', () => step(-1))
+    $('[data-photo-next]').addEventListener('click', () => step(1))
+
+    /* ---------- text ---------- */
+    function renderText(it: Item) {
+      field('name').textContent = it.name
+      field('country').textContent = it.country
+      field('pending').hidden = !it.pending
+      field('area').textContent = it.area
+      renderCoverage(it)
+      renderSources(it)
+      for (const [row, val] of [['ecosystem', it.ecosystem], ['livelihoods', it.livelihoods], ['why', it.why]] as const) {
+        $(`[data-row="${row}"]`).hidden = !val
+        field(row).textContent = val ?? ''
+      }
+      field('summary').textContent = it.summary ?? ''
+      ;(field('catalogue') as HTMLAnchorElement).href = it.catalogue
+      ;(field('catalogue-btn') as HTMLAnchorElement).href = it.catalogue
+      const bl = field('boundary') as HTMLAnchorElement
+      bl.href = it.boundary?.href ?? '#download'
+      field('boundary-size').textContent = it.boundary?.size ?? ''
+      svg.setAttribute('aria-label', `Map of ${it.name}`)
+      renderResources(it)
+    }
+
+    /* ---------- data coverage + sources ---------- */
+    function renderCoverage(it: Item) {
+      const total = it.covHave.length
+      const missing = data.themes.filter((_, i) => !it.covHave[i])
+      const withData = total - missing.length
+      field('cov-arc').setAttribute('stroke-dasharray', `${(withData / total) * 100} 100`)
+      field('cov-n').textContent = `${withData} of ${total}`
+      field('cov-with').textContent = String(withData)
+      field('cov-miss').textContent = String(missing.length)
+      field('cov-open').hidden = it.count === 0
+      field('cov-open-n').textContent = `${it.nOpen} of ${it.count}`
+      field('cov-open-label').textContent = `${it.count === 1 ? 'dataset is' : 'datasets are'} open access`
+      const box = $<HTMLDetailsElement>('[data-cov-missing]')
+      box.hidden = missing.length === 0
+      box.open = false
+      field('cov-miss-n').textContent = `(${missing.length})`
+      field('cov-missing-list').replaceChildren(...missing.map((t) => Object.assign(document.createElement('li'), { textContent: t })))
+    }
+    function renderSources(it: Item) {
+      const box = $<HTMLDetailsElement>('[data-src]')
+      box.hidden = it.sources.length === 0
+      box.open = false
+      $('[data-src-n]').textContent = `(${it.sources.length})`
+      $('[data-src-list]').replaceChildren(...it.sources.map((src) => {
+        const li = document.createElement('li')
+        const a = Object.assign(document.createElement('a'), { href: src.url, target: '_blank', rel: 'noopener', textContent: src.host })
+        const what = Object.assign(document.createElement('span'), { textContent: src.fields })
+        li.append(a, what)
+        return li
+      }))
+    }
+
+    /* ---------- other resources ---------- */
+    // One panel, two states: the list for a landscape that has resources, the
+    // "under construction" notice for one that does not. Rows are cloned from a
+    // <template> so the icon markup lives in one place.
+    const resPanel = root.querySelector<HTMLElement>('[data-panel="resources"]')
+    const resTpl = resPanel?.querySelector<HTMLTemplateElement>('[data-res-tpl]') ?? null
+    function renderResources(it: Item) {
+      if (!resPanel || !resTpl) return
+      const has = it.resources.length > 0
+      resPanel.querySelector<HTMLElement>('[data-res-has]')!.hidden = !has
+      resPanel.querySelector<HTMLElement>('[data-res-soon]')!.hidden = has
+      const chip = root.querySelector<HTMLElement>('[data-sec-soon="resources"]')
+      if (chip) chip.hidden = has
+      const list = resPanel.querySelector<HTMLElement>('[data-res-list]')!
+      list.textContent = ''
+      for (const r of it.resources) {
+        const li = resTpl.content.firstElementChild!.cloneNode(true) as HTMLElement
+        const a = li.querySelector<HTMLAnchorElement>('.lx-res-link')!
+        a.href = r.url
+        a.textContent = r.title
+        li.querySelector('.lx-res-meta')!.textContent = [r.type, r.org, r.year, r.extent].filter(Boolean).join(' \u00b7 ')
+        li.querySelector('.lx-res-note')!.textContent = r.note ?? ''
+        li.querySelector('.lx-res-foot')!.textContent = [r.authors, r.licence].filter(Boolean).join(' \u00b7 ')
+        list.appendChild(li)
+      }
+    }
+
+    /* ---------- select ---------- */
+    // Scroll only the list (never the page) so the selected item is visible.
+    const ul = $('.lx-list')
+    function revealInList(li: HTMLElement) {
+      const horizontal = ul.scrollWidth > ul.clientWidth + 1
+      const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth'
+      if (horizontal) {
+        const left = li.offsetLeft // ul is the offsetParent (position: relative)
+        if (left < ul.scrollLeft || left + li.offsetWidth > ul.scrollLeft + ul.clientWidth) ul.scrollTo({ left: left - 16, behavior })
+      } else {
+        const top = li.offsetTop
+        if (top < ul.scrollTop || top + li.offsetHeight > ul.scrollTop + ul.clientHeight) ul.scrollTo({ top: top - 8, behavior })
+      }
+    }
+    function markListed(code: string | null) {
+      list.forEach((li) => {
+        const on = li.dataset.code === code
+        li.setAttribute('aria-selected', String(on))
+        li.tabIndex = on ? 0 : -1
+      })
+    }
+    // the world map's pins: the chosen landscape's is highlighted
+    const worldSvg = root.querySelector<SVGSVGElement>('[data-world]')
+    const worldView = (() => {
+      const b = worldSvg?.viewBox.baseVal
+      return b ? [b.x, b.y, b.x + b.width, b.y + b.height] : null
+    })()
+    function markOn(code: string | null) {
+      root.querySelectorAll('[data-ip]').forEach((p) => p.classList.toggle('is-on', (p as HTMLElement).dataset.ip === code))
+    }
+    function enterIntro() {
+      if (intro) return
+      intro = true
+      root.classList.add('is-intro')
+      markListed(null)
+      markOn(null)
+      const top = root.getBoundingClientRect().top
+      if (top < 0) window.scrollTo({ top: top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
+    }
+    // leaves the start screen; true when it was showing
+    function leaveIntro() {
+      if (!intro) return false
+      intro = false
+      root.classList.remove('is-intro')
+      loadDetail()
+      const b = $('.lx-body')
+      if (!reduce) { b.classList.remove('is-arriving'); void b.offsetWidth; b.classList.add('is-arriving') }
+      // the locator map starts from the world view and flies to the landscape
+      if (worldView) setView(worldView)
+      requestAnimationFrame(() => { placePin(); updateScale(); queueLabels() })
+      // chosen from the list further down: bring the explorer's top back into view
+      const top = root.getBoundingClientRect().top
+      if (top < 0) window.scrollTo({ top: top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
+      return true
+    }
+    function select(code: string, opts: { focus?: boolean; push?: boolean } = {}) {
+      const it = byCode.get(code)
+      if (!it) return
+      const fromIntro = leaveIntro()
+      markOn(code)
+      if (it === current) {
+        if (fromIntro) {
+          markListed(code)
+          flyTo(it)
+          if (opts.push !== false) writeHash()
+        }
+        return
+      }
+      current = it
+      list.forEach((li) => {
+        const on = li.dataset.code === code
+        li.setAttribute('aria-selected', String(on))
+        li.tabIndex = on ? 0 : -1
+        if (on && opts.focus) li.focus()
+        if (on) revealInList(li)
+      })
+      // selector button, section links and the "under construction" panels
+      $('[data-pick-name]').textContent = it.name
+      $('[data-pick-country]').textContent = it.country
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec]').forEach((a) => { a.href = `#${code}/${a.dataset.sec}` })
+      root.querySelectorAll('[data-soon-name]').forEach((e) => { e.textContent = it.name })
+      root.querySelectorAll<HTMLAnchorElement>('[data-soon-catalogue]').forEach((a) => { a.href = it.catalogue })
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec-link]').forEach((a) => { a.href = `#${code}/${a.dataset.secLink}` })
+      if (opts.push !== false) writeHash()
+
+      // map
+      svg.querySelectorAll('.lx-ls').forEach((p) => p.classList.toggle('is-on', (p as SVGElement).dataset.ls === code))
+      svg.querySelectorAll<SVGPathElement>('.lx-ctry').forEach((p) => p.classList.toggle('is-home', it.countries.includes(p.dataset.iso!)))
+      const label = $('[data-map-label]')
+      label.style.opacity = '0'
+      setTimeout(() => { label.textContent = it.country; label.style.opacity = '1' }, 700)
+      flyTo(it)
+      spinTo(it)
+      // the drop animation runs on the inner group, so it never fights the
+      // translate/scale that placePin() writes on the outer one
+      const body = $<SVGGElement>('[data-pin-body]')
+      body.classList.remove('is-drop'); body.style.opacity = '0'
+      setTimeout(() => { body.style.opacity = ''; body.classList.add('is-drop') }, reduce ? 0 : 1150)
+
+      // counter + content
+      countTo(it.count)
+      root.classList.add('is-swapping')
+      setTimeout(() => { renderText(it); root.classList.remove('is-swapping') }, reduce ? 0 : 250)
+      renderPhotos(it)
+    }
+
+    /* ---------- selector dropdown ---------- */
+    const pickBtn = $<HTMLButtonElement>('[data-pick-btn]')
+    const pop = $('[data-pop]')
+    function openPick() {
+      pop.hidden = false
+      pickBtn.setAttribute('aria-expanded', 'true')
+      const sel = list.find((li) => li.getAttribute('aria-selected') === 'true')
+      if (sel) revealInList(sel)
+      $<HTMLInputElement>('#lx-search').focus()
+    }
+    function closePick(focusBtn = false) {
+      pop.hidden = true
+      pickBtn.setAttribute('aria-expanded', 'false')
+      if (focusBtn) pickBtn.focus()
+    }
+    pickBtn.addEventListener('click', () => (pop.hidden ? openPick() : closePick()))
+    document.addEventListener('click', (e) => {
+      if (!pop.hidden && !(e.target as Element).closest('[data-pick]')) closePick()
+    })
+    $('[data-pick]').addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { e.preventDefault(); closePick(true) } })
+
+    const choose = (code: string) => { closePick(true); select(code) }
+    list.forEach((li) => {
+      li.addEventListener('click', () => choose(li.dataset.code!))
+      li.addEventListener('keydown', (e) => {
+        const visible = list.filter((x) => !x.hidden)
+        const k = visible.indexOf(li)
+        let next: HTMLElement | undefined
+        if (e.key === 'ArrowDown') next = visible[k + 1]
+        if (e.key === 'ArrowUp') { if (k === 0) { e.preventDefault(); $<HTMLInputElement>('#lx-search').focus(); return } next = visible[k - 1] }
+        if (e.key === 'Home') next = visible[0]
+        if (e.key === 'End') next = visible[visible.length - 1]
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(li.dataset.code!) }
+        if (next) { e.preventDefault(); next.focus() }
+      })
+    })
+
+    // search
+    const input = $<HTMLInputElement>('#lx-search')
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase()
+      let n = 0
+      list.forEach((li) => { const hit = !q || li.dataset.search!.includes(q); li.hidden = !hit; if (hit) n++ })
+      $('.lx-empty').hidden = n > 0
+    })
+    input.addEventListener('keydown', (e) => {
+      const firstVisible = list.find((x) => !x.hidden)
+      if (e.key === 'ArrowDown' && firstVisible) { e.preventDefault(); firstVisible.focus() }
+      if (e.key === 'Enter' && firstVisible) { e.preventDefault(); choose(firstVisible.dataset.code!) }
+    })
+
+    /* ---------- sections ---------- */
+    const secIds = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]')).map((p) => p.dataset.panel!)
+    let section = 'overview'
+    function writeHash() {
+      const h = section === 'overview' ? `#${current.code}` : `#${current.code}/${section}`
+      history.replaceState(null, '', h)
+    }
+    function showSection(id: string, opts: { push?: boolean; scroll?: boolean } = {}) {
+      if (!secIds.includes(id)) id = 'overview'
+      const changed = id !== section
+      section = id
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => {
+        const on = p.dataset.panel === id
+        p.hidden = !on
+        if (on && changed && !reduce) { p.classList.remove('is-entering'); void p.offsetWidth; p.classList.add('is-entering') }
+      })
+      root.querySelectorAll<HTMLAnchorElement>('[data-sec]').forEach((a) => {
+        if (a.dataset.sec === id) a.setAttribute('aria-current', 'true')
+        else a.removeAttribute('aria-current')
+      })
+      // on phones the menu is a scrolling row: keep the active chip visible
+      const chip = root.querySelector<HTMLElement>(`[data-sec="${id}"]`)
+      const row = chip?.closest('ul')
+      if (chip && row && row.scrollWidth > row.clientWidth) row.scrollTo({ left: chip.offsetLeft - row.offsetLeft - 8, behavior: reduce ? 'auto' : 'smooth' })
+      // the map was hidden: re-measure it now that it is visible again
+      if (id === 'overview') { placePin(); updateScale(); queueLabels() }
+      // a short panel can leave the reader looking at the footer: bring the panel's top back into view
+      if (opts.scroll && changed) {
+        const top = $('.lx-body').getBoundingClientRect().top
+        if (top < 80) window.scrollTo({ top: top + window.scrollY - 96, behavior: reduce ? 'auto' : 'smooth' })
+      }
+      if (opts.push !== false) writeHash()
+    }
+    root.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest<HTMLAnchorElement>('[data-sec], [data-sec-link]')
+      if (!a) return
+      e.preventDefault()
+      showSection(a.dataset.sec ?? a.dataset.secLink!, { scroll: true })
+    })
+
+    // collapse / expand the section menu (remembered on this device only)
+    const lxBody = $('.lx-body')
+    const toggle = $<HTMLButtonElement>('[data-secnav-toggle]')
+    const setCollapsed = (on: boolean) => {
+      lxBody.classList.toggle('is-collapsed', on)
+      toggle.setAttribute('aria-expanded', String(!on))
+      toggle.setAttribute('aria-label', on ? 'Expand the section menu' : 'Collapse the section menu')
+      requestAnimationFrame(() => { placePin(); updateScale(); queueLabels() })
+    }
+    try { if (localStorage.getItem('mosaic.lx.collapsed') === '1') setCollapsed(true) } catch { /* storage unavailable */ }
+    toggle.addEventListener('click', () => {
+      const on = !lxBody.classList.contains('is-collapsed')
+      setCollapsed(on)
+      try { localStorage.setItem('mosaic.lx.collapsed', on ? '1' : '0') } catch { /* storage unavailable */ }
+    })
+
+    /* ---------- zoom & pan ---------- */
+    // The + button zooms towards the landscape itself, not the middle of the
+    // country, so a few clicks always land on it.
+    $('[data-zoom="in"]').addEventListener('click', () => zoomIntoLandscape())
+    $('[data-zoom="out"]').addEventListener('click', () => zoomBy(2))
+    $('[data-zoom="fit"]').addEventListener('click', fit)
+    $('[data-reset]').addEventListener('click', fit)
+    svg.addEventListener('dblclick', (e) => { const [x, y] = toUnits(e); zoomBy(e.shiftKey ? 2 : 0.5, x, y) })
+    const hint = $('[data-hint]')
+    let hintTimer = 0
+    svg.addEventListener('wheel', (e) => {
+      if (!(e.ctrlKey || e.metaKey)) {
+        // plain scroll keeps scrolling the page; say how to zoom instead
+        hint.classList.add('is-on'); window.clearTimeout(hintTimer)
+        hintTimer = window.setTimeout(() => hint.classList.remove('is-on'), 1400)
+        return
+      }
+      e.preventDefault()
+      const [x, y] = toUnits(e)
+      zoomBy(Math.exp(e.deltaY * 0.01), x, y, 120)
+    }, { passive: false })
+    // Mouse/pen: drag to pan. Touch: one finger scrolls the page, two fingers
+    // pinch and pan the map.
+    const pointers = new Map<number, { x: number; y: number }>()
+    let pinch: { d: number; mx: number; my: number } | null = null
+    svg.addEventListener('pointerdown', (e) => {
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (e.pointerType !== 'touch' || pointers.size === 2) { stopCam(); svg.setPointerCapture(e.pointerId); svg.classList.add('is-dragging') }
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()]
+        pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 }
+      }
+    })
+    svg.addEventListener('pointermove', (e) => {
+      const prev = pointers.get(e.pointerId)
+      if (!prev) return
+      const k = 1 / pxPerUnit()
+      if (pointers.size === 1 && e.pointerType !== 'touch' && svg.classList.contains('is-dragging')) {
+        panBy(-(e.clientX - prev.x) * k, -(e.clientY - prev.y) * k)
+      }
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (pointers.size === 2 && pinch) {
+        e.preventDefault()
+        const [a, b] = [...pointers.values()]
+        const d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2
+        panBy(-(mx - pinch.mx) * k, -(my - pinch.my) * k)
+        const [x, y] = toUnits({ clientX: mx, clientY: my })
+        zoomBy(pinch.d / d, x, y, 0)
+        pinch = { d, mx, my }
+      }
+    })
+    const release = (e: PointerEvent) => {
+      pointers.delete(e.pointerId)
+      if (pointers.size < 2) pinch = null
+      if (pointers.size === 0) { svg.classList.remove('is-dragging'); updateZoomButtons() }
+    }
+    svg.addEventListener('pointerup', release)
+    svg.addEventListener('pointercancel', release)
+    svg.addEventListener('keydown', (e) => {
+      const k = 40 / pxPerUnit()
+      const m: Record<string, () => void> = {
+        '+': zoomIntoLandscape, '=': zoomIntoLandscape, '-': () => zoomBy(2), '0': fit,
+        ArrowLeft: () => panBy(-k, 0), ArrowRight: () => panBy(k, 0), ArrowUp: () => panBy(0, -k), ArrowDown: () => panBy(0, k),
+      }
+      if (m[e.key]) { e.preventDefault(); m[e.key]() }
+    })
+
+    // first paint
+    renderResources(current)
+    setView(restView(current))
+    updateZoomButtons()
+    for (const g of globePaths) g.el.classList.toggle('is-home', current.countries.includes(g.iso))
+    drawGlobe(rot[0], rot[1])
+    restartAuto(current)
+    new ResizeObserver(() => { placePin(); updateScale(); queueLabels() }).observe(svg)
+
+    // deep links: /landscapes#COL-CUM and /landscapes#COL-CUM/knowledge-hub;
+    // an empty address returns to the start screen; other anchors (#download) leave it as is
+    function fromHash() {
+      const [c, sec] = decodeURIComponent(location.hash.slice(1)).split('/')
+      if (byCode.has(c)) {
+        select(c, { push: false })
+        showSection(sec || 'overview', { push: false })
+      } else if (!c) enterIntro()
+    }
+    if (intro) markListed(null)
+    else fromHash()
+    window.addEventListener('hashchange', fromHash)
+
+    // "See all landscapes": back to the start screen (a history entry, so Back returns)
+    root.querySelector('[data-gm-all]')?.addEventListener('click', (e) => {
+      e.preventDefault()
+      history.pushState(null, '', location.pathname + location.search)
+      enterIntro()
+    })
+    window.addEventListener('popstate', () => { if (!location.hash) enterIntro() })
+  }
+</script>

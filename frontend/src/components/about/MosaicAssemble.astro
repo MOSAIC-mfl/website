@@ -1,0 +1,102 @@
+---
+/* About › Overview art (2026-11-10): the six MOSAIC tiles spin in from
+   scattered places and lock together into the official mark
+   (public/mosaic-mark.svg geometry and colours), titled "Putting all the
+   pieces together". Plays once when it comes into view; clicking the
+   mark plays it again. With reduced motion, or without JavaScript, the mark
+   is shown assembled. */
+interface Tile { hue: 'teal' | 'amber' | 'terracotta'; x: number; y: number; w: number; h: number; from: [number, number, number] }
+// Mark geometry (viewBox 102 × 66), and where each tile starts: [dx, dy, rotation°]
+const tiles: Tile[] = [
+  { hue: 'teal', x: 1.5, y: 1.5, w: 34, h: 30, from: [-70, -46, -150] },
+  { hue: 'amber', x: 38.5, y: 1.5, w: 27, h: 30, from: [6, -62, 125] },
+  { hue: 'terracotta', x: 68.5, y: 1.5, w: 32, h: 30, from: [72, -38, -95] },
+  { hue: 'terracotta', x: 1.5, y: 34.5, w: 27, h: 30, from: [-78, 40, 200] },
+  { hue: 'teal', x: 31.5, y: 34.5, w: 34, h: 30, from: [-4, 64, -130] },
+  { hue: 'amber', x: 68.5, y: 34.5, w: 32, h: 30, from: [76, 44, 90] },
+]
+---
+
+<figure class="ma" data-ma>
+  <button type="button" class="ma-stage" data-ma-replay aria-label="Play the MOSAIC tiles animation again">
+    <svg viewBox="-34 -30 170 126" aria-hidden="true" focusable="false">
+      <g class="ma-mark">
+        {tiles.map((t, i) => (
+          <rect
+            class={`ma-tile ma-${t.hue}`}
+            x={t.x}
+            y={t.y}
+            width={t.w}
+            height={t.h}
+            rx="1.5"
+            style={`--dx:${t.from[0]}px;--dy:${t.from[1]}px;--rot:${t.from[2]}deg;--i:${i}`}
+          />
+        ))}
+      </g>
+    </svg>
+  </button>
+  <figcaption class="ma-caption">
+    <span class="ma-title">Putting all the pieces together</span>
+  </figcaption>
+</figure>
+
+<style>
+  .ma { margin: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); text-align: center; }
+  .ma-stage {
+    display: block; width: 100%; max-width: 300px; padding: 0; border: 0; background: none; cursor: pointer;
+    border-radius: var(--radius-lg);
+  }
+  .ma-stage:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: 4px; }
+  .ma-stage svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ma-teal { fill: var(--mosaic-tile-teal); }
+  .ma-amber { fill: var(--mosaic-tile-amber); }
+  .ma-terracotta { fill: var(--mosaic-tile-terracotta); }
+  :global([data-theme='dark']) .ma-teal { fill: var(--mosaic-tile-teal-reverse); }
+
+  .ma-tile { transform-box: fill-box; transform-origin: center; }
+  .ma-mark { transform-box: fill-box; transform-origin: center; }
+  /* waiting to play: tiles scattered and turned */
+  .ma.is-armed .ma-tile { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7); }
+  .ma.is-play .ma-tile {
+    animation: ma-in 1.3s cubic-bezier(0.25, 0.9, 0.3, 1.15) both;
+    animation-delay: calc(var(--i) * 0.12s + 0.15s);
+  }
+  .ma.is-play .ma-mark { animation: ma-settle 0.6s ease-out 1.9s both; }
+  @keyframes ma-in {
+    from { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7); }
+    35% { opacity: 1; }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes ma-settle { 40% { transform: scale(1.05); } to { transform: none; } }
+
+  .ma-caption { max-width: 34ch; }
+  .ma-title { font-family: var(--font-title); font-size: var(--text-xl); font-weight: 700; color: var(--color-text); line-height: 1.25; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ma.is-armed .ma-tile { opacity: 1; transform: none; }
+    .ma.is-play .ma-tile, .ma.is-play .ma-mark { animation: none; }
+  }
+</style>
+
+<script>
+  const figs = document.querySelectorAll<HTMLElement>('[data-ma]')
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  figs.forEach((fig) => {
+    if (still) return
+    const play = () => {
+      fig.classList.remove('is-play')
+      void fig.offsetWidth // restart the CSS animation
+      fig.classList.add('is-play')
+    }
+    fig.classList.add('is-armed')
+    // play when at least half of it is on screen (and visible — the About
+    // page hides inactive sections, so it waits for the Overview to show)
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { play(); io.disconnect() }
+      }
+    }, { threshold: 0.5 })
+    io.observe(fig)
+    fig.querySelector('[data-ma-replay]')?.addEventListener('click', play)
+  })
+</script>

@@ -1,0 +1,77 @@
+---
+/* About › Acknowledgements — official CGIAR / Science Programme lockups, used as
+   supplied and always on a white plate so they show in CGIAR's own colours in both
+   themes (MOSAIC Brand Guidelines v1.0, §5 — never recoloured or recreated). The
+   images are decorative: each card's heading already names the institution. */
+const base = import.meta.env.BASE_URL
+
+const acknowledgements = [
+  {
+    logo: 'cgiar-logo-full.png',
+    width: 600,
+    height: 269,
+    title: 'CGIAR',
+    text: 'MOSAIC is developed within CGIAR, the global research partnership for a food-secure future. This work is carried out with support from the CGIAR Trust Fund and the funders who contribute to it.',
+  },
+  {
+    logo: 'cgiar-mfl-lockup.png',
+    width: 2048,
+    height: 687,
+    title: 'Multifunctional Landscapes Science Programme',
+    text: 'The CGIAR Multifunctional Landscapes (MFL) Science Programme hosts and funds MOSAIC, under its work on landscape optimization and inclusive planning, and through the MFL Geospatial Community of Practice that maintains the catalogue.',
+  },
+  {
+    logo: 'cgiar-climate-action-lockup.png',
+    width: 600,
+    height: 288,
+    title: 'Climate Action Science Programme',
+    text: 'We acknowledge the CGIAR Climate Action Science Programme and the collaboration on shared metadata standards with the CGIAR Climate Data Hub, which keeps climate layers discoverable through MOSAIC while they remain maintained at their source.',
+  },
+] as const
+---
+
+<p class="ack-lead">
+  MOSAIC is a collective effort. We gratefully acknowledge the institutions and science
+  programmes that make this work possible.
+</p>
+<div class="ack-cards">
+  {acknowledgements.map((a) => (
+    <div class="ack-card">
+      <div class="ack-logo">
+        <img src={`${base}/${a.logo}`} alt="" width={a.width} height={a.height} aria-hidden="true" />
+      </div>
+      <h3 class="ack-title">{a.title}</h3>
+      <p class="ack-text">{a.text}</p>
+    </div>
+  ))}
+</div>
+<p class="ack-note">
+  For the full list of CGIAR funders, see <a href="https://www.cgiar.org/funders/" target="_blank" rel="noopener noreferrer">cgiar.org/funders</a>.
+</p>
+
+<style>
+  .ack-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; line-height: 1.6; }
+  .ack-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+  .ack-card {
+    display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6);
+    background-color: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  }
+  /* White plate for the official lockups — stays white in dark mode (as in the
+     footer endorsement), because --color-white is deliberately not remapped. */
+  .ack-logo {
+    display: flex; align-items: center; justify-content: flex-start;
+    background-color: var(--color-white); border-radius: var(--radius-md); padding: var(--space-4); min-height: 104px;
+  }
+  /* Sized by width so the three horizontal lockups read at a comparable optical
+     weight, with a height cap for the taller (two-square) ones. */
+  .ack-logo img { display: block; width: auto; height: auto; max-width: 160px; max-height: 72px; object-fit: contain; }
+  .ack-title { margin: 0; font-size: var(--text-lg); font-family: var(--font-title); color: var(--color-text); line-height: 1.3; }
+  .ack-text { margin: 0; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.6; }
+  .ack-note { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-6) 0 0; }
+  .ack-note a { color: var(--color-link); }
+  /* Ocean Teal is too dark to read on the dark surface — use the light tint of
+     the same brand colour there (the accent itself is never restyled). */
+  @media (max-width: 1023px) { .ack-cards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 767px) { .ack-cards { grid-template-columns: 1fr; } }
+</style>

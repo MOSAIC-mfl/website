@@ -3,7 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
 import { CatalogueApp } from '../../components/catalogue/CatalogueApp'
 import { CatalogueStats } from '../../components/catalogue/CatalogueStats'
-import LandscapeLocatorMap from '../../components/catalogue/LandscapeLocatorMap.astro'
 import { readConfig } from '../../lib/config'
 
 // No catalogue data at build time: the islands below read it from mosaic-api when the page opens.
@@ -28,12 +27,14 @@ const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/docs/` : `${api.apiUr
       contours
       width="var(--catalogue-max)"
       title="Dataset Catalogue"
-      subtitle="Search geospatial datasets by country, landscape, theme, organization or data type."
+      subtitle="Search geospatial datasets by country, landscape, theme, organization or readiness status."
     />
 
     <!-- ── Figures (open strip, not dashboard tiles) ──────────── -->
     <p class="catalogue-band catalogue-statline">
       <CatalogueStats client:load />
+      <a class="catalogue-maplink" href={`${base}/about#contribute`}>Register a dataset &rarr;</a>
+      <a class="catalogue-maplink" href={`${base}/landscapes`}>See the landscapes on a map &rarr;</a>
     </p>
 
     <!-- ── Search + Filters + Results (primary task) ─────────── -->
@@ -47,11 +48,6 @@ const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/docs/` : `${api.apiUr
       </div>
     </noscript>
     <CatalogueApp client:load base={base} />
-
-    <!-- ── Locator map (supporting context) ──────────────────── -->
-    <div class="catalogue-locator-wrap">
-      <LandscapeLocatorMap />
-    </div>
 
     <!-- ── Technical access (secondary, for advanced users) ──── -->
     <p class="catalogue-band catalogue-tech-access">

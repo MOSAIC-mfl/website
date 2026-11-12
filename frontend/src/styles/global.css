@@ -105,22 +105,20 @@ img {
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--color-green-dark);
-  border-color: var(--color-green-dark);
+  color: var(--color-link);
+  border-color: var(--color-link);
 }
 
 .btn-secondary:hover {
   background-color: var(--color-green-light);
 }
 
-/* Dark theme: an Ocean Teal outline on a dark surface is too faint (brand
-   annex §5), so the secondary button uses the theme's link colour. */
-[data-theme="dark"] .btn-secondary {
-  color: var(--color-link);
-  border-color: var(--color-link);
-}
+/* In the dark theme the outline button's text is the light tint (--color-link),
+   so its hover is a faint wash of it instead of the solid Light Teal, which
+   would hide the text. */
+
 [data-theme="dark"] .btn-secondary:hover {
-  background-color: var(--color-tint);
+  background-color: rgba(214, 238, 242, 0.12);
 }
 
 /* Tables */
@@ -131,9 +129,11 @@ img {
   font-size: var(--text-sm);
 }
 
-/* Let wide tables scroll horizontally on phones instead of overflowing the page */
+/* Wide tables (three columns or more: the Metadata guide's) scroll sideways on
+   phones instead of overflowing the page. A two-column table, like the one on
+   a dataset page, keeps wrapping, so no value is cut off at the edge. */
 @media (max-width: 640px) {
-  .data-table {
+  .data-table--wide {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
@@ -163,7 +163,7 @@ img {
 /* ── Focus-visible: WCAG 2.4.11 (AA) ─────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid var(--color-accent, #0D5C6B);
+  outline: 2px solid var(--color-link);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
@@ -206,4 +206,37 @@ code, pre, kbd {
     scroll-behavior: auto !important;
   }
   .ds-card:hover { transform: none; }
+}
+
+/* ── Page transitions (2026-11-10) ───────────────────────────────────────
+   1. Between pages: a short cross-fade, done by the browser itself
+      (cross-document view transitions; browsers without support simply
+      load the page as before).
+   2. On a page: each block of <main>, and the children of any element
+      marked [data-reveal-stagger], fades and rises into place as it comes
+      into view. BaseLayout adds .js-reveal to <html> before first paint
+      only when JavaScript runs and reduced motion is not requested, and
+      removes it again after 3 s if the reveal script never started — so
+      content is never left hidden. */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.3s; }
+
+html.js-reveal main > *:not(.is-revealed),
+html.js-reveal [data-reveal-stagger] > *:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+/* Printing or saving as PDF: nothing scrolls, so nothing would be revealed. */
+@media print {
+  html.js-reveal main > *,
+  html.js-reveal [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

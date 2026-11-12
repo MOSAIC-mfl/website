@@ -1,0 +1,142 @@
+---
+/* About › Overview — what MOSAIC is and who it serves. The art is the
+   six-tile mark assembling itself (MosaicAssemble, 2026-11-10). */
+import Icon from '../ui/Icon.astro'
+import MosaicAssemble from './MosaicAssemble.astro'
+
+const base = import.meta.env.BASE_URL
+
+// What MOSAIC does, in Lizeth's words (2026-11-10)
+const principles = [
+  { icon: 'link', title: 'Connect, don\'t duplicate', text: 'Each piece stays with the organisation that produced it; MOSAIC describes it, links to it and shows how ready it is to use.' },
+  { icon: 'eye', title: 'Integrate and give visibility', text: 'Work that would stay scattered across centres, projects and partners becomes visible in one picture of each landscape.' },
+  { icon: 'signpost', title: 'Support better decisions', text: 'With everything connected, people working in a landscape can see what exists, build on it and decide with better evidence.' },
+] as const
+
+const audiences = [
+  {
+    icon: 'search',
+    title: 'Data users',
+    text: 'Need to know what data exists for a landscape, how good it is and how to get it.',
+    who: ['Researchers', 'GIS analysts', 'Decision-makers', 'Landscape teams'],
+    href: `${base}/catalogue`,
+    link: 'Browse the catalogue',
+  },
+  {
+    icon: 'upload',
+    title: 'Data contributors',
+    text: 'Want their datasets to be findable, well documented and reused by others.',
+    who: ['Data stewards', 'Centre focal points', 'Projects and initiatives'],
+    href: '#contribute',
+    link: 'How to contribute',
+  },
+] as const
+---
+
+<div class="ov-split">
+  <div class="ov-text">
+    <p class="ov-intro">
+      MOSAIC is where everything about a living landscape comes together: the entry point to the
+      data and research produced around it, by many organisations.
+    </p>
+    <p class="ov-name">
+      The name stands for <strong>Multifunctional Open Spatial Analysis &amp; Integration Collaborative</strong>
+      — and, like a mosaic, it puts many separate pieces into one picture.
+    </p>
+    <ul class="ov-principles">
+      {principles.map((p) => (
+        <li>
+          <span class="ov-pico" aria-hidden="true"><Icon name={p.icon} size={18} /></span>
+          <span><strong>{p.title}.</strong> {p.text}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="ov-note">
+      Datasets can be found and registered today; research and knowledge resources are coming next.
+    </p>
+  </div>
+  <div class="ov-art">
+    <MosaicAssemble />
+  </div>
+</div>
+
+<div class="ov-who">
+  <div class="ov-who-head">
+    <h3 class="ov-h3">Who it serves</h3>
+    <p class="ov-lead">Anyone working with data for living landscapes — research institutions, universities, public agencies, NGOs, landscape initiatives and independent researchers.</p>
+  </div>
+  <div class="ov-cards">
+    {audiences.map((a) => (
+      <article class="ov-card">
+        <span class="ov-ico" aria-hidden="true"><Icon name={a.icon} size={22} /></span>
+        <h4 class="ov-card-title">{a.title}</h4>
+        <p class="ov-card-text">{a.text}</p>
+        <ul class="ov-tags" aria-label={`${a.title}, for example`}>
+          {a.who.map((w) => <li>{w}</li>)}
+        </ul>
+        <a class="ov-card-link" href={a.href}>{a.link} <Icon name="arrow-right" size={16} /></a>
+      </article>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ov-split { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-12); align-items: center; margin-bottom: var(--space-16); }
+  .ov-text p { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-4); }
+  .ov-text p:last-child { margin-bottom: 0; }
+  .ov-text .ov-intro { font-size: var(--text-lg); color: var(--color-text); margin-bottom: var(--space-6); }
+  .ov-principles { list-style: none; margin: 0 0 var(--space-6); padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+  .ov-principles li { display: flex; gap: var(--space-3); align-items: flex-start; color: var(--color-muted); line-height: 1.6; }
+  .ov-principles strong { color: var(--color-text); }
+  .ov-pico {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: var(--radius-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--color-gray-100); color: var(--color-gray-700);
+  }
+  .ov-text .ov-note { font-size: var(--text-sm); }
+  .ov-text .ov-name { margin-bottom: var(--space-6); }
+  .ov-name strong { color: var(--color-text); }
+
+  .ov-who { padding-top: var(--space-12); border-top: 1px solid var(--color-border); }
+  .ov-who-head { max-width: 62ch; margin-bottom: var(--space-8); }
+  .ov-h3 { font-size: var(--text-2xl); margin: 0 0 var(--space-3); }
+  .ov-lead { color: var(--color-muted); margin: 0; line-height: 1.6; }
+
+  .ov-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+  .ov-card {
+    display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-8);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  .ov-ico {
+    width: 48px; height: 48px; border-radius: var(--radius-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--color-gray-100); color: var(--color-gray-700);
+    margin-bottom: var(--space-1);
+  }
+  .ov-card-title { margin: 0; font-family: var(--font-title); font-size: var(--text-xl); color: var(--color-text); }
+  .ov-card-text { margin: 0; color: var(--color-muted); line-height: 1.6; }
+  .ov-tags { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); flex: 1; align-content: flex-start; }
+  .ov-tags li {
+    padding: 4px 12px; border-radius: var(--radius-full);
+    background-color: var(--color-gray-50); border: 1px solid var(--color-border);
+    font-size: var(--text-sm); color: var(--color-text);
+  }
+  .ov-card-link {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    margin-top: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-border);
+    color: var(--color-link); font-weight: 600; text-decoration: none;
+  }
+  .ov-card-link:hover { text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .ov-split { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); margin-bottom: var(--space-12); }
+  }
+  @media (max-width: 767px) {
+    .ov-cards { grid-template-columns: minmax(0, 1fr); }
+    .ov-card { padding: var(--space-6); }
+  }
+</style>

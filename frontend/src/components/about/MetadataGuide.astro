@@ -1,0 +1,200 @@
+---
+/* About › Metadata guide — moved here from the former /contribute/metadata-guide
+   page (2026-11-09; that URL now redirects to /about#metadata).
+
+   The two field tables follow the registration form field by field: its
+   labels, its order and its four required fields (catalog repository,
+   .github/ISSUE_TEMPLATE/new_dataset.yml). `key` is the name the field has in
+   a record file (catalog repository, spec/record_schema.json). When the form
+   or the schema changes, change these two lists with it. */
+import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER } from '../../utils/readiness'
+
+interface Field {
+  label: string
+  key: string
+  what: string
+  example: string
+}
+
+const requiredFields: Field[] = [
+  { label: 'Dataset title', key: 'title', what: 'A short, descriptive name.', example: 'Land use / land cover classification 2024' },
+  { label: 'Living landscape', key: 'living_landscape', what: 'The landscape the dataset covers, from the list below. Choose NATIONAL for a country-wide dataset and GLOBAL for a global or cross-landscape one.', example: 'KEN-LVB — Lake Victoria Basin (Kenya)' },
+  { label: 'Country', key: 'country', what: 'The country the dataset covers, from the list below; Global when it is not tied to one country.', example: 'Kenya' },
+  { label: 'Contact person', key: 'contact', what: 'Name and email of someone who can answer questions about the dataset.', example: 'Jane Doe, jane.doe@example.org' },
+]
+
+const optionalFields: Field[] = [
+  { label: 'MFL theme', key: 'theme', what: 'The theme the dataset mainly addresses, from the list below.', example: 'Land cover / land use' },
+  { label: 'Data type', key: 'data_type', what: 'Raster, Vector, Tabular or Mixed.', example: 'Raster' },
+  { label: 'Description / notes', key: 'description', what: 'What the dataset contains, in plain words; then methods, caveats, limitations and related datasets.', example: 'Land cover classes for the Kenyan part of the Lake Victoria Basin, from Sentinel-2 imagery.' },
+  { label: 'Spatial resolution', key: 'spatial_resolution', what: 'Pixel size or mapping unit, with its unit.', example: '30 m, 0.05°, admin level 2' },
+  { label: 'Temporal coverage', key: 'temporal_coverage', what: 'The year or period the data covers.', example: '2017-2025' },
+  { label: 'Source / centre', key: 'source', what: 'The organisation that produced the data.', example: 'Alliance Bioversity-CIAT' },
+  { label: 'Access level', key: 'access_level', what: 'Open, Restricted or Internal — see the table below. Open means anyone can get the data without asking, so an Open dataset needs a download or source URL.', example: 'Open' },
+  { label: 'License', key: 'license', what: 'The licence the data is shared under, as its owner states it.', example: 'CC BY 4.0' },
+  { label: 'Processing status', key: 'processing_status', what: 'Raw, Processed or Validated — see the table below. The catalogue shows it as the readiness status.', example: 'Processed' },
+  { label: 'Download / primary source URL', key: 'download_url', what: 'Where the data can be obtained: a download link, or the page of the portal that holds it.', example: 'https://example.org/data/land-cover-2024' },
+  { label: 'File size', key: 'file_size', what: 'Approximate size of the files.', example: '220 MB' },
+  { label: 'Coordinate reference system (CRS)', key: 'crs', what: 'The coordinate reference system of the data.', example: 'EPSG:4326' },
+  { label: 'DOI or citation (if published)', key: 'doi, citation', what: 'The DOI of the published dataset, or the citation its authors ask for.', example: 'https://doi.org/10.xxxx/xxxxx' },
+]
+---
+
+<p class="mg-lead">Every field of the registration form explained — what it means, what values are accepted, and what a good entry looks like.</p>
+<p class="mg-note">
+  Four fields are required; leave any other empty if you are not sure. You do not provide an ID:
+  MOSAIC assigns each record a permanent one, in the form <code>MFL-2026-080</code>, which appears on
+  the dataset's page and in its address. The name in grey under each field is its key in a record
+  file, for those who contribute through Git.
+</p>
+
+<section class="mg-sec">
+  <h3 class="mg-h3">Required fields</h3>
+  <table class="data-table data-table--wide mg-fields">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>What to enter</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      {requiredFields.map((f) => (
+        <tr>
+          <td><strong class="mg-field">{f.label}</strong><code class="mg-key">{f.key}</code></td>
+          <td>{f.what}</td>
+          <td>{f.example}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</section>
+
+<section class="mg-sec">
+  <h3 class="mg-h3">Optional fields</h3>
+  <table class="data-table data-table--wide mg-fields">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>What to enter</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      {optionalFields.map((f) => (
+        <tr>
+          <td><strong class="mg-field">{f.label}</strong><code class="mg-key">{f.key}</code></td>
+          <td>{f.what}</td>
+          <td>{f.example}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</section>
+
+<section class="mg-sec">
+  <h3 class="mg-h3">Controlled vocabulary tables</h3>
+
+  <h4 class="mg-h4">Country</h4>
+  <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-8);">
+    {['Cambodia', 'Colombia', "Côte d'Ivoire", 'Ethiopia', 'Global', 'India', 'Kenya', 'Laos', 'Peru', 'Senegal', 'Tanzania', 'Tunisia', 'Vietnam', 'Zimbabwe'].map((v) => (
+      <code style="background-color: var(--color-gray-100); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm);">{v}</code>
+    ))}
+  </div>
+
+  <h4 class="mg-h4">Living Landscape</h4>
+  <p style="color: var(--color-gray-600); margin-bottom: var(--space-3); font-size: var(--text-sm);">
+    These are the <strong>canonical</strong> MFL Living Landscape codes (approved 2026-07-21),
+    matching the delineated landscape boundaries.
+  </p>
+  <table class="data-table data-table--wide" style="margin-bottom: var(--space-4);">
+    <thead><tr><th>Code</th><th>Landscape Name</th><th>Country</th></tr></thead>
+    <tbody>
+      {[
+        ['COL-CUM', 'Cumbal (Nariño)', 'Colombia'],
+        ['PER-PCL', 'Pucallpa – Ucayali', 'Peru'],
+        ['SEN-FK', 'Fatick Department', 'Senegal'],
+        ['CIV-NZ', "N'Zi Watershed", "Côte d'Ivoire"],
+        ['TUN-NW', 'Northwestern Tunisia', 'Tunisia'],
+        ['ETH-OG', 'Omo-Gibe Basin', 'Ethiopia'],
+        ['KEN-LVB', 'Lake Victoria Basin (Kenya)', 'Kenya'],
+        ['KEN-LEI', 'LEILA (Southern Kenya Rangelands)', 'Kenya'],
+        ['ZWE-MB', 'Mbire – Lower Zambezi Valley', 'Zimbabwe'],
+        ['IND-CH', 'Central India Highlands', 'India'],
+        ['MEK-3S', '3S Basins (Sekong, Sesan, Srepok)', 'Laos / Cambodia / Vietnam'],
+      ].map(([code, name, country]) => (
+        <tr><td><code>{code}</code></td><td>{name}</td><td>{country}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p style="color: var(--color-gray-600); margin-bottom: var(--space-8); font-size: var(--text-sm);">
+    Datasets that are wider than a single landscape use the submission values
+    <strong>"NATIONAL — Country-wide coverage"</strong> or
+    <strong>"GLOBAL — Global / cross-landscape"</strong>. In the published catalogue these
+    resolve to the country's landscape collection or to the special value <code>GLB</code>
+    respectively, and each record carries a <code>coverage</code> field
+    (<code>landscape</code> | <code>national</code> | <code>global</code>) recording the
+    dataset's true footprint.
+  </p>
+
+  <h4 class="mg-h4">MFL Theme</h4>
+  <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-8);">
+    {['Boundaries / admin units','Land cover / land use','Ecosystem condition','Degradation / land health','Water / hydrology','Biodiversity / ecosystems','Pressures / drivers','Ecosystem services','Hotspots / leverage points','Scenarios / future risks','Decision-support outputs','Agrobiodiversity / crops','Socio-economic / livelihoods'].map((v) => (
+      <code style="background-color: var(--color-gray-100); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm);">{v}</code>
+    ))}
+  </div>
+
+  <h4 class="mg-h4">Data Type</h4>
+  <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-8);">
+    {['Raster','Vector','Tabular','Mixed'].map((v) => (
+      <code style="background-color: var(--color-gray-100); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm);">{v}</code>
+    ))}
+  </div>
+
+  <h4 class="mg-h4">Access Level</h4>
+  <p style="color: var(--color-gray-600); margin-bottom: var(--space-3); font-size: var(--text-sm);">
+    Access level decisions are made by the contributing centre, not by the MOSAIC team. MOSAIC records and displays the access level the contributor declares, and never overrides it.
+  </p>
+  <table class="data-table data-table--wide" style="margin-bottom: var(--space-8);">
+    <thead><tr><th>Value</th><th>Who can access</th><th>How to access</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-open">Open</span></td><td>Anyone — the dataset is publicly available</td><td>Direct download link on the dataset detail page (a <code>download_url</code> is required)</td></tr>
+      <tr><td><span class="badge badge-restricted">Restricted</span></td><td>Approved users — access is granted by the contributing centre</td><td>Contact email shown on the dataset detail page; decision made by the data owner</td></tr>
+      <tr><td><span class="badge badge-internal">Internal</span></td><td>CGIAR staff only — for datasets not ready for external sharing</td><td>Contact the MOSAIC team; verification of CGIAR affiliation required</td></tr>
+    </tbody>
+  </table>
+
+  <h4 class="mg-h4">Readiness Status</h4>
+  <table class="data-table">
+    <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+    <tbody>
+      {READINESS_ORDER.map((s) => (
+        <tr><td><span class={`badge badge-${s.toLowerCase()}`}>{s}</span></td><td>{READINESS_MEANING[s]}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p style="color: var(--color-gray-600); margin-top: var(--space-3); font-size: var(--text-sm);">{READINESS_NOTE} Choose the one that describes your dataset as it is today.</p>
+</section>
+
+<style>
+  @import '../../styles/catalogue.css';
+  .mg-lead { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-3); max-width: 70ch; }
+  .mg-note { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-8); max-width: 70ch; font-size: var(--text-sm); }
+  .mg-sec { margin-bottom: var(--space-12); overflow-x: auto; }
+  .mg-sec:last-child { margin-bottom: 0; }
+  .mg-h3 { font-size: var(--text-2xl); margin: 0 0 var(--space-6); }
+  .mg-h4 { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
+  /* Field name as the form shows it, with its record-file key under it */
+  .mg-field { display: block; color: var(--color-text); }
+  .mg-key { display: block; margin-top: 2px; font-size: var(--text-xs); color: var(--color-muted); }
+  /* Same column widths in both field tables, so they line up */
+  .mg-fields th:nth-child(1) { width: 27%; }
+  .mg-fields th:nth-child(3) { width: 31%; }
+  /* On phones the field tables still scroll sideways, but their sentences wrap
+     inside columns of a readable width instead of running on one long line. */
+  @media (max-width: 640px) {
+    .mg-fields { white-space: normal; }
+    .mg-fields th, .mg-fields td { min-width: 9rem; }
+    .mg-fields th:nth-child(2), .mg-fields td:nth-child(2) { min-width: 15rem; }
+  }
+</style>

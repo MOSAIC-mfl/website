@@ -6,5 +6,8 @@ export default defineConfig({
   site: process.env.MOSAIC_SITE_URL ?? 'https://mosaic-mfl.github.io',
   base: process.env.MOSAIC_SITE_BASE ?? '/website',
   output: 'static',
+  // Astro 7 defaults this to 'jsx', which removes whitespace between inline
+  // elements. Pinned to the Astro 4-6 behaviour so the parity diff stays readable.
+  compressHTML: true,
   integrations: [react()],
 })

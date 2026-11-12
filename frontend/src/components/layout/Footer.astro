@@ -18,7 +18,7 @@ const year = new Date().getFullYear()
           <span class="footer-brand-name">MOSAIC</span>
         </div>
         <p class="footer-about-text">
-          MOSAIC is an open spatial intelligence network for living landscapes. It connects data
+          MOSAIC is an open network for living landscapes. It connects data and research
           from institutions, researchers and landscape initiatives, with support from the CGIAR
           Multifunctional Landscapes Science Programme.
         </p>
@@ -27,27 +27,27 @@ const year = new Date().getFullYear()
       <div class="footer-col">
         <p class="footer-col-title">Explore</p>
         <ul class="footer-links">
-          <li><a href={`${base}/catalogue`}>Catalogue</a></li>
           <li><a href={`${base}/landscapes`}>Landscapes</a></li>
+          <li><a href={`${base}/catalogue`}>Catalogue</a></li>
           <li><a href={`${base}/about`}>About</a></li>
-          <li><a href={`${base}/contact`}>Contact</a></li>
+          <li><a href={`${base}/about#contact`}>Contact</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
         <p class="footer-col-title">Contribute</p>
         <ul class="footer-links">
-          <li><a href={`${base}/contribute`}>How to contribute</a></li>
-          <li><a href={`${base}/contribute/metadata-guide`}>Metadata Guide</a></li>
+          <li><a href={`${base}/about#contribute`}>How to contribute</a></li>
+          <li><a href={`${base}/about#metadata`}>Metadata Guide</a></li>
         </ul>
       </div>
     </div>
 
     <!-- ── CGIAR / MFL endorsement ──────────────────────────────────────
          Official "CGIAR Multifunctional Landscapes" lockup, used as supplied
-         and shown in CGIAR's own colours on a neutral (light) panel so it
-         reads as institutional endorsement — never restyled to the MOSAIC
-         palette (MOSAIC Brand Guidelines v1.0, §5). -->
+         in CGIAR's own colours, directly on the footer band (no white panel,
+         Lizeth 2026-11-10) — never restyled to the MOSAIC palette (MOSAIC
+         Brand Guidelines v1.0, §5). -->
     <div class="footer-endorsement">
       <img
         src={`${base}/cgiar-mfl-lockup.png`}
@@ -144,9 +144,7 @@ const year = new Date().getFullYear()
     display: flex;
     align-items: center;
     gap: var(--space-6);
-    background-color: var(--color-white);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-6);
+    padding: var(--space-3) 0;
     margin-bottom: var(--space-4);
   }
 
@@ -159,14 +157,13 @@ const year = new Date().getFullYear()
   .footer-endorsement-text {
     font-size: var(--text-xs);
     line-height: 1.6;
-    /* Literal grey (not a theme alias): the endorsement panel stays white in
-       both themes, so its text must not flip light in dark mode. */
-    color: #4B5563;
+    /* light text on the footer band, as in the rest of the footer */
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
   }
 
   .footer-endorsement-text strong {
-    color: var(--mosaic-ink);
+    color: var(--color-white);
   }
 
   /* ── Bottom bar ──────────────────────────────────────────────── */

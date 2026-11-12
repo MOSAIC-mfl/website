@@ -28,7 +28,25 @@
   --mosaic-light-teal:  #D6EEF2;   /* Light Teal  — background highlight, reverse logo */
   --mosaic-sand:        #F7F4EF;   /* Warm Sand   — page & section backgrounds  */
   --mosaic-ink:         #1C2B3A;   /* Near-black  — body text, dark sections    */
-  --mosaic-grey:        #6B7A85;   /* Muted Grey  — captions, secondary text    */
+  --mosaic-grey:        #6B7A85;   /* Muted Grey  — brand swatch (see below)    */
+  /* The brand's Muted Grey is 4.42:1 on white and 4.03:1 on Warm Sand — below the 4.5:1
+     WCAG AA floor for normal text. Text therefore uses --color-muted (#5A6872), the same
+     hue darkened until it clears AA on every background in use. Keep the swatch above as
+     the brand reference; use it only for large text, rules and non-text marks. */
+  /* Amber Land has the same limit: 2.98:1 as text on Warm Sand, and white on it is 3.26:1.
+     --mosaic-amber-text is the same hue darkened until it clears AA as text on every light
+     background in use (4.6:1 on the amber tint, 5.1:1 on Warm Sand) and as a button fill
+     under white text (5.6:1). The swatch above stays the brand reference. */
+  --mosaic-amber-text:  #935B14;
+  /* Eyebrow text that follows the theme: dark shades on light pages, lighter ones on dark. */
+  --color-amber-text:   #935B14;
+  /* Text and outlines in the brand teal on a surface that follows the theme: links,
+     outline buttons, small icons. Ocean Teal on light pages; on the dark theme its
+     light tint, because Ocean Teal is 2.3:1 on the dark background. Use --mosaic-teal
+     itself only where the ground is light in both themes (chips, the hero, callouts). */
+  --color-link:         #0D5C6B;
+  --color-link-hover:   #0A4753;
+  --color-moss-text:    #5C764F;
 
   /* Header & footer "bookend" colour — deeper Ocean Teal (brand request).
      Defined once so the two MOSAIC bookends always match; change here only. */
@@ -69,7 +87,7 @@
   --color-gray-100:     #F1EFEA;
   --color-gray-200:     #E2E0D9;
   --color-gray-400:     #9CA3AF;
-  --color-gray-500:     #6B7A85;   /* MOSAIC Muted Grey */
+  --color-gray-500:     #5A6872;   /* MOSAIC Muted Grey, darkened for AA text contrast */
   --color-gray-600:     #4B5563;
   --color-gray-700:     #36424B;
   --color-gray-800:     #1F2937;
@@ -86,7 +104,7 @@
   --color-surface:       #FFFFFF;
   --color-border:        #E2E0D9;
   --color-text:          #1C2B3A;
-  --color-muted:         #6B7A85;
+  --color-muted:         #5A6872;   /* Muted Grey darkened for AA — see the note above */
   --shadow-card:         0 10px 30px rgba(28, 43, 58, 0.08);
   --shadow-card-hover:   0 16px 40px rgba(28, 43, 58, 0.14);
   --radius-card:         1rem;
@@ -108,7 +126,7 @@
      Shared by IconChip, ContentCard, StatCard, StepTimeline, CtaBand, etc.
      Select via data-tint="teal|amber|terracotta|light-teal". */
   --tint-teal-bg:        #D6EEF2;  --tint-teal-fg:        #0D5C6B;
-  --tint-amber-bg:       #F6E7CE;  --tint-amber-fg:       #C97D1B;
+  --tint-amber-bg:       #F6E7CE;  --tint-amber-fg:       #935B14;
   --tint-terracotta-bg:  #F1DED6;  --tint-terracotta-fg:  #B54D2F;
   --tint-light-teal-bg:  #E6F3F6;  --tint-light-teal-fg:  #0D5C6B;
 
@@ -172,6 +190,10 @@
   --color-text:     #EAF2F4;   /* body text                */
   --color-muted:    #9DB0B8;   /* captions, secondary text */
   --color-border:   #26414C;   /* hairlines, dividers      */
+  --color-amber-text: #CD801C; /* eyebrows on dark surfaces */
+  --color-link:       #D6EEF2; /* Light Teal: 14.5:1 on the dark background */
+  --color-link-hover: #FFFFFF;
+  --color-moss-text:  #799B68;
 
   /* Brand annex §5: Ocean Teal has too little contrast on dark surfaces for
      small marks, so links switch to Light Teal; tinted panels become a dark

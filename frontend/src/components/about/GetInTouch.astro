@@ -1,0 +1,69 @@
+---
+/* About › Get in touch (the former Contact page; /contact redirects here). */
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import ContentCard from '../ui/ContentCard.astro'
+import CoordinatorCard from '../ui/CoordinatorCard.astro'
+
+const base = import.meta.env.BASE_URL
+const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
+// Dataset records live in the catalog repo — dataset corrections go there.
+const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
+
+// Show the photo only if the file is actually present; otherwise CoordinatorCard
+// renders the "LL" initials fallback.
+const hasPhoto = existsSync(fileURLToPath(new URL('../../../public/illustrations/lizeth-llanos.jpg', import.meta.url)))
+
+const issueCards = [
+  { icon: 'alert-circle', title: 'Report a problem', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
+  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalogue entry.' },
+  { icon: 'file', title: 'Fix content', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
+  { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
+] as const
+
+// The coordinator's institutional address (Lizeth, 2026-11-12), until a shared
+// mailbox exists. It is the way in for anyone without a GitHub account.
+const contactEmail = 'l.llanos@cgiar.org'
+const contactRows = [
+  { icon: 'mail', label: 'Email', value: contactEmail, href: `mailto:${contactEmail}` },
+]
+// The same four purposes as the GitHub cards, by mail, with the subject filled in.
+const mailTo = (subject: string) => `mailto:${contactEmail}?subject=${encodeURIComponent(`MOSAIC — ${subject}`)}`
+const mailLinks = [
+  { label: 'Ask a question', href: mailTo('question') },
+  { label: 'Report a problem', href: mailTo('problem on the site') },
+  { label: 'Correct a dataset', href: mailTo('correction to a dataset') },
+  { label: 'Suggest an idea', href: mailTo('suggestion') },
+]
+---
+
+<p class="gt-lead">Write to the MOSAIC coordinator — no account needed:</p>
+<div class="gt-direct">
+  <CoordinatorCard
+    name="Lizeth Llanos"
+    role="MFL Geospatial Coordinator"
+    orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Programme"]}
+    photo={hasPhoto ? `${base}/illustrations/lizeth-llanos.jpg` : undefined}
+    rows={contactRows}
+  />
+</div>
+<ul class="gt-mail">
+  {mailLinks.map((m) => <li><a href={m.href}>{m.label}</a></li>)}
+</ul>
+<p class="gt-lead gt-direct-lead">If you use GitHub, an issue reaches the team directly:</p>
+<div class="gt-cards">
+  {issueCards.map((c) => (
+    <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
+      {c.body}
+    </ContentCard>
+  ))}
+</div>
+
+<style>
+  .gt-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; line-height: 1.6; }
+  .gt-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .gt-direct-lead { margin-top: var(--space-12); margin-bottom: var(--space-4); }
+  .gt-direct { max-width: 640px; }
+  .gt-mail { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); font-size: var(--text-sm); font-weight: 600; }
+  @media (max-width: 600px) { .gt-cards { grid-template-columns: 1fr; } }
+</style>

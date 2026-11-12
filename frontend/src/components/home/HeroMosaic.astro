@@ -1,0 +1,181 @@
+---
+/* Home hero art (2026-11-10): Lizeth's landscape banner (illustrations/
+   hero-home-mosaic.webp, a tile-free version of her artwork) with the MOSAIC
+   tiles as live SVG, in image pixels (viewBox = the image, 1695 × 928). The
+   tiles start on the banner's route nodes, as in her tiled version; on load
+   they travel along the dotted route and assemble into the official six-tile
+   mark (public/mosaic-mark.svg geometry and colours) over its last node.
+   Without JavaScript, or with reduced motion, the mark is shown assembled.
+   The SVG is sliced like `object-fit: cover; object-position: right bottom`
+   (xMaxYMax slice), so the image and the tiles always stay aligned. */
+const base = import.meta.env.BASE_URL
+
+type Hue = 'teal' | 'amber' | 'terracotta'
+type Slot = 'T1' | 'A1' | 'R1' | 'R2' | 'T2' | 'A2'
+
+// Official mark, viewBox 102 × 66 (mosaic-mark.svg), scaled and placed at the
+// end of the route on the teal hill.
+const S = 1.1
+const OX = 1530
+const OY = 512
+const mark: Record<Slot, { hue: Hue; x: number; y: number; w: number; h: number }> = {
+  T1: { hue: 'teal', x: 1.5, y: 1.5, w: 34, h: 30 },
+  A1: { hue: 'amber', x: 38.5, y: 1.5, w: 27, h: 30 },
+  R1: { hue: 'terracotta', x: 68.5, y: 1.5, w: 32, h: 30 },
+  R2: { hue: 'terracotta', x: 1.5, y: 34.5, w: 27, h: 30 },
+  T2: { hue: 'teal', x: 31.5, y: 34.5, w: 34, h: 30 },
+  A2: { hue: 'amber', x: 68.5, y: 34.5, w: 32, h: 30 },
+}
+const slot = (s: Slot) => {
+  const m = mark[s]
+  return { x: OX + m.x * S, y: OY + m.y * S, w: m.w * S, h: m.h * S }
+}
+
+// 12 tiles in the clusters of Lizeth's tiled version, re-anchored on this
+// banner's nodes (695,654 · 957,594 · 1089,658 · 1288,586) and on the route
+// between them; each is sent to a slot of its colour. [x0, y0, x1, y1] in image px.
+const pieces: { hue: Hue; box: [number, number, number, number]; slot: Slot }[] = [
+  { hue: 'teal', box: [688, 644, 705, 662], slot: 'T1' },
+  { hue: 'terracotta', box: [853, 611, 866, 624], slot: 'R1' },
+  { hue: 'teal', box: [944, 585, 970, 603], slot: 'T2' },
+  { hue: 'amber', box: [973, 585, 991, 603], slot: 'A1' },
+  { hue: 'teal', box: [1057, 627, 1074, 645], slot: 'T1' },
+  { hue: 'amber', box: [1077, 627, 1095, 645], slot: 'A2' },
+  { hue: 'terracotta', box: [1077, 649, 1102, 667], slot: 'R2' },
+  { hue: 'amber', box: [1216, 594, 1231, 609], slot: 'A1' },
+  { hue: 'teal', box: [1268, 555, 1294, 573], slot: 'T2' },
+  { hue: 'amber', box: [1298, 555, 1315, 574], slot: 'A2' },
+  { hue: 'terracotta', box: [1280, 577, 1297, 595], slot: 'R1' },
+  { hue: 'teal', box: [1301, 577, 1327, 595], slot: 'T2' },
+]
+// The dotted route as drawn in the banner, first node to last.
+const route: [number, number][] = [
+  [696, 654], [725, 635], [760, 620], [795, 614], [830, 616], [870, 618], [910, 610], [957, 594],
+  [980, 603], [1010, 620], [1040, 640], [1065, 653], [1089, 658], [1120, 650], [1160, 630],
+  [1200, 610], [1240, 595], [1288, 586], [1320, 586], [1360, 591], [1400, 592], [1440, 588],
+  [1480, 575], [1520, 555], [1550, 546], [1580, 544],
+]
+const r1 = (n: number) => Math.round(n * 10) / 10
+---
+
+<svg
+  class="hm"
+  viewBox="0 0 1695 928"
+  preserveAspectRatio="xMaxYMax slice"
+  data-hero-mosaic
+  data-route={JSON.stringify(route)}
+  aria-hidden="true"
+  focusable="false"
+>
+  <image href={`${base}/illustrations/hero-home-mosaic.webp`} x="0" y="0" width="1695" height="928" />
+  <g class="hm-mark">
+    {pieces.map((p) => {
+      const s = slot(p.slot)
+      const [x0, y0, x1, y1] = p.box
+      return (
+        <rect
+          class={`hm-tile hm-${p.hue}`}
+          data-start={`${x0 - 1},${y0 - 1},${x1 - x0 + 2},${y1 - y0 + 2}`}
+          x={r1(s.x)}
+          y={r1(s.y)}
+          width={r1(s.w)}
+          height={r1(s.h)}
+          rx="2.5"
+        />
+      )
+    })}
+  </g>
+</svg>
+
+<style>
+  .hm { display: block; width: 100%; height: 100%; }
+  .hm-tile { stroke: var(--mosaic-sand); stroke-width: 2.5; }
+  .hm-teal { fill: var(--mosaic-tile-teal); }
+  .hm-amber { fill: var(--mosaic-tile-amber); }
+  .hm-terracotta { fill: var(--mosaic-tile-terracotta); }
+  /* a small "settle" once the last tile is in place */
+  .hm-mark { transform-box: fill-box; transform-origin: center; }
+  .hm-mark.is-done { animation: hm-pop 0.5s ease-out; }
+  @keyframes hm-pop { 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+</style>
+
+<script>
+  const svg = document.querySelector<SVGSVGElement>('[data-hero-mosaic]')
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (svg && !still) {
+    type P = [number, number]
+    const route = JSON.parse(svg.dataset.route ?? '[]') as P[]
+    const mark = svg.querySelector<SVGGElement>('.hm-mark')!
+    const num = (el: Element, a: string) => Number(el.getAttribute(a))
+
+    const tiles = Array.from(svg.querySelectorAll<SVGRectElement>('.hm-tile')).map((el) => {
+      const [sx, sy, sw, sh] = el.dataset.start!.split(',').map(Number)
+      const end = { x: num(el, 'x'), y: num(el, 'y'), w: num(el, 'width'), h: num(el, 'height') }
+      const from: P = [sx + sw / 2, sy + sh / 2]
+      const to: P = [end.x + end.w / 2, end.y + end.h / 2]
+      // follow the route from the stop nearest to the tile, then into its slot
+      let near = 0
+      route.forEach((p, i) => {
+        if (Math.hypot(p[0] - from[0], p[1] - from[1]) < Math.hypot(route[near][0] - from[0], route[near][1] - from[1])) near = i
+      })
+      const line: P[] = [from, ...route.slice(near + 1), to]
+      const cum = [0]
+      for (let i = 1; i < line.length; i++) cum.push(cum[i - 1] + Math.hypot(line[i][0] - line[i - 1][0], line[i][1] - line[i - 1][1]))
+      return { el, sw, sh, end, line, cum, startX: from[0] }
+    })
+
+    const at = (t: (typeof tiles)[number], d: number): P => {
+      const { line, cum } = t
+      let i = 1
+      while (i < cum.length - 1 && cum[i] < d) i++
+      const seg = cum[i] - cum[i - 1] || 1
+      const k = Math.min(Math.max((d - cum[i - 1]) / seg, 0), 1)
+      return [line[i - 1][0] + (line[i][0] - line[i - 1][0]) * k, line[i - 1][1] + (line[i][1] - line[i - 1][1]) * k]
+    }
+    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2)
+    const smooth = (x: number) => x * x * (3 - 2 * x)
+
+    // left-most tiles leave first; a short pause shows the scattered state
+    const order = [...tiles].sort((a, b) => a.startX - b.startX)
+    const HOLD = 700
+    const STAGGER = 110
+    const DUR = 2300
+    const delay = new Map(order.map((t, i) => [t, HOLD + i * STAGGER]))
+    const total = HOLD + (order.length - 1) * STAGGER + DUR
+
+    const draw = (ms: number) => {
+      for (const t of tiles) {
+        const p = Math.min(Math.max((ms - delay.get(t)!) / DUR, 0), 1)
+        const e = ease(p)
+        const [cx, cy] = at(t, e * t.cum[t.cum.length - 1])
+        const g = smooth(Math.min(Math.max((e - 0.7) / 0.3, 0), 1))
+        const w = t.sw + (t.end.w - t.sw) * g
+        const h = t.sh + (t.end.h - t.sh) * g
+        t.el.setAttribute('x', (cx - w / 2).toFixed(1))
+        t.el.setAttribute('y', (cy - h / 2).toFixed(1))
+        t.el.setAttribute('width', w.toFixed(1))
+        t.el.setAttribute('height', h.toFixed(1))
+      }
+    }
+
+    draw(0)
+    let t0 = 0
+    const tick = (now: number) => {
+      if (!t0) t0 = now
+      const ms = now - t0
+      draw(ms)
+      if (ms < total) requestAnimationFrame(tick)
+      else {
+        tiles.forEach((t) => {
+          t.el.setAttribute('x', String(t.end.x))
+          t.el.setAttribute('y', String(t.end.y))
+          t.el.setAttribute('width', String(t.end.w))
+          t.el.setAttribute('height', String(t.end.h))
+        })
+        mark.classList.add('is-done')
+        svg.dataset.done = 'true'
+      }
+    }
+    requestAnimationFrame(tick)
+  }
+</script>

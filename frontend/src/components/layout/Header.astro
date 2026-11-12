@@ -4,6 +4,10 @@ const base = import.meta.env.BASE_URL
 ---
 
 <header class="site-header">
+  <!-- Skip-to-content link: the first stop for the keyboard, ahead of the logo.
+       Off-screen until it receives focus. -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <div class="container site-header-inner">
     <a href={base} class="site-logo" aria-label="MOSAIC — home">
       <img
@@ -19,11 +23,10 @@ const base = import.meta.env.BASE_URL
 
     <Nav />
 
-    <!-- CGIAR / MFL co-branding. The official lockup is used as supplied and
-         always sits on a white chip: the header bar is teal in the light theme
-         and a dark surface in the dark theme, and the lockup must never sit on
-         a dark or coloured background (CGIAR brand rule). Hidden < 768px — it
-         moves into the mobile menu panel instead (see Nav.astro). -->
+    <!-- CGIAR / MFL co-branding. The official lockup is used as supplied,
+         directly on the header bar (no white chip, Lizeth 2026-11-10): its two
+         blocks carry their own CGIAR greens. Hidden < 768px — it moves into the
+         mobile menu panel instead (see Nav.astro). -->
     <div class="site-cobrand">
       <img
         src={`${base}/cgiar-mfl-lockup.png`}
@@ -68,10 +71,30 @@ const base = import.meta.env.BASE_URL
     flex-shrink: 0;
   }
 
+  /* Light Teal, not Ocean Teal: the ring sits on the teal bar */
   .site-logo:focus-visible {
-    outline: 2px solid var(--mosaic-teal);
+    outline: 2px solid var(--mosaic-light-teal);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
+  }
+
+  /* ── Skip link ─────────────────────────────────────── */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    background: var(--color-white);
+    color: var(--color-green-dark);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    z-index: 9999;
+    text-decoration: none;
+    transition: top 0.1s;
+  }
+  .skip-link:focus {
+    top: var(--space-2);
   }
 
   .site-logo-mark {
@@ -93,11 +116,6 @@ const base = import.meta.env.BASE_URL
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    /* --color-white is never remapped by the dark theme, so the chip stays
-       white under the green lockup in both themes (brand rule). */
-    background-color: var(--color-white);
-    border-radius: var(--radius-md);
-    padding: 4px 10px;
   }
 
   .site-cobrand-img {

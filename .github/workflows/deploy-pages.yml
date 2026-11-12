@@ -34,6 +34,7 @@ jobs:
         with:
           persist-credentials: false
 
+      # Node version: .nvmrc (22.23.4, Astro 7.4.7's engines.node floor), read by both workflows.
       - name: Setup Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:

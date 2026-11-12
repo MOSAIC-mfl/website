@@ -29,4 +29,51 @@ const { crumbs } = Astro.props
   </ol>
 </nav>
 
-<!-- Styles: styles/breadcrumb.css (global, so the React dataset page shares them). -->
+<style>
+  .breadcrumb {
+    padding: var(--space-3) 0;
+    margin-bottom: var(--space-4);
+  }
+
+  .breadcrumb-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .breadcrumb-link {
+    font-size: var(--text-sm);
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .breadcrumb-link:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb-link:focus-visible {
+    outline: 2px solid var(--color-accent, #0D5C6B);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .breadcrumb-current {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+  }
+
+  .breadcrumb-sep {
+    color: var(--color-gray-400);
+    flex-shrink: 0;
+  }
+</style>

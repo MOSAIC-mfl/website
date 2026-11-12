@@ -9,16 +9,20 @@ interface Props {
   title: string
   description?: string
   ogImage?: string
+  /** Keep the page out of search results (placeholders). */
+  noindex?: boolean
 }
 
 const {
   title,
-  description = 'MOSAIC — the shared spatial intelligence network for the CGIAR Multifunctional Landscapes Science Programme. Find, trust, and combine geospatial data across the Living Landscapes.',
+  // Same framing as About › What MOSAIC is: an entry point, never a store.
+  description = 'MOSAIC — an open network for living landscapes: the entry point to the data and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Programme.',
   ogImage = '/website/og-image.png',
+  noindex = false,
 } = Astro.props
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const pageTitle = title === 'Home'
-  ? 'MOSAIC — CGIAR MFL Science Programme'
+  ? 'MOSAIC — an open network for living landscapes'
   : `${title} | MOSAIC`
 const base = import.meta.env.BASE_URL
 ---
@@ -40,7 +44,20 @@ const base = import.meta.env.BASE_URL
         } catch (e) {}
       })()
     </script>
+    <!-- Blocks reveal as they come into view (styles in global.css). Hidden only
+         when the reveal can run; un-hidden after 3 s if it never starts. -->
+    <script is:inline>
+      (function () {
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return
+          var r = document.documentElement
+          r.classList.add('js-reveal')
+          setTimeout(function () { if (!window.__mosaicReveal) r.classList.remove('js-reveal') }, 3000)
+        } catch (e) {}
+      })()
+    </script>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonicalURL} />
@@ -63,6 +80,35 @@ const base = import.meta.env.BASE_URL
       <slot />
     </main>
     <Footer />
+
+    <!-- Reveal blocks of the page as they scroll into view; children of
+         [data-reveal-stagger] follow one another. -->
+    <script is:inline>
+      (function () {
+        var r = document.documentElement
+        if (!r.classList.contains('js-reveal')) return
+        window.__mosaicReveal = true
+        var EASE = 'cubic-bezier(0.2, 0.7, 0.2, 1)'
+        var targets = [].slice.call(document.querySelectorAll('main > *, [data-reveal-stagger] > *'))
+        var delay = new Map()
+        document.querySelectorAll('[data-reveal-stagger]').forEach(function (p) {
+          [].forEach.call(p.children, function (c, i) { delay.set(c, Math.min(i * 90, 540)) })
+        })
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return
+            var el = e.target
+            io.unobserve(el)
+            el.style.transition = 'opacity 0.7s ' + EASE + ', transform 0.7s ' + EASE
+            el.style.transitionDelay = (delay.get(el) || 0) + 'ms'
+            el.classList.add('is-revealed')
+            // hand the element's own transitions back once it has arrived
+            setTimeout(function () { el.style.transition = ''; el.style.transitionDelay = '' }, 1400)
+          })
+        }, { rootMargin: '0px 0px -6% 0px', threshold: 0 })
+        targets.forEach(function (t) { io.observe(t) })
+      })()
+    </script>
 
     <!-- Theme toggle wiring (runs once, shared by every .js-theme-toggle button). -->
     <script is:inline>

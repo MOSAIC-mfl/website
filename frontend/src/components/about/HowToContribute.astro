@@ -1,0 +1,137 @@
+---
+/* About › How to contribute — moved here from the former /contribute page
+   (2026-11-09; /contribute now redirects to /about#contribute). */
+import StickyNote from '../ui/StickyNote.astro'
+import StepTimeline from '../ui/StepTimeline.astro'
+
+// The catalogue's submission form (catalog repo — records/<ID>.yaml is
+// the source of truth; submissions become validated record files via PR).
+const newDatasetUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new?template=new_dataset.yml'
+const updateIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
+const howToUrl = 'https://github.com/MOSAIC-mfl/catalog/blob/main/docs/HOW_TO_REGISTER_DATASETS.md'
+
+const steps = [
+  { num: '01', icon: 'upload', title: 'Register', body: 'Fill the form: title, living landscape, country, contact. Everything else is optional — empty is a valid answer.' },
+  { num: '02', icon: 'eye', title: 'Review — together', body: 'The MOSAIC team turns your submission into a validated record and tags you to confirm the details. Typically 5–10 working days.' },
+  { num: '03', icon: 'globe', title: 'Published', body: 'Everything republishes automatically in about 2 minutes: permanent ID, STAC metadata, and a page in the catalogue.' },
+]
+
+const required = [
+  'Dataset title',
+  'Living Landscape it covers (or country-wide / global)',
+  'Country',
+  'Contact person',
+]
+
+const recommended = [
+  'A working download or source URL — the single biggest boost to reusability',
+  'Spatial resolution with units (e.g. "30 m") and the CRS (e.g. EPSG:4326)',
+  'Temporal coverage, a license (e.g. CC BY 4.0) and file format(s)',
+]
+---
+
+<p class="hc-lead">
+  Register your dataset's metadata and it becomes an open, citable record — permanent ID, STAC
+  metadata and its own page in the catalogue. <strong>Open to everyone working on living
+  landscapes</strong>: research institutions, universities, public agencies, NGOs, landscape
+  initiatives and independent researchers. Your files stay where they are — MOSAIC publishes
+  metadata that points to them.
+</p>
+<div class="hc-actions">
+  <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a new dataset</a>
+  <a class="btn btn-secondary" href="#contact">Ask before contributing</a>
+</div>
+<p class="hc-note">4 required fields · about 2 minutes · via GitHub or plain email</p>
+
+<h3 class="hc-h3">How it works</h3>
+<StepTimeline steps={steps} />
+
+<div class="need-card">
+  <div class="need-col">
+    <h3>Required <span class="need-count">4 fields</span></h3>
+    <ul>
+      {required.map((item) => (
+        <li><span class="need-tick req" aria-hidden="true">✓</span><span>{item}</span></li>
+      ))}
+    </ul>
+  </div>
+  <div class="need-col">
+    <h3>Recommended</h3>
+    <ul>
+      {recommended.map((item) => (
+        <li><span class="need-tick" aria-hidden="true">＋</span><span>{item}</span></li>
+      ))}
+    </ul>
+    <p class="need-foot">Full field descriptions: <a href="#metadata">Metadata guide</a>.</p>
+  </div>
+  <div class="need-sticky">
+    <StickyNote tint="teal" rotate={-2}>Not sure about a field? Leave it empty — you can always come back and edit later.</StickyNote>
+  </div>
+</div>
+
+<h3 class="hc-h3">Other ways to contribute</h3>
+<ul class="hc-bullets">
+  <li>
+    <strong>No GitHub account?</strong> Email the four required fields (title, landscape, country,
+    contact) to the <a href="#contact">MOSAIC coordinator</a> — we register it for you and send back
+    the published link.
+  </li>
+  <li>
+    <strong>Comfortable with Git?</strong> Each dataset is one record file in the
+    <a href="https://github.com/MOSAIC-mfl/catalog" target="_blank" rel="noopener noreferrer">catalogue's code on GitHub</a> —
+    copy one, edit it, open a pull request. Validation runs automatically, so you can't break the catalogue.
+  </li>
+  <li>
+    <strong>Many datasets at once?</strong> Send your centre's inventory (a spreadsheet is fine) to the
+    <a href="#contact">MOSAIC coordinator</a> — we run a scripted import and return draft records for your review.
+  </li>
+  <li>
+    <strong>Updating an existing dataset?</strong> <a href={updateIssueUrl} target="_blank" rel="noopener noreferrer">Open an update issue</a> describing the change.
+  </li>
+</ul>
+<p class="hc-text">
+  Step-by-step instructions for all routes:
+  <a href={howToUrl} target="_blank" rel="noopener noreferrer">How to register a dataset</a>.
+</p>
+
+<style>
+  .hc-lead { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-6); max-width: 70ch; }
+  .hc-lead strong { color: var(--color-text); }
+  .hc-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .hc-note { margin: var(--space-3) 0 var(--space-12); font-size: var(--text-sm); color: var(--color-muted); }
+  .hc-h3 { font-size: var(--text-2xl); margin: var(--space-12) 0 var(--space-6); }
+  .hc-note + .hc-h3 { margin-top: 0; }
+
+  .need-card {
+    display: grid; grid-template-columns: 1fr 1.3fr auto; gap: var(--space-8); align-items: start;
+    margin-top: var(--space-12); padding: var(--space-8);
+    background-color: var(--color-gray-50); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+  }
+  .need-col h3 { margin: 0 0 var(--space-4); font-size: var(--text-xl); }
+  .need-count {
+    display: inline-block; margin-left: var(--space-2); padding: 2px 10px; border-radius: var(--radius-full);
+    background-color: var(--tint-teal-bg); color: var(--tint-teal-fg);
+    font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; vertical-align: middle;
+  }
+  .need-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .need-col li { display: flex; gap: var(--space-3); align-items: flex-start; line-height: 1.5; }
+  .need-tick { flex-shrink: 0; font-weight: 700; color: var(--color-muted); }
+  .need-tick.req { color: var(--color-link); }
+  .need-foot { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
+  .need-sticky { align-self: center; }
+
+  .hc-bullets {
+    list-style: disc; padding-left: var(--space-6); color: var(--color-muted);
+    display: flex; flex-direction: column; gap: var(--space-3); margin: 0 0 var(--space-4); line-height: 1.6;
+  }
+  .hc-text { color: var(--color-muted); line-height: 1.7; margin: 0; }
+  .hc-bullets a, .hc-text a, .need-foot a { color: var(--color-link); }
+
+  @media (max-width: 1100px) {
+    .need-card { grid-template-columns: 1fr 1fr; }
+    .need-sticky { grid-column: 1 / -1; justify-self: center; }
+  }
+  @media (max-width: 767px) {
+    .need-card { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-6); }
+  }
+</style>
