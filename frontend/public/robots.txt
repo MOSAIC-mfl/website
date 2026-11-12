@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mosaic-mfl.github.io/website/sitemap.xml

@@ -42,6 +42,16 @@ const steps = [
     href: `${base}/about#contribute`, link: 'How to contribute',
   },
 ] as const
+
+// Each audience gets a way in: where someone like them would start.
+const audiences = [
+  { icon: 'search', who: 'Researchers', what: 'looking for landscape data, tools and research', href: `${base}/catalogue` },
+  { icon: 'upload', who: 'Institutions', what: 'sharing data, tools and research', href: `${base}/about#contribute` },
+  { icon: 'map-pin', who: 'Landscape teams', what: 'coordinating data across places', href: `${base}/landscapes` },
+  { icon: 'sparkles', who: 'Decision-makers', what: 'comparing environmental and social information', href: `${base}/landscapes` },
+  { icon: 'database', who: 'Data stewards', what: 'making their work easier to find and reuse', href: `${base}/about#metadata` },
+  { icon: 'users', who: 'Funders and partners', what: 'tracking evidence across initiatives', href: `${base}/about#overview` },
+] as const
 ---
 
 <BaseLayout title="Home">
@@ -79,30 +89,33 @@ const steps = [
   <section class="stats-section">
     <div class="container">
       <div class="stats-card" data-reveal-stagger>
-        <div class="stat-item">
+        <a class="stat-item" href={`${base}/catalogue`}>
           <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{totalDatasets}</span>
             <span class="stat-label">Datasets catalogued</span>
           </span>
-        </div>
+        </a>
         <div class="stat-divider" aria-hidden="true"></div>
-        <div class="stat-item">
+        <a class="stat-item" href={`${base}/landscapes`}>
           <span class="stat-icon" aria-hidden="true"><Icon name="mountains" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{landscapes}</span>
             <span class="stat-label">Landscapes with data</span>
           </span>
-        </div>
+        </a>
         <div class="stat-divider" aria-hidden="true"></div>
-        <div class="stat-item">
+        <a class="stat-item" href={`${base}/catalogue`}>
           <span class="stat-icon" aria-hidden="true"><Icon name="globe" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number">{countries}</span>
             <span class="stat-label">Countries with data</span>
           </span>
-        </div>
+        </a>
       </div>
+      <p class="stats-today">
+        Today MOSAIC lists datasets. Tools and research for each landscape are being added.
+      </p>
     </div>
   </section>
 
@@ -139,6 +152,7 @@ const steps = [
           loading="lazy"
           decoding="async"
         />
+        <p class="ll-parts">Water · Forests · Biodiversity · People and livelihoods · Agriculture · Land and soils · Climate</p>
       </div>
     </div>
   </section>
@@ -180,12 +194,14 @@ const steps = [
         </svg>
       </div>
       <ul class="who-grid" data-reveal-stagger>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="search" size={20} /></span><span><strong>Researchers</strong> looking for landscape data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="upload" size={20} /></span><span><strong>Institutions</strong> sharing data, tools and research</span></li>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="map-pin" size={20} /></span><span><strong>Landscape teams</strong> coordinating data across places</span></li>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="sparkles" size={20} /></span><span><strong>Decision-makers</strong> comparing environmental and social information</span></li>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="database" size={20} /></span><span><strong>Data stewards</strong> making their work easier to find and reuse</span></li>
-        <li class="who-item"><span class="who-ico" aria-hidden="true"><Icon name="users" size={20} /></span><span><strong>Funders and partners</strong> tracking evidence across initiatives</span></li>
+        {audiences.map((a) => (
+          <li>
+            <a class="who-item" href={a.href}>
+              <span class="who-ico" aria-hidden="true"><Icon name={a.icon} size={20} /></span>
+              <span><strong>{a.who}</strong> {a.what}</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   </section>
@@ -317,7 +333,12 @@ const steps = [
     gap: var(--space-4);
     flex: 1 1 0;
     min-width: 0;
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-md);
   }
+  .stat-item:hover .stat-label { text-decoration: underline; }
+  .stats-today { margin: var(--space-4) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
   .stat-icon {
     flex-shrink: 0;
     width: 52px;
@@ -378,7 +399,11 @@ const steps = [
     align-items: center;
     color: var(--color-text);
     line-height: 1.45;
+    text-decoration: none;
+    border-radius: var(--radius-md);
   }
+  .who-item:hover { color: var(--color-text); }
+  .who-item:hover strong { text-decoration: underline; }
   .who-item strong { font-weight: 700; }
   .who-ico {
     flex: 0 0 auto;
@@ -410,6 +435,11 @@ const steps = [
   .ll-link:hover, .how-link:hover { text-decoration: underline; }
 
   .ll-art img { display: block; width: 100%; height: auto; }
+  /* The labels are part of the picture and too small to read on a phone: there
+     they are repeated as text under it. */
+  .ll-parts { display: none; margin: var(--space-3) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.6; }
+  @media (max-width: 560px) { .ll-parts { display: block; } }
+  :global([data-theme='dark']) .ll-parts { color: var(--mosaic-ink); }
   /* The illustration has a transparent background and dark labels: in dark
      mode it sits on a white plate (never-remapped --color-white) so they stay readable. */
   :global([data-theme='dark']) .ll-art {
