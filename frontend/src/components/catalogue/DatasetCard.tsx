@@ -1,16 +1,11 @@
 import type { Dataset } from '../../utils/types'
 import { DatasetTypeIcon } from './DatasetTypeIcon'
+import { READINESS_MEANING } from '../../utils/readiness'
 
 const STATUS_BADGE: Record<string, string> = {
   'Raw':       'badge badge-raw',
   'Processed': 'badge badge-processed',
   'Validated': 'badge badge-validated',
-}
-
-const STATUS_TOOLTIP: Record<string, string> = {
-  'Raw':       'Metadata registered; dataset not yet reviewed.',
-  'Processed': 'Dataset prepared, harmonized or structured for use.',
-  'Validated': 'Metadata and spatial information checked by the MOSAIC team.',
 }
 
 interface Props {
@@ -30,6 +25,9 @@ export function DatasetCard({ dataset, base }: Props) {
     dataset.data_type,
     dataset.spatial_resolution && dataset.spatial_resolution !== 'N/A' ? dataset.spatial_resolution : null,
     dataset.temporal_coverage,
+    // Whether the data can be had without asking, in plain words: colour stays
+    // reserved for the readiness status.
+    dataset.access_level,
   ].filter(Boolean) as string[]
 
   const context = [
@@ -55,7 +53,7 @@ export function DatasetCard({ dataset, base }: Props) {
         <p className="ds-card-specs">
           <span
             className={STATUS_BADGE[dataset.readiness_status] ?? 'badge badge-raw'}
-            title={STATUS_TOOLTIP[dataset.readiness_status]}
+            title={READINESS_MEANING[dataset.readiness_status]}
           >
             {dataset.readiness_status}
           </span>

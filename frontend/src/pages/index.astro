@@ -234,7 +234,8 @@ const steps = [
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--mosaic-amber);
+    /* the hero is light in both themes: the fixed text amber, not the themed one */
+    color: var(--mosaic-amber-text);
     margin-bottom: var(--space-4);
     line-height: 1.2;
   }
@@ -266,13 +267,13 @@ const steps = [
   .hero-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
 
   .btn-hero-primary {
-    background-color: var(--mosaic-amber);
+    background-color: var(--mosaic-amber-text);
     color: var(--color-white);
-    border-color: var(--mosaic-amber);
+    border-color: var(--mosaic-amber-text);
     font-weight: 600;
     padding: var(--space-3) var(--space-6);
   }
-  .btn-hero-primary:hover { background-color: #b06d12; border-color: #b06d12; color: var(--color-white); }
+  .btn-hero-primary:hover { background-color: #7D4D10; border-color: #7D4D10; color: var(--color-white); }
   .btn-hero-ghost {
     /* Sits on the hero band, which stays light in BOTH themes — use the
        never-remapped white, not --color-surface (dark-on-dark in dark mode). */
@@ -356,10 +357,10 @@ const steps = [
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #6F8F5F;
+    color: var(--color-moss-text);
   }
   .section-wavy { display: inline-block; color: var(--mosaic-teal); }
-  .section-eyebrow--amber { color: var(--mosaic-amber); }
+  .section-eyebrow--amber { color: var(--color-amber-text); }
 
 
   /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */

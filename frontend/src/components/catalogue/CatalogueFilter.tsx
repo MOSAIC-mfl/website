@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import type { Dataset } from '../../utils/types'
 import { filterDatasets, emptyFilters, type FilterState } from '../../utils/filterDatasets'
 import { DatasetGrid } from './DatasetGrid'
+import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER } from '../../utils/readiness'
 
 interface Props {
   datasets: Dataset[]
@@ -286,7 +287,12 @@ export function CatalogueFilter({ datasets, base }: Props) {
   }
 
   function renderFilterSection(key: FilterKey) {
-    const options = getOptions(datasets, key)
+    // Sorted by what is shown, not by the value behind it: landscapes by name
+    // (their values are codes), readiness from Raw to Validated.
+    const options = getOptions(datasets, key).sort((a, b) =>
+      key === 'readiness_status'
+        ? (READINESS_ORDER as readonly string[]).indexOf(a) - (READINESS_ORDER as readonly string[]).indexOf(b)
+        : displayValue(key, a).localeCompare(displayValue(key, b)))
     if (options.length === 0) return null
     const open = openGroups.has(key)
     const nSelected = (filters[key] as string[]).length
@@ -484,9 +490,10 @@ export function CatalogueFilter({ datasets, base }: Props) {
         <details className="readiness-legend">
           <summary>What do “Raw”, “Processed” and “Validated” mean?</summary>
           <ul>
-            <li><span className="badge badge-raw">Raw</span> Metadata registered; dataset not yet reviewed.</li>
-            <li><span className="badge badge-processed">Processed</span> Dataset prepared, harmonized or structured for use.</li>
-            <li><span className="badge badge-validated">Validated</span> Metadata and spatial information checked by the MOSAIC team.</li>
+            {READINESS_ORDER.map((s) => (
+              <li key={s}><span className={`badge badge-${s.toLowerCase()}`}>{s}</span> {READINESS_MEANING[s]}</li>
+            ))}
+            <li>{READINESS_NOTE}</li>
           </ul>
         </details>
 

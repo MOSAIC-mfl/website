@@ -7,6 +7,8 @@
    .github/ISSUE_TEMPLATE/new_dataset.yml). `key` is the name the field has in
    a record file (catalog repository, spec/record_schema.json). When the form
    or the schema changes, change these two lists with it. */
+import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER } from '../../utils/readiness'
+
 interface Field {
   label: string
   key: string
@@ -166,11 +168,12 @@ const optionalFields: Field[] = [
   <table class="data-table">
     <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
     <tbody>
-      <tr><td><span class="badge badge-raw">Raw</span></td><td>Registered as supplied by the source; not yet processed or quality-checked. Metadata may be incomplete.</td></tr>
-      <tr><td><span class="badge badge-processed">Processed</span></td><td>Cleaned, reformatted, or harmonized, but not yet fully validated against the MFL spatial standards.</td></tr>
-      <tr><td><span class="badge badge-validated">Validated</span></td><td>Passed quality control and meets the MFL spatial standards. Suitable for analysis.</td></tr>
+      {READINESS_ORDER.map((s) => (
+        <tr><td><span class={`badge badge-${s.toLowerCase()}`}>{s}</span></td><td>{READINESS_MEANING[s]}</td></tr>
+      ))}
     </tbody>
   </table>
+  <p style="color: var(--color-gray-600); margin-top: var(--space-3); font-size: var(--text-sm);">{READINESS_NOTE} Choose the one that describes your dataset as it is today.</p>
 </section>
 
 <style>

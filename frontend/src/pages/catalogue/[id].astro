@@ -5,6 +5,7 @@ import AccessBadge from '../../components/ui/AccessBadge.astro'
 import Breadcrumb from '../../components/ui/Breadcrumb.astro'
 import { loadDatasets } from '../../utils/loadDatasets'
 import { isSpdxLicense } from '../../utils/license'
+import { READINESS_MEANING, READINESS_NOTE, READINESS_ORDER } from '../../utils/readiness'
 
 export async function getStaticPaths() {
   const datasets = await loadDatasets()
@@ -44,11 +45,6 @@ const related = allDatasets
   .slice(0, 4)
   .map((x) => x.d)
 
-const readinessDescriptions: Record<string, string> = {
-  'Raw': 'This dataset is registered as supplied by its source. It has not yet been processed or quality-checked by the MOSAIC network. Metadata may be incomplete.',
-  'Processed': 'This dataset has been processed (cleaned, reformatted, or harmonized) but has not yet completed full quality validation against the MFL spatial standards.',
-  'Validated': 'This dataset has undergone quality control and meets the MFL spatial standards. Suitable for analysis.',
-}
 ---
 
 <BaseLayout title={dataset.title} description={dataset.description ?? undefined}>
@@ -174,7 +170,7 @@ const readinessDescriptions: Record<string, string> = {
         <div>
           <p style="margin-bottom: var(--space-4);">Access to this dataset is restricted. To request access, please contact the data steward.</p>
           {dataset.contact
-            ? <p><strong>Contact:</strong> <a href={`mailto:${dataset.contact}`}>{dataset.contact}</a></p>
+            ? <p><strong>Contact:</strong> <a href={`mailto:${dataset.contact}?subject=${encodeURIComponent(`MOSAIC ${dataset.id} — access request`)}`}>{dataset.contact}</a></p>
             : <p>No steward contact is registered yet. Contact the MOSAIC coordination team.</p>}
         </div>
       ) : dataset.access_level === 'Internal' ? (
@@ -207,7 +203,7 @@ const readinessDescriptions: Record<string, string> = {
     <!-- Readiness explanation -->
     <section style="margin-bottom: var(--space-8);">
       <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-3);">About the readiness status</h2>
-      <p><strong>{dataset.readiness_status}:</strong> {readinessDescriptions[dataset.readiness_status]}</p>
+      <p><strong>{dataset.readiness_status}:</strong> {READINESS_MEANING[dataset.readiness_status]} {READINESS_NOTE}</p>
     </section>
 
     <!-- Citation: the record's own when it carries one; otherwise how to cite without one -->
@@ -242,9 +238,9 @@ const readinessDescriptions: Record<string, string> = {
           <tr><th>Status</th><th>Meaning</th></tr>
         </thead>
         <tbody>
-          <tr><td><span class="badge badge-raw">Raw</span></td><td>Registered as supplied by the source; not yet processed or quality-checked. Metadata may be incomplete.</td></tr>
-          <tr><td><span class="badge badge-processed">Processed</span></td><td>Cleaned, reformatted, or harmonized, but not yet fully validated against the MFL spatial standards.</td></tr>
-          <tr><td><span class="badge badge-validated">Validated</span></td><td>Passed quality control and meets the MFL spatial standards. Suitable for analysis.</td></tr>
+          {READINESS_ORDER.map((s) => (
+            <tr><td><span class={`badge badge-${s.toLowerCase()}`}>{s}</span></td><td>{READINESS_MEANING[s]}</td></tr>
+          ))}
         </tbody>
       </table>
     </details>

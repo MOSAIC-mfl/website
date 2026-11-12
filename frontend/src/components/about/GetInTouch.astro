@@ -9,7 +9,6 @@ const base = import.meta.env.BASE_URL
 const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
 // Dataset records live in the catalog repo — dataset corrections go there.
 const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
-const siteUrl = 'https://mosaic-mfl.github.io/website/'
 
 // Show the photo only if the file is actually present; otherwise CoordinatorCard
 // renders the "LL" initials fallback.
@@ -22,10 +21,11 @@ const issueCards = [
   { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
 ] as const
 
+// The coordinator's institutional address (Lizeth, 2026-11-12), until a shared
+// mailbox exists. It is the way in for anyone without a GitHub account.
+const contactEmail = 'l.llanos@cgiar.org'
 const contactRows = [
-  // Email intentionally a clearly-marked placeholder — do not invent an address.
-  { icon: 'mail', label: 'Email', value: 'Contact email — to be confirmed' },
-  { icon: 'globe', label: 'Website', value: 'mosaic-mfl.github.io/website', href: siteUrl },
+  { icon: 'mail', label: 'Email', value: contactEmail, href: `mailto:${contactEmail}` },
 ]
 ---
 

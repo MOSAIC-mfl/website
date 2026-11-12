@@ -72,6 +72,8 @@
   text-decoration: none;
 }
 .catalogue-maplink:hover { text-decoration: underline; }
+.catalogue-maplink + .catalogue-maplink { margin-left: var(--space-6); }
+.catalogue-updated { font-size: var(--text-sm); color: var(--color-muted); }
 [data-theme="dark"] .catalogue-maplink { color: var(--mosaic-light-teal); }
 
 /* ── Layout ──────────────────────────────────────────────────── */
@@ -840,6 +842,9 @@
   padding: 0.85rem 1rem;
   background: var(--color-surface);
 }
+/* The last fact runs to the end of its row, so no empty cell shows the grid's
+   hairline colour as a grey block. */
+.ds-fact:last-child { grid-column-end: -1; }
 .ds-fact-label {
   font-size: var(--text-xs);
   text-transform: uppercase;
