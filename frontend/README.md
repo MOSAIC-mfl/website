@@ -32,12 +32,18 @@ cp .env.example .env          # choose the API mode (see below)
 npm run dev                   # http://localhost:4321/website/
 ```
 
-Two ways to serve the API, same results on the website:
+The website talks to mosaic-api through one port (`src/lib/catalog`) with two adapters, so pages
+and components do not know which one is in use:
 
 | Mode | `.env` | Start the API |
 |---|---|---|
-| `static` (what GitHub Pages serves) | `PUBLIC_MOSAIC_API_MODE=static`<br>`PUBLIC_MOSAIC_API_URL=http://127.0.0.1:8001` | in `mosaic-api`: `python -m mosaic_api export`, then here `npm run api:static` |
-| `live` (FastAPI, for development) | `PUBLIC_MOSAIC_API_MODE=live`<br>`PUBLIC_MOSAIC_API_URL=http://127.0.0.1:8000` | in `mosaic-api`: `python -m mosaic_api serve` |
+| `live` (a running API: local, a VM, a container — any URL) | `PUBLIC_MOSAIC_API_MODE=live`<br>`PUBLIC_MOSAIC_API_URL=http://127.0.0.1:8000` | in `mosaic-api`: `python -m mosaic_api serve` |
+| `static` (the JSON files mosaic-api exports, e.g. on GitHub Pages) | `PUBLIC_MOSAIC_API_MODE=static`<br>`PUBLIC_MOSAIC_API_URL=http://127.0.0.1:8001` | in `mosaic-api`: `python -m mosaic_api export`, then here `npm run api:static` |
+
+`live` is the default for development and the target once the API runs on a server; `static` stays
+for hosting without a server. Either way the data is read in the browser when a page opens, so a new
+or corrected record needs no website rebuild. To point the site at a deployed API, set
+`PUBLIC_MOSAIC_API_URL` to its address and add the website's origin to the API's CORS list.
 
 The API only accepts the origins listed in `mosaic-api/config/mosaic-api.yaml`
 (`http.cors_origins`: `localhost:4321`, `127.0.0.1:4321`, `mosaic-mfl.github.io`).

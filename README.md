@@ -130,8 +130,10 @@ Delete branches after merge.
 ## Deployment
 
 The site deploys automatically to GitHub Pages on every push to `main` via the `deploy-pages.yml`
-workflow. The build reads the static API at `https://mosaic-mfl.github.io/mosaic-api`
-(`PUBLIC_MOSAIC_API_MODE=static`) and is served under `/website`.
+workflow and is served under `/website`. Today it reads the static API at
+`https://mosaic-mfl.github.io/mosaic-api` (`PUBLIC_MOSAIC_API_MODE=static`); once mosaic-api runs on
+a server, set `PUBLIC_MOSAIC_API_MODE=live` and `PUBLIC_MOSAIC_API_URL` in the workflow - no code
+change.
 
 **One-time setup (repository admin):** In Settings > Pages, set Source to **GitHub Actions**.
 
