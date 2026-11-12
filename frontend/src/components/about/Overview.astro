@@ -39,6 +39,10 @@ const audiences = [
       MOSAIC is where everything about a living landscape comes together: the entry point to the
       data, tools and research produced around it, by many organisations.
     </p>
+    <p class="ov-name">
+      The name stands for <strong>Multifunctional Open Spatial Analysis &amp; Integration Collaborative</strong>
+      — and, like a mosaic, it puts many separate pieces into one picture.
+    </p>
     <ul class="ov-principles">
       {principles.map((p) => (
         <li>
@@ -90,6 +94,8 @@ const audiences = [
     background-color: var(--color-gray-100); color: var(--color-gray-700);
   }
   .ov-text .ov-note { font-size: var(--text-sm); }
+  .ov-text .ov-name { margin-bottom: var(--space-6); }
+  .ov-name strong { color: var(--color-text); }
 
   .ov-who { padding-top: var(--space-12); border-top: 1px solid var(--color-border); }
   .ov-who-head { max-width: 62ch; margin-bottom: var(--space-8); }

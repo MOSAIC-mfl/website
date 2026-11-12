@@ -27,17 +27,17 @@ const contactEmail = 'l.llanos@cgiar.org'
 const contactRows = [
   { icon: 'mail', label: 'Email', value: contactEmail, href: `mailto:${contactEmail}` },
 ]
+// The same four purposes as the GitHub cards, by mail, with the subject filled in.
+const mailTo = (subject: string) => `mailto:${contactEmail}?subject=${encodeURIComponent(`MOSAIC — ${subject}`)}`
+const mailLinks = [
+  { label: 'Ask a question', href: mailTo('question') },
+  { label: 'Report a problem', href: mailTo('problem on the site') },
+  { label: 'Correct a dataset', href: mailTo('correction to a dataset') },
+  { label: 'Suggest an idea', href: mailTo('suggestion') },
+]
 ---
 
-<p class="gt-lead">The fastest way to reach the team is a GitHub issue — pick the one that fits:</p>
-<div class="gt-cards">
-  {issueCards.map((c) => (
-    <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
-      {c.body}
-    </ContentCard>
-  ))}
-</div>
-<p class="gt-lead gt-direct-lead">For anything else, contact the MOSAIC coordinator:</p>
+<p class="gt-lead">Write to the MOSAIC coordinator — no account needed:</p>
 <div class="gt-direct">
   <CoordinatorCard
     name="Lizeth Llanos"
@@ -47,11 +47,23 @@ const contactRows = [
     rows={contactRows}
   />
 </div>
+<ul class="gt-mail">
+  {mailLinks.map((m) => <li><a href={m.href}>{m.label}</a></li>)}
+</ul>
+<p class="gt-lead gt-direct-lead">If you use GitHub, an issue reaches the team directly:</p>
+<div class="gt-cards">
+  {issueCards.map((c) => (
+    <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
+      {c.body}
+    </ContentCard>
+  ))}
+</div>
 
 <style>
   .gt-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; line-height: 1.6; }
   .gt-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
   .gt-direct-lead { margin-top: var(--space-12); margin-bottom: var(--space-4); }
   .gt-direct { max-width: 640px; }
+  .gt-mail { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); font-size: var(--text-sm); font-weight: 600; }
   @media (max-width: 600px) { .gt-cards { grid-template-columns: 1fr; } }
 </style>
