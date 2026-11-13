@@ -1,7 +1,7 @@
 import type { AccessPoint, RecordDetail } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { ACCESS_BADGE, ACCESS_LABEL } from '../../lib/domain/present'
-import { contactLine, formatsOf, licenseText, licenseUrl, METHOD_ACTION, pointOfContact, primaryAccess, spdxOf, urlOf } from './view'
+import { contactLine, formatName, formatsOf, licenseText, licenseUrl, METHOD_ACTION, pointOfContact, primaryAccess, spdxOf, urlOf } from './view'
 
 function AccessPoints({ points, recordAccess, labels }: { points: AccessPoint[]; recordAccess?: string; labels: LabelBook }) {
   if (points.length === 0) return null
@@ -14,7 +14,7 @@ function AccessPoints({ points, recordAccess, labels }: { points: AccessPoint[];
               <strong>{p.name}</strong>
               {p.description && <><br /><span className="dp-small">{p.description}</span></>}
               {(p.kind || p.media_type || p.file_size) && (
-                <><br /><span className="dp-small dp-muted">{[p.kind && labels.label('data_kind', p.kind), p.media_type, p.file_size].filter(Boolean).join(' · ')}</span></>
+                <><br /><span className="dp-small dp-muted">{[p.kind && labels.label('data_kind', p.kind), p.media_type && formatName(p.media_type), p.file_size].filter(Boolean).join(' · ')}</span></>
               )}
             </td>
             <td>

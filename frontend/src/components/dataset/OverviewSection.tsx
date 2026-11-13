@@ -8,10 +8,10 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
   const tags = [
     ...(r.themes ?? []).map((t) => labels.label('theme', t)),
     ...(d.facets.data_kind ?? []).filter((k) => k !== 'not_specified').map((k) => labels.label('data_kind', k)),
+    ...(r.spatial?.geography ?? []).filter((g) => g !== 'global').map((g) => labels.label('geography', g)),
     ...keywords,
   ]
   const status = r.processing_status
-  const missing = d.quality.missing_minimum
   const uses = r.usage?.intended_uses ?? []
   const avoid = r.usage?.not_recommended_for ?? []
   return (
@@ -59,14 +59,6 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
         </details>
       </div>
 
-      <div className="dp-note dp-note--meta">
-        <h3>Metadata: {missing.length === 0 ? 'complete' : 'incomplete'} ({Math.round((d.quality.completeness.minimum ?? 0) * 100)}% of the MOSAIC minimum)</h3>
-        <p>
-          {missing.length === 0
-            ? 'The record has every field of the MOSAIC minimum: enough to find, understand, cite and reach the data without opening it.'
-            : `Still missing: ${missing.join(', ')}. MOSAIC does not invent them; the data owner completes them.`}
-        </p>
-      </div>
     </section>
   )
 }

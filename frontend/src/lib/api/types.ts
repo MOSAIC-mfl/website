@@ -14,7 +14,6 @@ export type SourceInfo = S['SourceOut']
 export type Labels = Record<string, Record<string, string>>
 export type FacetCounts = Record<string, Record<string, number>>
 export type Provenance = S['ProvenanceOut']
-export type Quality = S['QualityOut']
 
 /** RecordDetail with `record` typed as a MOSAIC standard record. */
 export type RecordDetail = Omit<S['RecordDetail'], 'record'> & { record: MosaicRecord }

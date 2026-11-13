@@ -114,15 +114,11 @@ export interface components {
     schemas: {
         /**
          * DataStatusOut
-         * @description What the catalogue holds for the landscape and how complete it is.
+         * @description What the catalogue holds for the landscape.
          */
         DataStatusOut: {
             /** Total */
             total: number;
-            /** Complete */
-            complete: number;
-            /** Incomplete */
-            incomplete: number;
             /**
              * Stated
              * @description Resources that name the landscape; the others cover it by bounding box.
@@ -138,13 +134,6 @@ export interface components {
             };
             /** By Access */
             by_access: {
-                [key: string]: number;
-            };
-            /**
-             * Missing Minimum
-             * @description Minimum field -> resources missing it.
-             */
-            missing_minimum: {
                 [key: string]: number;
             };
         };
@@ -294,23 +283,10 @@ export interface components {
              */
             fetched_at: string;
         };
-        /** QualityOut */
-        QualityOut: {
-            /**
-             * Status
-             * @description complete | incomplete (against the MOSAIC minimum).
-             */
-            status: string;
-            /** Completeness */
-            completeness: {
-                [key: string]: number;
-            };
-            /** Missing Minimum */
-            missing_minimum: string[];
-        };
         /**
          * RecordDetail
-         * @description The full resource in the MOSAIC model, plus where it came from and how complete it is.
+         * @description The full resource in the MOSAIC model, plus where it came from. How complete its metadata is stays
+         *     internal (the standard's review lists): it is not part of the public API.
          */
         RecordDetail: {
             /** Id */
@@ -335,7 +311,6 @@ export interface components {
                 [key: string]: string[];
             };
             provenance: components["schemas"]["ProvenanceOut"];
-            quality: components["schemas"]["QualityOut"];
             /** Same As */
             same_as: string[];
         };
@@ -421,12 +396,6 @@ export interface components {
              * @description SPDX expression, or the licence text when there is no SPDX code.
              */
             license?: string | null;
-            /** Status */
-            status: string;
-            /** Completeness */
-            completeness: {
-                [key: string]: number;
-            };
             /** Same As */
             same_as: string[];
             /** Updated */

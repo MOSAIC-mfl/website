@@ -5,12 +5,22 @@ import { joinLabels } from '../../lib/domain/present'
 import { readinessLabel } from '../../lib/domain/readiness'
 import { coverageOf, formatsOf, periodOf, resolutionOf } from './view'
 
+interface Props {
+  d: RecordDetail
+  labels: LabelBook
+  jsonUrl: string
+  /** Bounding box of each living landscape (mosaic-api /v1/landscapes), for records without their own. */
+  landscapeBoxes: Record<string, number[] | null | undefined>
+}
+
+const box = (b: number[]) => `W ${b[0]}, S ${b[1]}, E ${b[2]}, N ${b[3]}`
+
 const row = (label: string, value: React.ReactNode) => (
   <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
 )
 
 /** Technical metadata: spatial, temporal, data, processing and the full record (standard v0.2 fields). */
-export function TechnicalSection({ d, labels, jsonUrl }: { d: RecordDetail; labels: LabelBook; jsonUrl: string }) {
+export function TechnicalSection({ d, labels, jsonUrl, landscapeBoxes }: Props) {
   const r = d.record
   const sp = r.spatial
   const t = r.temporal
@@ -18,6 +28,8 @@ export function TechnicalSection({ d, labels, jsonUrl }: { d: RecordDetail; labe
   const geometry = (d.facets.geometry ?? []).filter((g) => g !== NOT_SPECIFIED)
   const bbox = (sp?.bbox ?? []) as unknown as number[] | number[][]
   const boxes = (Array.isArray(bbox[0]) ? bbox : bbox.length ? [bbox] : []) as number[][]
+  const landBoxes = d.landscapes.map((c) => landscapeBoxes[c]).filter((b): b is number[] => !!b && b.length === 4)
+  const formats = formatsOf(r)
   const structures = r.structures ?? []
   const steps = r.processing ?? []
   return (
@@ -31,9 +43,12 @@ export function TechnicalSection({ d, labels, jsonUrl }: { d: RecordDetail; labe
         {row('Living landscape', d.landscapes.length
           ? <>{d.landscapes.map((c) => `${labels.label('landscape', c)} (${c})`).join(', ')}{d.landscapes_derived ? ' — from the dataset extent' : ''}</>
           : 'Not specified')}
-        {row('Country or region', joinLabels(labels, 'geography', sp?.geography ?? [], 20) ?? 'Not specified')}
+        {row('Country', joinLabels(labels, 'geography', sp?.geography ?? [], 20) ?? 'Not specified')}
         {row('Spatial resolution', resolutionOf(r) ?? 'Not specified')}
-        {boxes.length > 0 && row('Bounding box', boxes.map((b) => `W ${b[0]}, S ${b[1]}, E ${b[2]}, N ${b[3]}`).join('; '))}
+        {boxes.length > 0
+          ? row('Bounding box', boxes.map(box).join('; '))
+          : landBoxes.length > 0 &&
+            row('Bounding box', <>{landBoxes.map(box).join('; ')} <span className="dp-small">(the living landscape's; the dataset's own extent is not recorded)</span></>)}
         {sp?.crs && row('Coordinate system', sp.crs)}
       </dl>
 
@@ -49,7 +64,7 @@ export function TechnicalSection({ d, labels, jsonUrl }: { d: RecordDetail; labe
       <dl className="dp-kv">
         {row('Data type', joinLabels(labels, 'data_kind', d.facets.data_kind ?? [], 5) ?? 'Not specified')}
         {geometry.length > 0 && row('Geometry', joinLabels(labels, 'geometry', geometry, 5))}
-        {row('Formats', formatsOf(r).join(', ') || 'Not specified')}
+        {formats.length > 0 && row('Formats', formats.join(', '))}
         {row('Theme', joinLabels(labels, 'theme', r.themes ?? [], 20) ?? 'Not specified')}
         {row('Data entries', String((r.data ?? []).length))}
         {structures.length > 0 && row('Data dictionary', structures.map((s) => `${s.name}: ${(s.variables ?? []).length} variables`).join('; '))}

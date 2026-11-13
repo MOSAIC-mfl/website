@@ -90,9 +90,27 @@ export function primaryAccess(r: MosaicRecord): AccessPoint | undefined {
   return pts.find((p) => urlOf(p) && (p.access ?? r.access) === 'public' && p.access_method !== 'request') ?? pts.find((p) => urlOf(p) && p.access_method !== 'request')
 }
 
-/** Formats of the data entries (media types), without repeats. */
+/** Names people know for the media types of data entries (anything else is shown as it is). */
+const FORMAT_NAME: [RegExp, string][] = [
+  [/^image\/tiff;.*profile=cloud-optimized/i, 'Cloud Optimized GeoTIFF'],
+  [/^image\/tiff/i, 'GeoTIFF'],
+  [/^application\/x-esri-shapefile|^application\/vnd\.shp/i, 'Shapefile'],
+  [/^text\/csv/i, 'CSV'],
+  [/spreadsheetml|^application\/vnd\.ms-excel/i, 'XLSX'],
+  [/^application\/x-netcdf|^application\/netcdf/i, 'NetCDF'],
+  [/^application\/geo\+json/i, 'GeoJSON'],
+  [/^application\/geopackage/i, 'GeoPackage'],
+  [/^application\/vnd\.apache\.parquet/i, 'Parquet'],
+  [/^application\/zip/i, 'ZIP'],
+  [/^application\/json/i, 'JSON'],
+  [/^application\/pdf/i, 'PDF'],
+]
+
+export const formatName = (mediaType: string): string => FORMAT_NAME.find(([re]) => re.test(mediaType))?.[1] ?? mediaType
+
+/** Formats of the data entries, by name, without repeats. */
 export function formatsOf(r: MosaicRecord): string[] {
-  return [...new Set((r.data ?? []).map((p) => p.media_type).filter((m): m is string => !!m))]
+  return [...new Set((r.data ?? []).map((p) => p.media_type).filter((m): m is string => !!m).map(formatName))]
 }
 
 const authorName = (a: NonNullable<NonNullable<MosaicRecord['citation']>['authors']>[number]): string =>

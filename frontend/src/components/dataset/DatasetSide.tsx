@@ -45,7 +45,13 @@ export function DatasetSide({ d, labels, base, related }: { d: RecordDetail; lab
           {landscape && <li><a href={`${base}/landscapes#${landscape}`}>{labels.label('landscape', landscape)}: the landscape</a></li>}
           {landscape && <li><a href={`${base}/catalogue/?landscape=${encodeURIComponent(landscape)}`}>All datasets for {labels.label('landscape', landscape)}</a></li>}
           {source && urlOf(source) && <li><a href={urlOf(source)} target="_blank" rel="noopener noreferrer">The data at its source ↗</a></li>}
-          {d.provenance.record_url && <li><a href={d.provenance.record_url} target="_blank" rel="noopener noreferrer">The record in {d.provenance.source_name} ↗</a></li>}
+          {d.provenance.record_url && !d.provenance.record_url.includes('/website/catalogue/') && (
+            <li>
+              <a href={d.provenance.record_url} target="_blank" rel="noopener noreferrer">
+                {d.source === 'mosaic' ? 'The record file in the MOSAIC catalogue' : `The record in ${d.provenance.source_name}`} ↗
+              </a>
+            </li>
+          )}
         </ul>
       </section>
     </aside>

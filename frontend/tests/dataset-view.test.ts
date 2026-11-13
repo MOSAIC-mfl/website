@@ -15,7 +15,6 @@ const detail = (over: Partial<RecordDetail> & { record?: Partial<RecordDetail['r
     facets: {},
     same_as: [],
     provenance: { source: 'mosaic', source_name: 'MOSAIC', record_url: null, format: 'mosaic', fetched_at: '2026-11-12T00:00:00Z' },
-    quality: { status: 'incomplete', completeness: {}, missing_minimum: [] },
     ...over,
     record: { title: 'LULC', spatial: { geography: ['IND'] }, ...(over.record ?? {}) },
   }) as unknown as RecordDetail
@@ -64,5 +63,31 @@ describe('dataset page view', () => {
     expect(correctionLinks(d)?.edit).toContain('github.com/MOSAIC-mfl/catalog/issues/new')
     const cdh = detail({ source: 'cdh', provenance: { source: 'cdh', source_name: 'CGIAR Climate Data Hub', record_url: 'https://github.com/x/y', format: 'cdh', fetched_at: '' } } as never)
     expect(correctionLinks(cdh)).toEqual({ edit: 'https://github.com/x/y', problem: 'https://github.com/x/y', atSource: true })
+  })
+})
+
+describe('related datasets', () => {
+  it('as on the previous website: same landscape and theme first, then catalogue order; bbox-only matches last', async () => {
+    const { rankRelated } = await import('../src/lib/catalog/related')
+    const { summary } = await import('./fixtures')
+    const d = detail({ id: 'mosaic:MFL-2026-025', landscapes: ['ZWE-MB'], facets: { theme: ['ecosystem-services'] } } as never)
+    const items = [
+      summary('mosaic:MFL-2026-028', { landscapes: ['ZWE-MB'], themes: ['land-cover-land-use'] }),
+      summary('cdh:africa-spei-drought', { landscapes: ['ZWE-MB'], landscapes_derived: true, themes: ['climate'] }),
+      summary('mosaic:MFL-2026-026', { landscapes: ['ZWE-MB'], themes: ['boundaries-admin-units'] }),
+      summary('mosaic:MFL-2026-029', { landscapes: ['ZWE-MB'], themes: ['ecosystem-services'] }),
+      summary('mosaic:MFL-2026-027', { landscapes: ['ZWE-MB'], themes: ['land-cover-land-use'] }),
+    ]
+    expect(rankRelated(d, items, 4).map((r) => r.local_id)).toEqual(['MFL-2026-029', 'MFL-2026-026', 'MFL-2026-027', 'MFL-2026-028'])
+  })
+})
+
+describe('formats', () => {
+  it('names media types the way people know them', async () => {
+    const { formatName } = await import('../src/components/dataset/view')
+    expect(formatName('image/tiff; application=geotiff; profile=cloud-optimized')).toBe('Cloud Optimized GeoTIFF')
+    expect(formatName('application/x-esri-shapefile')).toBe('Shapefile')
+    expect(formatName('text/csv')).toBe('CSV')
+    expect(formatName('application/x-foo')).toBe('application/x-foo')
   })
 })
