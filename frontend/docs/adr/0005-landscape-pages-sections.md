@@ -1,6 +1,6 @@
 # ADR 0005 — One page per landscape, made of sections chosen by the profile
 
-**Status:** proposed (to review with the team)
+**Status:** superseded by [ADR 0008](0008-landscapes-explorer-map-visualization.md) (2026-11-13)
 
 ## Context
 The deliverables ask for a profile page for every living landscape; the Lake Victoria Basin Explorer

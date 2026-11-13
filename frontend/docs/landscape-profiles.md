@@ -1,18 +1,22 @@
-# Landscape pages and the map explorer
+# Landscapes and the map explorer
 
-A landscape page (`src/pages/landscapes/[slug].astro`, one per code in `data/landscapes.json`) is
-built at compile time with the site header, breadcrumb and title. Its content is read from mosaic-api
-when the page opens (`GET /v1/landscapes/{code}`), so a new or changed profile needs no rebuild.
+The Landscapes page (`/landscapes`, Lizeth's explorer in `components/landscapes/`) shows every living
+landscape: selector, photos, locator map, key insights and a section menu. Its catalogue figures and
+which landscapes have a map profile are read from mosaic-api when the page opens
+(`GET /v1/landscapes`, `GET /v1/landscapes/{code}`), so a new dataset or profile needs no rebuild.
+
+**Map visualization** appears in the section menu only for a landscape whose profile has a
+`map-explorer` section (today KEN-LVB and PER-PCL). It shows the profile - map, story, studies:
 
 ```
-LandscapePage (container)         features/landscape/LandscapePage.tsx
-  intro (summary, status)  ·  section navigation (sticky)
-  for each section of the profile:  sectionModule(kind)  ->  React component
-      overview             features/landscape/sections/Overview.tsx
-      map-explorer         features/landscape/sections/MapExplorer.tsx  ->  ExplorerApp (lazy: MapLibre is only loaded here)
-      catalogue-datasets   features/landscape/sections/Datasets.tsx     (the catalogue's DatasetCard)
-      data-status          features/landscape/sections/DataStatus.tsx   (gap analysis)
+/landscapes#KEN-LVB/map     explorer panel  ->  ProfileMapPanel (React island, client:idle)
+/landscapes/ken-lvb/map/    full screen     ->  ProfileMap
+                                              -> GET /v1/landscapes/{code} -> map-explorer section
+                                              -> MapExplorer -> ExplorerApp (lazy: MapLibre loads here)
 ```
+
+Both are kept while the team chooses one. The explorer's controller tells the island which
+landscape to show (`lx:map-code` event); closing the panel unmounts the map.
 
 ## The map explorer
 
@@ -42,7 +46,7 @@ features/explorer/
   charts/          the explorer's own SVG charts, vendored (svg-charts.js, typed in svg-charts.d.ts)
   ui/              React components (container ExplorerApp, Rail, Legend, TimeBar, Popover,
                    SidePanel, Blocks, StoryDrawer, AboutPanel)
-  plugins.ts       profile plugins, loaded only on their landscape page
+  plugins.ts       profile plugins, loaded only with their profile
 profiles/ken-lvb/  Lake Victoria plugin: the flood click (its query raster's codes)
 ```
 
@@ -64,10 +68,10 @@ story drawer.
 
 | To add | Where | Then |
 |---|---|---|
-| A landscape page with the standard sections | nothing (every landscape has one) | — |
-| A curated page | mosaic-catalog `landscapes/<CODE>/profile.yaml` | `validate-landscapes` |
+| A landscape in the explorer | the site's `data/landscapes.json` (+ geometry, photos, texts in `data/`) | — |
+| A map profile ("Map visualization") | mosaic-catalog `landscapes/<CODE>/profile.yaml` with a `map-explorer` section and its `explorer.yaml` | `validate-landscapes` |
 | A map explorer like Lake Victoria for other data | `explorer.yaml` with the same kinds | — |
-| A new kind of section | a component in `features/landscape/sections/`, registered in `registry.ts` | name it in the profile |
+| A new section of the Landscapes page | `sectionList` in `LandscapeExplorer.astro` and its panel; data from the API through `ExplorerData` | — |
 | A new kind of layer | a class implementing `OverlayRenderer` in `features/explorer/renderers/`, registered in `coreRegistry()` | `kind:` on the overlay |
 | A click on a data format of one profile | `src/profiles/<code>/index.ts` (a `ProfilePlugin`), listed in `features/explorer/plugins.ts` | `inspect: {kind: ...}` |
 | A story chart from a series | a `ChartBuilder` in `application/chart-builders.ts` or in a plugin | `charts: [{builder: ...}]` |

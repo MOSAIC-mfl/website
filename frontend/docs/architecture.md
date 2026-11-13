@@ -11,7 +11,7 @@ contract, so the website and the API cannot silently drift apart.
 ```
 pages (Astro)  ──▶  components (React, presentational)
                          ▲
-                    containers: CatalogueApp, DatasetDetail, CatalogueStats
+                    containers: CatalogueApp, DatasetPage, CatalogueStats, ProfileMap
                          │ use
               ┌──────────┴───────────┐
         lib/ui (hooks)          lib/domain (pure rules)
@@ -35,7 +35,8 @@ pages (Astro)  ──▶  components (React, presentational)
   * `LiveCatalogRepository` calls the FastAPI routes through `openapi-fetch`, typed by
     `schema.d.ts`: `/v1/sources` and one page of `/v1/records?include_facets=true` (the counts)
     once, then `/v1/records`; search, counts and sorting happen on the server.
-* **Filters:** the four of the API (country, living landscape, theme, catalogue). The API has no
+* **Filters:** those of `GET /v1/records`: country, living landscape, theme and readiness
+  (`processing_status`) first; data type, access, licence and catalogue under "More filters". The API has no
   filters endpoint (mosaic-api ADR-0007): the labels are the website's own
   (`lib/domain/vocab-labels.ts`, generated from the standard's vocabularies by
   `npm run gen:labels -- <mosaic-standard>/vocab`; catalogue names from `/v1/sources`), and the counts
@@ -64,13 +65,24 @@ pages (Astro)  ──▶  components (React, presentational)
 * Dataset: `/catalogue/dataset/?id=<source>:<id>`, one static page for every record of every
   catalogue. Old links `/catalogue/MFL-…/` are redirected by `404.astro`.
 
-## 5. What changed on screen (and what did not)
+## 5. What is on screen
 
-Same pages, sections, fonts, colours and components. Adapted to the new metadata:
-completeness badge (complete / incomplete with the missing fields), access level and access
-method, source catalogue (MOSAIC, CDH), the catalogue filter, a JSON link to the record,
-"Other ways to access it". The filters are the API's four (2026-11: "More filters" removed).
-Counts on the home and landscape pages are read from the API.
+Lizeth's redesign (website `main`, 2026-11-12) is kept as it is; what depends on the catalogue is
+read from the API in the browser:
+
+* **Home:** the figures (datasets, landscapes, countries) - `lib/ui/catalogue-figures.ts`.
+* **Landscapes** (`/landscapes`, `components/landscapes/`): her explorer (selector, photos, locator
+  map, key insights, section menu). Its controller (`explorer/controller.ts`) gets dataset counts,
+  data coverage over the standard's 16 themes, open access and whether a landscape has a map profile
+  from `ExplorerData` (`lib/ui/landscape-explorer-data.ts`, pure rules in
+  `lib/domain/landscape-insights.ts`). "Map visualization" shows only for landscapes with a profile.
+* **Catalogue:** her filters, tiles / list, readiness legend, on `CatalogueApp` and the repository.
+* **Dataset page:** her header, four tabs and side column (`components/dataset/`), with more of the
+  standard v0.2: access points, processing steps, contacts, funding, publications, completeness.
+* **Readiness** is the standard's optional `processing_status`, declared by the contributor and
+  never inferred (`lib/domain/readiness.ts`); records without it read "Not stated".
+* Landscape texts and photos stay in the site (`data/landscape_profiles.json`,
+  `data/landscape_photos.json`); only catalogue figures come from the API.
 
 ## 6. Quality gates
 

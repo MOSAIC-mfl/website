@@ -70,9 +70,10 @@ committed types do not match the contract.
 | `src/lib/catalog/` | `CatalogRepository` port and its two adapters (`static`, `live`); `index.ts` chooses one from the config. |
 | `src/lib/api/` | Types generated from the contract (never edited by hand) and readable aliases. |
 | `src/lib/ui/` | React hooks (async loading, query in the URL). |
-| `src/components/catalogue/`, `src/components/dataset/` | UI: one container (`CatalogueApp`, `DatasetDetail`) and presentational components. |
-| `src/pages/` | Astro pages (unchanged sections). Dataset page: `/catalogue/dataset/?id=mosaic:MFL-…`. Landscape pages: `/landscapes/<code>/`. |
-| `src/features/landscape/` | Landscape page: its sections (overview, map explorer, datasets, data status), each a module chosen by `kind`. |
+| `src/components/catalogue/`, `src/components/dataset/` | Catalogue and dataset page (Lizeth's design): one container each (`CatalogueApp`, `DatasetPage`) and presentational components; the dataset page's wording is in `components/dataset/view.ts`. |
+| `src/components/landscapes/` | The Landscapes explorer (Lizeth's design): `LandscapeExplorer.astro` (markup, styles) and `explorer/controller.ts` (plain DOM); its catalogue figures come from mosaic-api through `lib/ui/landscape-explorer-data.ts`. |
+| `src/pages/` | Astro pages. Dataset page: `/catalogue/dataset/?id=mosaic:MFL-…`. Landscapes: `/landscapes#CODE` (sections `#CODE/map`, …); a landscape's map profile full screen: `/landscapes/<code>/map/`. Old addresses are redirected by `404.astro`. |
+| `src/features/landscape/` | The map profile of a landscape (`ProfileMap`: map, story, studies), shown in the explorer's "Map visualization" panel (`ProfileMapPanel`) and on `/landscapes/<code>/map/`. |
 | `src/features/explorer/` | The map explorer engine: domain rules, ports (map, data), MapLibre and GeoTIFF adapters, renderers per kind of layer, click inspectors, panels, React UI. |
 | `src/profiles/<code>/` | Profile plugins: the few modules a profile needs beyond the core (KEN-LVB: the flood click). |
 | `data/` | Map geometry for landscapes (site content, not catalogue). |
@@ -81,11 +82,10 @@ More: [docs/architecture.md](docs/architecture.md) and the decisions in [docs/ad
 
 ## Pending (to review with the team)
 
-- The text pages **About**, **Contribute** and **Metadata guide** still describe the old
-  schema (`readiness_status`, old fields). They were not changed on purpose: their content
-  needs review with Lizeth before it is rewritten for the new standard.
-- The site reads the static API at mosaic-mfl.github.io/mosaic-api: it shows data once mosaic-api
-  has published on Pages.
-- The Lake Victoria explorer reads its data from where its author publishes it (GitHub Pages of
-  anaguilarar/mosaic-lake-victoria and the Hugging Face dataset aaguilar90/mosaic-lake-victoria).
-  Moving that data under MOSAIC is a separate decision.
+- **Map visualization:** two ways are kept while the team chooses - the profile embedded in the
+  panel, and "Open full screen" (`/landscapes/<code>/map/`).
+- **API hosting:** the site reads the static API (mosaic-mfl.github.io/mosaic-api, `PUBLIC_MOSAIC_API_MODE=static`).
+  When mosaic-api runs on a server, set `PUBLIC_MOSAIC_API_MODE=live` and its URL in `deploy-pages.yml`.
+- The map explorers read their data from where their author publishes it (GitHub Pages of
+  anaguilarar/mosaic-lake-victoria and mosaic-ucayali, and the Hugging Face dataset). Moving that
+  data under MOSAIC is a separate decision.
