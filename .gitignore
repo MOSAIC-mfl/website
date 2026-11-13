@@ -4,3 +4,8 @@
 
 # Local Claude Code tooling (dev-server launch config, etc.)
 .claude/
+
+# local settings and secrets: never committed (copy frontend/.env.example)
+.env
+.env.*
+!.env.example

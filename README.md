@@ -5,7 +5,7 @@ The public website of MOSAIC, the open geospatial data network for living landsc
 **Live site:** https://mosaic-mfl.github.io/website/
 
 [![Deploy to GitHub Pages](https://github.com/MOSAIC-mfl/website/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/MOSAIC-mfl/website/actions/workflows/deploy-pages.yml)
-[![Validate Dataset Metadata](https://github.com/MOSAIC-mfl/website/actions/workflows/validate-data.yml/badge.svg)](https://github.com/MOSAIC-mfl/website/actions/workflows/validate-data.yml)
+[![Lint Frontend](https://github.com/MOSAIC-mfl/website/actions/workflows/lint-frontend.yml/badge.svg)](https://github.com/MOSAIC-mfl/website/actions/workflows/lint-frontend.yml)
 
 ---
 
@@ -13,7 +13,7 @@ The public website of MOSAIC, the open geospatial data network for living landsc
 
 - [Local development](#local-development)
 - [Repository structure](#repository-structure)
-- [Updating the dataset catalogue](#updating-the-dataset-catalogue)
+- [Where the catalogue comes from](#where-the-catalogue-comes-from)
 - [Contributing](#contributing)
 - [Branch strategy](#branch-strategy)
 - [Deployment](#deployment)
@@ -23,33 +23,33 @@ The public website of MOSAIC, the open geospatial data network for living landsc
 
 ## Local development
 
-**Prerequisites:** Node 20 LTS, npm
+**Prerequisites:** Node 22 (`nvm use` reads `.nvmrc`), npm. To work against a local API: Python
+3.12 and [mosaic-api](https://github.com/MOSAIC-mfl/mosaic-api) cloned next to this repository.
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/MOSAIC-mfl/website.git
-cd website
+cd website/frontend
 
 # 2. Install dependencies
-cd frontend
-npm install
+npm ci
 
-# 3. Start the development server
+# 3. Choose where the catalogue is read from (see frontend/README.md)
+cp .env.example .env
+
+# 4. Start the development server
 npm run dev
-# → http://localhost:4321/website
+# → http://localhost:4321/website/
 
-# 4. Build for production
-npm run build
-
-# 5. Preview the production build locally
-npm run preview
-
-# 6. Run linting and type checks
+# 5. Checks (the same ones CI runs)
 npm run lint
 npm run typecheck
+npm test
+npm run build
 ```
 
-Use `nvm use` in the repository root to switch to the pinned Node version (20).
+Without a `.env`, the site reads the published static API (https://mosaic-mfl.github.io/mosaic-api).
+Details, the two API modes and the code layout: [frontend/README.md](frontend/README.md).
 
 ---
 
@@ -58,61 +58,59 @@ Use `nvm use` in the repository root to switch to the pinned Node version (20).
 ```
 website/
 ├── .github/
-│   ├── workflows/          # CI/CD workflows (deploy, lint, validate)
-│   ├── ISSUE_TEMPLATE/     # Bug, feature, dataset, content issue templates
+│   ├── workflows/
+│   │   ├── deploy-pages.yml    # build frontend/ and publish on Pages (push to main)
+│   │   └── lint-frontend.yml   # contract types, lint, typecheck, tests, build (PRs and main)
+│   ├── ISSUE_TEMPLATE/         # bug, content fix, dataset request
 │   ├── PULL_REQUEST_TEMPLATE.md
-│   └── dependabot.yml      # Weekly grouped dependency updates
-├── scripts/
-│   └── validate_datasets.py  # Metadata validation script
-├── frontend/
+│   └── dependabot.yml          # weekly grouped updates: npm (frontend/) and the pinned actions
+├── frontend/                   # the site: Astro + React (README inside)
 │   ├── src/
-│   │   ├── components/     # Astro + React components
-│   │   ├── layouts/        # BaseLayout, DocLayout
-│   │   ├── pages/          # All 10 site pages
-│   │   ├── styles/         # Global CSS, variables, catalogue styles
-│   │   └── utils/          # TypeScript interfaces and data utilities
-│   ├── data/
-│   │   ├── datasets.json   # Primary metadata source — edit to update catalogue
-│   │   ├── landscapes.json # Living Landscape codes
-│   │   ├── themes.json     # MFL theme labels
-│   │   └── metadata_schema.json
-│   ├── public/             # Static assets
-│   ├── astro.config.mjs
+│   │   ├── pages/              # site pages, dataset page, landscape pages /landscapes/<code>/
+│   │   ├── lib/                # domain rules, catalogue repository (static / live API), generated API types
+│   │   ├── features/           # landscape page sections, map explorer engine
+│   │   ├── profiles/           # landscape profile plugins (ken-lvb)
+│   │   ├── components/ layouts/ styles/
+│   ├── contract/               # API contract (openapi.json) and record schema the types are generated from
+│   ├── data/                   # map geometry for the landscapes (site content, not catalogue)
+│   ├── docs/                   # architecture, decisions (adr/), landscape profiles
+│   ├── scripts/ tests/ public/
 │   └── package.json
-└── .nvmrc                  # Node 20
+├── scripts/
+│   └── build_map_outlines.py   # frontend/data/landscape_outlines.json from the catalogue boundaries
+├── docs/history/               # earlier planning notes
+└── .nvmrc                      # Node 22
 ```
 
 ---
 
-## Updating the dataset catalogue
+## Where the catalogue comes from
 
-The catalogue is driven by `frontend/data/datasets.json`. To add or update a dataset:
+The website holds no dataset list. The records live in
+[MOSAIC-mfl/catalog](https://github.com/MOSAIC-mfl/catalog) (MOSAIC metadata standard v0.1),
+[mosaic-api](https://github.com/MOSAIC-mfl/mosaic-api) harvests them (and other catalogues, such
+as the CGIAR Climate Data Hub) and publishes a static JSON API on GitHub Pages, and the pages read
+that API when they open. A change in the catalogue shows on the site once the API is republished,
+with no rebuild of the website.
 
-1. Create a branch: `git checkout -b data/add-dataset-name`
-2. Edit `frontend/data/datasets.json`
-3. Validate locally: `python3 scripts/validate_datasets.py frontend/data/datasets.json`
-4. Open a pull request — the `validate-data.yml` workflow runs automatically
-5. If validation passes, merge — the site rebuilds and deploys within ~5 minutes
+To add or update a dataset, open a pull request on the catalog repository, or use its
+"Register a new dataset" issue form. Non-technical contributors can also open a
+[Dataset catalogue update issue](https://github.com/MOSAIC-mfl/website/issues/new?template=dataset_update.yml) here.
 
-For non-technical contributors, open a [Dataset Catalogue Update issue](https://github.com/MOSAIC-mfl/website/issues/new?template=dataset_update.yml) and the MOSAIC team will handle the pull request.
-
-### Dataset ID format
-
-`{LANDSCAPE}_{THEME-CODE}_{YEAR}_{SOURCE}_{VERSION}`
-
-Example: `KEN-LV_LC_2023_ILRI_v1`
+Landscape pages (`/landscapes/<code>/`) are described by profiles in the catalog repository
+(`landscapes/<CODE>/`); see [frontend/docs/landscape-profiles.md](frontend/docs/landscape-profiles.md).
 
 ---
 
 ## Contributing
 
 For code or content changes:
-1. Fork or create a feature branch from `main`
-2. Make your changes
-3. Ensure `npm run build`, `npm run lint`, and `npm run typecheck` all pass
+1. Create a feature branch from `main`
+2. Make your changes in `frontend/`
+3. Ensure `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass
 4. Open a pull request using the PR template
 
-All PRs require at least one review before merging to `main`. See the [Upload Guidelines](https://mosaic-mfl.github.io/website/contribute) for how to add a dataset.
+All PRs require at least one review before merging to `main`.
 
 ---
 
@@ -123,7 +121,6 @@ All PRs require at least one review before merging to `main`. See the [Upload Gu
 | `main` | Production — always deployable | Yes |
 | `feature/*` | New features or pages | No |
 | `fix/*` | Bug fixes | No |
-| `data/*` | Dataset or metadata updates | No |
 | `hotfix/*` | Urgent production fixes | No |
 
 Delete branches after merge.
@@ -132,7 +129,11 @@ Delete branches after merge.
 
 ## Deployment
 
-The site deploys automatically to GitHub Pages on every push to `main` via the `deploy-pages.yml` workflow.
+The site deploys automatically to GitHub Pages on every push to `main` via the `deploy-pages.yml`
+workflow and is served under `/website`. Today it reads the static API at
+`https://mosaic-mfl.github.io/mosaic-api` (`PUBLIC_MOSAIC_API_MODE=static`); once mosaic-api runs on
+a server, set `PUBLIC_MOSAIC_API_MODE=live` and `PUBLIC_MOSAIC_API_URL` in the workflow - no code
+change.
 
 **One-time setup (repository admin):** In Settings > Pages, set Source to **GitHub Actions**.
 

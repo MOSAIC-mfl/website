@@ -1,9 +1,8 @@
-dist/
 node_modules/
+dist/
 .astro/
+
+# local settings and secrets: never committed (copy .env.example when there is one)
 .env
 .env.*
 !.env.example
-
-# Full-resolution image originals (web-optimized copies live in public/illustrations)
-.image-originals/

@@ -1,0 +1,101 @@
+import { useEffect, useState } from 'react'
+import type { FacetCounts } from '../../lib/api/types'
+import type { FacetKey, Filters } from '../../lib/domain/facets'
+import type { LabelBook } from '../../lib/domain/labels'
+import { FilterGroup } from './FilterGroup'
+import { MORE_FILTERS, PRIMARY_FILTERS, type FilterDef } from './filters'
+
+interface Props {
+  catalogueFacets: FacetCounts
+  resultFacets: FacetCounts
+  filters: Filters
+  labels: LabelBook
+  activeCount: number
+  canClear: boolean
+  onToggle: (facet: FacetKey, value: string) => void
+  onClearAll: () => void
+}
+
+const hasSelection = (filters: Filters, defs: FilterDef[]) => defs.some((d) => (filters[d.key]?.length ?? 0) > 0)
+
+/**
+ * The filter sidebar (approved design): groups fold away and start closed, except those with a value
+ * selected (e.g. from a link); "More filters" shows the secondary groups.
+ */
+export function FilterPanel({ catalogueFacets, resultFacets, filters, labels, activeCount, canClear, onToggle, onClearAll }: Props) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [showMore, setShowMore] = useState(() => hasSelection(filters, MORE_FILTERS))
+  const [open, setOpen] = useState<Set<FacetKey>>(
+    () => new Set([...PRIMARY_FILTERS, ...MORE_FILTERS].filter((d) => filters[d.key]?.length).map((d) => d.key)),
+  )
+  // a filter set from outside (a link, the URL after Back) opens its group
+  useEffect(() => {
+    const selected = [...PRIMARY_FILTERS, ...MORE_FILTERS].filter((d) => filters[d.key]?.length).map((d) => d.key)
+    if (selected.length) setOpen((prev) => new Set([...prev, ...selected]))
+    if (hasSelection(filters, MORE_FILTERS)) setShowMore(true)
+  }, [filters])
+
+  const toggleOpen = (k: FacetKey) =>
+    setOpen((prev) => {
+      const next = new Set(prev)
+      if (next.has(k)) next.delete(k)
+      else next.add(k)
+      return next
+    })
+
+  const group = (def: FilterDef) => (
+    <FilterGroup
+      key={def.key}
+      def={def}
+      values={Object.keys(catalogueFacets[def.key] ?? {})}
+      counts={resultFacets[def.key] ?? {}}
+      selected={filters[def.key] ?? []}
+      labels={labels}
+      open={open.has(def.key)}
+      onOpenChange={() => toggleOpen(def.key)}
+      onToggle={(v) => onToggle(def.key, v)}
+    />
+  )
+
+  return (
+    <aside className="filter-panel">
+      <button className="filter-mobile-toggle" onClick={() => setMobileOpen((o) => !o)} aria-expanded={mobileOpen}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+        </svg>
+        {mobileOpen ? 'Hide filters' : 'Filter datasets'}
+        {activeCount > 0 && <span className="filter-count-badge">{activeCount}</span>}
+      </button>
+
+      <div className={`filter-panel-inner${mobileOpen ? ' open' : ''}`}>
+        <div className="filter-panel-header">
+          <span className="filter-panel-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+            Filters
+          </span>
+          {canClear && <button className="filter-clear-btn" onClick={onClearAll}>Clear all</button>}
+        </div>
+
+        <div className="filter-panel-body">
+          {PRIMARY_FILTERS.map(group)}
+          {showMore && MORE_FILTERS.map(group)}
+          <button className="filter-more-btn" onClick={() => setShowMore((s) => !s)}>
+            {showMore ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                Fewer filters
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                More filters
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </aside>
+  )
+}

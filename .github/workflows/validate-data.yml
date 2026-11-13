@@ -1,8 +1,16 @@
 # .github/workflows/validate-data.yml
-name: Validate Dataset Metadata
+# Every pull request: the site's own data files (frontend/data/: landscapes, outlines, photos,
+# descriptions). The catalogue is not in the site any more; mosaic-api serves it.
+#
+# The job is named validate: that is the status check the protection of main requires. Keep the
+# name, or change the required check in the settings with it.
+name: Validate Site Data
 
 on:
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   validate:
@@ -16,5 +24,5 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run metadata validator
-        run: python scripts/validate_datasets.py frontend/data/datasets.json
+      - name: Check the site's data files
+        run: python scripts/validate_site_data.py

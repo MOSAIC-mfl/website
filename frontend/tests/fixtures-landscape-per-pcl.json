@@ -1,0 +1,3089 @@
+{
+ "profile": "mosaic-landscape-profile@0.1",
+ "landscape": {
+  "code": "PER-PCL",
+  "label": "Pucallpa – Ucayali",
+  "countries": [
+   "PER"
+  ],
+  "bbox": [
+   -75.9479,
+   -9.4181,
+   -74.3225,
+   -7.9501
+  ]
+ },
+ "curated": true,
+ "title": "Pucallpa – Ucayali",
+ "summary": "The forest–agriculture interface of Ucayali, Peru: co-produced vegetation classes, GEDI lidar and ETH canopy height, GEOBOSQUES forest loss, MapBiomas land cover and burned area, active fires, protected areas, and rainfall, temperature and drought 1981–2026, with a guided story built around Cooley et al. (2024) and published studies.",
+ "status": "draft",
+ "credits": [
+  {
+   "name": "Andrés Aguilar",
+   "role": "MOSAIC Ucayali Explorer: data pipeline, analysis, design",
+   "url": "https://github.com/anaguilarar/mosaic-ucayali"
+  }
+ ],
+ "origin": {
+  "repository": "https://github.com/anaguilarar/mosaic-ucayali",
+  "commit": "24fbe3a",
+  "note": "Converted by scripts/migrate_ucayali.py; the original explorer is unchanged."
+ },
+ "sections": [
+  {
+   "id": "explorer",
+   "kind": "map-explorer",
+   "title": "Ucayali Explorer",
+   "config": {
+    "title": "MOSAIC Ucayali Explorer",
+    "tagline": "Vegetation classes, lidar canopy height, forest loss, land cover, fire, protected areas and climate · 1981–2026",
+    "data": {
+     "roots": {
+      "site": "https://anaguilarar.github.io/mosaic-ucayali/data/",
+      "hf": "https://huggingface.co/datasets/aaguilar90/mosaic-ucayali/resolve/main/"
+     },
+     "default_root": "hf",
+     "routes": [
+      {
+       "prefix": "meta/",
+       "root": "site"
+      },
+      {
+       "prefix": "series/",
+       "root": "site"
+      },
+      {
+       "prefix": "vectors/",
+       "root": "site"
+      },
+      {
+       "prefix": "figures/",
+       "root": "site"
+      },
+      {
+       "prefix": "fonts/",
+       "root": "site"
+      },
+      {
+       "prefix": "climate/",
+       "root": "site"
+      },
+      {
+       "path": "tiles/osm_basemap.pmtiles",
+       "root": "site"
+      },
+      {
+       "path": "tiles/terrain.pmtiles",
+       "root": "site"
+      },
+      {
+       "path": "tiles/s2_rgb.pmtiles",
+       "root": "site"
+      }
+     ],
+     "tiles_version": "1",
+     "report": "https://github.com/anaguilarar/mosaic-ucayali/blob/main/DATA_REPORT.md"
+    },
+    "map": {
+     "center": [
+      -73.6,
+      -9.5
+     ],
+     "zoom": 6.1,
+     "pitch": 32,
+     "bearing": 0,
+     "min_zoom": 5.5,
+     "max_zoom": 16,
+     "max_pitch": 62,
+     "max_bounds": [
+      [
+       -79.0,
+       -14.3
+      ],
+      [
+       -67.4,
+       -4.4
+      ]
+     ],
+     "sky": {
+      "sky-color": "#c8d4de",
+      "horizon-color": "#e7ebef",
+      "fog-color": "#e7ebef",
+      "sky-horizon-blend": 0.6,
+      "horizon-fog-blend": 0.7
+     },
+     "glyphs": "fonts/{fontstack}/{range}.pbf",
+     "terrain": {
+      "source": "dem",
+      "exaggeration": 1.6,
+      "min": 1.0,
+      "max": 4.0,
+      "step": 0.1
+     },
+     "attribution": "Sentinel-2 · DEM",
+     "sources": {
+      "department": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/department.geojson"
+       }
+      },
+      "mask": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/department_mask.geojson"
+       }
+      },
+      "s2": {
+       "type": "raster",
+       "url": {
+        "pmtiles": "tiles/s2_rgb.pmtiles"
+       },
+       "tileSize": 256
+      },
+      "dem": {
+       "type": "raster-dem",
+       "url": {
+        "pmtiles": "tiles/terrain.pmtiles"
+       },
+       "tileSize": 256,
+       "encoding": "mapbox"
+      },
+      "demHillshade": {
+       "type": "raster-dem",
+       "url": {
+        "pmtiles": "tiles/terrain.pmtiles"
+       },
+       "tileSize": 256,
+       "encoding": "mapbox"
+      },
+      "provinces": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/provinces.geojson"
+       }
+      },
+      "districts": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/districts.geojson"
+       }
+      },
+      "admLabels": {
+       "type": "geojson",
+       "data": {
+        "asset": "vectors/admin_labels.geojson"
+       }
+      },
+      "osm": {
+       "type": "vector",
+       "url": {
+        "pmtiles": "tiles/osm_basemap.pmtiles"
+       },
+       "attribution": "© OpenStreetMap contributors"
+      }
+     },
+     "layers": [
+      {
+       "id": "bg",
+       "type": "background",
+       "paint": {
+        "background-color": "#dfe5ea"
+       }
+      },
+      {
+       "id": "s2",
+       "type": "raster",
+       "source": "s2",
+       "paint": {
+        "raster-resampling": "linear"
+       }
+      },
+      {
+       "id": "hillshade",
+       "type": "hillshade",
+       "source": "demHillshade",
+       "paint": {
+        "hillshade-exaggeration": 0.35,
+        "hillshade-shadow-color": "#3c4148",
+        "hillshade-highlight-color": "#ffffff",
+        "hillshade-accent-color": "#5b6672"
+       }
+      },
+      {
+       "id": "dim",
+       "type": "fill",
+       "source": "mask",
+       "paint": {
+        "fill-color": "#dfe5ea",
+        "fill-opacity": 1
+       }
+      },
+      {
+       "id": "department-halo",
+       "type": "line",
+       "source": "department",
+       "layout": {
+        "line-join": "round"
+       },
+       "paint": {
+        "line-color": "#ffffff",
+        "line-opacity": 0.85,
+        "line-width": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         5,
+         3,
+         8,
+         4.5,
+         12,
+         6
+        ]
+       }
+      },
+      {
+       "id": "department-line",
+       "type": "line",
+       "source": "department",
+       "layout": {
+        "line-join": "round"
+       },
+       "paint": {
+        "line-color": "#1c2b3a",
+        "line-width": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         5,
+         1.4,
+         8,
+         2,
+         12,
+         2.6
+        ]
+       }
+      },
+      {
+       "id": "labels-start",
+       "type": "background",
+       "paint": {
+        "background-opacity": 0
+       }
+      },
+      {
+       "id": "districts-hit",
+       "type": "fill",
+       "source": "districts",
+       "minzoom": 8,
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "fill-opacity": 0
+       }
+      },
+      {
+       "id": "provinces-hit",
+       "type": "fill",
+       "source": "provinces",
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "fill-opacity": 0
+       }
+      },
+      {
+       "id": "districts-line",
+       "type": "line",
+       "source": "districts",
+       "minzoom": 8,
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "line-color": "#c9ced2",
+        "line-width": 0.6,
+        "line-dasharray": [
+         3,
+         2
+        ],
+        "line-opacity": 0.8
+       }
+      },
+      {
+       "id": "provinces-line",
+       "type": "line",
+       "source": "provinces",
+       "layout": {
+        "visibility": "none"
+       },
+       "paint": {
+        "line-color": "#dfe3e6",
+        "line-width": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         0.7,
+         11,
+         1.4
+        ],
+        "line-opacity": 0.9
+       }
+      },
+      {
+       "id": "provinces-label",
+       "type": "symbol",
+       "source": "admLabels",
+       "minzoom": 6.5,
+       "maxzoom": 11,
+       "filter": [
+        "==",
+        [
+         "get",
+         "level"
+        ],
+        "province"
+       ],
+       "layout": {
+        "visibility": "none",
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Regular"
+        ],
+        "text-size": 11,
+        "text-letter-spacing": 0.06,
+        "text-transform": "uppercase",
+        "text-padding": 4
+       },
+       "paint": {
+        "text-color": "#e4e8eb",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.3
+       }
+      },
+      {
+       "id": "districts-label",
+       "type": "symbol",
+       "source": "admLabels",
+       "minzoom": 9,
+       "filter": [
+        "==",
+        [
+         "get",
+         "level"
+        ],
+        "district"
+       ],
+       "layout": {
+        "visibility": "none",
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 4
+       },
+       "paint": {
+        "text-color": "#e4e8eb",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.3
+       }
+      },
+      {
+       "id": "osm-natural",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "pois",
+       "minzoom": 8,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "national_park",
+           "nature_reserve",
+           "protected_area",
+           "forest"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8
+       },
+       "paint": {
+        "text-color": "#e6f0dc",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-water-river",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "water",
+       "minzoom": 8,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "river",
+           "canal",
+           "stream"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-placement": "line",
+        "symbol-spacing": 400
+       },
+       "paint": {
+        "text-color": "#d6eef2",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-water",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "water",
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "geometry-type"
+         ],
+         "Point"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind"
+         ],
+         [
+          "literal",
+          [
+           "lake",
+           "water",
+           "bay",
+           "reservoir"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Italic"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         12,
+         10,
+         14
+        ],
+        "text-padding": 3,
+        "text-max-width": 8
+       },
+       "paint": {
+        "text-color": "#d6eef2",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-village",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "minzoom": 11,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "in",
+         [
+          "get",
+          "kind_detail"
+         ],
+         [
+          "literal",
+          [
+           "village",
+           "hamlet"
+          ]
+         ]
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Regular"
+        ],
+        "text-size": 11,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-town",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "minzoom": 7,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind_detail"
+         ],
+         "town"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         7,
+         11,
+         12,
+         13
+        ],
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-city",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "locality"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind_detail"
+         ],
+         "city"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         6,
+         12,
+         12,
+         15
+        ],
+        "text-padding": 3,
+        "text-max-width": 8,
+        "symbol-sort-key": [
+         "-",
+         0,
+         [
+          "coalesce",
+          [
+           "get",
+           "population_rank"
+          ],
+          0
+         ]
+        ]
+       },
+       "paint": {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      },
+      {
+       "id": "osm-country",
+       "type": "symbol",
+       "source": "osm",
+       "source-layer": "places",
+       "maxzoom": 7,
+       "filter": [
+        "all",
+        [
+         "has",
+         "name"
+        ],
+        [
+         "==",
+         [
+          "get",
+          "kind"
+         ],
+         "country"
+        ]
+       ],
+       "layout": {
+        "text-field": [
+         "get",
+         "name"
+        ],
+        "text-font": [
+         "Noto Sans Medium"
+        ],
+        "text-size": 13,
+        "text-padding": 3,
+        "text-max-width": 8,
+        "text-transform": "uppercase",
+        "text-letter-spacing": 0.12
+       },
+       "paint": {
+        "text-color": "#f3f5f6",
+        "text-halo-color": "rgba(17,26,34,0.88)",
+        "text-halo-width": 1.5
+       }
+      }
+     ]
+    },
+    "groups": [
+     "Base",
+     "Vegetation",
+     "Land",
+     "Climate",
+     "Fire",
+     "Conservation"
+    ],
+    "toggles": [
+     {
+      "id": "place_names",
+      "group": "Base",
+      "title": "Place names",
+      "swatch": "#ffffff",
+      "default": true,
+      "layers": [
+       "osm-natural",
+       "osm-water-river",
+       "osm-water",
+       "osm-village",
+       "osm-town",
+       "osm-city",
+       "osm-country"
+      ],
+      "attribution": "© OpenStreetMap contributors"
+     },
+     {
+      "id": "admin",
+      "group": "Base",
+      "title": "Provinces & districts",
+      "swatch": "#c9ced2",
+      "default": false,
+      "layers": [
+       "districts-line",
+       "provinces-line",
+       "districts-hit",
+       "provinces-hit",
+       "districts-label",
+       "provinces-label"
+      ],
+      "attribution": "IGN (ODC-By)",
+      "source_ref": "admin_boundaries"
+     }
+    ],
+    "panels": [],
+    "click": {
+     "title": "Ucayali",
+     "source": "Sentinel-2 mosaic · 30 m",
+     "admin": {
+      "layers": [
+       "districts-hit",
+       "provinces-hit"
+      ],
+      "visible_layer": "provinces-hit",
+      "name_fields": [
+       "district",
+       "province"
+      ],
+      "iso": "PER",
+      "units": {
+       "PER": [
+        "Province",
+        "District"
+       ]
+      }
+     }
+    },
+    "overlays": [
+     {
+      "id": "veg_classes",
+      "group": "Vegetation",
+      "title": "Vegetation classes",
+      "kind": "style-layers",
+      "swatch": "#55a05f",
+      "source_ref": "veg_classes",
+      "before": "dim",
+      "attribution": "Cooley et al. (2024) vegetation typologies (CC0)",
+      "sources": {
+       "veg": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/veg_classes.geojson"
+        }
+       }
+      },
+      "layers": [
+       {
+        "id": "veg-fill",
+        "type": "fill",
+        "source": "veg",
+        "paint": {
+         "fill-color": [
+          "get",
+          "color"
+         ],
+         "fill-opacity": 0.72
+        }
+       },
+       {
+        "id": "veg-line",
+        "type": "line",
+        "source": "veg",
+        "paint": {
+         "line-color": [
+          "get",
+          "color"
+         ],
+         "line-width": 1.2
+        }
+       }
+      ],
+      "legend": {
+       "kind": "classes",
+       "title": "Vegetation classes (co-produced with local experts)",
+       "classes": [
+        {
+         "name": "Palm swamps (aguajales) · Aguajales (3)",
+         "color": "#5e9ea0"
+        },
+        {
+         "name": "Cloud forest · Bosque de colina alta (4)",
+         "color": "#2e5d78"
+        },
+        {
+         "name": "Mature lowland forest · Bosque de colina baja (12)",
+         "color": "#1b6b45"
+        },
+        {
+         "name": "Wetland forest · Bosque inundado (2)",
+         "color": "#3f7f93"
+        },
+        {
+         "name": "Secondary or degraded lowland forest · Bosque secundario o degradado (216)",
+         "color": "#55a05f"
+        },
+        {
+         "name": "Degraded shrubland or pasture · Pastizales o herbazales degradados (10)",
+         "color": "#d8c26a"
+        },
+        {
+         "name": "Young vegetation regrowth (purma) · Purma (77)",
+         "color": "#a9c977"
+        }
+       ],
+       "notes": [
+        "Polygon counts are this app's analysis of the CC0 dataset. Class definitions: Cooley et al. (2024), Table 1."
+       ],
+       "source": "Cooley et al. (2021) vegetation typology dataset v4 (Feb 2022), CaltechDATA; classes co-produced with local experts in Ucayali · digitised on 2020/2021 imagery"
+      },
+      "inspect": {
+       "kind": "feature-attributes",
+       "layers": [
+        "veg-fill"
+       ],
+       "place": true,
+       "title": "{class_en}",
+       "fields": [
+        {
+         "label": "Class (local name)",
+         "value": "{COBERTURA|spaces}"
+        },
+        {
+         "label": "Polygon",
+         "value": "{PLOTID} · {area_ha|num} ha"
+        },
+        {
+         "label": "Digitised on",
+         "value": "{MAPA_BASE} imagery, {ANO_IMAGEN}"
+        }
+       ],
+       "notes": [
+        "Class co-produced with local experts; polygon from the CC0 dataset (doi:10.22002/D1.2318). Area is this app's analysis.",
+        "Cooley et al. (2024) · classes of the forest–agriculture interface"
+       ],
+       "empty_title": "Ucayali",
+       "empty": "No digitised polygon here. The 324 polygons cover sampled patches, not the whole department."
+      }
+     },
+     {
+      "id": "canopy",
+      "group": "Vegetation",
+      "title": "Canopy height",
+      "kind": "raster-tiles",
+      "swatch": "#1f704a",
+      "source_ref": "canopy",
+      "asset": "tiles/canopy.pmtiles",
+      "before": "dim",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "ETH canopy height 2020 (CC BY 4.0)",
+      "legend": {
+       "kind": "steps",
+       "title": "Canopy height 2020 (ETH, 10 m)",
+       "colors": [
+        "#f0eee1",
+        "#cdd5ab",
+        "#9bbc86",
+        "#579a66",
+        "#1f704a",
+        "#06422b"
+       ],
+       "labels": [
+        "0 m",
+        "≥ 40 m"
+       ],
+       "source": "Lang et al. (2023) · CC BY 4.0 · model estimate; clicks read the 10 m raster"
+      },
+      "inspect": {
+       "kind": "value-at-point",
+       "asset": "query/canopy_height_10m.tif",
+       "title": "Canopy height at {place}",
+       "hint": "ETH Global Canopy Height 2020, 10 m (GEDI + Sentinel-2 deep-learning fusion), six 3-degree tiles mosaicked and clipped to the department",
+       "bands": [
+        {
+         "band": 0,
+         "label": "Canopy top height · 2020",
+         "unit": "m",
+         "nodata": [
+          255
+         ]
+        }
+       ],
+       "facts": [
+        {
+         "label": "Product",
+         "value": "ETH 10 m (GEDI + Sentinel-2)"
+        },
+        {
+         "label": "Licence",
+         "value": "CC BY 4.0"
+        }
+       ],
+       "note": "Model estimate, not a measurement: tall-canopy heights saturate and the map carries the model's uncertainty (a per-pixel SD layer exists upstream). Display tiles are averaged to ~38 m at z12; clicks read the 10 m raster."
+      }
+     },
+     {
+      "id": "gedi",
+      "group": "Vegetation",
+      "title": "GEDI lidar canopy height",
+      "kind": "style-layers",
+      "swatch": "#579a66",
+      "source_ref": "gedi",
+      "before": "dim",
+      "attribution": "NASA GEDI L2A v002",
+      "sources": {
+       "gedi-grid": {
+        "type": "raster",
+        "url": {
+         "pmtiles": "tiles/gedi_grid.pmtiles"
+        },
+        "tileSize": 256
+       },
+       "gedi-fp": {
+        "type": "vector",
+        "url": {
+         "pmtiles": "tiles/gedi_footprints.pmtiles"
+        }
+       }
+      },
+      "layers": [
+       {
+        "id": "gedi-grid-tiles",
+        "type": "raster",
+        "source": "gedi-grid",
+        "paint": {
+         "raster-resampling": "nearest",
+         "raster-opacity": [
+          "interpolate",
+          [
+           "linear"
+          ],
+          [
+           "zoom"
+          ],
+          9,
+          0.85,
+          11.5,
+          0
+         ]
+        }
+       },
+       {
+        "id": "gedi-fp",
+        "type": "circle",
+        "source": "gedi-fp",
+        "source-layer": "footprints",
+        "minzoom": 9,
+        "paint": {
+         "circle-radius": [
+          "interpolate",
+          [
+           "exponential",
+           2
+          ],
+          [
+           "zoom"
+          ],
+          9,
+          1.6,
+          12,
+          3.8,
+          14,
+          4.8,
+          16,
+          5.3,
+          18,
+          21.2
+         ],
+         "circle-color": [
+          "interpolate",
+          [
+           "linear"
+          ],
+          [
+           "get",
+           "rh95"
+          ],
+          0,
+          "#f0eee1",
+          50,
+          "#cdd5ab",
+          100,
+          "#9bbc86",
+          200,
+          "#579a66",
+          300,
+          "#1f704a",
+          400,
+          "#06422b"
+         ],
+         "circle-stroke-color": "rgba(255,255,255,0.7)",
+         "circle-stroke-width": [
+          "interpolate",
+          [
+           "linear"
+          ],
+          [
+           "zoom"
+          ],
+          9,
+          0.3,
+          13,
+          0.7
+         ]
+        }
+       }
+      ],
+      "legend": {
+       "kind": "steps",
+       "title": "GEDI canopy height (RH95)",
+       "colors": [
+        "#f0eee1",
+        "#cdd5ab",
+        "#9bbc86",
+        "#579a66",
+        "#1f704a",
+        "#06422b"
+       ],
+       "labels": [
+        "0 m",
+        "≥ 40 m"
+       ],
+       "notes": [
+        "Transparent 1 km cell: no valid GEDI shot in it (the imagery shows through)."
+       ],
+       "source": "1,506,194 footprints, 2019-04-20 to 2025-07-09 · zoomed out: 1 km mean; from zoom 9: one dot per 25 m footprint (a sample at zooms 9–10) · strict quality set, this app's analysis · NASA GEDI L2A v002"
+      },
+      "inspect": {
+       "kind": "combined",
+       "target": "panel",
+       "hint": "NASA GEDI L2A (GEDI02_A v002), full-power beams; the paper's filters (Cooley et al. 2024, sect. 2.4) plus quality_flag = 1 and degrade_flag = 0 (this app's strict set)",
+       "parts": [
+        {
+         "kind": "feature-attributes",
+         "layers": [
+          "gedi-fp"
+         ],
+         "radius": 8,
+         "nearest": true,
+         "optional": true,
+         "as": "kpis",
+         "title": "GEDI footprint",
+         "fields": [
+          {
+           "label": "RH95 · this footprint",
+           "value": "{rh95|scale:0.1|fixed:1}",
+           "unit": "m"
+          },
+          {
+           "label": "RH50",
+           "value": "{rh50|scale:0.1|fixed:1}",
+           "unit": "m"
+          },
+          {
+           "label": "Date",
+           "value": "{date|date8}"
+          }
+         ]
+        },
+        {
+         "kind": "value-at-point",
+         "asset": "query/gedi_rh95_1km.tif",
+         "title": "GEDI at {place}",
+         "bands": [
+          {
+           "band": 0,
+           "label": "Mean RH95 · 1 km cell",
+           "unit": "m",
+           "scale": 0.1,
+           "decimals": 1,
+           "nodata": [
+            -32768
+           ],
+           "nodata_text": "no valid shot"
+          },
+          {
+           "band": 1,
+           "label": "Shots in the cell",
+           "nodata": [
+            -32768
+           ],
+           "nodata_text": "0"
+          }
+         ],
+         "notes": [
+          "Zoom in to 9 or closer and click a dot to read one footprint."
+         ]
+        }
+       ],
+       "note": "This app's analysis. Each dot is one 25 m footprint, located to about ±10 m. Zoomed out, a 1 km grid shows the mean RH95 of the shots in each cell; at zooms 9-10 the dots are a random sample. RH95 is GEDI's own value (no ground-return transformation, unlike the paper's Table 2a)."
+      }
+     },
+     {
+      "id": "landcover",
+      "group": "Land",
+      "title": "Land cover",
+      "kind": "year-tiles",
+      "swatch": "#e49635",
+      "source_ref": "landcover",
+      "before": "dim",
+      "attribution": "MapBiomas Perú C4 (CC BY 4.0)",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.8
+      },
+      "years": {
+       "2000": "tiles/lulc_2000.pmtiles",
+       "2005": "tiles/lulc_2005.pmtiles",
+       "2010": "tiles/lulc_2010.pmtiles",
+       "2015": "tiles/lulc_2015.pmtiles",
+       "2020": "tiles/lulc_2020.pmtiles",
+       "2024": "tiles/lulc_2024.pmtiles"
+      },
+      "time_caption": "land cover (MapBiomas C4)",
+      "legend": {
+       "kind": "classes",
+       "title": "Land cover {year} (MapBiomas Perú C4)",
+       "classes": [
+        {
+         "value": 3,
+         "name": "Forest · Bosque",
+         "color": "#1f8d49"
+        },
+        {
+         "value": 4,
+         "name": "Dry forest · Bosque seco",
+         "color": "#7dc975"
+        },
+        {
+         "value": 6,
+         "name": "Flooded forest · Bosque inundable",
+         "color": "#026975"
+        },
+        {
+         "value": 12,
+         "name": "Herbaceous formation · Formación herbácea",
+         "color": "#d6bc74"
+        },
+        {
+         "value": 15,
+         "name": "Pasture (beta) · Pasto (beta)",
+         "color": "#edde8e"
+        },
+        {
+         "value": 21,
+         "name": "Mosaic of agriculture and pasture · Mosaico agropecuario",
+         "color": "#ffefc3"
+        },
+        {
+         "value": 23,
+         "name": "Beach · Playa",
+         "color": "#ffa07a"
+        },
+        {
+         "value": 24,
+         "name": "Urban infrastructure · Infraestructura urbana",
+         "color": "#d4271e"
+        },
+        {
+         "value": 25,
+         "name": "Other anthropogenic non-vegetated area · Otra área antrópica sin vegetación",
+         "color": "#db4d4f"
+        },
+        {
+         "value": 27,
+         "name": "Not observed · No observado",
+         "color": "#ffffff"
+        },
+        {
+         "value": 30,
+         "name": "Mining · Minería",
+         "color": "#9c0027"
+        },
+        {
+         "value": 33,
+         "name": "River, lake or ocean · Río, lago u océano",
+         "color": "#2532e4"
+        },
+        {
+         "value": 35,
+         "name": "Oil palm · Palma aceitera",
+         "color": "#9065d0"
+        },
+        {
+         "value": 40,
+         "name": "Rice (beta) · Arroz (beta)",
+         "color": "#c71585"
+        },
+        {
+         "value": 51,
+         "name": "Lowland flooded grassland · Herbazal inundable de tierras bajas",
+         "color": "#5faf92"
+        },
+        {
+         "value": 66,
+         "name": "Shrubland and other shrub vegetation · Matorral y otros arbustales",
+         "color": "#a89358"
+        },
+        {
+         "value": 68,
+         "name": "Other natural non-vegetated area · Otra área natural sin vegetación",
+         "color": "#e97a7a"
+        }
+       ],
+       "source": "30 m · CC BY 4.0 · official palette · cacao has no class of its own (inside 'Mosaico agropecuario')"
+      },
+      "inspect": {
+       "kind": "class-at-point",
+       "asset": "query/lulc_stack_30m.tif",
+       "band_per_year": true,
+       "classes": [
+        {
+         "value": 3,
+         "name": "Forest · Bosque",
+         "color": "#1f8d49"
+        },
+        {
+         "value": 4,
+         "name": "Dry forest · Bosque seco",
+         "color": "#7dc975"
+        },
+        {
+         "value": 6,
+         "name": "Flooded forest · Bosque inundable",
+         "color": "#026975"
+        },
+        {
+         "value": 12,
+         "name": "Herbaceous formation · Formación herbácea",
+         "color": "#d6bc74"
+        },
+        {
+         "value": 15,
+         "name": "Pasture (beta) · Pasto (beta)",
+         "color": "#edde8e"
+        },
+        {
+         "value": 21,
+         "name": "Mosaic of agriculture and pasture · Mosaico agropecuario",
+         "color": "#ffefc3"
+        },
+        {
+         "value": 23,
+         "name": "Beach · Playa",
+         "color": "#ffa07a"
+        },
+        {
+         "value": 24,
+         "name": "Urban infrastructure · Infraestructura urbana",
+         "color": "#d4271e"
+        },
+        {
+         "value": 25,
+         "name": "Other anthropogenic non-vegetated area · Otra área antrópica sin vegetación",
+         "color": "#db4d4f"
+        },
+        {
+         "value": 27,
+         "name": "Not observed · No observado",
+         "color": "#ffffff"
+        },
+        {
+         "value": 30,
+         "name": "Mining · Minería",
+         "color": "#9c0027"
+        },
+        {
+         "value": 33,
+         "name": "River, lake or ocean · Río, lago u océano",
+         "color": "#2532e4"
+        },
+        {
+         "value": 35,
+         "name": "Oil palm · Palma aceitera",
+         "color": "#9065d0"
+        },
+        {
+         "value": 40,
+         "name": "Rice (beta) · Arroz (beta)",
+         "color": "#c71585"
+        },
+        {
+         "value": 51,
+         "name": "Lowland flooded grassland · Herbazal inundable de tierras bajas",
+         "color": "#5faf92"
+        },
+        {
+         "value": 66,
+         "name": "Shrubland and other shrub vegetation · Matorral y otros arbustales",
+         "color": "#a89358"
+        },
+        {
+         "value": 68,
+         "name": "Other natural non-vegetated area · Otra área natural sin vegetación",
+         "color": "#e97a7a"
+        }
+       ],
+       "title": "Land cover at {place}",
+       "hint": "MapBiomas Perú Collection 4 (Landsat, 30 m), national rasters clipped to Ucayali",
+       "area_series": {
+        "file": "series/lulc_areas.json",
+        "path": [
+         "areas",
+         "{year}"
+        ],
+        "key": "value",
+        "label": "Department area of class",
+        "unit": "km²"
+       },
+       "note": "Oil palm is its own class (35, Palma aceitera); cacao and other specific crops have no class and fall inside 'Mosaico agropecuario' (21) - relevant when relating classes to Cooley et al. (2024). Class areas are this app's analysis."
+      }
+     },
+     {
+      "id": "forest_loss",
+      "group": "Land",
+      "title": "Forest loss",
+      "kind": "raster-tiles",
+      "swatch": "#b2182b",
+      "source_ref": "forest_loss",
+      "asset": "tiles/forest_loss.pmtiles",
+      "before": "dim",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "attribution": "GEOBOSQUES (MINAM/SERFOR)",
+      "legend": {
+       "kind": "classes",
+       "title": "Forest & loss (GEOBOSQUES)",
+       "classes": [
+        {
+         "value": 1,
+         "name": "Water · Hidrografía",
+         "color": "#2e5573"
+        },
+        {
+         "value": 2,
+         "name": "Humid Amazon forest (remaining in 2024) · Bosque 2024",
+         "color": "#1f6b45"
+        },
+        {
+         "value": 3,
+         "name": "Forest loss 2001–2024 · Pérdida 2001–2024",
+         "color": "#d64530"
+        },
+        {
+         "value": 4,
+         "name": "Non-forest at the 2000 baseline · No Bosque 2000",
+         "color": "#d8c26a"
+        }
+       ],
+       "source": "30 m · MINAM/SERFOR · zoomed out, each pixel samples one 30 m cell, so every class keeps its true share · 'No Monitoreado' (outside the humid-Amazon monitoring area) is transparent · loss includes natural losses, not only deforestation"
+      },
+      "inspect": {
+       "kind": "series-values",
+       "series": "series/forest_classes.json",
+       "path": [
+        "regions",
+        "Ucayali"
+       ],
+       "labels_path": [
+        "classes"
+       ],
+       "unit": "km²",
+       "title": "Forest & loss · Ucayali",
+       "hint": "GEOBOSQUES (MINAM PNCBMCC + SERFOR/MIDAGRI) Bosque Húmedo Amazónico monitoring, 30 m, national rasters clipped to the department; downloaded manually (the site blocks scripted access)",
+       "note": "Department totals, this app's analysis. The year-by-year loss series arrives with GEOBOSQUES' annual loss raster."
+      }
+     },
+     {
+      "id": "fire",
+      "group": "Fire",
+      "title": "Active fires",
+      "kind": "year-tiles",
+      "swatch": "#e55064",
+      "source_ref": "fire",
+      "before": "dim",
+      "attribution": "NASA FIRMS VIIRS",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "years": {
+       "2012": "tiles/fire_density_2012.pmtiles",
+       "2013": "tiles/fire_density_2013.pmtiles",
+       "2014": "tiles/fire_density_2014.pmtiles",
+       "2015": "tiles/fire_density_2015.pmtiles",
+       "2016": "tiles/fire_density_2016.pmtiles",
+       "2017": "tiles/fire_density_2017.pmtiles",
+       "2018": "tiles/fire_density_2018.pmtiles",
+       "2019": "tiles/fire_density_2019.pmtiles",
+       "2020": "tiles/fire_density_2020.pmtiles",
+       "2021": "tiles/fire_density_2021.pmtiles",
+       "2022": "tiles/fire_density_2022.pmtiles",
+       "2023": "tiles/fire_density_2023.pmtiles",
+       "2024": "tiles/fire_density_2024.pmtiles",
+       "2025": "tiles/fire_density_2025.pmtiles"
+      },
+      "time_caption": "active-fire density (VIIRS S-NPP)",
+      "points": {
+       "assets": {
+        "2012": "fire/points_2012.geojson",
+        "2013": "fire/points_2013.geojson",
+        "2014": "fire/points_2014.geojson",
+        "2015": "fire/points_2015.geojson",
+        "2016": "fire/points_2016.geojson",
+        "2017": "fire/points_2017.geojson",
+        "2018": "fire/points_2018.geojson",
+        "2019": "fire/points_2019.geojson",
+        "2020": "fire/points_2020.geojson",
+        "2021": "fire/points_2021.geojson",
+        "2022": "fire/points_2022.geojson",
+        "2023": "fire/points_2023.geojson",
+        "2024": "fire/points_2024.geojson",
+        "2025": "fire/points_2025.geojson"
+       },
+       "min_zoom": 0,
+       "before": "dim",
+       "paint": {
+        "circle-radius": [
+         "interpolate",
+         [
+          "linear"
+         ],
+         [
+          "zoom"
+         ],
+         10,
+         2,
+         13,
+         4.5
+        ],
+        "circle-color": "#e55064",
+        "circle-opacity": [
+         "step",
+         [
+          "zoom"
+         ],
+         0,
+         10,
+         0.75
+        ],
+        "circle-stroke-color": "#7f1d2e",
+        "circle-stroke-width": 0.5,
+        "circle-stroke-opacity": [
+         "step",
+         [
+          "zoom"
+         ],
+         0,
+         10,
+         1
+        ]
+       }
+      },
+      "legend": {
+       "kind": "classes",
+       "title": "Active fires {year} — density (S-NPP)",
+       "classes": [
+        {
+         "color": "#f8c471",
+         "name": "≤ 1 fires/km²"
+        },
+        {
+         "color": "#eb984e",
+         "name": "≤ 3 fires/km²"
+        },
+        {
+         "color": "#e55064",
+         "name": "≤ 10 fires/km²"
+        },
+        {
+         "color": "#b03a2e",
+         "name": "≤ 30 fires/km²"
+        },
+        {
+         "color": "#78281f",
+         "name": "≤ 100 fires/km²"
+        }
+       ],
+       "source": "VIIRS 375 m, confidence nominal/high · points from zoom 10"
+      },
+      "inspect": {
+       "kind": "annual-series",
+       "series": "series/fire.json",
+       "path": [
+        "snpp_detections_dept"
+       ],
+       "area_name": "department",
+       "title": "Active fires · department (S-NPP)",
+       "hint": "NASA FIRMS VIIRS 375 m active fires (S-NPP), yearly Peru archives, bbox clip",
+       "unit": "detections",
+       "chart_title": "S-NPP detections per year",
+       "note_field": "caveats"
+      }
+     },
+     {
+      "id": "burned_area",
+      "group": "Fire",
+      "title": "Burned area",
+      "kind": "year-tiles",
+      "swatch": "#782012",
+      "source_ref": "burned_area",
+      "before": "dim",
+      "attribution": "MapBiomas Fuego C2 (CC BY 4.0)",
+      "paint": {
+       "raster-resampling": "nearest",
+       "raster-opacity": 0.85
+      },
+      "years": {
+       "2013": "tiles/burned_2013.pmtiles",
+       "2014": "tiles/burned_2014.pmtiles",
+       "2015": "tiles/burned_2015.pmtiles",
+       "2016": "tiles/burned_2016.pmtiles",
+       "2017": "tiles/burned_2017.pmtiles",
+       "2018": "tiles/burned_2018.pmtiles",
+       "2019": "tiles/burned_2019.pmtiles",
+       "2020": "tiles/burned_2020.pmtiles",
+       "2021": "tiles/burned_2021.pmtiles",
+       "2022": "tiles/burned_2022.pmtiles",
+       "2023": "tiles/burned_2023.pmtiles",
+       "2024": "tiles/burned_2024.pmtiles"
+      },
+      "time_caption": "burned area (MapBiomas)",
+      "legend": {
+       "kind": "classes",
+       "title": "Burned area {year} — share of area burned",
+       "classes": [
+        {
+         "color": "#fbe3c8",
+         "name": "up to 2 %"
+        },
+        {
+         "color": "#f6b98a",
+         "name": "2–5 %"
+        },
+        {
+         "color": "#ec8a55",
+         "name": "5–15 %"
+        },
+        {
+         "color": "#d4562f",
+         "name": "15–35 %"
+        },
+        {
+         "color": "#a8301c",
+         "name": "35–75 %"
+        },
+        {
+         "color": "#782012",
+         "name": "more than 75 %"
+        }
+       ],
+       "source": "MapBiomas Fuego C2 · CC BY 4.0 · zoomed out, each pixel shows the share of its area that burned; from zoom 12 each 30 m cell is shown burned (darkest colour) or not · Landsat-based: misses small or low-severity burns"
+      },
+      "inspect": {
+       "kind": "annual-series",
+       "series": "series/fire.json",
+       "path": [
+        "burned_km2_dept"
+       ],
+       "area_name": "department",
+       "title": "Burned area · department",
+       "hint": "MapBiomas Perú Fuego Collection 2 annual burned area (GEE export), 30 m, department clip",
+       "unit": "km²",
+       "chart_title": "Burned area per year (km²)",
+       "note": "Landsat-based: misses small or low-severity burns. Zoomed out, each pixel shows the share of its area that burned; from zoom 12 each 30 m cell is shown as burned or not. Burned km² per year is this app's analysis."
+      }
+     },
+     {
+      "id": "protected_areas",
+      "group": "Conservation",
+      "title": "Protected areas (ANP & ACR)",
+      "kind": "style-layers",
+      "swatch": "#2e86ab",
+      "source_ref": "protected_areas",
+      "before": "dim",
+      "attribution": "SERNANP",
+      "sources": {
+       "pa": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/protected_areas.geojson"
+        }
+       }
+      },
+      "layers": [
+       {
+        "id": "pa-fill",
+        "type": "fill",
+        "source": "pa",
+        "paint": {
+         "fill-color": [
+          "case",
+          [
+           "==",
+           [
+            "get",
+            "kind"
+           ],
+           "ACR (regional)"
+          ],
+          "#7fb069",
+          "#2e86ab"
+         ],
+         "fill-opacity": 0.35
+        }
+       },
+       {
+        "id": "pa-line",
+        "type": "line",
+        "source": "pa",
+        "paint": {
+         "line-color": [
+          "case",
+          [
+           "==",
+           [
+            "get",
+            "kind"
+           ],
+           "ACR (regional)"
+          ],
+          "#7fb069",
+          "#2e86ab"
+         ],
+         "line-width": 1.8
+        }
+       }
+      ],
+      "legend": {
+       "kind": "classes",
+       "title": "Protected areas",
+       "classes": [
+        {
+         "color": "#2e86ab",
+         "name": "ANP — national protected area"
+        },
+        {
+         "color": "#7fb069",
+         "name": "ACR — regional conservation area"
+        }
+       ],
+       "source": "Click an area for its name, category and creation year · source: SERNANP"
+      },
+      "inspect": {
+       "kind": "feature-attributes",
+       "layers": [
+        "pa-fill"
+       ],
+       "place": true,
+       "title": "{name}",
+       "fields": [
+        {
+         "label": "Category",
+         "value": "{category}"
+        },
+        {
+         "label": "Kind",
+         "value": "{kind}"
+        },
+        {
+         "label": "Created",
+         "value": "{year}"
+        },
+        {
+         "label": "Legal document",
+         "value": "{legal_doc}"
+        },
+        {
+         "label": "Legal area",
+         "value": "{area_legal_ha|int}",
+         "unit": "ha"
+        }
+       ],
+       "note": "Source: SERNANP (boundaries simplified for display; not an official delimitation).",
+       "empty_title": "Ucayali",
+       "empty": "No protected area here."
+      }
+     },
+     {
+      "id": "precip",
+      "group": "Climate",
+      "title": "Precipitation",
+      "kind": "climate-grid",
+      "swatch": "#434e6b",
+      "source_ref": "precip",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "CHIRPS v3 (UCSB CHC, CC BY 4.0)",
+      "variables": [
+       {
+        "id": "precip",
+        "label": "Precip",
+        "title": "Precipitation",
+        "cells": "precip_cells.bin"
+       }
+      ],
+      "seasons": [
+       "annual",
+       "wet",
+       "dry"
+      ],
+      "season_labels": {
+       "annual": "Annual",
+       "wet": "Core wet (Jan–Mar)",
+       "dry": "Core dry (Jun–Aug)"
+      },
+      "season_names": {
+       "annual": "annual",
+       "wet": "core wet season (Jan–Mar)",
+       "dry": "core dry season (Jun–Aug)"
+      },
+      "aggregate": "total",
+      "units": "mm",
+      "source": "CHIRPS v3.0",
+      "ramp": [
+       "#fde737",
+       "#dec957",
+       "#bbad6c",
+       "#9b9376",
+       "#7c7b78",
+       "#61646f",
+       "#434e6b",
+       "#1a386f",
+       "#00224d"
+      ],
+      "anomaly": {
+       "kind": "ratio",
+       "units": "% of normal",
+       "centre": 100,
+       "ramp": [
+        "#543005",
+        "#8a5009",
+        "#bf812d",
+        "#dec07b",
+        "#f6e8c3",
+        "#f4f4f4",
+        "#c7eae5",
+        "#7ecbc0",
+        "#35978f",
+        "#00655d",
+        "#003c30"
+       ],
+       "normals": "precip"
+      },
+      "water_cell_note": "River cell: satellite rainfall estimates over open water are less reliable."
+     },
+     {
+      "id": "temperature",
+      "group": "Climate",
+      "title": "Temperature",
+      "kind": "climate-grid",
+      "swatch": "#e14c66",
+      "source_ref": "temperature",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "CHIRTS-ERA5 (UCSB CHC)",
+      "variables": [
+       {
+        "id": "tmean",
+        "label": "Tmean",
+        "title": "Tmean (Tmax+Tmin)/2",
+        "cells": "tmean_cells.bin",
+        "normals": "tmean"
+       },
+       {
+        "id": "tmax",
+        "label": "Tmax",
+        "title": "Tmax",
+        "cells": "tmean_cells.bin",
+        "series_of": "tmean"
+       },
+       {
+        "id": "tmin",
+        "label": "Tmin",
+        "title": "Tmin",
+        "cells": "tmean_cells.bin",
+        "series_of": "tmean"
+       }
+      ],
+      "seasons": [
+       "annual",
+       "wet",
+       "dry"
+      ],
+      "season_labels": {
+       "annual": "Annual",
+       "wet": "Core wet (Jan–Mar)",
+       "dry": "Core dry (Jun–Aug)"
+      },
+      "season_names": {
+       "annual": "annual",
+       "wet": "core wet season (Jan–Mar)",
+       "dry": "core dry season (Jun–Aug)"
+      },
+      "aggregate": "mean",
+      "units": "°C",
+      "source": "CHIRTS-ERA5",
+      "ramp": [
+       "#060519",
+       "#2a115c",
+       "#5a157e",
+       "#872781",
+       "#b53679",
+       "#e14c66",
+       "#f97b5d",
+       "#feb179",
+       "#fce6a8"
+      ],
+      "anomaly": {
+       "kind": "difference",
+       "units": "°C vs normal",
+       "centre": 0,
+       "ramp": [
+        "#053061",
+        "#2064aa",
+        "#4393c3",
+        "#90c4dd",
+        "#d1e5f0",
+        "#f7f6f6",
+        "#fddbc7",
+        "#f3a380",
+        "#d6604d",
+        "#b0172a",
+        "#67001f"
+       ]
+      }
+     },
+     {
+      "id": "spi3",
+      "group": "Climate",
+      "title": "Drought (SPI-3)",
+      "kind": "index-grid",
+      "swatch": "#35978f",
+      "source_ref": "spi3",
+      "grid": "climate/app/",
+      "before": "dim",
+      "attribution": "SPI-3 from CHIRPS v3",
+      "stack": "spi3.tif",
+      "cells": "spi3_cells.bin",
+      "qc": "spi3_qc.tif",
+      "scale": 0.01,
+      "range": [
+       -3,
+       3
+      ],
+      "ramp": [
+       "#543005",
+       "#8a5009",
+       "#bf812d",
+       "#dec07b",
+       "#f6e8c3",
+       "#f4f4f4",
+       "#c7eae5",
+       "#7ecbc0",
+       "#35978f",
+       "#00655d",
+       "#003c30"
+      ],
+      "provisional_months": 3,
+      "basin_series": "series/spi3_dept.json",
+      "area_name": "department",
+      "title_long": "SPI-3 — 3-month standardized precipitation",
+      "short": "SPI-3",
+      "calibration": "1991–2020",
+      "provisional_note": "{from} to {to}: provisional (latest CHIRPS months, may be revised)",
+      "provisional_cell_note": "The latest 2–3 CHIRPS months may be revised.",
+      "axis": [
+       "−3 dry",
+       "+3 wet"
+      ],
+      "classes": [
+       {
+        "max": -2,
+        "label": "extremely dry"
+       },
+       {
+        "max": -1.5,
+        "label": "severely dry"
+       },
+       {
+        "max": -1,
+        "label": "moderately dry"
+       },
+       {
+        "below": 1,
+        "label": "near normal"
+       },
+       {
+        "below": 1.5,
+        "label": "moderately wet"
+       },
+       {
+        "below": 2,
+        "label": "very wet"
+       },
+       {
+        "label": "extremely wet"
+       }
+      ],
+      "legend_notes": [
+       "≤ −2.0 extremely dry · −1.5 to −1.99 severely dry · −1.0 to −1.49 moderately dry · −0.99 to 0.99 near normal (WMO 2012)"
+      ],
+      "source": "Gamma fit (Thom), calibration 1991–2020 · CHIRPS v3.0 · 0.05°",
+      "cell_source": "SPI-3 from CHIRPS v3.0 · calibration 1991–2020",
+      "cell_method": "SPI-3 from CHIRPS v3.0 · gamma fit (Thom 1958), zero-rain mixed distribution · classes: WMO (2012)"
+     }
+    ],
+    "story": {
+     "title": "Forest structure from space and local knowledge",
+     "map": {
+      "sources": {
+       "storyVeg": {
+        "type": "geojson",
+        "data": {
+         "asset": "vectors/veg_classes.geojson"
+        }
+       }
+      },
+      "layers": [
+       {
+        "id": "story-veg-halo",
+        "type": "line",
+        "source": "storyVeg",
+        "layout": {
+         "visibility": "none"
+        },
+        "paint": {
+         "line-color": "#ffffff",
+         "line-width": 3,
+         "line-opacity": 0.75
+        }
+       },
+       {
+        "id": "story-veg-line",
+        "type": "line",
+        "source": "storyVeg",
+        "layout": {
+         "visibility": "none"
+        },
+        "paint": {
+         "line-color": [
+          "get",
+          "color"
+         ],
+         "line-width": 1.4
+        }
+       },
+       {
+        "id": "story-veg-focus-halo",
+        "type": "line",
+        "source": "storyVeg",
+        "layout": {
+         "visibility": "none"
+        },
+        "filter": [
+         "==",
+         [
+          "get",
+          "PLOTID"
+         ],
+         ""
+        ],
+        "paint": {
+         "line-color": "#ffffff",
+         "line-width": 6
+        }
+       },
+       {
+        "id": "story-veg-focus",
+        "type": "line",
+        "source": "storyVeg",
+        "layout": {
+         "visibility": "none"
+        },
+        "filter": [
+         "==",
+         [
+          "get",
+          "PLOTID"
+         ],
+         ""
+        ],
+        "paint": {
+         "line-color": "#1c2b3a",
+         "line-width": 2.6
+        }
+       }
+      ],
+      "highlights": {
+       "outlines": [
+        "story-veg-halo",
+        "story-veg-line"
+       ]
+      },
+      "focus": {
+       "layers": [
+        "story-veg-focus-halo",
+        "story-veg-focus"
+       ],
+       "field": "PLOTID"
+      }
+     },
+     "note": "Study numbers are as printed in the cited papers (pages in story_chapters.json); “this app's analysis” numbers come from the app's own data (methods in the data report).",
+     "chapters": [
+      {
+       "id": "intro",
+       "title": "A department the size of a country",
+       "text": "Ucayali stretches from the Andean foothills to the heart of the Peruvian Amazon — about 105,000 km², roughly the size of Iceland. The Ucayali River, a ~2,700 km headwater tributary of the Amazon, runs the length of it, and lowland rainforest covers most of the department. On the department's land cells the 1991–2020 normal is ≈ 2,150 mm of rain a year; in Coronel Portillo and Padre Abad it is ≈ 2,240 mm (this app's analysis of CHIRPS v3). Cooley et al. (2024, p.4) give ≈ 1,560 mm for northern Ucayali, citing NOAA (2022). Around 496,459 people live here; 12.3 % speak an indigenous language as their first language, Shipibo above all.",
+       "visual": {
+        "layers": [],
+        "camera": {
+         "lng": -73.6,
+         "lat": -9.5,
+         "zoom": 6.1,
+         "pitch": 35
+        }
+       },
+       "numbers": [
+        {
+         "value": "~2,700 km",
+         "label": "length of the Ucayali River, between the high Andes and the low hills to the east",
+         "source": {
+          "kind": "study",
+          "citation": "Amazon Waters Alliance (2022), as cited in Cooley et al. (2024)",
+          "page": "p.4"
+         }
+        },
+        {
+         "value": "496,459",
+         "label": "inhabitants of Ucayali",
+         "source": {
+          "kind": "study",
+          "citation": "INEI (2022), as cited in Cooley et al. (2024)",
+          "page": "p.4"
+         }
+        },
+        {
+         "value": "≈ 105,000 km²",
+         "label": "department area, from the INEI boundary",
+         "source": {
+          "kind": "app",
+          "method": "equal-area measurement of inputs/ucayali.shp"
+         }
+        },
+        {
+         "value": "≈ 2,150 mm",
+         "label": "mean annual rainfall 1991–2020 on the department's land cells (≈ 2,240 mm in Coronel Portillo + Padre Abad, where the vegetation-class polygons are)",
+         "source": {
+          "kind": "app",
+          "method": "CHIRPS v3.0 annual totals averaged over 0.05° land cells, 1991–2020"
+         }
+        }
+       ],
+       "sources": [
+        "Climate (≈1,560 mm yr⁻¹, 26.3 °C, 114 rainy days): NOAA (2022), as cited in Cooley et al. (2024), Ecology and Evolution 14:e70116, sect. 2.1, p.4.",
+        "River length: Amazon Waters Alliance (2022); population and languages: INEI (2022, 2007) — all as cited in Cooley et al. (2024), p.4."
+       ]
+      },
+      {
+       "id": "classes",
+       "title": "The forest is not one thing",
+       "text": "What a land-cover map calls 'forest' is many things here: old-growth lowland forest, secondary forest regrowing after cultivation, young purma on recently rested fields, palm swamps, cloud forest. Cooley et al. built their vegetation classes WITH the people who know this landscape — a two-day workshop and about two years of roughly bi-monthly dialogues with local experts, then 324 polygons digitised on satellite imagery and verified through time. The classes carry local names: purma is under ~8 years old, secondary forest ~8–20, mature forest more than 20.",
+       "visual": {
+        "layers": [
+         "veg_classes"
+        ],
+        "camera": {
+         "lng": -75.25,
+         "lat": -8.95,
+         "zoom": 10.3,
+         "pitch": 0
+        },
+        "note": "Click any polygon for its class, local name and the imagery it was digitised on. The polygons are sampled patches, not a wall-to-wall map."
+       },
+       "numbers": [
+        {
+         "value": "324",
+         "label": "vegetation-class polygons published by the project (CC0), shown on this map",
+         "source": {
+          "kind": "app",
+          "method": "count of the CaltechDATA v4 polygon file (doi:10.22002/D1.2318)"
+         }
+        },
+        {
+         "value": "< 8 · 8–20 · > 20 years",
+         "label": "purma · secondary forest · mature forest, as the local typology defines them",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Table 1",
+          "page": "pp.8–10"
+         }
+        }
+       ],
+       "sources": [
+        "Co-production process (workshop + ~bi-monthly dialogues over 2 years): Cooley et al. (2024), sect. 2.2, p.5.",
+        "Class definitions and names: Table 1, pp.7–10; dataset README (CaltechDATA doi:10.22002/D1.2318, CC0).",
+        "Digitisation on Google Earth/Bing (~2015–2019) and MAXAR (2020), verified with monthly Planet imagery: sect. 2.3.1, p.6."
+       ]
+      },
+      {
+       "id": "forest_loss",
+       "title": "Twenty-four years of loss",
+       "text": "Since the 2000 baseline, Ucayali has lost about 6,054 km² of humid Amazon forest — concentrated along the roads and rivers of Padre Abad and Coronel Portillo, while Purús, in the remote east, lost almost nothing. About 91,159 km² of forest still stood in 2024. The regional government's own strategy flags 11.35 % of Ucayali's intact forests as at risk (Gobierno Regional de Ucayali 2022, as cited in Cooley et al. 2024, p.18).",
+       "visual": {
+        "layers": [
+         "forest_loss"
+        ],
+        "camera": {
+         "lng": -75.1,
+         "lat": -8.85,
+         "zoom": 8.6,
+         "pitch": 0
+        },
+        "steps": [
+         {
+          "label": "Drought index, Jun–Aug 2024",
+          "layer": "spi3",
+          "camera": {
+           "lng": -73.6,
+           "lat": -9.5,
+           "zoom": 6.3,
+           "pitch": 0
+          },
+          "time": {
+           "month": "2024-08"
+          }
+         },
+         {
+          "label": "Active fires, 2024",
+          "layer": "fire",
+          "camera": {
+           "lng": -73.6,
+           "lat": -9.5,
+           "zoom": 6.3,
+           "pitch": 0
+          },
+          "time": {
+           "year": 2024
+          }
+         }
+        ],
+        "pending_note": "The year-by-year loss map and annual series arrive when GEOBOSQUES' annual loss raster (with the year field) is added to the pipeline.",
+        "charts": [
+         {
+          "builder": "class-bars",
+          "title": "Department land by GEOBOSQUES class, km²",
+          "series": "series/forest_classes.json",
+          "values_path": [
+           "regions",
+           "Ucayali"
+          ],
+          "labels_path": [
+           "classes"
+          ],
+          "groups": {
+           "1": {
+            "label": "",
+            "colour": "#2e5573"
+           },
+           "2": {
+            "label": "",
+            "colour": "#1f6b45"
+           },
+           "3": {
+            "label": "",
+            "colour": "#d64530"
+           },
+           "4": {
+            "label": "",
+            "colour": "#d8c26a"
+           }
+          },
+          "unit": "km²",
+          "tip": "{label}: {value} (this app's analysis)",
+          "note": "This app's analysis of the GEOBOSQUES combined raster; ordered by area."
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "6,054 km²",
+         "label": "forest loss 2001–2024 in the department (includes natural losses, not only deforestation)",
+         "source": {
+          "kind": "app",
+          "method": "GEOBOSQUES combined raster clipped to the department, 30 m pixel counting"
+         }
+        },
+        {
+         "value": "2,154 vs 30 km²",
+         "label": "loss in Padre Abad vs Purús — the whole gradient of the department in two provinces",
+         "source": {
+          "kind": "app",
+          "method": "GEOBOSQUES raster by province (this app's analysis)"
+         }
+        },
+        {
+         "value": "11.35 %",
+         "label": "of Ucayali's intact forests (1,059,312 ha) are in at-risk areas, per the regional low-emissions strategy",
+         "source": {
+          "kind": "study",
+          "citation": "Gobierno Regional de Ucayali (2022), as cited in Cooley et al. (2024)",
+          "page": "p.18"
+         }
+        },
+        {
+         "value": "17,468",
+         "label": "VIIRS active-fire detections in the department in 2024 — the highest in the VIIRS record (2012–2025)",
+         "source": {
+          "kind": "app",
+          "method": "NASA FIRMS VIIRS S-NPP, confidence nominal/high, inside the department boundary"
+         }
+        },
+        {
+         "value": "786 km²",
+         "label": "MapBiomas burned area (Fuego Collection 2) also peaks in 2024, the largest of 2013–2024, matching the VIIRS detections; this app's analysis.",
+         "source": {
+          "kind": "app",
+          "method": "MapBiomas Perú Fuego Collection 2 annual burned area, 30 m, cells inside the department"
+         }
+        },
+        {
+         "value": "1,686 mm",
+         "label": "department rainfall in 2024 — the lowest annual total of 1981–2025 (normal 1991–2020 ≈ 2,150 mm)",
+         "source": {
+          "kind": "app",
+          "method": "CHIRPS v3.0 annual totals, department land cells; rank among 45 complete years"
+         }
+        },
+        {
+         "value": "−1.89",
+         "label": "department-mean SPI-3 for Jun–Aug 2024 (severely dry, WMO 2012) — the 3rd lowest since 1981, after 2023 (−2.23) and 1988 (−1.91). The data show co-occurrence, not cause.",
+         "source": {
+          "kind": "app",
+          "method": "SPI-3 from CHIRPS v3.0, window ending August, calibration 1991–2020"
+         }
+        }
+       ],
+       "sources": [
+        "GEOBOSQUES (MINAM PNCBMCC + SERFOR/MIDAGRI), 'Mapa del Bosque Húmedo Amazónico Peruano 2000–2024'; loss integrates natural and anthropic losses (product metadata, PRECAUCIONES).",
+        "Fire, burned-area and drought numbers: this app's analysis of NASA FIRMS VIIRS (2012–2025), MapBiomas Fuego Collection 2 (2013–2024) and CHIRPS v3.0 (1981–2025); they show co-occurrence in 2024, not cause.",
+        "At-risk share: Ucayali Regional Strategy for Low Emissions Rural Development, as cited in Cooley et al. (2024), p.18."
+       ]
+      },
+      {
+       "id": "gedi",
+       "title": "A laser from the Space Station",
+       "text": "NASA's GEDI lidar, mounted on the International Space Station, fires laser pulses that return the vertical structure of the forest in 25 m footprints — through the haze and between the clouds that defeat optical satellites. Cooley et al. kept only the most reliable shots: full-power beams, beam sensitivity of at least 0.9, and ground elevations that five of six algorithms agreed on to within 2 m. Of the 29.1 million full-power shots GEDI recorded over a box around the department from April 2019 to July 2025, about one in five passes all three tests; the rest fail the sensitivity test or the ground-elevation test. The map then keeps only the shots inside the department that also pass GEDI's own quality flags: 1.5 million footprints, each a dot coloured by its height.",
+       "visual": {
+        "layers": [
+         "gedi"
+        ],
+        "camera": {
+         "lng": -75.2,
+         "lat": -8.9,
+         "zoom": 10.2,
+         "pitch": 0
+        }
+       },
+       "numbers": [
+        {
+         "value": "5.25 of 29.1 million",
+         "label": "full-power GEDI shots over a box around the department that pass the paper's three filters, April 2019 – July 2025",
+         "source": {
+          "kind": "app",
+          "method": "GEDI02_A v002 Harmony subsets filtered as in Cooley et al. (2024), sect. 2.4 (pipeline steps 11–12)"
+         }
+        },
+        {
+         "value": "1.5 million",
+         "label": "of them inside the department that also pass GEDI's quality flags — the dots on the map",
+         "source": {
+          "kind": "app",
+          "method": "strict set: plus quality_flag = 1 and degrade_flag = 0 (pipeline step 14)"
+         }
+        },
+        {
+         "value": "25 m",
+         "label": "diameter of one GEDI footprint on the ground",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Fig. 6",
+          "page": "p.15"
+         }
+        },
+        {
+         "value": "≥ 0.9 · ≤ 2 m",
+         "label": "beam sensitivity threshold · allowed ground-elevation spread among the five best algorithms",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), sect. 2.4",
+          "page": "pp.11–12"
+         }
+        }
+       ],
+       "sources": [
+        "GEDI L2A product and filters: Cooley et al. (2024), sect. 2.4, pp.11–12; Dubayah et al. (2020).",
+        "This app uses GEDI02_A v002 (the paper's data link is v001) — see the data report.",
+        "Shot counts and the footprint map: this app's analysis; the GEDI archive has no shots from April 2023 to April 2024."
+       ]
+      },
+      {
+       "id": "heights",
+       "title": "How tall is each forest?",
+       "text": "Each dot is one GEDI footprint, coloured by its RH95 — the height below which 95 % of the returned laser energy lies: dark green is tall canopy, pale is low. The outlines are the vegetation classes mapped with local experts. Step through three of them. In mature lowland forest (more than 20 years old) almost every dot is dark; Cooley et al. report a mean RH95 of 29.55 m for this class. In secondary forest (about 8–20 years) pale and dark dots sit side by side; its mean is 21.25 m, with the widest spread of any class (sd 8.85 m), which the authors attribute to patches at different stages of regrowth. In purma, regrowth younger than about 8 years, the dots are pale: 6.33 m on average, close to monocrop cacao (6.85 m). Oil palm sits in between at 11.50 m.",
+       "visual": {
+        "layers": [
+         "gedi"
+        ],
+        "focus": "SC_338",
+        "camera": {
+         "bounds": [
+          -75.2313,
+          -9.0767,
+          -75.1766,
+          -9.0051
+         ],
+         "pitch": 0,
+         "lng": -75.20395,
+         "lat": -9.0409
+        },
+        "steps": [
+         {
+          "label": "1 · Mature lowland forest",
+          "layer": "gedi",
+          "focus": "SC_338",
+          "camera": {
+           "bounds": [
+            -75.2313,
+            -9.0767,
+            -75.1766,
+            -9.0051
+           ],
+           "pitch": 0,
+           "lng": -75.20395,
+           "lat": -9.0409
+          }
+         },
+         {
+          "label": "2 · Secondary forest",
+          "layer": "gedi",
+          "focus": "SC_344",
+          "camera": {
+           "bounds": [
+            -74.9404,
+            -8.4055,
+            -74.9264,
+            -8.3941
+           ],
+           "pitch": 0,
+           "lng": -74.9334,
+           "lat": -8.3998
+          }
+         },
+         {
+          "label": "3 · Purma",
+          "layer": "gedi",
+          "focus": "SC_356",
+          "camera": {
+           "bounds": [
+            -74.8986,
+            -8.7188,
+            -74.8943,
+            -8.7143
+           ],
+           "pitch": 0,
+           "lng": -74.89645,
+           "lat": -8.71655
+          }
+         }
+        ],
+        "show": [
+         "outlines"
+        ],
+        "charts": [
+         {
+          "builder": "class-bars",
+          "title": "Canopy height by class — mean RH95 (Table 2a)",
+          "series": "series/cooley_tables.json",
+          "rows_path": [
+           "classes"
+          ],
+          "label_field": "label",
+          "value_field": "rh95_mean",
+          "group_field": "group",
+          "groups": {
+           "forest": {
+            "label": "Forest regeneration classes",
+            "colour": "#2f7d4f"
+           },
+           "agri": {
+            "label": "Agricultural classes",
+            "colour": "#c48a2c"
+           }
+          },
+          "decimals": 2,
+          "unit": "m",
+          "tip": "{label}: {rh95_mean|fixed:2} m (sd {rh95_sd|fixed:2} m; n = {n|int} footprints, Table 2a)",
+          "note": "The paper's published means (ground returns removed), Table 2a p.16, ordered by value; hover a bar for its standard deviation and footprint count."
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "29.55 m",
+         "label": "mean canopy height (RH95) of mature lowland forest, n = 2,063 footprints",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Table 2a",
+          "page": "p.16"
+         }
+        },
+        {
+         "value": "21.25 m",
+         "label": "mean RH95 of secondary or degraded lowland forest (sd 8.85 m — the most variable class)",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Table 2a",
+          "page": "p.16"
+         }
+        }
+       ],
+       "sources": [
+        "RH95 by class: Table 2a, p.16 (ground returns removed). The abstract quotes the untransformed Table 2b values (29.40 / 20.82 m), p.1–2 and p.16.",
+        "Class ages: Table 1, pp.8–10. Secondary forest's spread and regrowth stages: sect. 4.1, p.17.",
+        "Map: GEDI L2A v002 footprints, the paper's filters plus GEDI's quality flags, April 2019 – July 2025 (chapter 4); polygons SC_338, SC_344 and SC_356 of the CaltechDATA v4 vegetation typologies (CC0).",
+        "How this app's footprints compare with the paper's tables: data report, replication check."
+       ]
+      },
+      {
+       "id": "shape",
+       "title": "The shape of the canopy",
+       "text": "Height is only half the story; the other half is where the canopy holds its substance. The ratio RH50/RH95 says how high the median of the returned laser energy sits. The surprise of the paper: secondary forest (0.54) looks almost like mature forest (0.58) in vertical profile — the authors expected regrowing forest to look clearly different. Oil palm (0.53) mimics a closed forest canopy too, while cacao and purma (0.35–0.36) keep their energy low.",
+       "visual": {
+        "layers": [
+         "canopy"
+        ],
+        "camera": {
+         "lng": -75.2,
+         "lat": -8.9,
+         "zoom": 10,
+         "pitch": 0
+        },
+        "note": "Caveat: the paper's discussion text (sect. 4.1, p.13) states these two ratios the other way round; this app quotes Table 4a and the abstract, and records the discrepancy in the data report.",
+        "charts": [
+         {
+          "builder": "class-bars",
+          "title": "Canopy shape — mean RH50/RH95 (Table 4a)",
+          "series": "series/cooley_tables.json",
+          "rows_path": [
+           "classes"
+          ],
+          "label_field": "label",
+          "value_field": "ratio_mean",
+          "group_field": "group",
+          "groups": {
+           "forest": {
+            "label": "Forest regeneration classes",
+            "colour": "#2f7d4f"
+           },
+           "agri": {
+            "label": "Agricultural classes",
+            "colour": "#c48a2c"
+           }
+          },
+          "decimals": 2,
+          "max": 1,
+          "tip": "{label}: {ratio_mean|fixed:2} (Table 4a; n = {n|int} footprints, Table 2a)",
+          "note": "Scale 0–1: closer to 1 = energy returned high in the canopy. The paper's values, Table 4a p.17 (abstract p.1: 0.58 / 0.54 / 0.53), ordered by value."
+         }
+        ]
+       },
+       "numbers": [
+        {
+         "value": "0.58 vs 0.54",
+         "label": "mean RH50/RH95 of mature vs secondary lowland forest — unexpectedly similar vertical profiles",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Table 4a (abstract p.1)",
+          "page": "p.17"
+         }
+        },
+        {
+         "value": "p < .0001",
+         "label": "after accounting for canopy height, mature forest keeps a ~0.03 higher ratio than secondary",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), sect. 3.2",
+          "page": "p.13"
+         }
+        }
+       ],
+       "sources": [
+        "RH50/RH95 by class: Table 4a, p.17; abstract values 0.58 / 0.54 / 0.53, pp.1–2.",
+        "Hypotheses and the surprise: Fig. 1 p.4; sect. 4.1 pp.13, 16–17. Table 4b is not quoted (rows appear swapped — data report §2)."
+       ]
+      },
+      {
+       "id": "footprint",
+       "title": "The footprint problem",
+       "text": "A GEDI shot lands within about ±10 m of where it says it lands. To be sure a footprint sampled one single class, Cooley et al. required a homogeneous area of ~65 m across (the 25 m footprint plus twice the geolocation error) — and at that standard, not a single cacao observation survived: smallholder plots are simply too small for the laser's aim. That is why the smallest farms stay invisible to spaceborne lidar, and why local knowledge had to carry the map where the instrument could not.",
+       "visual": {
+        "layers": [
+         "veg_classes"
+        ],
+        "camera": {
+         "lng": -75.468,
+         "lat": -8.897,
+         "zoom": 12.5,
+         "pitch": 0
+        },
+        "note": "The view shows small purma and secondary-forest polygons near San Alejandro — patches at the scale where the 65 m rule bites."
+       },
+       "numbers": [
+        {
+         "value": "~65 m",
+         "label": "diameter of the homogeneous area needed per footprint (25 m beam ± 2σ geolocation error)",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), Fig. 6",
+          "page": "p.15"
+         }
+        },
+        {
+         "value": "0",
+         "label": "cacao observations remaining after the 65 m homogeneity filter",
+         "source": {
+          "kind": "study",
+          "citation": "Cooley et al. (2024), sect. 3.1",
+          "page": "p.13"
+         }
+        }
+       ],
+       "sources": [
+        "Geolocation error and the 45 m / 65 m rule: sect. 2.4 p.12 and Fig. 6 p.15; consequences for cacao and small high-conservation-value patches: pp.13, 18–19."
+       ]
+      },
+      {
+       "id": "limits",
+       "title": "What the map cannot see",
+       "text": "Every layer here has edges. The paper left out the wetland forests that stand in water along the Ucayali River: where the water level keeps changing, the lidar cannot reliably find the ground. The vegetation-class layer includes two such types, palm swamps (aguajales, 3 polygons) and wetland forest (2 polygons), but they were not analysed. GEDI's coverage is sparse in parts of the western Amazon. And one absence is deliberate: the cacao plots mapped together with women farmers are not in the public dataset, and this app does not look for them — the published polygons cover the forest and regrowth classes only, so the paper's oil-palm and cacao results cannot be reproduced from public data.",
+       "visual": {
+        "layers": [],
+        "camera": {
+         "lng": -74.3,
+         "lat": -9.1,
+         "zoom": 8.2,
+         "pitch": 30
+        }
+       },
+       "numbers": [
+        {
+         "value": "0",
+         "label": "oil-palm or cacao polygons in the published CC0 dataset (by design)",
+         "source": {
+          "kind": "app",
+          "method": "inventory of the CaltechDATA v4 polygon file"
+         }
+        }
+       ],
+       "sources": [
+        "Wetland forests along the Ucayali excluded: Cooley et al. (2024), sect. 2.1, p.4.",
+        "Polygon counts (3 palm-swamp, 2 wetland-forest): this app's analysis, inventory of the CaltechDATA v4 polygon file.",
+        "Sparse GEDI coverage in the western Amazon: Potapov et al. (2021), as cited in Cooley et al. (2024), sect. 4.3, p.19.",
+        "Cacao mapped with women farmers of the Alianza Cacao Peru programme: sect. 2.3.3, p.11; the plots are not part of the public dataset."
+       ]
+      },
+      {
+       "id": "stewards",
+       "title": "Who stewards the landscape",
+       "text": "Seven national protected areas and three regional conservation areas reach into Ucayali, from Cordillera Azul in the west to Alto Purús in the east. The vegetation typology itself was co-produced by people who manage and live from this landscape: Alianza Cacao, CIAT, Conservación Amazónica, the Universidad Nacional de Ucayali and the Universidad Nacional Mayor de San Marcos, the regional economic development office, SERNANP — and the women cacao farmers of the Alianza Cacao Peru programme, whose field knowledge anchored the agricultural classes.",
+       "visual": {
+        "layers": [
+         "protected_areas"
+        ],
+        "camera": {
+         "lng": -73.4,
+         "lat": -9.7,
+         "zoom": 6.8,
+         "pitch": 0
+        },
+        "note": "Click an area for its name, category and creation year. Indigenous territories are deliberately not hosted in this app (RAISG licence and sensitivity) — see About & sources for the link to RAISG's own map."
+       },
+       "numbers": [
+        {
+         "value": "7 + 3",
+         "label": "national protected areas (ANP) and regional conservation areas (ACR) intersecting the department",
+         "source": {
+          "kind": "app",
+          "method": "SERNANP map service clipped to the department, fetched 2026-11-04"
+         }
+        }
+       ],
+       "sources": [
+        "Partner institutions as the paper lists them: Cooley et al. (2024), sect. 2.2 p.5 and sect. 2.3.3 p.11. Funded by the NASA SERVIR programme (acknowledgments, p.19).",
+        "Protected areas: SERNANP (geo.sernanp.gob.pe), cited as source; boundaries simplified for display."
+       ]
+      },
+      {
+       "id": "explore",
+       "title": "Explore the layers yourself",
+       "text": "Switch between the vegetation classes, canopy height, forest & loss, fires and protected areas — every layer carries its source, licence and caveats in About & sources, and every number in this story is either printed in the cited paper (page recorded) or computed by this app and labelled so.",
+       "visual": {
+        "layers": [],
+        "camera": {
+         "lng": -73.6,
+         "lat": -9.5,
+         "zoom": 6.3,
+         "pitch": 32
+        },
+        "action": "explore"
+       },
+       "sources": [
+        "Data report: the DATA_REPORT.md link in About & sources."
+       ]
+      }
+     ]
+    },
+    "studies": {
+     "note": "Published findings quote the cited paper (page and table recorded in studies.json); explore cards are open questions, not claims.",
+     "cards": [
+      {
+       "id": "cooley_2024_structure",
+       "kind": "published",
+       "question": "How do canopy height and shape differ among Ucayali's forest and agricultural classes?",
+       "finding": "Mature lowland forest averages 29.55 m canopy height (RH95) against 21.25 m for secondary forest, 11.50 m for mature oil palm, 6.85–8.90 m for cacao and 6.33 m for young purma (Table 2a, p.16, ground returns removed; n = 46–2,063 footprints per class). The surprise is the canopy's shape: secondary forest's RH50/RH95 ratio (0.54) is nearly that of mature forest (0.58), and oil palm mimics a closed canopy at 0.53, while cacao and purma stay low at 0.35–0.36 (Table 4a, p.17; abstract p.1). Even after accounting for canopy height, mature forest keeps a ~0.03 higher ratio than secondary (p < .0001, sect. 3.2 p.13).",
+       "caveat": "The discussion text (sect. 4.1, p.13) states the mature/secondary ratios the other way round; this app quotes Table 4a and the abstract. Table 4b appears to have its mature and oil-palm rows swapped and is not quoted. The paper's data link points to GEDI L2A v001 while this app processes v002. The paper's oil-palm and cacao results cannot be reproduced from public data: the CC0 polygon dataset contains no oil-palm or cacao polygons (the cacao plots were mapped with individual women farmers and are deliberately not published).",
+       "citation": "Cooley, S.S., Pinto, N., Becerra, M., Vela Alvarado, J.W., Fahlen, J.C., Rivera, O., Fricker, G.A., De Los Ríos Dantas, A.R., Aguilar-Amuchastegui, N., Reygadas, Y., Gan, J., DeFries, R. & Menge, D.N.L. (2024). Ecology and Evolution 14:e70116 (CC BY)",
+       "doi": "10.1002/ece3.70116",
+       "layers": [
+        "veg_classes",
+        "canopy"
+       ],
+       "camera": {
+        "lng": -75.2,
+        "lat": -8.9,
+        "zoom": 10,
+        "pitch": 0
+       }
+      },
+      {
+       "id": "cooley_2024_coproduction",
+       "kind": "published",
+       "question": "Can local knowledge and spaceborne lidar be combined to monitor a fragmented tropical landscape?",
+       "finding": "Yes — the vegetation typology was co-produced through a two-day workshop and ~bi-monthly dialogues over two years with Alianza Cacao, CIAT, Conservación Amazónica, the Universidad Nacional de Ucayali, the Universidad Nacional Mayor de San Marcos, the Ucayali economic development office, SERNANP and women cacao farmers of the Alianza Cacao Peru programme (sect. 2.2 p.5, sect. 2.3.3 p.11). The combination matters where each side is blind: GEDI sees structure through cloud but misses plots smaller than its ~65 m homogeneous-area requirement — after that filter, no cacao observations remained (Fig. 6 p.15; sect. 3.1 p.13) — while local knowledge defined classes optical imagery confuses.",
+       "caveat": "The published lessons (shared vision; co-produced land-cover keys; two-way knowledge exchange, sect. 4.2 p.18) are the authors' qualitative synthesis, not measured outcomes. Individual collaborating farmers are deliberately not identified here.",
+       "citation": "Cooley, S.S., et al. (2024). Ecology and Evolution 14:e70116 (CC BY); dataset: CaltechDATA doi:10.22002/D1.2318 (CC0)",
+       "doi": "10.1002/ece3.70116",
+       "layers": [
+        "veg_classes"
+       ],
+       "camera": {
+        "lng": -75.25,
+        "lat": -8.95,
+        "zoom": 10.3,
+        "pitch": 0
+       }
+      },
+      {
+       "id": "santini_2026_sediment",
+       "kind": "published",
+       "question": "How much water and sediment does the Ucayali River move, and what do its floodplains do to the flux?",
+       "finding": "The Andean Ucayali exports 455 [410, 500] ×10⁶ t yr⁻¹ of suspended sediment (40 % sand), of which 36 % is trapped in the floodplain — predominantly as sand (65 % of deposition) — and delivers 290 [235, 345] ×10⁶ t yr⁻¹ to the Amazon River, making it the dominant sediment source among the Andean foreland tributaries. At high water the floodplain stores up to 19.1 [15.3, 22.9] km³ (~38 % of discharge), capturing up to 14 % of the sand flux at peak, while recession recycling contributes 22 % of the suspended load at the outlet (abstract, p.3367).",
+       "caveat": "Model-based budgets (SWAT-Amazon constrained by long-term observations and remote sensing) with the bracketed uncertainty ranges shown; the paper argues budget accuracy rests on multi-source observations rather than calibration alone (abstract, p.3367). River reaches, not the forest interface, are the study object.",
+       "citation": "Santini, W., Delort-Ylla, A., Lavado-Casimiro, W., Camenen, B., Roussillon, J., Pérez Arévalo, J.J., Molina-Carpio, J. & Martinez, J.M. (2026). Hydrology and Earth System Sciences 30:3367–3397 (CC BY)",
+       "doi": "10.5194/hess-30-3367-2026",
+       "layers": [],
+       "data_note": "The study's data are not available in this app."
+      },
+      {
+       "id": "balling_2026_planform",
+       "kind": "published",
+       "question": "How fast does the Ucayali River move across its floodplain, seen by radar?",
+       "finding": "Using Sentinel-1 SAR quarterly composites (2017–2025) across the whole Amazon basin, the upper Ucayali stands out with the basin's highest measured channel migration rate — 293.94 m per quarter, far above the second-ranked Xingu (96.81 m/q) — and a sinuosity of 1.99 (p.17; basin table p.43). The underlying basin-wide water masks reached 98.5 % overall accuracy (abstract, p.1).",
+       "caveat": "The authors themselves flag the Ucayali value as likely inflated: centerline-distance migration picks up classification noise, cutoffs and avulsions (p.22), and ≈1,176 m yr⁻¹ exceeds earlier Landsat-based estimates of 36–750 m yr⁻¹ (p.23). The planform metrics are not validated in situ (abstract, p.1). Read it as 'the Ucayali is the basin's most dynamic large river', not as a precise rate.",
+       "citation": "van Rijt, I., Balling, J. & Reiche, J. (2026). Assessment of River Planform Dynamics in the Amazon Basin Using Sentinel-1 SAR Data (2017–2025). Remote Sensing 18:2075 (CC BY)",
+       "doi": "10.3390/rs18132075",
+       "layers": [
+        "landcover"
+       ],
+       "camera": {
+        "bounds": [
+         -74.42,
+         -9.72,
+         -74.05,
+         -9.33
+        ],
+        "pitch": 0,
+        "lng": -74.235,
+        "lat": -9.525,
+        "fill": 0.85
+       },
+       "steps": [
+        {
+         "label": "Show 2000 on the map",
+         "layer": "landcover",
+         "time": {
+          "year": 2000
+         }
+        },
+        {
+         "label": "Show 2024 on the map",
+         "layer": "landcover",
+         "time": {
+          "year": 2024
+         }
+        }
+       ],
+       "map_note": "Map: this app's MapBiomas land-cover layer (water class, 2000 vs 2024), for visual context only; the study's own channel data are not available in this app. The view is a meandering reach of the upper Ucayali in Iparia district (Coronel Portillo); the river is the blue class."
+      },
+      {
+       "id": "swat_amazon_model",
+       "kind": "explore",
+       "question": "Could land-use change in Ucayali be linked to river flows and sediment with a model?",
+       "finding": "SWAT-Amazon v1.0 is the regionally adapted SWAT2012 used by Santini et al. (2026): a Fortran executable plus an R workflow, adding Muskingum-with-variable-K, kinematic- and diffusive-wave routing and new sand/fine-sediment routing modules built for Amazonian floodplains (repository README). It could be used to study how forest loss affects water and sediment downstream; nothing from the model is shown in this app.",
+       "caveat": "A model framework, not a finding — nothing from it is shown on this map yet. Version in bibliography: SWAT-Amazon v1.0 (william-santini/SWAT-Amazon, commit 231c5e5).",
+       "citation": "Santini, W. SWAT-Amazon v1.0 (github.com/william-santini/SWAT-Amazon); described in Santini et al. (2026), HESS 30:3367–3397",
+       "doi": "10.5194/hess-30-3367-2026",
+       "layers": [
+        "forest_loss"
+       ],
+       "camera": {
+        "lng": -74.6,
+        "lat": -8.8,
+        "zoom": 8,
+        "pitch": 0
+       }
+      }
+     ]
+    },
+    "about": {
+     "intro": "Part of MOSAIC — the CGIAR Multifunctional Landscapes Science Programme.",
+     "licence": "Content licensed under CC BY 4.0 unless otherwise stated. Each layer below carries its own source, period and citation.",
+     "sources": [
+      {
+       "id": "veg_classes",
+       "title": "Vegetation classes (co-produced)",
+       "group": "Vegetation",
+       "source": "Cooley et al. (2021) vegetation typology dataset v4 (Feb 2022), CaltechDATA; classes co-produced with local experts in Ucayali",
+       "period": "digitised on 2020/2021 imagery",
+       "licence": "CC0 (as stated on the CaltechDATA record)",
+       "citation": "Cooley, S., Pinto, N., Aguilar-Amuchastegui, N., Vela Alvarado, J. & Fahlen, J. (2021). Vegetation typology classification and data set in Ucayali, Peru (v4.0). CaltechDATA. doi:10.22002/D1.2318. Described in Cooley et al. (2024), Ecology and Evolution 14:e70116, doi:10.1002/ece3.70116",
+       "caveats": "Counts and areas are this app's analysis of the CC0 polygon file. The published dataset has no oil-palm or cacao polygons; the paper's results for those classes cannot be reproduced from it. The file's 'Bosque_secudario_o_degradado' spelling is normalised here (original kept in COBERTURA_RAW).",
+       "record": null
+      },
+      {
+       "id": "terrain",
+       "title": "Terrain",
+       "group": "Base",
+       "source": "30 m DEM, department extent (inputs/dem_ucayali_basin_extent.tif; provenance to confirm - see the data report)",
+       "units": "m above sea level",
+       "licence": "per DEM source (to confirm)",
+       "caveats": "Terrain beyond the department extent is synthetic padding for display; elevations are neither shown nor queryable there.",
+       "record": null
+      },
+      {
+       "id": "s2_rgb",
+       "title": "Satellite imagery (Sentinel-2)",
+       "group": "Base",
+       "source": "Sentinel-2 L2A mosaic 2025, 30 m (Earth Engine export; script in prep/)",
+       "period": "2025",
+       "units": "true colour (fixed stretch 0-3000, gamma 2.2)",
+       "licence": "Copernicus Sentinel data: free use with attribution",
+       "citation": "Contains modified Copernicus Sentinel-2 data [2025]",
+       "record": null
+      },
+      {
+       "id": "department",
+       "title": "Ucayali department",
+       "group": "Base",
+       "source": "INEI department boundary (inputs/ucayali.shp, FUENTE=INEI)",
+       "licence": "Peruvian government boundary data; the same boundaries on datosabiertos.gob.pe (publisher IGN) carry the Open Data Commons Attribution License (ODC-By)",
+       "citation": "INEI / IGN via the Plataforma Nacional de Datos Abiertos (datosabiertos.gob.pe)",
+       "caveats": "Boundaries are referential (1:100,000), not an official delimitation.",
+       "record": null
+      },
+      {
+       "id": "admin_boundaries",
+       "title": "Provinces & districts",
+       "group": "Base",
+       "source": "IGN 'Limites Departamentales' dataset (DISTRITOS_LIMITES.zip), datosabiertos.gob.pe; provinces dissolved from districts",
+       "period": "portal release 2022-03-10, modified 2023-08-01",
+       "licence": "Open Data Commons Attribution License (ODC-By), as stated on the dataset page",
+       "citation": "Instituto Geográfico Nacional (IGN), Plataforma Nacional de Datos Abiertos",
+       "caveats": "Referential boundaries at 1:100,000; simplified ~90 m for display.",
+       "record": null
+      },
+      {
+       "id": "protected_areas",
+       "title": "Protected areas (ANP & ACR)",
+       "group": "Conservation",
+       "source": "SERNANP public map service (geoservicios.sernanp.gob.pe, peru_sernanp_0102: ANP definitivas + ACR), clipped to Ucayali and simplified ~90 m",
+       "period": "fetched 2026-11-04 (creation year per area in the popup)",
+       "licence": "SERNANP viewer terms: information 'de dominio público'; derived maps authorised with SERNANP cited as source; no commercialisation; redistribution of the original information not authorised (this file is a clipped, simplified derivative; verbatim terms in the data report)",
+       "citation": "SERNANP - Servicio Nacional de Áreas Naturales Protegidas por el Estado (geo.sernanp.gob.pe)",
+       "caveats": "Boundaries simplified for display; legal areas (ha) are the service's anp_suleg/acr_suleg values, not recomputed.",
+       "record": null
+      },
+      {
+       "id": "fire",
+       "title": "Active fires (VIIRS)",
+       "group": "Fire",
+       "source": "NASA FIRMS VIIRS 375 m active fires (S-NPP), yearly Peru archives, bbox clip",
+       "period": "2012-2025",
+       "units": "detections per km² per year (~1 km cells)",
+       "licence": "NASA FIRMS data are freely available; cite NASA FIRMS",
+       "citation": "NASA FIRMS: VIIRS 375 m active fire product (VNP14IMGT). firms.modaps.eosdis.nasa.gov",
+       "caveats": "Detections, not burned area: small/short fires can be missed under cloud; confidence nominal/high only.",
+       "record": null
+      },
+      {
+       "id": "canopy",
+       "title": "Canopy height (ETH 2020)",
+       "group": "Vegetation",
+       "source": "ETH Global Canopy Height 2020, 10 m (GEDI + Sentinel-2 deep-learning fusion), six 3-degree tiles mosaicked and clipped to the department",
+       "period": "2020",
+       "units": "canopy top height, m (RH98-calibrated)",
+       "licence": "CC BY 4.0 (ETH Research Collection record)",
+       "citation": "Lang, N., Jetz, W., Schindler, K. & Wegner, J.D. (2023). A high-resolution canopy height model of the Earth. Nature Ecology & Evolution 7:1778-1789. doi:10.1038/s41559-023-02206-6. Data: doi:10.3929/ethz-b-000609802",
+       "caveats": "Model estimate, not a measurement: tall-canopy heights saturate and the map carries the model's uncertainty (a per-pixel SD layer exists upstream). Display tiles are averaged to ~38 m at z12; clicks read the 10 m raster.",
+       "record": null
+      },
+      {
+       "id": "forest_loss",
+       "title": "Forest & loss (GEOBOSQUES)",
+       "group": "Land",
+       "source": "GEOBOSQUES (MINAM PNCBMCC + SERFOR/MIDAGRI) Bosque Húmedo Amazónico monitoring, 30 m, national rasters clipped to the department; downloaded manually (the site blocks scripted access)",
+       "licence": "the product metadata's LICENCIA field is '-' (no licence stated); citation required as given by GEOBOSQUES",
+       "citation": "MINAM (PNCBMCC) y MIDAGRI (SERFOR). 'Mapa del Bosque Húmedo Amazónico Peruano, 2000-2024'. Acceso a través de GEOBOSQUES, geobosques.minam.gob.pe",
+       "caveats": "Covers the Bosque Húmedo Amazónico monitoring area only ('No Monitoreado' elsewhere). Loss includes natural losses, not only deforestation; river-channel migration losses are excluded (metadata PRECAUCIONES). 2001-2016 follow the UMD methodology, 2017+ the PNCBMCC methodology. Areas are this app's analysis.",
+       "period": "baseline 2000, loss 2001-2024, forest state 2024",
+       "record": null
+      },
+      {
+       "id": "precip",
+       "title": "Precipitation (CHIRPS v3)",
+       "group": "Climate",
+       "source": "CHIRPS v3.0 daily (RNL, ERA5-disaggregated), 0.05 deg, via the aaguilar90 Hugging Face zarr mirror of UCSB CHC data",
+       "period": "1981-01 to 2026-08",
+       "units": "mm",
+       "licence": "CC-BY-4.0",
+       "caveats": "The latest 2-3 CHIRPS months are provisional and may be revised.",
+       "citation": "Funk et al. (2015), Scientific Data 2:150066; CHIRPS v3.0, UCSB Climate Hazards Center",
+       "record": null
+      },
+      {
+       "id": "temperature",
+       "title": "Temperature (CHIRTS-ERA5)",
+       "group": "Climate",
+       "source": "CHIRTS-ERA5 daily Tmax/Tmin, 0.05 deg; Tmean = (Tmax+Tmin)/2; via the aaguilar90 Hugging Face zarr mirror of UCSB CHC data",
+       "period": "1981-01 to 2026-08",
+       "units": "degC",
+       "licence": "CC-BY-4.0",
+       "citation": "Funk et al. (2019), J. Climate 32:5639-5658; CHIRTS-ERA5, UCSB CHC",
+       "record": null
+      },
+      {
+       "id": "spi3",
+       "title": "Drought index (SPI-3)",
+       "group": "Climate",
+       "source": "SPI-3 computed from CHIRPS v3.0 monthly totals (gamma fit, Thom 1958; zero-rain mixed distribution), calibration 1991-2020",
+       "period": "1981-03 to 2026-08",
+       "units": "SPI (unitless)",
+       "licence": "Derived from CHIRPS v3.0 (CC-BY-4.0)",
+       "caveats": "The latest 2-3 CHIRPS months are provisional; class names follow WMO (2012).",
+       "citation": "McKee, Doesken & Kleist (1993), 8th Conf. Applied Climatology; classes: WMO (2012), SPI User Guide, WMO-No. 1090; Funk et al. (2015), Sci. Data 2:150066",
+       "record": null
+      },
+      {
+       "id": "gedi",
+       "title": "GEDI canopy height (RH95)",
+       "group": "Vegetation",
+       "source": "NASA GEDI L2A (GEDI02_A v002), full-power beams; the paper's filters (Cooley et al. 2024, sect. 2.4) plus quality_flag = 1 and degrade_flag = 0 (this app's strict set)",
+       "period": "2019-04-20 to 2025-07-09 (no shots April 2023 - April 2024: GEDI hibernation)",
+       "units": "RH95: height above the ground at which 95 % of the returned energy is reached, m",
+       "licence": "NASA Earth science data: free and open; cite the product DOI",
+       "citation": "Dubayah, R., Hofton, M., Blair, J., Armston, J., Tang, H. & Luthcke, S. (2021). GEDI L2A Elevation and Height Metrics Data Global Footprint Level V002. NASA EOSDIS Land Processes DAAC. doi:10.5067/GEDI/GEDI02_A.002",
+       "caveats": "This app's analysis. Each dot is one 25 m footprint, located to about ±10 m. Zoomed out, a 1 km grid shows the mean RH95 of the shots in each cell; at zooms 9-10 the dots are a random sample. RH95 is GEDI's own value (no ground-return transformation, unlike the paper's Table 2a).",
+       "record": null
+      },
+      {
+       "id": "landcover",
+       "title": "Land cover (MapBiomas)",
+       "group": "Land",
+       "source": "MapBiomas Perú Collection 4 (Landsat, 30 m), national rasters clipped to Ucayali",
+       "period": "collection spans 1985-2025; the app serves 2000/2005/2010/2015/2020/2024",
+       "licence": "CC BY 4.0 - 'Los datos de MapBiomas son de uso público, abierto y gratuito, sujetos a citación' (site footer)",
+       "citation": "MapBiomas Perú Collection 4 (peru.mapbiomas.org). Official class palette.",
+       "caveats": "Oil palm is its own class (35, Palma aceitera); cacao and other specific crops have no class and fall inside 'Mosaico agropecuario' (21) - relevant when relating classes to Cooley et al. (2024). Class areas are this app's analysis.",
+       "record": null
+      },
+      {
+       "id": "burned_area",
+       "title": "Burned area (MapBiomas)",
+       "group": "Fire",
+       "source": "MapBiomas Perú Fuego Collection 2 annual burned area (GEE export), 30 m, department clip",
+       "period": "2013-2024",
+       "units": "burned at least once in the year; zoomed out, share of the pixel's area that burned",
+       "licence": "CC BY 4.0 (MapBiomas: public, open and free use, subject to citation)",
+       "citation": "MapBiomas Perú - Colección 2 de fuego (peru.mapbiomas.org)",
+       "caveats": "Landsat-based: misses small or low-severity burns. Zoomed out, each pixel shows the share of its area that burned; from zoom 12 each 30 m cell is shown as burned or not. Burned km² per year is this app's analysis.",
+       "record": null
+      },
+      {
+       "id": "indigenous_territories",
+       "title": "Indigenous territories (not hosted here)",
+       "caveats": "RAISG's Indigenous-territories data is not redistributed in this app: RAISG's use licence requires unaltered data and non-profit use, and the layer includes territories of peoples in isolation. View it on RAISG's own map: https://www.raisg.org/es/mapas/",
+       "record": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "datasets",
+   "kind": "catalogue-datasets",
+   "title": "Datasets in the catalogue"
+  },
+  {
+   "id": "data-status",
+   "kind": "data-status",
+   "title": "Data status"
+  }
+ ]
+}

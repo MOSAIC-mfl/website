@@ -99,6 +99,18 @@ const hasArt = Astro.slots.has('art')
     box-shadow: 0 14px 26px -20px rgba(28, 43, 58, 0.22);
   }
 
+  /* Dark theme: the light hero becomes a dark surface. Its Warm Sand background
+     is a brand constant that does not flip, while body text tokens do, which
+     left light text on a light band. */
+  :global([data-theme='dark']) .page-hero--light {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: none;
+  }
+  :global([data-theme='dark']) .page-hero--light .page-hero-title { color: var(--color-text); }
+  :global([data-theme='dark']) .page-hero--light .page-hero-subtitle { color: var(--color-muted); }
+  :global([data-theme='dark']) .page-hero--light .page-hero-topo :global(path) { stroke: var(--color-muted); }
+
   /* ── Topo pattern (dark only) ─────────────────────────── */
   .page-hero-topo {
     position: absolute;

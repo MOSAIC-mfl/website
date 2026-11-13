@@ -25,8 +25,33 @@ updates:
         patterns:
           - "eslint"
           - "@typescript-eslint/*"
+          - "globals"
+      # The map explorer: the engine and its plugins move together.
+      maps:
+        patterns:
+          - "maplibre-gl"
+          - "@maplibre/*"
+          - "pmtiles"
+          - "geotiff"
+      api-types:
+        patterns:
+          - "openapi-*"
+          - "json-schema-to-typescript"
     # The previous limit of 5 was saturated by five stale PRs, which stopped
     # Dependabot opening anything new, security updates included.
     open-pull-requests-limit: 8
+    labels:
+      - "dependencies"
+
+  # The workflows pin each action by commit SHA; this keeps the pins current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      actions:
+        patterns:
+          - "*"
     labels:
       - "dependencies"

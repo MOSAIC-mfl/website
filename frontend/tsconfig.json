@@ -2,6 +2,13 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    // TypeScript 6 includes no global types unless listed: GeoJSON is used by the map explorer.
+    "types": ["geojson"],
+    // Paths resolve from this file (no baseUrl, deprecated in TypeScript 6).
+    "paths": {
+      "@/*": ["./src/*"],
+      "@data/*": ["./data/*"]
+    }
   }
 }

@@ -90,6 +90,11 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
      text must stay dark too: --color-gray-700 turns light in the dark theme. */
   :global([data-theme='dark']) .cta-band--soft .cta-band-body { color: var(--mosaic-ink); }
   .cta-band--soft .cta-band-sticky { flex-shrink: 0; }
+  /* Dark theme: same reason as the light page hero — the sand/teal tints are
+     brand constants, the text tokens flip. */
+  :global([data-theme='dark']) .cta-band--soft[data-tint] { background-color: var(--color-surface); }
+  :global([data-theme='dark']) .cta-band--soft .cta-band-title { color: var(--color-text); }
+  :global([data-theme='dark']) .cta-band--soft .cta-band-body { color: var(--color-muted); }
 
   /* ── dark ─────────────────────────────────────────────── */
   .cta-band--dark { background-color: var(--mosaic-ink); }
@@ -120,7 +125,7 @@ const relFor = (c?: Cta) => (c?.target === '_blank' ? 'noopener noreferrer' : un
   }
   .cta-band-link {
     font-weight: 600;
-    color: var(--mosaic-teal);
+    color: var(--color-link);
     text-decoration: underline;
     text-underline-offset: 3px;
   }

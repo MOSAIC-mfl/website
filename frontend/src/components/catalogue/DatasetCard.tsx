@@ -1,144 +1,120 @@
-import type { Dataset } from '../../utils/types'
+import type { RecordSummary } from '../../lib/api/types'
+import { NOT_SPECIFIED } from '../../lib/domain/facets'
+import type { LabelBook } from '../../lib/domain/labels'
+import { dataTypeIcon, datasetHref, joinLabels, periodText } from '../../lib/domain/present'
+import { readinessBadge, readinessLabel, readinessTooltip } from '../../lib/domain/readiness'
 import { DatasetTypeIcon } from './DatasetTypeIcon'
-import { READINESS_MEANING } from '../../utils/readiness'
-import { isSpdxLicense } from '../../utils/license'
-
-const STATUS_BADGE: Record<string, string> = {
-  'Raw':       'badge badge-raw',
-  'Processed': 'badge badge-processed',
-  'Validated': 'badge badge-validated',
-}
+import type { ViewMode } from './ResultsToolbar'
 
 interface Props {
-  dataset: Dataset
+  dataset: RecordSummary
   base: string
-  // 'card' = a tile in the grid (the default view); 'list' = the compact row.
-  variant?: 'card' | 'list'
+  labels: LabelBook
+  /** 'card' = a tile in the grid (the default view); 'list' = the compact row. */
+  variant?: ViewMode
 }
 
-export function DatasetCard({ dataset, base, variant = 'list' }: Props) {
-  const detailUrl = `${base}/catalogue/${dataset.id}`
-  if (variant === 'card') return <DatasetTile dataset={dataset} detailUrl={detailUrl} />
-  const isOpen = dataset.access_level === 'Open' && !!dataset.download_url
-  const formats = dataset.formats ?? []
+/** A licence short enough for a tile: the SPDX id; anything else is given in full on the dataset page. */
+function licenceShort(d: RecordSummary): string | null {
+  const l = d.facets.license?.[0]
+  if (!l || l === NOT_SPECIFIED) return null
+  return l === 'other' ? 'Terms at the source' : l
+}
 
-  // Colour emphasis is reserved for readiness status. Everything else that
-  // used to be a badge (type, resolution, year) is plain text, dot-separated,
-  // so the row reads as a record rather than a wall of pills.
-  const specs = [
-    dataset.data_type,
-    dataset.spatial_resolution && dataset.spatial_resolution !== 'N/A' ? dataset.spatial_resolution : null,
-    dataset.temporal_coverage,
-    // Whether the data can be had without asking, in plain words: colour stays
-    // reserved for the readiness status.
-    dataset.access_level,
-  ].filter(Boolean) as string[]
+function ReadinessBadge({ value }: { value: string | null | undefined }) {
+  return (
+    <span className={readinessBadge(value)} title={readinessTooltip(value)}>
+      {readinessLabel(value)}
+    </span>
+  )
+}
 
+/** One result, as a tile or a row (Lizeth's design); the readiness badge is the only colour. */
+export function DatasetCard({ dataset: d, base, labels, variant = 'card' }: Props) {
+  const href = datasetHref(base, d.id)
+  const kinds = d.facets.data_kind ?? []
+  const kindText = joinLabels(labels, 'data_kind', kinds, 2)
+  const where = joinLabels(labels, 'landscape', d.landscapes, 1) ?? joinLabels(labels, 'geography', d.geography, 2)
+  const access = d.access ? labels.label('access', d.access) : null
+  const period = periodText(d.period)
+  const fromOther = d.source !== 'mosaic' ? labels.label('source', d.source) : null
+
+  if (variant === 'card') {
+    const line1 = [where, d.resolution].filter((x): x is string => !!x)
+    const line2 = [access, period, licenceShort(d)].filter((x): x is string => !!x)
+    return (
+      <article className="ds-tile">
+        <p className="ds-tile-top">
+          <span className="ds-tile-type">
+            <DatasetTypeIcon type={dataTypeIcon(kinds)} />
+            {kindText ?? 'Dataset'}
+          </span>
+          <ReadinessBadge value={d.processing_status} />
+        </p>
+        <h3 className="ds-tile-title">
+          <a href={href} className="ds-card-title-link">{d.title}</a>
+        </h3>
+        {(d.producer || fromOther) && (
+          <p className="ds-tile-by">
+            {d.producer && <>By {d.producer}</>}
+            {d.producer && fromOther && ' · '}
+            {fromOther && <em>via {fromOther}</em>}
+          </p>
+        )}
+        {d.description && <p className="ds-tile-desc">{d.description}</p>}
+        <div className="ds-tile-foot">
+          {line1.length > 0 && <p>{line1.join(' · ')}</p>}
+          {line2.length > 0 && <p>{line2.join(' · ')}</p>}
+        </div>
+      </article>
+    )
+  }
+
+  const specs = [kindText, d.resolution, period, access].filter((x): x is string => !!x)
   const context = [
-    dataset.country,
-    dataset.landscape_name ?? dataset.living_landscape,
-    dataset.mfl_theme,
-    dataset.source,
-  ].filter(Boolean) as string[]
+    joinLabels(labels, 'geography', d.geography, 2),
+    joinLabels(labels, 'landscape', d.landscapes, 2),
+    joinLabels(labels, 'theme', d.themes, 1),
+    d.producer,
+  ].filter((x): x is string => !!x)
+  const isOpen = d.access === 'public' && !!d.access_url
 
   return (
     <article className="ds-card">
       <span className="ds-card-icon">
-        <DatasetTypeIcon type={dataset.data_type} />
+        <DatasetTypeIcon type={dataTypeIcon(kinds)} />
       </span>
-
       <div className="ds-card-main">
         <h3 className="ds-card-title">
-          {/* Stretched-link: the title is the real anchor; ::after overlay makes
-              the whole row clickable while keeping new-tab / keyboard behaviour. */}
-          <a href={detailUrl} className="ds-card-title-link">{dataset.title}</a>
+          {/* stretched link: the title is the anchor, the whole row is clickable */}
+          <a href={href} className="ds-card-title-link">{d.title}</a>
         </h3>
-
         <p className="ds-card-specs">
-          <span
-            className={STATUS_BADGE[dataset.readiness_status] ?? 'badge badge-raw'}
-            title={READINESS_MEANING[dataset.readiness_status]}
-          >
-            {dataset.readiness_status}
-          </span>
+          <ReadinessBadge value={d.processing_status} />
           {specs.length > 0 && <span className="ds-spec-text">{specs.join(' · ')}</span>}
         </p>
-
-        {dataset.description && (
-          <p className="ds-card-desc">{dataset.description}</p>
-        )}
-
+        {d.description && <p className="ds-card-desc">{d.description}</p>}
         <p className="ds-card-meta">
-          <span className="ds-meta-text">{context.join(' · ')}</span>
-
-          {/* MOSAIC connects to sources rather than re-hosting: only show a
-              source link when the record carries a real external download_url. */}
-          {dataset.download_url && (
-            <a
-              href={dataset.download_url}
-              className="ds-source-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Go to source for ${dataset.title}`}
-            >
+          <span className="ds-meta-text">
+            {context.join(' · ')}
+            {fromOther && <> · <em>via {fromOther}</em></>}
+          </span>
+          {/* MOSAIC links to the data where it lives; it does not re-host it. */}
+          {d.access_url && (
+            <a href={d.access_url} className="ds-source-link" target="_blank" rel="noopener noreferrer" aria-label={`Go to source for ${d.title}`}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
               </svg>
               {isOpen ? 'Go to source' : 'Source link'}
-              {formats.length > 0 && <span className="ds-formats">({formats.join(', ')})</span>}
             </a>
           )}
         </p>
       </div>
-
-      {/* Discreet affordance only — the title is the real link. */}
       <span className="ds-card-arrow" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </span>
-    </article>
-  )
-}
-
-// Grid tile: what kind of data, what it is called, who it is from, what it is,
-// and — under a rule, in the mono face — where, how fine, how open, when, on what terms.
-// The whole tile is the link; the source link lives on the dataset's own page.
-function DatasetTile({ dataset, detailUrl }: { dataset: Dataset; detailUrl: string }) {
-  const where = dataset.landscape_name ?? dataset.living_landscape ?? dataset.country
-  const resolution = dataset.spatial_resolution && dataset.spatial_resolution !== 'N/A' ? dataset.spatial_resolution : null
-  // An SPDX id is short enough to show; any other wording is the source's own
-  // and is given in full on the dataset's page.
-  const terms = dataset.license ? (isSpdxLicense(dataset.license) ? dataset.license : 'Terms at the source') : null
-  const line1 = [where, resolution].filter(Boolean) as string[]
-  const line2 = [dataset.access_level, dataset.temporal_coverage, terms].filter(Boolean) as string[]
-
-  return (
-    <article className="ds-tile">
-      <p className="ds-tile-top">
-        <span className="ds-tile-type">
-          <DatasetTypeIcon type={dataset.data_type} />
-          {dataset.data_type ?? 'Dataset'}
-        </span>
-        <span
-          className={STATUS_BADGE[dataset.readiness_status] ?? 'badge badge-raw'}
-          title={READINESS_MEANING[dataset.readiness_status]}
-        >
-          {dataset.readiness_status}
-        </span>
-      </p>
-
-      <h3 className="ds-tile-title">
-        <a href={detailUrl} className="ds-card-title-link">{dataset.title}</a>
-      </h3>
-
-      {dataset.source && <p className="ds-tile-by">By {dataset.source}</p>}
-      {dataset.description && <p className="ds-tile-desc">{dataset.description}</p>}
-
-      <div className="ds-tile-foot">
-        {line1.length > 0 && <p>{line1.join(' \u00b7 ')}</p>}
-        {line2.length > 0 && <p>{line2.join(' \u00b7 ')}</p>}
-      </div>
     </article>
   )
 }

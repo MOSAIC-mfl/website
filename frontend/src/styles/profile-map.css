@@ -1,0 +1,7 @@
+/* Map profile (features/landscape): loading state and the explorer's height in each place it is shown. */
+.lp-explorer-loading { display: grid; place-items: center; height: 60vh; color: var(--color-muted); background: var(--color-bg); }
+.lp-empty { color: var(--color-muted); }
+
+/* Embedded in the "Map visualization" panel of the Landscapes page: a framed block, not the full screen. */
+.lx-mapviz-frame .lvx { --explorer-top: calc(var(--site-header-h, 74px) + 96px); height: clamp(560px, calc(100dvh - var(--explorer-top)), 860px); border: 1px solid var(--color-border); border-radius: var(--radius-card, 12px); }
+.lx-mapviz-frame .lp-explorer-loading { height: 560px; border-radius: var(--radius-card, 12px); }

@@ -1,20 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import PageHero from '../../components/ui/PageHero.astro'
-import { CatalogueFilter } from '../../components/catalogue/CatalogueFilter'
-import { loadDatasets } from '../../utils/loadDatasets'
-import { countCountries } from '../../utils/countries'
+import { CatalogueApp } from '../../components/catalogue/CatalogueApp'
+import { CatalogueStats } from '../../components/catalogue/CatalogueStats'
+import { readConfig } from '../../lib/config'
 
-const datasets = await loadDatasets()
+// No catalogue data at build time: the islands below read it from mosaic-api when the page opens.
 const base = import.meta.env.BASE_URL
-
-const totalDatasets = datasets.length
-// 'GLB' is the global / cross-landscape value, not a landscape; likewise the
-// 'Global' and regional values of `country` are not countries.
-const landscapes = [...new Set(datasets.filter((d) => d.living_landscape !== 'GLB').map((d) => d.living_landscape))].length
-const countries   = countCountries(datasets)
-// Date of this build, so a visitor can tell the catalogue is alive.
-const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+const api = readConfig()
+const apiEntry = api.apiMode === 'static' ? `${api.apiUrl}/docs/` : `${api.apiUrl}/docs`
 ---
 
 <BaseLayout
@@ -38,19 +32,7 @@ const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 
 
     <!-- ── Figures (open strip, not dashboard tiles) ──────────── -->
     <p class="catalogue-band catalogue-statline">
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{totalDatasets}</span>
-        <span class="catalogue-stat-label">datasets</span>
-      </span>
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{landscapes}</span>
-        <span class="catalogue-stat-label">landscapes</span>
-      </span>
-      <span class="catalogue-stat">
-        <span class="catalogue-stat-value">{countries}</span>
-        <span class="catalogue-stat-label">countries</span>
-      </span>
-      <span class="catalogue-updated">Updated {updated}</span>
+      <CatalogueStats client:load />
       <a class="catalogue-maplink" href={`${base}/about#contribute`}>Register a dataset &rarr;</a>
       <a class="catalogue-maplink" href={`${base}/landscapes`}>See the landscapes on a map &rarr;</a>
     </p>
@@ -61,12 +43,11 @@ const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 
         <p style="background: var(--mosaic-light-teal); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); color: var(--color-gray-700); font-size: var(--text-sm);">
           Interactive search and filtering need JavaScript. You can still reach the full,
           machine-readable catalogue through the
-          <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" style="color: var(--mosaic-teal); font-weight: 600;">STAC endpoint</a>
-          — the source of truth MOSAIC connects to.
+          <a href={apiEntry} style="color: var(--color-link); font-weight: 600;">MOSAIC API</a>.
         </p>
       </div>
     </noscript>
-    <CatalogueFilter client:visible datasets={datasets} base={base} />
+    <CatalogueApp client:load base={base} />
 
     <!-- ── Technical access (secondary, for advanced users) ──── -->
     <p class="catalogue-band catalogue-tech-access">
@@ -74,8 +55,8 @@ const updated = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 
         <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
       </svg>
       Technical access:
-      <a href="https://mosaic-mfl.github.io/catalog/stac/catalog.json" target="_blank" rel="noopener noreferrer">STAC endpoint</a>
-      — the machine-readable catalogue MOSAIC connects to.
+      <a href={apiEntry} target="_blank" rel="noopener noreferrer">MOSAIC API</a>
+      — the machine-readable catalogue (MOSAIC and the catalogues it connects to).
     </p>
 
   </div>
