@@ -4,7 +4,7 @@
  * a side column. Each section is its own presentational component; the words come from ./view.
  */
 import { useCallback, useEffect, useState } from 'react'
-import { catalogue, landscapePages } from '../../lib/catalog'
+import { catalogue } from '../../lib/catalog'
 import { useAsync } from '../../lib/ui/useAsync'
 import { QS_STORAGE_KEY } from '../../lib/ui/useCatalogueQuery'
 import { LoadError, Loading } from '../catalogue/LoadState'
@@ -59,14 +59,9 @@ export function DatasetPage({ base }: { base: string }) {
   const repo = catalogue()
   const [section, go] = useSection()
   const state = useAsync(async () => {
-    const [detail, overview, landscapes] = await Promise.all([
-      repo.get(id),
-      repo.overview(),
-      landscapePages().landscapes().catch(() => []),
-    ])
+    const [detail, overview] = await Promise.all([repo.get(id), repo.overview()])
     const related = detail ? await repo.related(detail, 4) : []
-    const landscapeBoxes = Object.fromEntries(landscapes.map((l) => [l.code, l.bbox]))
-    return { detail, labels: overview.labels, related, landscapeBoxes }
+    return { detail, labels: overview.labels, related }
   }, [repo, id])
 
   // every link on the page that points at a section (#access, …) switches to it
@@ -81,7 +76,7 @@ export function DatasetPage({ base }: { base: string }) {
 
   if (state.status === 'loading') return <div className="container dp"><Loading what="the dataset" /></div>
   if (state.status === 'error') return <div className="container dp"><LoadError error={state.error} onRetry={state.retry} /></div>
-  const { detail: d, labels, related, landscapeBoxes } = state.data
+  const { detail: d, labels, related } = state.data
   if (!d) {
     return (
       <div className="container dp">
@@ -116,7 +111,7 @@ export function DatasetPage({ base }: { base: string }) {
         <div className="dp-main">
           {section === 'overview' && <OverviewSection d={d} labels={labels} />}
           {section === 'access' && <AccessSection d={d} labels={labels} />}
-          {section === 'technical' && <TechnicalSection d={d} labels={labels} jsonUrl={jsonUrl} landscapeBoxes={landscapeBoxes} />}
+          {section === 'technical' && <TechnicalSection d={d} labels={labels} jsonUrl={jsonUrl} />}
           {section === 'citation' && <CitationSection d={d} base={base} />}
         </div>
         <DatasetSide d={d} labels={labels} base={base} related={related} />

@@ -9,8 +9,6 @@ interface Props {
   d: RecordDetail
   labels: LabelBook
   jsonUrl: string
-  /** Bounding box of each living landscape (mosaic-api /v1/landscapes), for records without their own. */
-  landscapeBoxes: Record<string, number[] | null | undefined>
 }
 
 const box = (b: number[]) => `W ${b[0]}, S ${b[1]}, E ${b[2]}, N ${b[3]}`
@@ -20,7 +18,7 @@ const row = (label: string, value: React.ReactNode) => (
 )
 
 /** Technical metadata: spatial, temporal, data, processing and the full record (standard v0.2 fields). */
-export function TechnicalSection({ d, labels, jsonUrl, landscapeBoxes }: Props) {
+export function TechnicalSection({ d, labels, jsonUrl }: Props) {
   const r = d.record
   const sp = r.spatial
   const t = r.temporal
@@ -28,7 +26,6 @@ export function TechnicalSection({ d, labels, jsonUrl, landscapeBoxes }: Props) 
   const geometry = (d.facets.geometry ?? []).filter((g) => g !== NOT_SPECIFIED)
   const bbox = (sp?.bbox ?? []) as unknown as number[] | number[][]
   const boxes = (Array.isArray(bbox[0]) ? bbox : bbox.length ? [bbox] : []) as number[][]
-  const landBoxes = d.landscapes.map((c) => landscapeBoxes[c]).filter((b): b is number[] => !!b && b.length === 4)
   const formats = formatsOf(r)
   const structures = r.structures ?? []
   const steps = r.processing ?? []
@@ -45,10 +42,7 @@ export function TechnicalSection({ d, labels, jsonUrl, landscapeBoxes }: Props) 
           : 'Not specified')}
         {row('Country', joinLabels(labels, 'geography', sp?.geography ?? [], 20) ?? 'Not specified')}
         {row('Spatial resolution', resolutionOf(r) ?? 'Not specified')}
-        {boxes.length > 0
-          ? row('Bounding box', boxes.map(box).join('; '))
-          : landBoxes.length > 0 &&
-            row('Bounding box', <>{landBoxes.map(box).join('; ')} <span className="dp-small">(the living landscape's; the dataset's own extent is not recorded)</span></>)}
+        {boxes.length > 0 && row('Bounding box', boxes.map(box).join('; '))}
         {sp?.crs && row('Coordinate system', sp.crs)}
       </dl>
 
