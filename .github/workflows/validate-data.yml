@@ -1,0 +1,28 @@
+# .github/workflows/validate-data.yml
+# Every pull request: the site's own data files (frontend/data/: landscapes, outlines, photos,
+# descriptions). The catalogue is not in the site any more; mosaic-api serves it.
+#
+# The job is named validate: that is the status check the protection of main requires. Keep the
+# name, or change the required check in the settings with it.
+name: Validate Site Data
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check the site's data files
+        run: python scripts/validate_site_data.py
