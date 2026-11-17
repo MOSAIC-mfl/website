@@ -87,7 +87,7 @@
   /* "green" family → MOSAIC teal family */
   --color-green-dark:   #0D5C6B;   /* Ocean Teal */
   --color-green-mid:    #117A8D;   /* lighter teal for hovers */
-  --color-green-moss:   #C97D1B;   /* Amber accent (eyebrows, markers) */
+  --color-green-moss:   #C97D1B;   /* Amber accent (markers) */
   --color-green-light:  #D6EEF2;   /* Light Teal */
   --color-cream:        #F7F4EF;   /* Warm Sand */
 
@@ -218,7 +218,7 @@
   --color-text:     #EAF2F4;   /* body text                */
   --color-muted:    #9DB0B8;   /* captions, secondary text */
   --color-border:   #26414C;   /* hairlines, dividers      */
-  --color-amber-text: #CD801C; /* eyebrows on dark surfaces */
+  --color-amber-text: #CD801C; /* amber text on dark surfaces */
   --color-link:       #D6EEF2; /* Light Teal: 14.5:1 on the dark background */
   --color-link-hover: #FFFFFF;
   --color-moss-text:  #799B68;

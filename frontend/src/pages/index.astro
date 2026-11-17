@@ -54,7 +54,6 @@ const audiences = [
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-content" data-reveal-stagger>
-        <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data and research for living landscapes — connected</h1>
         <p class="hero-sub">
           MOSAIC is where everything about a living landscape comes together — the entry point
@@ -107,9 +106,6 @@ const audiences = [
           </span>
         </a>
       </div>
-      <p class="stats-today">
-        Today MOSAIC lists datasets. Research for each landscape is being added.
-      </p>
     </div>
   </section>
 
@@ -117,7 +113,6 @@ const audiences = [
   <section class="section-subtle">
     <div class="container ll">
       <div class="ll-text">
-        <p class="section-eyebrow">New to living landscapes?</p>
         <h2 class="ll-title">What is a living landscape?</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -155,7 +150,6 @@ const audiences = [
   <section class="section-white">
     <div class="container">
       <div class="section-head">
-        <p class="section-eyebrow section-eyebrow--amber">In three steps</p>
         <h2 class="section-title-center">How MOSAIC works</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -181,7 +175,6 @@ const audiences = [
   <section class="section-subtle">
     <div class="container">
       <div class="section-head">
-        <p class="section-eyebrow section-eyebrow--amber">Open to all</p>
         <h2 class="section-title-center">Who is MOSAIC for?</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -239,15 +232,6 @@ const audiences = [
     z-index: 1;
   }
 
-  .hero-eyebrow {
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    /* the hero is light in both themes: the fixed text amber, not the themed one */
-    color: var(--mosaic-amber-text);
-    margin-bottom: var(--space-4);
-  }
   .hero-headline {
     font-size: clamp(2.25rem, 4.5vw, 3.5rem);
     color: var(--mosaic-ink);
@@ -319,7 +303,6 @@ const audiences = [
     border-radius: var(--radius-md);
   }
   .stat-item:hover .stat-label { text-decoration: underline; }
-  .stats-today { margin: var(--space-4) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
   .stat-icon {
     flex-shrink: 0;
     width: 52px;
@@ -352,19 +335,10 @@ const audiences = [
   .section-subtle { background-color: var(--color-gray-50); padding: var(--space-16) 0; }
   .section-title-center { text-align: center; margin-bottom: var(--space-12); }
 
-  /* Centred section head: eyebrow + title + wavy underline */
+  /* Centred section head: title + wavy underline */
   .section-head { text-align: center; margin-bottom: var(--space-12); }
   .section-head .section-title-center { margin-bottom: var(--space-2); }
-  .section-eyebrow {
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--color-moss-text);
-  }
   .section-wavy { display: inline-block; color: var(--color-link); }
-  .section-eyebrow--amber { color: var(--color-amber-text); }
 
 
   /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */

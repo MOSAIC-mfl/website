@@ -312,7 +312,6 @@ const codes = items.map((it) => it.code)
       </svg>
     </div>
     <div class="lx-gm-side">
-      <p class="lx-gm-kicker">Living landscapes</p>
       <p class="lx-gm-count">{items.length} landscapes in {introCountries.length} countries</p>
       <p class="lx-gm-hint">Pick another pin on the map to switch.</p>
       <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
@@ -623,7 +622,6 @@ const codes = items.map((it) => it.code)
   .lx.is-live:not(.is-intro) .lx-intro-map { max-width: 540px; }
   .lx-gm-side { display: none; }
   .lx.is-live:not(.is-intro) .lx-gm-side { display: block; animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .lx-gm-kicker { margin: 0; font-size: var(--text-xs); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--color-muted); }
   .lx-gm-count { margin: var(--space-1) 0 0; font-family: var(--font-title); font-size: var(--text-xl); font-weight: 400; color: var(--color-text); }
   .lx-gm-hint { margin: var(--space-1) 0 var(--space-3); color: var(--color-muted); font-size: var(--text-sm); }
   .lx-gm-all { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-link); font-weight: 600; text-decoration: none; }
