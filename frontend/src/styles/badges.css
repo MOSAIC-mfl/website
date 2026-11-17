@@ -4,16 +4,19 @@
    home page, the catalogue list and the dataset detail pages.
    ═══════════════════════════════════════════════════════════════ */
 
+/* The CGIAR MFL page's tag shape: uppercase 12px semibold, 1px tracking,
+   5px radius (not a pill). Filter chips in the catalogue stay pills. */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.22rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.72rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   white-space: nowrap;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* ── BADGE COLOUR CODE ────────────────────────────────────────────

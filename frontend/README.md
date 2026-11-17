@@ -1,6 +1,7 @@
 # MOSAIC website — frontend
 
-The MOSAIC website (Astro + React). Same pages, sections, fonts and styles as before; the
+The MOSAIC website (Astro + React). Same pages, sections and styles as before (the type, buttons,
+tags and cards were aligned with the CGIAR MFL programme page on 2026-11-17); the
 difference is **where the catalogue comes from**: the site no longer reads `data/datasets.json`
 at build time, it reads the **MOSAIC API** ([mosaic-api](https://github.com/MOSAIC-mfl/mosaic-api))
 when a page opens.
@@ -77,6 +78,8 @@ committed types do not match the contract.
 | `src/features/explorer/` | The map explorer engine: domain rules, ports (map, data), MapLibre and GeoTIFF adapters, renderers per kind of layer, click inspectors, panels, React UI. |
 | `src/profiles/<code>/` | Profile plugins: the few modules a profile needs beyond the core (KEN-LVB: the flood click). |
 | `data/` | Map geometry for landscapes (site content, not catalogue). |
+| `src/styles/variables.css` | Design tokens: MOSAIC palette, fonts, spacing, radius, card shadow. Fonts: Noto Sans for text and page/section titles (h1/h2 Light 300), Noto Serif for card titles (400) and big figures (300), IBM Plex Mono for code. |
+| `public/fonts/` | Self-hosted web fonts (woff2; Noto: one variable-weight file per family, latin subset) with their SIL Open Font License texts. No external font service is called. |
 
 More: [docs/architecture.md](docs/architecture.md) and the decisions in [docs/adr](docs/adr).
 

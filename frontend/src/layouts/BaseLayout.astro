@@ -61,6 +61,10 @@ const base = import.meta.env.BASE_URL
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonicalURL} />
+    <!-- Self-hosted Noto Sans (body, headlines) and Noto Serif (titles): fetched early so the
+         first paint uses them; @font-face rules in styles/variables.css. -->
+    <link rel="preload" href={`${base}/fonts/NotoSans-Variable-latin.woff2`} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={`${base}/fonts/NotoSerif-Variable-latin.woff2`} as="font" type="font/woff2" crossorigin />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />

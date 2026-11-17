@@ -54,7 +54,6 @@ const audiences = [
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-content" data-reveal-stagger>
-        <p class="hero-eyebrow">An open network for living landscapes</p>
         <h1 class="hero-headline">Data and research for living landscapes — connected</h1>
         <p class="hero-sub">
           MOSAIC is where everything about a living landscape comes together — the entry point
@@ -107,9 +106,6 @@ const audiences = [
           </span>
         </a>
       </div>
-      <p class="stats-today">
-        Today MOSAIC lists datasets. Research for each landscape is being added.
-      </p>
     </div>
   </section>
 
@@ -117,7 +113,6 @@ const audiences = [
   <section class="section-subtle">
     <div class="container ll">
       <div class="ll-text">
-        <p class="section-eyebrow">New to living landscapes?</p>
         <h2 class="ll-title">What is a living landscape?</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -155,7 +150,6 @@ const audiences = [
   <section class="section-white">
     <div class="container">
       <div class="section-head">
-        <p class="section-eyebrow section-eyebrow--amber">In three steps</p>
         <h2 class="section-title-center">How MOSAIC works</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -181,7 +175,6 @@ const audiences = [
   <section class="section-subtle">
     <div class="container">
       <div class="section-head">
-        <p class="section-eyebrow section-eyebrow--amber">Open to all</p>
         <h2 class="section-title-center">Who is MOSAIC for?</h2>
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -239,22 +232,9 @@ const audiences = [
     z-index: 1;
   }
 
-  .hero-eyebrow {
-    font-size: var(--text-sm);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    /* the hero is light in both themes: the fixed text amber, not the themed one */
-    color: var(--mosaic-amber-text);
-    margin-bottom: var(--space-4);
-    line-height: 1.2;
-  }
   .hero-headline {
     font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
     color: var(--mosaic-ink);
-    letter-spacing: -0.02em;
     margin-bottom: var(--space-6);
   }
   .hero-sub {
@@ -262,14 +242,12 @@ const audiences = [
     /* Fixed grey (not a theming token) — this hero is always light in both
        themes, so the subtitle must stay dark-on-sand and never invert. */
     color: #4B5563;
-    line-height: 1.7;
     max-width: 560px;
     margin-bottom: var(--space-4);
   }
   .hero-support {
     font-size: var(--text-base);
     color: #5B6B72;
-    line-height: 1.65;
     max-width: 560px;
     margin: 0 0 var(--space-8);
   }
@@ -280,8 +258,6 @@ const audiences = [
     background-color: var(--mosaic-amber-text);
     color: var(--color-white);
     border-color: var(--mosaic-amber-text);
-    font-weight: 600;
-    padding: var(--space-3) var(--space-6);
   }
   .btn-hero-primary:hover { background-color: #7D4D10; border-color: #7D4D10; color: var(--color-white); }
   .btn-hero-ghost {
@@ -290,14 +266,9 @@ const audiences = [
     background-color: var(--color-white);
     color: var(--mosaic-teal);
     border: 2px solid var(--mosaic-teal);
-    font-weight: 600;
-    padding: var(--space-3) var(--space-6);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    border-radius: var(--radius-md);
-    font-family: var(--font-body);
-    font-size: var(--text-base);
     transition: background-color 0.15s, border-color 0.15s, color 0.15s;
     cursor: pointer;
   }
@@ -332,7 +303,6 @@ const audiences = [
     border-radius: var(--radius-md);
   }
   .stat-item:hover .stat-label { text-decoration: underline; }
-  .stats-today { margin: var(--space-4) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
   .stat-icon {
     flex-shrink: 0;
     width: 52px;
@@ -347,13 +317,15 @@ const audiences = [
     color: var(--color-gray-700);
   }
   .stat-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  /* Big figures: Noto Serif Light, tight tracking (the CGIAR MFL page's
+     "2 million"), scaled to share the row with an icon and a label. */
   .stat-number {
     font-family: var(--font-title);
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-weight: 300;
     color: var(--color-text);
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
   }
   .stat-label { font-size: var(--text-sm); color: var(--color-muted); font-weight: 400; }
   .stat-divider { width: 1px; align-self: stretch; background-color: var(--color-border); flex-shrink: 0; margin: var(--space-1) 0; }
@@ -363,19 +335,10 @@ const audiences = [
   .section-subtle { background-color: var(--color-gray-50); padding: var(--space-16) 0; }
   .section-title-center { text-align: center; margin-bottom: var(--space-12); }
 
-  /* Centred section head: eyebrow + title + wavy underline */
+  /* Centred section head: title + wavy underline */
   .section-head { text-align: center; margin-bottom: var(--space-12); }
   .section-head .section-title-center { margin-bottom: var(--space-2); }
-  .section-eyebrow {
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-moss-text);
-  }
   .section-wavy { display: inline-block; color: var(--color-link); }
-  .section-eyebrow--amber { color: var(--color-amber-text); }
 
 
   /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */
@@ -420,8 +383,8 @@ const audiences = [
     align-items: center;
   }
   .ll-title { margin: 0 0 var(--space-2); }
-  .ll-lead { font-size: var(--text-lg); color: var(--color-text); line-height: 1.6; margin: var(--space-6) 0 var(--space-4); }
-  .ll-body { color: var(--color-muted); line-height: 1.7; margin: 0 0 var(--space-6); }
+  .ll-lead { font-size: var(--text-lg); color: var(--color-text); margin: var(--space-6) 0 var(--space-4); }
+  .ll-body { color: var(--color-muted); margin: 0 0 var(--space-6); }
   .ll-link, .how-link {
     display: inline-flex; align-items: center; gap: var(--space-2);
     color: var(--color-link); font-weight: 600; text-decoration: none;
@@ -431,7 +394,7 @@ const audiences = [
   .ll-art img { display: block; width: 100%; height: auto; }
   /* The labels are part of the picture and too small to read on a phone: there
      they are repeated as text under it. */
-  .ll-parts { display: none; margin: var(--space-3) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.6; }
+  .ll-parts { display: none; margin: var(--space-3) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
   @media (max-width: 560px) { .ll-parts { display: block; } }
   :global([data-theme='dark']) .ll-parts { color: var(--mosaic-ink); }
   /* The illustration has a transparent background and dark labels: in dark
@@ -454,14 +417,14 @@ const audiences = [
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-top: 4px solid var(--tint);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
   }
   .how-step[data-tint='amber'] { --tint: var(--mosaic-amber); }
   .how-step[data-tint='terracotta'] { --tint: var(--mosaic-terracotta); }
   .how-top { display: flex; align-items: center; justify-content: space-between; }
   .how-num {
-    font-family: var(--font-title); font-size: 2.25rem; font-weight: 700; line-height: 1;
+    font-family: var(--font-title); font-size: 3rem; font-weight: 300; line-height: 1; letter-spacing: -0.04em;
     color: var(--tint);
   }
   /* Ocean Teal is too dark on the dark surface: use its light tint there */
@@ -472,7 +435,7 @@ const audiences = [
     background-color: var(--color-gray-100); color: var(--color-gray-700);
   }
   .how-title { margin: var(--space-2) 0 0; font-size: var(--text-xl); }
-  .how-body { margin: 0; color: var(--color-muted); line-height: 1.6; flex: 1; }
+  .how-body { margin: 0; color: var(--color-muted); flex: 1; }
   .how-link { margin-top: var(--space-2); }
 
   @media (max-width: 900px) {
@@ -510,7 +473,6 @@ const audiences = [
   }
   @media (max-width: 640px) {
     .stat-item { flex: 1 1 100%; }
-    .stat-number { font-size: 1.75rem; }
     .stats-card { padding: var(--space-6); gap: var(--space-6); }
   }
 </style>
