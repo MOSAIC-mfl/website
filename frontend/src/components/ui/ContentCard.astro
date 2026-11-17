@@ -57,13 +57,13 @@ const rel = target === '_blank' ? 'noopener noreferrer' : undefined
   .content-card[data-tint='terracotta']  { --chip-bg: var(--tint-terracotta-bg);  --chip-fg: var(--tint-terracotta-fg); }
   .content-card[data-tint='light-teal']  { --chip-bg: var(--tint-light-teal-bg);  --chip-fg: var(--tint-light-teal-fg); }
 
+  /* Flat cards (CGIAR MFL alignment): no lift on hover, the border takes the link colour. */
   .content-card--link {
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s;
   }
   .content-card--link:hover,
   .content-card--link:focus-visible {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-link);
   }
 
   .content-card-icon {
@@ -81,6 +81,7 @@ const rel = target === '_blank' ? 'noopener noreferrer' : undefined
     margin: 0;
     font-size: var(--text-lg);
     font-family: var(--font-title);
+    font-weight: 400;
     color: var(--color-text);
     line-height: 1.3;
   }

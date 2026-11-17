@@ -1,6 +1,28 @@
-/* ── Web fonts — IBM Plex Mono kept for code/labels (OFL license) ─────────
-   MOSAIC brand fonts are Georgia (display, system serif) + Calibri (body),
-   both delivered via system font stacks — no web-font download required. */
+/* ── Web fonts — self-hosted, all under the SIL Open Font License 1.1 ──────
+   Noto Sans (body, buttons, display headlines) + Noto Serif (card titles,
+   big figures), as on the CGIAR MFL programme page (aligned 2026-11-17).
+   One variable-weight file per family, latin subset only (≈36 KB each),
+   from the @fontsource-variable/noto-sans and /noto-serif packages 5.3.0;
+   licence texts beside them in public/fonts/. Other scripts fall back to
+   the system fonts in the stacks below. IBM Plex Mono stays for code. */
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/website/fonts/NotoSans-Variable-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/website/fonts/NotoSerif-Variable-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 @font-face {
   font-family: 'IBM Plex Mono';
@@ -105,9 +127,11 @@
   --color-border:        #E2E0D9;
   --color-text:          #1C2B3A;
   --color-muted:         #5A6872;   /* Muted Grey darkened for AA — see the note above */
-  --shadow-card:         0 10px 30px rgba(28, 43, 58, 0.08);
-  --shadow-card-hover:   0 16px 40px rgba(28, 43, 58, 0.14);
-  --radius-card:         1rem;
+  /* Cards are flat, as on the CGIAR MFL page: 1px border, 8px radius, no
+     shadow; hover turns the border to the link colour instead of lifting. */
+  --shadow-card:         none;
+  --shadow-card-hover:   none;
+  --radius-card:         0.5rem;
   --sidebar-width-new:   280px;
 
   /* Status badge colours (functional traffic-light — unchanged) */
@@ -130,12 +154,16 @@
   --tint-terracotta-bg:  #F1DED6;  --tint-terracotta-fg:  #B54D2F;
   --tint-light-teal-bg:  #E6F3F6;  --tint-light-teal-fg:  #0D5C6B;
 
-  /* ── Typography — MOSAIC brand fonts ────────────────────────────────────
-     Georgia (serif) for titles; Calibri (sans) for body, with robust
-     cross-platform fallbacks. */
-  --font-title:  Georgia, 'Times New Roman', 'Noto Serif', serif;
-  --font-body:   Calibri, Candara, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+  /* ── Typography — CGIAR MFL alignment (2026-11-17) ──────────────────────
+     --font-body:     Noto Sans — body text, buttons, labels.
+     --font-headline: the body sans — h1/h2 display titles, set Light (300)
+                      with tight tracking.
+     --font-title:    Noto Serif — h3 and card titles (400), big figures (300).
+     The brand fonts Calibri and Georgia stay as the first fallbacks. */
+  --font-body:     'Noto Sans', Calibri, 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  --font-headline: var(--font-body);
+  --font-title:    'Noto Serif', Georgia, 'Times New Roman', serif;
+  --font-mono:     'IBM Plex Mono', 'Courier New', monospace;
 
   --text-xs:    0.75rem;
   --text-sm:    0.875rem;
@@ -216,7 +244,5 @@
   --color-gray-800:  #E1EAED;
   --color-gray-900:  #EAF2F4;
 
-  /* Deeper shadows read better on dark surfaces */
-  --shadow-card:        0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-card-hover:  0 16px 40px rgba(0, 0, 0, 0.55);
+  /* Cards stay flat (no shadow) in the dark theme too: the tokens in :root apply. */
 }

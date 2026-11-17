@@ -148,22 +148,19 @@ const hasArt = Astro.slots.has('art')
   /* ── Eyebrow ──────────────────────────────────────────── */
   .page-hero-eyebrow {
     margin: 0 0 var(--space-4);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    line-height: 1.2;
   }
 
   .page-hero--dark .page-hero-eyebrow { color: var(--mosaic-light-teal); }
   .page-hero--light .page-hero-eyebrow { color: var(--mosaic-amber); }
 
   /* ── Title ────────────────────────────────────────────── */
+  /* Family, Light weight, tracking and line height: the h1 defaults in global.css. */
   .page-hero-title {
     font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
     margin-bottom: var(--space-5);
   }
 
@@ -174,7 +171,6 @@ const hasArt = Astro.slots.has('art')
   .page-hero-subtitle {
     font-size: var(--text-lg);
     max-width: 470px;
-    line-height: 1.7;
     margin: 0;
   }
 
