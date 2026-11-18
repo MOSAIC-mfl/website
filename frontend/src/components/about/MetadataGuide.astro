@@ -20,7 +20,7 @@ const requiredFields: Field[] = [
   { label: 'Dataset title', what: 'A short, descriptive name.', example: 'Land use / land cover classification 2024' },
   { label: 'Living landscape', what: 'The landscape the dataset covers, from the list below. Choose NATIONAL for a country-wide dataset and GLOBAL for a global or cross-landscape one.', example: 'KEN-LVB — Lake Victoria Basin (Kenya)' },
   { label: 'Country', what: 'The country the dataset covers, from the list below; Global when it is not tied to one country.', example: 'Kenya' },
-  { label: 'Contact person', what: 'Name and email of someone who can answer questions about the dataset.', example: 'Jane Doe, jane.doe@example.org' },
+  { label: 'Contact person', what: 'Name and email of someone who can answer questions about the dataset.', example: 'The data manager at AfricaRice: name and work email' },
 ]
 
 const optionalFields: Field[] = [
@@ -33,10 +33,10 @@ const optionalFields: Field[] = [
   { label: 'Access level', what: 'Open, Restricted or Internal (see the table below). Open means anyone can get the data without asking, so an Open dataset needs a download or source URL.', example: 'Open' },
   { label: 'License', what: 'The license the data is shared under, as its owner states it.', example: 'CC BY 4.0' },
   { label: 'Processing status', what: 'Raw, Processed or Validated (see the table below). The catalog shows it as the readiness status.', example: 'Processed' },
-  { label: 'Download / primary source URL', what: 'Where the data can be obtained: a download link, or the page of the portal that holds it.', example: 'https://example.org/data/land-cover-2024' },
+  { label: 'Download / primary source URL', what: 'Where the data can be obtained: a download link, or the page of the portal that holds it.', example: 'https://doi.org/10.7910/DVN/1PEEY0 (the IFPRI Dataverse page of a soil profile database)' },
   { label: 'File size', what: 'Approximate size of the files.', example: '220 MB' },
   { label: 'Coordinate reference system (CRS)', what: 'The coordinate reference system of the data.', example: 'EPSG:4326' },
-  { label: 'DOI or citation (if published)', what: 'The DOI of the published dataset, or the citation its authors ask for.', example: 'https://doi.org/10.xxxx/xxxxx' },
+  { label: 'DOI or citation (if published)', what: 'The DOI of the published dataset, or the citation its authors ask for.', example: 'https://doi.org/10.7910/DVN/1PEEY0' },
 ]
 ---
 

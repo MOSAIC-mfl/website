@@ -28,23 +28,23 @@ const steps = [
   {
     num: '2', icon: 'link', title: 'Go to the source',
     body: 'Each entry links to where the data is kept, at the organization that produced it. MOSAIC connects, it does not duplicate: no copies are kept here.',
-    href: `${base}/about#overview`, link: 'More about MOSAIC',
+    href: `${base}/about#overview`, link: 'How MOSAIC links to sources',
   },
   {
     num: '3', icon: 'upload', title: 'Add your own',
     body: 'Register a dataset in a few minutes so others can find it and build on it. Open to anyone working on these places. Research and knowledge resources are coming next.',
-    href: `${base}/about#contribute`, link: 'How to contribute',
+    href: `${base}/about#contribute`, link: 'Register a dataset',
   },
 ] as const
 
 // Each audience gets a way in: where someone like them would start.
 const audiences = [
-  { icon: 'search', who: 'Researchers', what: 'looking for landscape data and research', href: `${base}/catalogue` },
-  { icon: 'upload', who: 'Institutions', what: 'sharing data and research', href: `${base}/about#contribute` },
-  { icon: 'map-pin', who: 'Landscape teams', what: 'coordinating data across places', href: `${base}/landscapes` },
-  { icon: 'sparkles', who: 'Decision-makers', what: 'comparing environmental and social information', href: `${base}/landscapes` },
-  { icon: 'database', who: 'Data stewards', what: 'making their work easier to find and reuse', href: `${base}/about#metadata` },
-  { icon: 'users', who: 'Funders and partners', what: 'tracking evidence across initiatives', href: `${base}/about#overview` },
+  { who: 'Researchers', what: 'looking for landscape data and research', href: `${base}/catalogue` },
+  { who: 'Institutions', what: 'sharing data and research', href: `${base}/about#contribute` },
+  { who: 'Landscape teams', what: 'coordinating data across places', href: `${base}/landscapes` },
+  { who: 'Decision-makers', what: 'comparing environmental and social information', href: `${base}/landscapes` },
+  { who: 'Data stewards', what: 'making their work easier to find and reuse', href: `${base}/about#metadata` },
+  { who: 'Funders and partners', what: 'tracking evidence across initiatives', href: `${base}/about#overview` },
 ] as const
 ---
 
@@ -68,7 +68,7 @@ const audiences = [
             <Icon name="map-pin" size={18} aria-hidden="true" /> Explore the landscapes
           </a>
           <a href={`${base}/about#contribute`} class="btn btn-hero-ghost">
-            <Icon name="upload" size={18} aria-hidden="true" /> Contribute
+            <Icon name="upload" size={18} aria-hidden="true" /> Register a dataset
           </a>
         </div>
       </div>
@@ -173,7 +173,6 @@ const audiences = [
         {audiences.map((a) => (
           <li>
             <a class="who-item" href={a.href}>
-              <span class="who-ico" aria-hidden="true"><Icon name={a.icon} size={20} /></span>
               <span><strong>{a.who}</strong> {a.what}</span>
             </a>
           </li>
@@ -327,16 +326,6 @@ const audiences = [
   .who-item:hover { color: var(--color-text); }
   .who-item:hover strong { text-decoration: underline; }
   .who-item strong { font-weight: 700; }
-  .who-ico {
-    flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .who-ico { background-color: var(--color-gray-100); color: var(--color-gray-700); }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
   /* ── What is a living landscape? ───────────────────────────── */

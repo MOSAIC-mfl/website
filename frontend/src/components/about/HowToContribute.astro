@@ -14,7 +14,7 @@ const howToUrl = 'https://github.com/MOSAIC-mfl/catalog#add-or-change-a-dataset'
 const steps = [
   { num: '01', icon: 'upload', title: 'Register', body: 'Fill the form: title, living landscape, country, contact. Everything else is optional; empty is a valid answer.' },
   { num: '02', icon: 'eye', title: 'Review with you', body: 'The MOSAIC team turns your submission into a validated record and tags you to confirm the details. Typically 5–10 working days.' },
-  { num: '03', icon: 'globe', title: 'Published', body: 'Everything republishes automatically in about 2 minutes: permanent ID, a metadata record, and a page in the catalog.' },
+  { num: '03', icon: 'check-circle', title: 'Published', body: 'Everything republishes automatically in about 2 minutes: permanent ID, a metadata record, and a page in the catalog.' },
 ]
 
 const required = [
@@ -39,7 +39,7 @@ const recommended = [
   metadata that points to them.
 </p>
 <div class="hc-actions">
-  <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a new dataset</a>
+  <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a dataset</a>
   <a class="btn btn-secondary" href="#contact">Ask before contributing</a>
 </div>
 <p class="hc-note">4 required fields · about 2 minutes · via GitHub or plain email</p>
@@ -49,7 +49,7 @@ const recommended = [
 
 <div class="need-card">
   <div class="need-col">
-    <h3>Required <span class="need-count">4 fields</span></h3>
+    <h4>Required <span class="need-count">4 fields</span></h4>
     <ul>
       {required.map((item) => (
         <li><span class="need-tick req" aria-hidden="true">✓</span><span>{item}</span></li>
@@ -57,7 +57,7 @@ const recommended = [
     </ul>
   </div>
   <div class="need-col">
-    <h3>Recommended</h3>
+    <h4>Recommended</h4>
     <ul>
       {recommended.map((item) => (
         <li><span class="need-tick" aria-hidden="true">＋</span><span>{item}</span></li>
@@ -108,7 +108,7 @@ const recommended = [
     margin-top: var(--space-12); padding: var(--space-8);
     background-color: var(--color-gray-50); border-radius: var(--radius-card);
   }
-  .need-col h3 { margin: 0 0 var(--space-4); font-size: var(--text-xl); }
+  .need-col h4 { margin: 0 0 var(--space-4); font-size: var(--text-xl); }
   .need-count {
     display: inline-block; margin-left: var(--space-2); padding: 2px 10px; border-radius: var(--radius-full);
     background-color: var(--tint-teal-bg); color: var(--tint-teal-fg);

@@ -31,7 +31,7 @@ export function ResultsToolbar({ text, sort, viewMode, onText, onSort, onViewMod
           type="search"
           id="dataset-search"
           className="search-input"
-          placeholder="Search by title, landscape, theme, ID…"
+          placeholder="Search datasets, e.g. land cover Kenya"
           value={text}
           onChange={(e) => onText(e.target.value)}
         />
