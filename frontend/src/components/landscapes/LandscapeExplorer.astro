@@ -191,11 +191,11 @@ const sectionList = [
 const soon: Record<string, { title: string; text: string }> = {
   'knowledge-hub': {
     title: 'Knowledge hub',
-    text: 'Evidence, actions and lessons from this landscape, connected to the data behind them, are on their way. In the meantime, the catalogue lists the datasets already registered here.',
+    text: 'Evidence, actions and lessons from this landscape, connected to the data behind them, are on their way. Until then, browse the datasets already registered here.',
   },
   resources: {
     title: 'Other resources',
-    text: 'Reports and useful links for this landscape will be gathered here. In the meantime, the catalogue lists the datasets already registered for it.',
+    text: 'Reports and useful links for this landscape will be gathered here.',
   },
 }
 const globeCountries = Object.entries(geoCountries).map(([iso, c]) => ({ iso, rings: c.globe }))
@@ -444,7 +444,7 @@ const codes = items.map((it) => it.code)
 
       <!-- Key facts -->
       <div class="lx-facts lx-anim">
-        <h3 class="lx-facts-title">Key insights</h3>
+        <h3 class="lx-facts-title">At a glance</h3>
         <ul class="lx-fact-list">
           <li class="lx-fact">
             <span class="lx-fact-ic t-teal"><Icon name="mountains" size={22} /></span>
@@ -549,7 +549,7 @@ const codes = items.map((it) => it.code)
       <article class="lx-main" data-panel="resources" hidden>
         <div data-res-has hidden>
           <h2 class="lx-res-title">Other resources <span class="lx-soon-for">for <span data-soon-name>{first.name}</span></span></h2>
-          <p class="lx-res-sub">Published work about this landscape. Each item stays with its publisher &mdash; MOSAIC links to it.</p>
+          <p class="lx-res-sub">Published work about this landscape. Each item stays with its publisher; MOSAIC links to it.</p>
           <ul class="lx-res-list" data-res-list></ul>
         </div>
         <div class="lx-soon" data-res-soon>

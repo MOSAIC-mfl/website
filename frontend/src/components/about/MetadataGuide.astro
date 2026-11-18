@@ -30,9 +30,9 @@ const optionalFields: Field[] = [
   { label: 'Spatial resolution', key: 'spatial_resolution', what: 'Pixel size or mapping unit, with its unit.', example: '30 m, 0.05°, admin level 2' },
   { label: 'Temporal coverage', key: 'temporal_coverage', what: 'The year or period the data covers.', example: '2017-2025' },
   { label: 'Source / centre', key: 'source', what: 'The organisation that produced the data.', example: 'Alliance Bioversity-CIAT' },
-  { label: 'Access level', key: 'access_level', what: 'Open, Restricted or Internal — see the table below. Open means anyone can get the data without asking, so an Open dataset needs a download or source URL.', example: 'Open' },
+  { label: 'Access level', key: 'access_level', what: 'Open, Restricted or Internal (see the table below). Open means anyone can get the data without asking, so an Open dataset needs a download or source URL.', example: 'Open' },
   { label: 'License', key: 'license', what: 'The licence the data is shared under, as its owner states it.', example: 'CC BY 4.0' },
-  { label: 'Processing status', key: 'processing_status', what: 'Raw, Processed or Validated — see the table below. The catalogue shows it as the readiness status.', example: 'Processed' },
+  { label: 'Processing status', key: 'processing_status', what: 'Raw, Processed or Validated (see the table below). The catalogue shows it as the readiness status.', example: 'Processed' },
   { label: 'Download / primary source URL', key: 'download_url', what: 'Where the data can be obtained: a download link, or the page of the portal that holds it.', example: 'https://example.org/data/land-cover-2024' },
   { label: 'File size', key: 'file_size', what: 'Approximate size of the files.', example: '220 MB' },
   { label: 'Coordinate reference system (CRS)', key: 'crs', what: 'The coordinate reference system of the data.', example: 'EPSG:4326' },
@@ -40,7 +40,7 @@ const optionalFields: Field[] = [
 ]
 ---
 
-<p class="mg-lead">Every field of the registration form explained — what it means, what values are accepted, and what a good entry looks like.</p>
+<p class="mg-lead">Every field of the registration form explained: what it means, what values are accepted, and what a good entry looks like.</p>
 <p class="mg-note">
   Four fields are required; leave any other empty if you are not sure. You do not provide an ID:
   MOSAIC assigns each record a permanent one, in the form <code>MFL-2026-080</code>, which appears on
@@ -102,13 +102,13 @@ const optionalFields: Field[] = [
     ))}
   </div>
 
-  <h4 class="mg-h4">Living Landscape</h4>
+  <h4 class="mg-h4">Living landscape</h4>
   <p style="color: var(--color-gray-600); margin-bottom: var(--space-3); font-size: var(--text-sm);">
     These are the <strong>canonical</strong> MFL Living Landscape codes (approved 2026-07-21),
     matching the delineated landscape boundaries.
   </p>
   <table class="data-table data-table--wide" style="margin-bottom: var(--space-4);">
-    <thead><tr><th>Code</th><th>Landscape Name</th><th>Country</th></tr></thead>
+    <thead><tr><th>Code</th><th>Landscape name</th><th>Country</th></tr></thead>
     <tbody>
       {[
         ['COL-CUM', 'Cumbal (Nariño)', 'Colombia'],
@@ -137,21 +137,21 @@ const optionalFields: Field[] = [
     dataset's true footprint.
   </p>
 
-  <h4 class="mg-h4">MFL Theme</h4>
+  <h4 class="mg-h4">MFL theme</h4>
   <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-8);">
     {['Boundaries / admin units','Land cover / land use','Ecosystem condition','Degradation / land health','Water / hydrology','Biodiversity / ecosystems','Pressures / drivers','Ecosystem services','Hotspots / leverage points','Scenarios / future risks','Decision-support outputs','Agrobiodiversity / crops','Socio-economic / livelihoods'].map((v) => (
       <code style="background-color: var(--color-gray-100); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm);">{v}</code>
     ))}
   </div>
 
-  <h4 class="mg-h4">Data Type</h4>
+  <h4 class="mg-h4">Data type</h4>
   <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-8);">
     {['Raster','Vector','Tabular','Mixed'].map((v) => (
       <code style="background-color: var(--color-gray-100); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm);">{v}</code>
     ))}
   </div>
 
-  <h4 class="mg-h4">Access Level</h4>
+  <h4 class="mg-h4">Access level</h4>
   <p style="color: var(--color-gray-600); margin-bottom: var(--space-3); font-size: var(--text-sm);">
     Access level decisions are made by the contributing centre, not by the MOSAIC team. MOSAIC records and displays the access level the contributor declares, and never overrides it.
   </p>
@@ -164,7 +164,7 @@ const optionalFields: Field[] = [
     </tbody>
   </table>
 
-  <h4 class="mg-h4">Readiness Status</h4>
+  <h4 class="mg-h4">Readiness status</h4>
   <table class="data-table">
     <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
     <tbody>

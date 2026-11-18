@@ -9,8 +9,8 @@ const base = import.meta.env.BASE_URL
 // What MOSAIC does, in Lizeth's words (2026-11-10)
 const principles = [
   { icon: 'link', title: 'Connect, don\'t duplicate', text: 'Each piece stays with the organisation that produced it; MOSAIC describes it, links to it and shows how ready it is to use.' },
-  { icon: 'eye', title: 'Integrate and give visibility', text: 'Work that would stay scattered across centres, projects and partners becomes visible in one picture of each landscape.' },
-  { icon: 'signpost', title: 'Support better decisions', text: 'With everything connected, people working in a landscape can see what exists, build on it and decide with better evidence.' },
+  { icon: 'eye', title: 'Show what exists', text: 'Work that would stay scattered across centres, projects and partners becomes visible, landscape by landscape.' },
+  { icon: 'signpost', title: 'Build on what is there', text: 'People working in a landscape can see what is already available, build on it and bring it into their decisions.' },
 ] as const
 
 const audiences = [
@@ -36,12 +36,12 @@ const audiences = [
 <div class="ov-split">
   <div class="ov-text">
     <p class="ov-intro">
-      MOSAIC is where everything about a living landscape comes together: the entry point to the
-      data and research produced around it, by many organisations.
+      MOSAIC is the entry point to the data and research produced around each living landscape,
+      by many organisations.
     </p>
     <p class="ov-name">
-      The name stands for <strong>Multifunctional Open Spatial Analysis &amp; Integration Collaborative</strong>
-      — and, like a mosaic, it puts many separate pieces into one picture.
+      The name stands for <strong>Multifunctional Open Spatial Analysis &amp; Integration Collaborative</strong>.
+      Like a mosaic, it puts many separate pieces into one picture.
     </p>
     <ul class="ov-principles">
       {principles.map((p) => (
@@ -63,7 +63,7 @@ const audiences = [
 <div class="ov-who">
   <div class="ov-who-head">
     <h3 class="ov-h3">Who it serves</h3>
-    <p class="ov-lead">Anyone working with data for living landscapes — research institutions, universities, public agencies, NGOs, landscape initiatives and independent researchers.</p>
+    <p class="ov-lead">Anyone working with data for living landscapes: research institutions, universities, public agencies, NGOs, landscape initiatives and independent researchers.</p>
   </div>
   <div class="ov-cards">
     {audiences.map((a) => (

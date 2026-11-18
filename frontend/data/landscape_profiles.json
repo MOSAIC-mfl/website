@@ -80,7 +80,7 @@
       ]
     },
     "ETH-OG": {
-      "summary": "Ethiopia's Omo-Gibe river basin — about 79,700 km² across four regions, running some 550 km from the south-western highlands to the Omo delta at Lake Turkana. A strong north–south gradient separates humid, densely settled highlands from semi-arid pastoral lowlands.",
+      "summary": "Ethiopia's Omo-Gibe river basin: about 79,700 km² across four regions, running some 550 km from the south-western highlands to the Omo delta at Lake Turkana. A strong north–south gradient separates humid, densely settled highlands from semi-arid pastoral lowlands.",
       "ecosystem": "Forest (31%), shrubland (29%) and grassland (20%) still cover four fifths of the basin; 23 protected and conserved sites take in about 35% of it, from the wild Arabica coffee forests of the south-west to the Omo–Tama–Mago park complex in the lower valley.",
       "livelihoods": "Some 14–16 million people: coffee, enset and cereals in the densely settled highlands, maize and root crops in the crowded middle basin, and herding, flood-recession cropping and fishing in the southern lowlands.",
       "why_it_matters": "It drives the Gibe hydropower cascade and supplies more than 80% of Lake Turkana's inflow, but nearly half the basin saw some deforestation between 1985 and 2020, and the regulated river no longer floods the lower Omo, where recession farming and fishing depended on it.",
@@ -122,7 +122,7 @@
       ]
     },
     "IND-CH": {
-      "summary": "Six districts of central India — Jhansi in Uttar Pradesh and Tikamgarh, Chhatarpur, Damoh, Jabalpur and Mandla in Madhya Pradesh. The first four lie in Bundelkhand, a fragile dryland with shallow, low-fertility soils, poor water retention and highly erratic rainfall.",
+      "summary": "Six districts of central India: Jhansi in Uttar Pradesh and Tikamgarh, Chhatarpur, Damoh, Jabalpur and Mandla in Madhya Pradesh. The first four lie in Bundelkhand, a fragile dryland with shallow, low-fertility soils, poor water retention and highly erratic rainfall.",
       "ecosystem": "Rainfed cropland, forests and open natural ecosystems on a hot, sub-humid upland.",
       "livelihoods": "In Bundelkhand, households depend heavily on rainfed farming and livestock; cropping intensity is often no more than 110%, poverty is widespread, and many people migrate to cities, leaving the elderly and children behind.",
       "why_it_matters": "Rainfed farms and livestock sustain rural livelihoods, but in Bundelkhand annual rainfall has fallen by nearly 250 mm over five decades, droughts are frequent, groundwater is being depleted and nearly 30% of productive farmland lies fallow in one of the two cropping seasons.",
@@ -146,10 +146,10 @@
       ]
     },
     "KEN-LEI": {
-      "summary": "Four Kenyan counties near Nairobi — Kajiado, Kiambu, Machakos and Makueni. They run from Kiambu's wet, densely settled highlands on the edge of the Aberdare ranges to the semi-arid farmland of Machakos and Makueni and the pastoral rangelands of Kajiado.",
+      "summary": "Four Kenyan counties near Nairobi: Kajiado, Kiambu, Machakos and Makueni. They run from Kiambu's wet, densely settled highlands on the edge of the Aberdare ranges to the semi-arid farmland of Machakos and Makueni and the pastoral rangelands of Kajiado.",
       "ecosystem": "Kiambu's main forests lie in its wet upper highlands; Makueni is half arable, with 34% shrubland and 9% grassland; on the Athi-Kapiti plains of Kajiado and Machakos, semi-arid grassland with scattered trees links Nairobi National Park to Amboseli and Tsavo.",
       "livelihoods": "Nearly six million people across the four counties (2019 census): tea, coffee, dairy and commuting to Nairobi in Kiambu; rain-fed maize, beans, pulses and fruit farming in Machakos and Makueni; and livestock herding, mainly by Maasai pastoralists, in rural Kajiado.",
-      "why_it_matters": "Its plains keep wildlife moving between Nairobi National Park, Amboseli and Tsavo and Kajiado's herds supply Nairobi's meat markets, but recurrent drought and the subdivision of pastoral land for settlement — Kajiado's population grew 62.6% in ten years — are shrinking grazing land and leaving water scarce.",
+      "why_it_matters": "Its plains keep wildlife moving between Nairobi National Park, Amboseli and Tsavo and Kajiado's herds supply Nairobi's meat markets, but recurrent drought and the subdivision of pastoral land for settlement (Kajiado's population grew 62.6% in ten years) are shrinking grazing land and leaving water scarce.",
       "confidence": "medium",
       "sources": [
         {
@@ -240,9 +240,9 @@
       ]
     },
     "KEN-LVB": {
-      "summary": "Five counties of western Kenya — Kericho, Kisumu, Nandi, Siaya and Vihiga — in the Lake Victoria Basin. Lowland floodplains by the lake give way to mid-altitude mixed farms and densely populated highlands; rainfall averages 1,000–1,500 mm a year.",
+      "summary": "Five counties of western Kenya (Kericho, Kisumu, Nandi, Siaya and Vihiga) in the Lake Victoria Basin. Lowland floodplains by the lake give way to mid-altitude mixed farms and densely populated highlands; rainfall averages 1,000–1,500 mm a year.",
       "ecosystem": "A mosaic of farm fields, pastures, settlements and pockets of natural vegetation on low-organic-matter Acrisols and Cambisols, draining to Lake Victoria; Vihiga is predominantly hilly, while Kisumu's lake-adjacent lowlands flood repeatedly.",
-      "livelihoods": "Smallholder households combining crops — maize, beans, cassava, sweet potatoes, bananas and vegetables — with dairy cattle, goats and poultry, informal trade and wage work; Nile perch and tilapia fisheries add food and income along the lake.",
+      "livelihoods": "Smallholder households combining crops (maize, beans, cassava, sweet potatoes, bananas and vegetables) with dairy cattle, goats and poultry, informal trade and wage work; Nile perch and tilapia fisheries add food and income along the lake.",
       "why_it_matters": "Its farms and the lake's Nile perch and tilapia fisheries feed and employ a dense smallholder population, but maize yields of 2.1–2.3 t/ha in Kisumu and Vihiga sit far below the 6–8 t/ha potential, steep slopes in Vihiga erode, and farm runoff and sewage pollute the lake.",
       "confidence": "medium",
       "sources": [
@@ -288,10 +288,10 @@
       ]
     },
     "PER-PCL": {
-      "summary": "Peru's Pucallpa–Aguaytía agroforestry corridor in the Amazonian region of Ucayali — about 14,000 km², linking the city of Pucallpa to the Aguaytía river basin. Amazon lowlands rise westward towards the Cordillera Azul and the Andean foothills, along a road frontier settled since the 1940s.",
-      "ecosystem": "Humid tropical rainforest — terra firme, riparian and seasonally flooded forest, with foothill forest in the west — now a mosaic of old-growth remnants, secondary forest, fallows, agro-pastoral land and agroforestry plots along the Aguaytía River, a tributary of the Ucayali.",
+      "summary": "Peru's Pucallpa–Aguaytía agroforestry corridor in the Amazonian region of Ucayali: about 14,000 km², linking the city of Pucallpa to the Aguaytía river basin. Amazon lowlands rise westward towards the Cordillera Azul and the Andean foothills, along a road frontier settled since the 1940s.",
+      "ecosystem": "Humid tropical rainforest (terra firme, riparian and seasonally flooded forest, with foothill forest in the west), now a mosaic of old-growth remnants, secondary forest, fallows, agro-pastoral land and agroforestry plots along the Aguaytía River, a tributary of the Ucayali.",
       "livelihoods": "About 500,000 people, 81% of them urban; rural households, mestizo and Indigenous (chiefly Shipibo-Konibo), live from oil palm, rice, cacao, banana and cassava, extensive cattle, fish farming and Amazonian fruits such as camu camu.",
-      "why_it_matters": "Its forest mosaic stores carbon, regulates water and shelters high biodiversity while supplying cacao and oil palm to domestic and export markets, but the corridor has the highest deforestation rate in Ucayali — 40% of its forests lost in two decades to the farming frontier and infrastructure.",
+      "why_it_matters": "Its forest mosaic stores carbon, regulates water and shelters high biodiversity while supplying cacao and oil palm to domestic and export markets, but the corridor has the highest deforestation rate in Ucayali: 40% of its forests lost in two decades to the farming frontier and infrastructure.",
       "confidence": "high",
       "sources": [
         {
@@ -380,9 +380,9 @@
       ]
     },
     "ZWE-MB": {
-      "summary": "Four districts of Zimbabwe's Zambezi Valley — Mbire, Muzarabani, Mount Darwin and Hurungwe. Mbire district, about 250 km north of Harare on the Zambia and Mozambique borders, is a semi-arid wildlife–agriculture mosaic of about 4,700 km² with 83,724 residents (2022 census).",
-      "ecosystem": "In Mbire district, forest and woodland — mopane, miombo, Combretum–Terminalia and acacia — cover around 70%, with scrub, open grassland, riverine forest and wetlands; in Ward 2, mapped cropland is only 5–6% within a shrub, forest and grass matrix.",
-      "livelihoods": "About 80% of Mbire district's households depend on crop production — rainfed maize, sorghum, cotton, sesame and groundnuts on plots typically under 1.5 ha — alongside goats, poultry and cattle, casual labour, fishing and wild foods.",
+      "summary": "Four districts of Zimbabwe's Zambezi Valley: Mbire, Muzarabani, Mount Darwin and Hurungwe. Mbire district, about 250 km north of Harare on the Zambia and Mozambique borders, is a semi-arid wildlife–agriculture mosaic of about 4,700 km² with 83,724 residents (2022 census).",
+      "ecosystem": "In Mbire district, forest and woodland (mopane, miombo, Combretum–Terminalia and acacia) cover around 70%, with scrub, open grassland, riverine forest and wetlands; in Ward 2, mapped cropland is only 5–6% within a shrub, forest and grass matrix.",
+      "livelihoods": "About 80% of Mbire district's households depend on crop production (rainfed maize, sorghum, cotton, sesame and groundnuts on plots typically under 1.5 ha), alongside goats, poultry and cattle, casual labour, fishing and wild foods.",
       "why_it_matters": "Mbire district's woodlands, rivers and floodplains sustain wildlife, flood-recession farming and non-timber products between major conservation areas, but drought is chronic, floods recur almost yearly and elephants and baboons raid crops; about 55% of rural households were estimated cereal insecure at the January–March 2025 hunger peak.",
       "confidence": "medium",
       "sources": [
