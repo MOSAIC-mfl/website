@@ -190,14 +190,15 @@ const audiences = [
     position: relative;
     display: flex;
     align-items: flex-start;
-    /* Tall enough that the text sits in the open sky above the hills: the
-       banner is ~1.83:1 and its hills start ~70% down on the left. */
-    min-height: clamp(720px, 54.7vw, 880px);
+    /* Short enough that the figures below show on a laptop screen without
+       scrolling (Lizeth, 2026-11-18); the banner is shifted down and cropped
+       at the bottom so its hills still start below the buttons. */
+    min-height: clamp(540px, 38vw, 640px);
     /* the banner's sky is Warm Sand too, so the band above the shifted
        banner shows no seam */
     background-color: var(--mosaic-sand);
     color: var(--mosaic-ink);
-    padding: 3.5rem 0 6.5rem;
+    padding: 3.5rem 0 3rem;
     overflow: hidden;
   }
 
@@ -216,7 +217,7 @@ const audiences = [
     position: absolute;
     /* shifted down so the hills start below the buttons; the gap above is
        the hero background, which matches the banner's sky */
-    inset: 6rem 0 -6rem;
+    inset: 6rem 0 -10rem;
     pointer-events: none;
     z-index: 1;
   }
