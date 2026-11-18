@@ -170,6 +170,19 @@ export class MapLibreEngine implements MapEngine {
     return () => this.map.off('click', f)
   }
 
+  onKeyInspect(handler: (lngLat: LngLat) => void): () => void {
+    // Only when the map canvas itself has focus, so the map's own buttons keep their keys.
+    const canvas = this.map.getCanvas()
+    const f = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      e.preventDefault()
+      const c = this.map.getCenter()
+      handler({ lng: c.lng, lat: c.lat })
+    }
+    canvas.addEventListener('keydown', f)
+    return () => canvas.removeEventListener('keydown', f)
+  }
+
   onLayerClick(layer: string, handler: (e: MapClick) => void): () => void {
     const f = (e: maplibregl.MapLayerMouseEvent) => handler({ lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat }, point: { x: e.point.x, y: e.point.y } })
     const enter = () => (this.map.getCanvas().style.cursor = 'pointer')

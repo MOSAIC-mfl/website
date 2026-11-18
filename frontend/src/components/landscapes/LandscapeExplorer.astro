@@ -343,7 +343,8 @@ const codes = items.map((it) => it.code)
 
     <div class="lx-content">
   <!-- Detail -->
-  <article class="lx-main" data-panel="overview" aria-live="polite">
+  <article class="lx-main" data-panel="overview">
+    <p class="sr-only" role="status" data-lx-announce></p>
     <header class="lx-head">
       <div class="lx-anim">
         <h2 class="lx-title" data-f="name">{first.name}</h2>
@@ -380,9 +381,9 @@ const codes = items.map((it) => it.code)
         <button type="button" class="lx-nav lx-prev" data-photo-prev aria-label="Previous photo" hidden={first.photos.length < 2}><Icon name="chevron-right" size={20} /></button>
         <button type="button" class="lx-nav lx-next" data-photo-next aria-label="Next photo" hidden={first.photos.length < 2}><Icon name="chevron-right" size={20} /></button>
         <span class="lx-count" data-photo-count hidden={first.photos.length < 2}>1 / {first.photos.length}</span>
-        <div class="lx-dots" data-dots role="tablist" aria-label="Photos">
+        <div class="lx-dots" data-dots role="group" aria-label="Photos">
           {first.photos.map((_, i) => (
-            <button type="button" class:list={['lx-dot', { 'is-on': i === 0 }]} aria-label={`Photo ${i + 1}`} aria-selected={i === 0 ? 'true' : 'false'} role="tab"></button>
+            <button type="button" class:list={['lx-dot', { 'is-on': i === 0 }]} aria-label={`Photo ${i + 1}`} aria-current={i === 0 ? 'true' : undefined}></button>
           ))}
         </div>
         <figcaption class="lx-credit" data-credit>
@@ -871,15 +872,18 @@ const codes = items.map((it) => it.code)
     transition: opacity 0.7s ease, transform 6s ease-out;
   }
   .lx-photo :global(.lx-photo-img.is-on) { opacity: 1; transform: scale(1); }
-  .lx-dots { position: absolute; left: 0; right: 0; bottom: 3.6rem; display: flex; justify-content: center; gap: var(--space-2); }
+  .lx-dots { position: absolute; left: 0; right: 0; bottom: 3.6rem; display: flex; justify-content: center; gap: var(--space-4); }
   .lx-dots[hidden] { display: none; }
   .lx-photo :global(.lx-dot) {
+    position: relative;
     width: 10px; height: 10px; min-width: 0; min-height: 0; padding: 0; border-radius: var(--radius-full);
     border: 2px solid var(--color-white); background: transparent; cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     transition: background-color 0.25s, transform 0.25s;
   }
   .lx-photo :global(.lx-dot.is-on) { background: var(--color-white); transform: scale(1.2); }
+  /* 24px hit area around the 10px dot (WCAG 2.5.8) */
+  .lx-photo :global(.lx-dot)::before { content: ''; position: absolute; inset: -7px; }
   .lx-nav {
     position: absolute; top: 50%; transform: translateY(-50%);
     width: 36px; height: 36px; display: grid; place-items: center; padding: 0;
@@ -970,7 +974,7 @@ const codes = items.map((it) => it.code)
   .lx-ls.is-on { opacity: 1; animation: lx-draw 1.2s ease forwards; }
   .lx-pin-dot { fill: var(--color-white); stroke: var(--mosaic-teal); stroke-width: 2.5; }
   .lx-pin-ring { fill: var(--mosaic-teal); }
-  .lx-pin-pulse { fill: var(--mosaic-teal); opacity: 0.25; transform-origin: center; transform-box: fill-box; animation: lx-pulse 2s ease-out infinite; }
+  .lx-pin-pulse { fill: var(--mosaic-teal); opacity: 0.25; transform-origin: center; transform-box: fill-box; animation: lx-pulse 2s ease-out 2; }
   .lx-pin.is-drop { animation: lx-drop 0.5s cubic-bezier(.3,1.6,.5,1); transform-box: fill-box; }
   .lx-map-label {
     position: absolute; left: 50%; top: var(--space-4); transform: translateX(-50%);

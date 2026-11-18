@@ -400,13 +400,18 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
   }
 
   /* ---------- photos ---------- */
+  // Photos change only when the visitor asks (arrows or dots): no auto-advance,
+  // so nothing moves on its own (WCAG 2.2.2). Removed 2026-11-18.
   let photoIdx = 0
-  let photoTimer = 0
   function showPhoto(it: Item, i: number) {
     photoIdx = i
     const imgs = root.querySelectorAll('.lx-photo-img')
     imgs.forEach((im, k) => im.classList.toggle('is-on', k === i))
-    root.querySelectorAll('.lx-dot').forEach((d, k) => { d.classList.toggle('is-on', k === i); d.setAttribute('aria-selected', String(k === i)) })
+    root.querySelectorAll('.lx-dot').forEach((d, k) => {
+      d.classList.toggle('is-on', k === i)
+      if (k === i) d.setAttribute('aria-current', 'true')
+      else d.removeAttribute('aria-current')
+    })
     $('[data-photo-count]').textContent = `${i + 1} / ${it.photos.length}`
     setCredit(it.photos[i])
   }
@@ -436,8 +441,8 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
     }))
     dots.replaceChildren(...it.photos.map((_, k) => {
       const b = Object.assign(document.createElement('button'), { type: 'button', className: 'lx-dot' })
-      b.setAttribute('role', 'tab'); b.setAttribute('aria-label', `Photo ${k + 1}`)
-      b.addEventListener('click', () => { showPhoto(it, k); restartAuto(it) })
+      b.setAttribute('aria-label', `Photo ${k + 1}`)
+      b.addEventListener('click', () => showPhoto(it, k))
       return b
     }))
     dots.hidden = it.photos.length < 2
@@ -447,21 +452,14 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
     // let the new images paint at opacity 0 before fading the first one in
     // (skipped if another landscape was selected in the meantime)
     requestAnimationFrame(() => requestAnimationFrame(() => { if (current === it) showPhoto(it, 0) }))
-    restartAuto(it)
-  }
-  function restartAuto(it: Item) {
-    window.clearInterval(photoTimer)
-    if (reduce || it.photos.length < 2) return
-    photoTimer = window.setInterval(() => { if (current === it) showPhoto(it, (photoIdx + 1) % it.photos.length) }, 6000)
   }
   // wire the server-rendered dots of the first landscape
-  root.querySelectorAll<HTMLButtonElement>('.lx-dot').forEach((b, k) => b.addEventListener('click', () => { showPhoto(current, k); restartAuto(current) }))
+  root.querySelectorAll<HTMLButtonElement>('.lx-dot').forEach((b, k) => b.addEventListener('click', () => showPhoto(current, k)))
   $('[data-dots]').hidden = current.photos.length < 2
   const step = (d: number) => {
     const n = current.photos.length
     if (n < 2) return
     showPhoto(current, (photoIdx + d + n) % n)
-    restartAuto(current)
   }
   $('[data-photo-prev]').addEventListener('click', () => step(-1))
   $('[data-photo-next]').addEventListener('click', () => step(1))
@@ -485,6 +483,8 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
     bl.href = it.boundary?.href ?? '#download'
     field('boundary-size').textContent = it.boundary?.size ?? ''
     svg.setAttribute('aria-label', `Map of ${it.name}`)
+    // one short announcement per landscape change (the panel itself is not a live region)
+    $('[data-lx-announce]').textContent = `${it.name}, ${it.country}`
     renderResources(it)
   }
 
@@ -890,7 +890,6 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
   updateZoomButtons()
   for (const g of globePaths) g.el.classList.toggle('is-home', current.countries.includes(g.iso))
   drawGlobe(rot[0], rot[1])
-  restartAuto(current)
   new ResizeObserver(() => { placePin(); updateScale(); queueLabels() }).observe(svg)
 
   // deep links: /landscapes#COL-CUM and /landscapes#COL-CUM/knowledge-hub;
