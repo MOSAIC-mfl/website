@@ -25,7 +25,7 @@ export function periodText(period: (number | null)[] | null | undefined): string
   return null
 }
 
-export const ACCESS_LABEL: Record<string, string> = { public: 'Open', restricted: 'Restricted', 'non-public': 'Not public' }
+export const ACCESS_LABEL: Record<string, string> = { public: 'Public', restricted: 'Restricted', 'non-public': 'Non-public' }
 export const ACCESS_BADGE: Record<string, string> = {
   public: 'badge badge-open',
   restricted: 'badge badge-restricted',

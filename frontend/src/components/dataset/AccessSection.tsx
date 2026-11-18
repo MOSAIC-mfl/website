@@ -54,7 +54,7 @@ export function AccessSection({ d, labels }: { d: RecordDetail; labels: LabelBoo
         ) : r.access === 'restricted' ? (
           <p>Access to this dataset is restricted. To request access, please contact the data steward.</p>
         ) : r.access === 'non-public' ? (
-          <p>This dataset is for internal CGIAR use only. Contact the MOSAIC team if you believe you should have access.</p>
+          <p>This dataset is not public: only the team that holds it has the data. Contact the data steward for details.</p>
         ) : (
           <p>The access level for this dataset has not been specified yet. Contact the data steward or the MOSAIC coordination team for details.</p>
         )}
