@@ -1,6 +1,6 @@
 [
   { "code": "COL-CUM", "name": "Cumbal (Nariño)", "country": "Colombia" },
-  { "code": "PER-PCL", "name": "Pucallpa – Ucayali", "country": "Peru", "pending": true },
+  { "code": "PER-PCL", "name": "Pucallpa – Ucayali", "country": "Peru" },
   { "code": "SEN-FK", "name": "Fatick Department", "country": "Senegal" },
   { "code": "CIV-NZ", "name": "N'Zi Watershed", "country": "Côte d'Ivoire" },
   { "code": "TUN-NW", "name": "Northwestern Tunisia", "country": "Tunisia" },
