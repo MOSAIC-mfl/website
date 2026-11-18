@@ -11,6 +11,9 @@ interface Props {
   ogImage?: string
   /** Keep the page out of search results (placeholders). */
   noindex?: boolean
+  /** False on a page whose content depends on the query string (the dataset page): the path
+      alone is not its address, so it must not be declared as canonical or as og:url. */
+  canonical?: boolean
 }
 
 const {
@@ -19,6 +22,7 @@ const {
   description = 'MOSAIC is an open network for living landscapes: the entry point to the data and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Program.',
   ogImage = '/website/og-image.png',
   noindex = false,
+  canonical = true,
 } = Astro.props
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const pageTitle = title === 'Home'
@@ -48,14 +52,14 @@ const base = import.meta.env.BASE_URL
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <title>{pageTitle}</title>
-    <link rel="canonical" href={canonicalURL} />
+    {canonical && <link rel="canonical" href={canonicalURL} />}
     <!-- Self-hosted Noto Sans (body, headlines) and Noto Serif (titles): fetched early so the
          first paint uses them; @font-face rules in styles/variables.css. -->
     <link rel="preload" href={`${base}/fonts/NotoSans-Variable-latin.woff2`} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={`${base}/fonts/NotoSerif-Variable-latin.woff2`} as="font" type="font/woff2" crossorigin />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
+    {canonical && <meta property="og:url" content={canonicalURL} />}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
