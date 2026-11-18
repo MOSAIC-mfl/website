@@ -31,7 +31,7 @@ export class LiveCatalogRepository implements CatalogRepository, LandscapeReposi
       try {
         return await base(input, init)
       } catch (err) {
-        throw new ApiError(`Could not reach the catalogue at ${baseUrl} (${String(err)})`, null, String(input))
+        throw new ApiError(`Could not reach the catalog at ${baseUrl} (${String(err)})`, null, String(input))
       }
     }
     this.client = createClient<paths>({ baseUrl, fetch: guarded })

@@ -8,7 +8,7 @@
   "profiles": {
     "CIV-NZ": {
       "summary": "The N'Zi river basin, a 35,500 km² sub-basin of the Bandama in Côte d'Ivoire. The river rises near Ferkessédougou at about 400 m and flows north–south across low plateaux, from the savanna north to the forest south.",
-      "ecosystem": "Savanna in the north and centre gives way to forest in the south, across plateaux of 100–400 m broken by the Baoulé range; annual rainfall rises from under 1,200 mm to over 1,600 mm southwards.",
+      "ecosystem": "Savanna in the north and center gives way to forest in the south, across plateaux of 100–400 m broken by the Baoulé range; annual rainfall rises from under 1,200 mm to over 1,600 mm southwards.",
       "livelihoods": "Smallholder farming: in inland valleys surveyed around Bouaké, households cultivate about 2.7 ha on average, with rice ranked the first crop and yam the second.",
       "why_it_matters": "Its seasonally flooded inland valleys feed farm households, with rice the top-ranked crop, but river flow has fallen far more than rainfall (deficits of 52% against 16%).",
       "confidence": "medium",
@@ -80,7 +80,7 @@
       ]
     },
     "ETH-OG": {
-      "summary": "Ethiopia's Omo-Gibe river basin: about 79,700 km² across four regions, running some 550 km from the south-western highlands to the Omo delta at Lake Turkana. A strong north–south gradient separates humid, densely settled highlands from semi-arid pastoral lowlands.",
+      "summary": "Ethiopia's Omo-Gibe river basin: about 79,700 km² across four regions, running some 550 km from the southwestern highlands to the Omo delta at Lake Turkana. A strong north–south gradient separates humid, densely settled highlands from semi-arid pastoral lowlands.",
       "ecosystem": "Forest (31%), shrubland (29%) and grassland (20%) still cover four fifths of the basin; 23 protected and conserved sites take in about 35% of it, from the wild Arabica coffee forests of the south-west to the Omo–Tama–Mago park complex in the lower valley.",
       "livelihoods": "Some 14–16 million people: coffee, enset and cereals in the densely settled highlands, maize and root crops in the crowded middle basin, and herding, flood-recession cropping and fishing in the southern lowlands.",
       "why_it_matters": "It drives the Gibe hydropower cascade and supplies more than 80% of Lake Turkana's inflow, but nearly half the basin saw some deforestation between 1985 and 2020, and the regulated river no longer floods the lower Omo, where recession farming and fishing depended on it.",
@@ -112,7 +112,7 @@
           "title": "Omo-Gibe landscape characterization: an integrated biophysical and socio-economic assessment of the Omo-Gibe Landscape, Ethiopia",
           "type": "Report",
           "authors": "Degefie Tibebe, Getachew Tesfaye, Yonas Getaneh, Habtamu Sewnet, Meron Awoke, Kalkidan Mulatu, Kifle Woldearegay, Zenebe Adimassu, Wuletawu Abera",
-          "org": "Alliance of Bioversity International and CIAT, for the CGIAR Multifunctional Landscapes Science Programme",
+          "org": "Alliance of Bioversity International and CIAT, for the CGIAR Multifunctional Landscapes Science Program",
           "year": 2026,
           "extent": "51 p.",
           "licence": "CC BY 4.0",
@@ -288,7 +288,7 @@
       ]
     },
     "PER-PCL": {
-      "summary": "Peru's Pucallpa–Aguaytía agroforestry corridor in the Amazonian region of Ucayali: about 14,000 km², linking the city of Pucallpa to the Aguaytía river basin. Amazon lowlands rise westward towards the Cordillera Azul and the Andean foothills, along a road frontier settled since the 1940s.",
+      "summary": "Peru's Pucallpa–Aguaytía agroforestry corridor in the Amazonian region of Ucayali: about 14,000 km², linking the city of Pucallpa to the Aguaytía river basin. Amazon lowlands rise westward toward the Cordillera Azul and the Andean foothills, along a road frontier settled since the 1940s.",
       "ecosystem": "Humid tropical rainforest (terra firme, riparian and seasonally flooded forest, with foothill forest in the west), now a mosaic of old-growth remnants, secondary forest, fallows, agro-pastoral land and agroforestry plots along the Aguaytía River, a tributary of the Ucayali.",
       "livelihoods": "About 500,000 people, 81% of them urban; rural households, mestizo and Indigenous (chiefly Shipibo-Konibo), live from oil palm, rice, cacao, banana and cassava, extensive cattle, fish farming and Amazonian fruits such as camu camu.",
       "why_it_matters": "Its forest mosaic stores carbon, regulates water and shelters high biodiversity while supplying cacao and oil palm to domestic and export markets, but the corridor has the highest deforestation rate in Ucayali: 40% of its forests lost in two decades to the farming frontier and infrastructure.",
@@ -320,7 +320,7 @@
       "summary": "Fatick Department in west-central Senegal lies between the inland farming and grazing zones and the Sine-Saloum estuary, reaching the Atlantic to the west. It is a Sudano-Sahelian area with 500–700 mm of rain a year, highly variable from one year to the next.",
       "ecosystem": "A mosaic of rainfed cropland, extensive grazing land, forest resources and wetlands on mainly tropical ferruginous soils, with salt-affected land in the south and near the coast; in Niakhar commune, cropland averaged 19,581 ha over 2016–2025.",
       "livelihoods": "Rainfed farming and extensive livestock keeping are the main livelihoods; in Niakhar commune farmers grow groundnut, millet, sorghum and cowpea, herds graze the harvested fields in the dry season, and women and young people run small market gardens.",
-      "why_it_matters": "Its cropland, grazing land, forest resources and wetlands support farming and herding side by side, but soil degradation, salinization, scarcer woody biomass and growing pressure on land, sharpened by variable rainfall, are lowering yields and fuelling conflicts between farmers and herders.",
+      "why_it_matters": "Its cropland, grazing land, forest resources and wetlands support farming and herding side by side, but soil degradation, salinization, scarcer woody biomass and growing pressure on land, sharpened by variable rainfall, are lowering yields and fueling conflicts between farmers and herders.",
       "confidence": "high",
       "sources": [
         {
@@ -382,7 +382,7 @@
     "ZWE-MB": {
       "summary": "Four districts of Zimbabwe's Zambezi Valley: Mbire, Muzarabani, Mount Darwin and Hurungwe. Mbire district, about 250 km north of Harare on the Zambia and Mozambique borders, is a semi-arid wildlife–agriculture mosaic of about 4,700 km² with 83,724 residents (2022 census).",
       "ecosystem": "In Mbire district, forest and woodland (mopane, miombo, Combretum–Terminalia and acacia) cover around 70%, with scrub, open grassland, riverine forest and wetlands; in Ward 2, mapped cropland is only 5–6% within a shrub, forest and grass matrix.",
-      "livelihoods": "About 80% of Mbire district's households depend on crop production (rainfed maize, sorghum, cotton, sesame and groundnuts on plots typically under 1.5 ha), alongside goats, poultry and cattle, casual labour, fishing and wild foods.",
+      "livelihoods": "About 80% of Mbire district's households depend on crop production (rainfed maize, sorghum, cotton, sesame and groundnuts on plots typically under 1.5 ha), alongside goats, poultry and cattle, casual labor, fishing and wild foods.",
       "why_it_matters": "Mbire district's woodlands, rivers and floodplains sustain wildlife, flood-recession farming and non-timber products between major conservation areas, but drought is chronic, floods recur almost yearly and elephants and baboons raid crops; about 55% of rural households were estimated cereal insecure at the January–March 2025 hunger peak.",
       "confidence": "medium",
       "sources": [

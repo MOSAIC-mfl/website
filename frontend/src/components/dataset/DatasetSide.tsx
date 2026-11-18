@@ -12,7 +12,7 @@ export function DatasetSide({ d, labels, base, related }: { d: RecordDetail; lab
     ['Temporal', periodOf(r)],
     ['Data type', joinLabels(labels, 'data_kind', d.facets.data_kind ?? [], 3)],
     ['Theme', joinLabels(labels, 'theme', r.themes ?? [], 3)],
-    ['Catalogue', d.provenance.source_name],
+    ['Catalog', d.provenance.source_name],
   ].filter(([, v]) => v) as [string, string][]
   const source = primaryAccess(r)
   const landscape = d.landscapes[0]
@@ -48,7 +48,7 @@ export function DatasetSide({ d, labels, base, related }: { d: RecordDetail; lab
           {d.provenance.record_url && !d.provenance.record_url.includes('/website/catalogue/') && (
             <li>
               <a href={d.provenance.record_url} target="_blank" rel="noopener noreferrer">
-                {d.source === 'mosaic' ? 'The record file in the MOSAIC catalogue' : `The record in ${d.provenance.source_name}`} ↗
+                {d.source === 'mosaic' ? 'The record file in the MOSAIC catalog' : `The record in ${d.provenance.source_name}`} ↗
               </a>
             </li>
           )}

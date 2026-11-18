@@ -23,7 +23,7 @@ export function createJsonFetcher(fetchImpl: typeof fetch = globalThis.fetch.bin
     } catch (err) {
       if (err instanceof ApiError) throw err
       const reason = err instanceof DOMException && err.name === 'AbortError' ? 'timed out' : String(err)
-      throw new ApiError(`Could not reach the catalogue (${reason})`, null, url)
+      throw new ApiError(`Could not reach the catalog (${reason})`, null, url)
     } finally {
       clearTimeout(timer)
     }

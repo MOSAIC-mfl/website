@@ -90,7 +90,7 @@ export function CatalogueApp({ base }: Props) {
                 {READINESS_ORDER.map((r) => (
                   <li key={r}><span className={readinessBadge(r)}>{readinessLabel(r)}</span> {READINESS_MEANING[r]}</li>
                 ))}
-                <li><span className={readinessBadge(null)}>{NOT_STATED}</span> The contributor did not state it, or the catalogue it comes from has no such field.</li>
+                <li><span className={readinessBadge(null)}>{NOT_STATED}</span> The contributor did not state it, or the catalog it comes from has no such field.</li>
                 <li>{READINESS_NOTE}</li>
               </ul>
             </details>

@@ -16,12 +16,12 @@ export const NOT_STATED = 'Not stated'
 
 export const READINESS_MEANING: Record<Readiness, string> = {
   raw: 'As supplied by the contributor; not processed.',
-  processed: 'Cleaned, reformatted or harmonised by the contributor.',
+  processed: 'Cleaned, reformatted or harmonized by the contributor.',
   validated: 'The contributor reports that it has been quality-checked.',
 }
 
 export const READINESS_NOTE =
-  'The status is declared by the contributor of each dataset; MOSAIC has not verified it. Records from catalogues without this field show "Not stated".'
+  'The status is declared by the contributor of each dataset; MOSAIC has not verified it. Records from catalogs without this field show "Not stated".'
 
 export const isReadiness = (v: unknown): v is Readiness => (READINESS_ORDER as readonly unknown[]).includes(v)
 

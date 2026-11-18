@@ -18,5 +18,5 @@ export const MORE_FILTERS: FilterDef[] = [
   { key: 'data_kind', label: 'Data type' },
   { key: 'access', label: 'Access level' },
   { key: 'license', label: 'License' },
-  { key: 'source', label: 'Catalogue' },
+  { key: 'source', label: 'Catalog' },
 ]

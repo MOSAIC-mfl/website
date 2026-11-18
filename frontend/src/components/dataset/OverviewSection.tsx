@@ -45,7 +45,7 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
       <div className="dp-note">
         <h3>Readiness: {readinessLabel(status)}</h3>
         <p>
-          {isReadiness(status) ? READINESS_MEANING[status] : 'The contributor did not state how far the data has been processed, or its catalogue has no such field.'}{' '}
+          {isReadiness(status) ? READINESS_MEANING[status] : 'The contributor did not state how far the data has been processed, or its catalog has no such field.'}{' '}
           {READINESS_NOTE}
         </p>
         <details>

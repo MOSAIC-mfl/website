@@ -83,7 +83,7 @@ export function DatasetPage({ base }: { base: string }) {
         <div className="empty-state">
           <h3>Dataset not found</h3>
           <p>No dataset has the id “{id}”.</p>
-          <a className="empty-state-clear" href={`${base}/catalogue`}>Back to catalogue</a>
+          <a className="empty-state-clear" href={`${base}/catalogue`}>Back to catalog</a>
         </div>
       </div>
     )
@@ -94,7 +94,7 @@ export function DatasetPage({ base }: { base: string }) {
 
   return (
     <div className="container dp is-tabbed" onClick={onClick}>
-      <Breadcrumb crumbs={[{ label: 'Home', href: `${base}/` }, { label: 'Catalogue', href: `${base}/catalogue` }, { label: title }]} />
+      <Breadcrumb crumbs={[{ label: 'Home', href: `${base}/` }, { label: 'Catalog', href: `${base}/catalogue` }, { label: title }]} />
       <DatasetHeader d={d} labels={labels} base={base} jsonUrl={jsonUrl} />
 
       <nav className="dp-nav" aria-label="Sections of this record">
@@ -117,7 +117,7 @@ export function DatasetPage({ base }: { base: string }) {
         <DatasetSide d={d} labels={labels} base={base} related={related} />
       </div>
 
-      <a className="dp-small dp-back" href={backToCatalogue(base)}>&larr; Back to the catalogue</a>
+      <a className="dp-small dp-back" href={backToCatalogue(base)}>&larr; Back to the catalog</a>
     </div>
   )
 }

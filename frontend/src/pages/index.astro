@@ -22,12 +22,12 @@ const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).siz
 const steps = [
   {
     num: '1', icon: 'search', tint: 'teal', title: 'Find what exists',
-    body: 'Pick a landscape or search by topic. For each place you see what exists across centres, projects and partners, who made it and how ready it is to use.',
-    href: `${base}/catalogue`, link: 'Search the catalogue',
+    body: 'Pick a landscape or search by topic. For each place you see what exists across centers, projects and partners, who made it and how ready it is to use.',
+    href: `${base}/catalogue`, link: 'Search the catalog',
   },
   {
     num: '2', icon: 'link', tint: 'amber', title: 'Go to the source',
-    body: 'Each entry links to where the data is kept, at the organisation that produced it. MOSAIC connects, it does not duplicate: no copies are kept here.',
+    body: 'Each entry links to where the data is kept, at the organization that produced it. MOSAIC connects, it does not duplicate: no copies are kept here.',
     href: `${base}/about#overview`, link: 'More about MOSAIC',
   },
   {
@@ -57,7 +57,7 @@ const audiences = [
         <h1 class="hero-headline">Data and research for living landscapes</h1>
         <p class="hero-sub">
           MOSAIC is the entry point to the data and research produced around each living
-          landscape, by many organisations.
+          landscape, by many organizations.
         </p>
         <p class="hero-support">
           Each piece stays with whoever produced it: MOSAIC describes it, links to it and shows
@@ -86,7 +86,7 @@ const audiences = [
           <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
           <span class="stat-text">
             <span class="stat-number" data-stat="resources">–</span>
-            <span class="stat-label">Datasets catalogued</span>
+            <span class="stat-label">Datasets cataloged</span>
           </span>
         </a>
         <div class="stat-divider" aria-hidden="true"></div>
@@ -123,7 +123,7 @@ const audiences = [
           not one at a time.
         </p>
         <p class="ll-body">
-          The CGIAR Multifunctional Landscapes Science Programme works with local communities,
+          The CGIAR Multifunctional Landscapes Science Program works with local communities,
           governments and partners in {allLandscapes > 0 ? `${allLandscapes} of these landscapes, in ${allCountries} countries` : 'these landscapes'} across
           Latin America, Africa and Asia. Each covers tens of thousands of hectares or more, and is
           where solutions are tried on the ground to learn what works, where and why.
