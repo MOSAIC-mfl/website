@@ -173,7 +173,8 @@ const audiences = [
         {audiences.map((a) => (
           <li>
             <a class="who-item" href={a.href}>
-              <span><strong>{a.who}</strong> {a.what}</span>
+              <span class="who-name">{a.who} <Icon name="arrow-right" size={16} aria-hidden="true" /></span>
+              <span class="who-what">{a.what}</span>
             </a>
           </li>
         ))}
@@ -304,28 +305,44 @@ const audiences = [
   .section-wavy { display: inline-block; color: var(--color-link); }
 
 
-  /* ── "Who is MOSAIC for?" audience grid ─────────────────────── */
+  /* ── "Who is MOSAIC for?" audience rows ─────────────────────
+     Each audience is a link: name in the title serif with an arrow, what they do below,
+     a rule above each row. Three columns, no icons. */
   .who-grid {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-12);
-    max-width: 960px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--space-8);
   }
+  .who-grid li { border-top: 1px solid var(--color-border); }
   .who-item {
     display: flex;
-    gap: var(--space-3);
-    align-items: center;
-    color: var(--color-text);
-    line-height: 1.45;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4) 0 var(--space-6);
+    color: var(--color-muted);
+    line-height: 1.5;
     text-decoration: none;
-    border-radius: var(--radius-md);
   }
-  .who-item:hover { color: var(--color-text); }
-  .who-item:hover strong { text-decoration: underline; }
-  .who-item strong { font-weight: 700; }
+  .who-name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-title);
+    font-size: var(--text-lg);
+    font-weight: 400;
+    color: var(--color-text);
+  }
+  .who-name :global(svg) { color: var(--color-link); transition: transform 150ms ease-out; }
+  .who-item:hover { color: var(--color-muted); }
+  @media (hover: hover) {
+    .who-item:hover .who-name { text-decoration: underline; text-underline-offset: 3px; }
+    .who-item:hover .who-name :global(svg) { transform: translateX(3px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .who-name :global(svg) { transition: none; } }
+  @media (max-width: 900px) { .who-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
   /* ── What is a living landscape? ───────────────────────────── */
