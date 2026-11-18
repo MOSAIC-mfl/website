@@ -2,7 +2,7 @@
 """Build frontend/data/landscape_outlines.json from the canonical MOSAIC
 landscape delineations.
 
-Reads MOSAIC_catalog/boundaries/<CODE>.geojson (one Feature per landscape,
+Reads mosaic-standard/boundaries/<CODE>.geojson (one Feature per landscape,
 EPSG:4326; skips the combined landscapes.geojson) and emits one SVG path
 string per code in the locator map's equirectangular projection:
 
@@ -18,10 +18,11 @@ for a build-time import. Each outline also carries its PROJECTED bbox
 can letterbox the zoom target without re-parsing the path.
 
 Usage:
-    python3 scripts/build_map_outlines.py [path/to/MOSAIC_catalog]
+    python3 scripts/build_map_outlines.py [path/to/mosaic-standard]
 
-The catalog path defaults to the sibling repo layout used in
-MOSAIC_development/ (../../MOSAIC_catalog relative to this repo).
+The path defaults to the sibling repo layout used in MOSAIC_development/
+(../mosaic-standard relative to this repo). The boundaries moved there from
+the catalog repo with the v0.2 rebuild (2026-11-13).
 """
 
 import json
@@ -30,7 +31,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CATALOG = REPO_ROOT.parent.parent / "MOSAIC_catalog"
+DEFAULT_CATALOG = REPO_ROOT.parent / "mosaic-standard"
 OUT_PATH = REPO_ROOT / "frontend" / "data" / "landscape_outlines.json"
 
 MAX_RING_POINTS = 500  # per ring, after subsampling
