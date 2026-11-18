@@ -410,6 +410,17 @@ const audiences = [
   }
 
   /* ── Responsive ────────────────────────────────────────────── */
+  /* Wider than the banner itself (1695 px): stop stretching it, which blurs and
+     oversizes it. It keeps its own size against the right edge and its left
+     edge fades into the sand background. */
+  @media (min-width: 1696px) {
+    .hero-art {
+      left: auto;
+      width: 1695px;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+      mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+    }
+  }
   @media (max-width: 1100px) {
     .hero-content { max-width: 460px; }
     /* narrower screens bring the hills up under the text: soften them there */
