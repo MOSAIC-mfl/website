@@ -157,7 +157,7 @@
   --access-internal:    #6B7280;
 
   /* ── Tints (pale circle/band backgrounds + matching icon colour) ────────
-     Shared by IconChip, ContentCard, StatCard, StepTimeline, CtaBand, etc.
+     Shared by ContentCard, StepTimeline, CtaBand, etc.
      Select via data-tint="teal|amber|terracotta|light-teal". */
   --tint-teal-bg:        #D6EEF2;  --tint-teal-fg:        #0D5C6B;
   --tint-amber-bg:       #F6E7CE;  --tint-amber-fg:       #935B14;

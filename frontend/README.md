@@ -15,9 +15,10 @@ cdh-catalog (and others) ──────────────────�
 A change in the catalogue is visible on the website as soon as the API is republished;
 the website only needs rebuilding when its own code changes.
 
-**Landscape pages.** Every living landscape has a page, `/landscapes/<code>/` (e.g.
-`/landscapes/ken-lvb/`): the site header, then the sections its profile lists (written in
-mosaic-catalog, served by the API). Lake Victoria shows the **Basin Explorer** by Andrés Aguilar,
+**Landscapes.** All living landscapes are on one page, `/landscapes/` (one opens at
+`/landscapes#CODE`). A landscape with a map profile also has a full-screen map,
+`/landscapes/<code>/map/` (e.g. `/landscapes/ken-lvb/map/`), with the sections its profile lists
+(written in the catalog repository, served by the API). Lake Victoria shows the **Basin Explorer** by Andrés Aguilar,
 rebuilt here as a reusable map explorer with the same layout, layers, legends, story and studies.
 How it is built and how to add a profile: [docs/landscape-profiles.md](docs/landscape-profiles.md).
 

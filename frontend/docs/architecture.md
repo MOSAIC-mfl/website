@@ -55,8 +55,9 @@ pages (Astro)  ──▶  components (React, presentational)
   and "Perú" match in search, filters and ids.
 * **Filter values** are resolved by id or label; unknown values produce a warning shown to
   the user instead of an empty page.
-* **Facets and statuses** come from the API vocabulary (`/v1/labels`), not from lists in the
-  website.
+* **Facets and statuses**: the counts come from the API records; the labels are the website's own
+  (`lib/domain/vocab-labels.ts`, generated from the standard's vocabularies; see Filters above).
+  The API has no labels endpoint.
 
 ## 4. URLs
 
@@ -88,4 +89,4 @@ read from the API in the browser:
 
 `npm run lint`, `npm run typecheck`, `npm test` (Vitest: domain rules and both adapters
 against fixtures), `npm run build`, and a check that generated types match the contract
-(`.github/workflows/ci.yml`).
+(`.github/workflows/lint-frontend.yml`).

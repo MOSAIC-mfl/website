@@ -60,13 +60,14 @@ website/
 ├── .github/
 │   ├── workflows/
 │   │   ├── deploy-pages.yml    # build frontend/ and publish on Pages (push to main)
-│   │   └── lint-frontend.yml   # contract types, lint, typecheck, tests, build (PRs and main)
+│   │   ├── lint-frontend.yml   # contract types, lint, typecheck, tests, build (PRs and main)
+│   │   └── validate-data.yml   # checks the site's own data files (scripts/validate_site_data.py)
 │   ├── ISSUE_TEMPLATE/         # bug, content fix, dataset request
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── dependabot.yml          # weekly grouped updates: npm (frontend/) and the pinned actions
 ├── frontend/                   # the site: Astro + React (README inside)
 │   ├── src/
-│   │   ├── pages/              # site pages, dataset page, landscape pages /landscapes/<code>/
+│   │   ├── pages/              # site pages, dataset page, Landscapes, map profiles /landscapes/<code>/map/
 │   │   ├── lib/                # domain rules, catalogue repository (static / live API), generated API types
 │   │   ├── features/           # landscape page sections, map explorer engine
 │   │   ├── profiles/           # landscape profile plugins (ken-lvb)
@@ -76,9 +77,9 @@ website/
 │   ├── docs/                   # architecture, decisions (adr/), landscape profiles
 │   ├── scripts/ tests/ public/
 │   └── package.json
-├── scripts/
-│   └── build_map_outlines.py   # frontend/data/landscape_outlines.json from the catalogue boundaries
-├── docs/history/               # earlier planning notes
+├── scripts/                    # build_map_outlines.py, build_landscape_geo.py, build_map_labels.py
+│                               # (map data in frontend/data/ from the boundaries in mosaic-standard),
+│                               # validate_site_data.py, parity_diff.sh
 └── .nvmrc                      # Node 22
 ```
 
@@ -87,7 +88,7 @@ website/
 ## Where the catalogue comes from
 
 The website holds no dataset list. The records live in
-[MOSAIC-mfl/catalog](https://github.com/MOSAIC-mfl/catalog) (MOSAIC metadata standard v0.1),
+[MOSAIC-mfl/catalog](https://github.com/MOSAIC-mfl/catalog) (MOSAIC metadata standard v0.2),
 [mosaic-api](https://github.com/MOSAIC-mfl/mosaic-api) harvests them (and other catalogues, such
 as the CGIAR Climate Data Hub) and publishes a static JSON API on GitHub Pages, and the pages read
 that API when they open. A change in the catalogue shows on the site once the API is republished,
@@ -97,7 +98,7 @@ To add or update a dataset, open a pull request on the catalog repository, or us
 "Register a new dataset" issue form. Non-technical contributors can also open a
 [Dataset catalogue update issue](https://github.com/MOSAIC-mfl/website/issues/new?template=dataset_update.yml) here.
 
-Landscape pages (`/landscapes/<code>/`) are described by profiles in the catalog repository
+Landscape map profiles (`/landscapes/<code>/map/`) are described by profiles in the catalog repository
 (`landscapes/<CODE>/`); see [frontend/docs/landscape-profiles.md](frontend/docs/landscape-profiles.md).
 
 ---
@@ -110,7 +111,7 @@ For code or content changes:
 3. Ensure `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass
 4. Open a pull request using the PR template
 
-All PRs require at least one review before merging to `main`.
+`main` is protected: the checks `lint` and `validate` must pass. No approving review is required.
 
 ---
 
@@ -119,11 +120,9 @@ All PRs require at least one review before merging to `main`.
 | Branch | Purpose | Protected |
 |---|---|---|
 | `main` | Production — always deployable | Yes |
-| `feature/*` | New features or pages | No |
-| `fix/*` | Bug fixes | No |
-| `hotfix/*` | Urgent production fixes | No |
+| `<your-name>/<short-topic>` | Any change, merged by squash through a pull request | No |
 
-Delete branches after merge.
+GitHub deletes the branch on merge.
 
 ---
 

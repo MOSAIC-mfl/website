@@ -22,8 +22,9 @@ async function datasetIds(): Promise<string[]> {
       ids.push(...items.map((i) => i.id))
       if (items.length === 0 || ids.length >= total) break
     }
-  } catch {
-    /* API unreachable at build time: main pages only */
+  } catch (err) {
+    // API unreachable at build time: main pages only. Say so, or the build looks complete.
+    console.warn(`sitemap: the API could not be read, so no dataset address is listed (${String(err)})`)
   }
   return ids
 }

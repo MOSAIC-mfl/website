@@ -2,7 +2,7 @@
 """Build frontend/data/landscape_geo.json for the Landscapes page explorer.
 
 Inputs (both outside this repo, in the MOSAIC_development/ layout):
-  - MOSAIC_catalog/boundaries/<CODE>.geojson — canonical delineations (EPSG:4326)
+  - mosaic-standard/boundaries/<CODE>.geojson — canonical delineations (EPSG:4326)
   - MOSAIC_LLV_delim/for global map/ne_50m_countries.geojson — Natural Earth
     1:50m admin-0 countries (public domain)
 
@@ -28,7 +28,7 @@ from shapely.geometry import MultiPolygon, Polygon, box
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEV_ROOT = REPO_ROOT.parent
-BOUNDARIES = DEV_ROOT / "MOSAIC_catalog" / "boundaries"
+BOUNDARIES = DEV_ROOT / "mosaic-standard" / "boundaries"
 COUNTRIES = DEV_ROOT / "MOSAIC_LLV_delim" / "for global map" / "ne_50m_countries.geojson"
 LANDSCAPES = REPO_ROOT / "frontend" / "data" / "landscapes.json"
 OUT_PATH = REPO_ROOT / "frontend" / "data" / "landscape_geo.json"
