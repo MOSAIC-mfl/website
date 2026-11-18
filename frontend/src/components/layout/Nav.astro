@@ -1,15 +1,27 @@
 ---
 import Icon from '../ui/Icon.astro'
+import landscapes from '../../../data/landscapes.json'
 
 const base = import.meta.env.BASE_URL
 const currentPath = Astro.url.pathname
 
 const navLinks = [
   { href: `${base}/`, label: 'Home', exact: true },
-  { href: `${base}/landscapes`, label: 'Landscapes' },
+  { href: `${base}/landscapes`, label: 'Landscapes', menu: true },
   { href: `${base}/catalogue`, label: 'Catalog' },
   { href: `${base}/about`, label: 'About' },
 ]
+
+// Landscapes with a map viewer today. Whether a landscape has one is read from the API
+// when its map page opens, but this menu is built with the site: add a code here when
+// a new viewer is published. The others are listed as "Soon" (Lizeth, 2026-11-18).
+const MAP_VIEWERS = ['KEN-LVB', 'PER-PCL']
+const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)
+const viewers = landscapes
+  .filter((l) => MAP_VIEWERS.includes(l.code))
+  .sort(byName)
+  .map((l) => ({ name: l.name, href: `${base}/landscapes/${l.code.toLowerCase()}/map/` }))
+const soonViewers = landscapes.filter((l) => !MAP_VIEWERS.includes(l.code)).sort(byName)
 
 // Home must match exactly, otherwise it would light up on every page
 // (every path starts with the base path).
@@ -23,7 +35,29 @@ function isActive(href: string, exact = false) {
 <!-- Desktop nav (the skip-to-content link lives in Header.astro, ahead of the logo) -->
 <nav aria-label="Main navigation" class="main-nav">
   <ul class="nav-list">
-    {navLinks.map(link => (
+    {navLinks.map(link => link.menu ? (
+      <li class="nav-dd">
+        <button
+          type="button"
+          class="nav-link nav-dd-btn"
+          aria-expanded="false"
+          aria-controls="nav-landscapes-menu"
+          data-active={isActive(link.href) ? 'true' : undefined}
+        >{link.label} <Icon name="chevron-down" size={14} aria-hidden="true" /></button>
+        <div class="nav-dd-panel" id="nav-landscapes-menu" hidden>
+          <a class="nav-dd-link nav-dd-all" href={link.href}>All landscapes</a>
+          <p class="nav-dd-head" id="nav-mv-head">Map viewers</p>
+          <ul class="nav-dd-list" aria-labelledby="nav-mv-head">
+            {viewers.map((v) => (
+              <li><a class="nav-dd-link" href={v.href}>{v.name}</a></li>
+            ))}
+            {soonViewers.map((l) => (
+              <li class="nav-dd-soon"><span>{l.name}</span> <span class="nav-dd-tag">Soon</span></li>
+            ))}
+          </ul>
+        </div>
+      </li>
+    ) : (
       <li>
         <a
           href={link.href}
@@ -77,6 +111,19 @@ function isActive(href: string, exact = false) {
           class="mobile-nav-link"
           aria-current={isActive(link.href, link.exact) ? 'page' : undefined}
         >{link.label}</a>
+        {link.menu && (
+          <div class="mobile-mv">
+            <p class="mobile-mv-head" id="mobile-mv-head">Map viewers</p>
+            <ul class="mobile-mv-list" aria-labelledby="mobile-mv-head">
+              {viewers.map((v) => (
+                <li><a class="mobile-nav-link mobile-mv-link" href={v.href}>{v.name}</a></li>
+              ))}
+              {soonViewers.map((l) => (
+                <li class="mobile-mv-soon"><span>{l.name}</span> <span class="nav-dd-tag">Soon</span></li>
+              ))}
+            </ul>
+          </div>
+        )}
       </li>
     ))}
     <li>
@@ -220,6 +267,73 @@ function isActive(href: string, exact = false) {
     font-weight: 600;
   }
 
+  /* ── Landscapes dropdown: all landscapes + the map viewers ── */
+  .nav-dd { position: relative; }
+  .nav-dd-btn :global(svg) { transition: transform 0.15s; }
+  .nav-dd-btn[aria-expanded='true'] :global(svg) { transform: rotate(180deg); }
+  .nav-dd-btn[data-active='true'] {
+    color: var(--color-white);
+    border-bottom-color: var(--mosaic-light-teal);
+    font-weight: 600;
+  }
+  /* White panel in both themes, like the mobile menu: brand colours that never flip. */
+  .nav-dd-panel {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: calc(-1 * var(--space-4));
+    z-index: 200;
+    width: 340px;
+    max-height: calc(100vh - var(--header-offset));
+    overflow-y: auto;
+    padding: var(--space-2) 0;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+  }
+  .nav-dd-panel[hidden] { display: none; }
+  .nav-dd-list { list-style: none; margin: 0; padding: 0; }
+  .nav-dd-link {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: var(--space-2) var(--space-4);
+    color: var(--mosaic-ink);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .nav-dd-link:hover { background-color: var(--mosaic-sand); color: var(--mosaic-teal); }
+  .nav-dd-link:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
+  .nav-dd-all { font-weight: 600; }
+  .nav-dd-head {
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2) var(--space-4) var(--space-1);
+    border-top: 1px solid var(--color-gray-200);
+    color: var(--mosaic-grey-text);
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+  .nav-dd-soon,
+  .mobile-mv-soon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--mosaic-grey-text);
+    font-size: var(--text-sm);
+  }
+  .nav-dd-soon { padding: var(--space-1) var(--space-4); }
+  .nav-dd-tag {
+    flex-shrink: 0;
+    padding: 0.05rem var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--tint-amber-bg);
+    color: var(--tint-amber-fg);
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+
   /* ── "Contribute" button in the bar ─────────────────── */
   .nav-cta {
     display: inline-flex;
@@ -319,6 +433,19 @@ function isActive(href: string, exact = false) {
     padding-left: calc(var(--space-6) - 3px);
   }
 
+  /* Map viewers under Landscapes in the mobile menu, indented */
+  .mobile-mv { padding: 0 0 var(--space-2) var(--space-6); }
+  .mobile-mv-head {
+    margin: 0;
+    padding: var(--space-1) var(--space-6) var(--space-1) var(--space-4);
+    color: var(--mosaic-grey-text);
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+  .mobile-mv-list { list-style: none; margin: 0; padding: 0; }
+  .mobile-mv-link { padding-left: var(--space-4); font-size: var(--text-sm); }
+  .mobile-mv-soon { padding: var(--space-1) var(--space-6) var(--space-1) var(--space-4); }
+
   .mobile-menu-cobrand {
     margin-top: var(--space-4);
     padding: var(--space-4) var(--space-6) 0;
@@ -368,6 +495,32 @@ function isActive(href: string, exact = false) {
 </style>
 
 <script>
+  // Landscapes dropdown (a disclosure: a button that shows a panel of links).
+  // Click toggles it; Escape, a click outside or Tab out of it closes it.
+  document.querySelectorAll<HTMLElement>('.nav-dd').forEach((dd) => {
+    const btn = dd.querySelector<HTMLButtonElement>('.nav-dd-btn')
+    const panel = dd.querySelector<HTMLElement>('.nav-dd-panel')
+    if (!btn || !panel) return
+    const isOpen = () => btn.getAttribute('aria-expanded') === 'true'
+    const setOpen = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open))
+      panel.hidden = !open
+    }
+    btn.addEventListener('click', () => setOpen(!isOpen()))
+    document.addEventListener('click', (e) => {
+      if (isOpen() && !dd.contains(e.target as Node)) setOpen(false)
+    })
+    dd.addEventListener('focusout', (e) => {
+      if (isOpen() && !dd.contains(e.relatedTarget as Node | null)) setOpen(false)
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        setOpen(false)
+        btn.focus()
+      }
+    })
+  })
+
   // Hamburger: toggle mobile menu
   const hamburger = document.getElementById('hamburger-btn')
   const mobileMenu = document.getElementById('mobile-menu')
