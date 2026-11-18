@@ -448,11 +448,11 @@ const codes = items.map((it) => it.code)
         <h3 class="lx-facts-title">At a glance</h3>
         <ul class="lx-fact-list">
           <li class="lx-fact">
-            <span class="lx-fact-ic t-teal"><Icon name="mountains" size={22} /></span>
+            <span class="lx-fact-ic"><Icon name="mountains" size={22} /></span>
             <span><strong>Area</strong><span data-f="area">{first.area}</span></span>
           </li>
           <li class="lx-fact is-wide">
-            <span class="lx-fact-ic t-light"><Icon name="grid" size={22} /></span>
+            <span class="lx-fact-ic"><Icon name="grid" size={22} /></span>
             <div class="lx-cov">
               <strong>Data coverage</strong>
               <div class="lx-cov-row">
@@ -481,15 +481,15 @@ const codes = items.map((it) => it.code)
             </div>
           </li>
           <li class="lx-fact" data-row="ecosystem" hidden={!first.ecosystem}>
-            <span class="lx-fact-ic t-amber"><Icon name="leaf" size={22} /></span>
+            <span class="lx-fact-ic"><Icon name="leaf" size={22} /></span>
             <span><strong>Ecosystems</strong><span data-f="ecosystem">{first.ecosystem}</span></span>
           </li>
           <li class="lx-fact" data-row="livelihoods" hidden={!first.livelihoods}>
-            <span class="lx-fact-ic t-terra"><Icon name="users" size={22} /></span>
+            <span class="lx-fact-ic"><Icon name="users" size={22} /></span>
             <span><strong>People and livelihoods</strong><span data-f="livelihoods">{first.livelihoods}</span></span>
           </li>
           <li class="lx-fact" data-row="why" hidden={!first.why}>
-            <span class="lx-fact-ic t-light"><Icon name="sparkles" size={22} /></span>
+            <span class="lx-fact-ic"><Icon name="sparkles" size={22} /></span>
             <span><strong>Why it matters</strong><span data-f="why">{first.why}</span></span>
           </li>
         </ul>
@@ -672,7 +672,7 @@ const codes = items.map((it) => it.code)
   .lx-ip:hover .lx-ip-body, .lx-ip:focus-visible .lx-ip-body { transform: scale(1.5); }
   .lx-ip:hover .lx-ip-name, .lx-ip:focus-visible .lx-ip-name { opacity: 1; }
   .lx-ip:focus-visible .lx-ip-halo { opacity: 0.45; }
-  @keyframes lx-ip-in { from { transform: scale(0); opacity: 0; } 60% { transform: scale(1.3); opacity: 1; } to { transform: none; opacity: 1; } }
+  @keyframes lx-ip-in { from { transform: scale(0); opacity: 0; } to { transform: none; opacity: 1; } }
   .lx-body.is-arriving { animation: lx-arrive 0.55s cubic-bezier(0.2, 0.7, 0.2, 1); }
   @keyframes lx-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (max-width: 767px) {
@@ -719,8 +719,9 @@ const codes = items.map((it) => it.code)
   .lx-secnav a[aria-current='true'] :global(svg) { color: var(--mosaic-teal); }
   .lx-secnav a[aria-current='true']::before {
     content: ''; position: absolute; left: -12px; top: 12%; bottom: 12%; width: 4px;
-    border-radius: var(--radius-full); background: var(--mosaic-amber);
+    border-radius: var(--radius-full); background: var(--mosaic-teal);
   }
+  :global([data-theme='dark']) .lx-secnav a[aria-current='true']::before { background: var(--mosaic-light-teal); }
   .lx-sec-label { flex: 1; min-width: 0; white-space: nowrap; }
   .lx-sec-soon {
     padding: 0.05rem var(--space-2); border-radius: var(--radius-full);
@@ -751,9 +752,9 @@ const codes = items.map((it) => it.code)
   :global([data-theme='dark']) .lx-soon-actions .btn-secondary { color: var(--mosaic-light-teal); border-color: var(--mosaic-light-teal); }
 
   /* ---------- other resources ---------- */
-  .lx-res-title { font-size: var(--text-2xl); margin: 0 0 var(--space-2); }
+  .lx-res-title { font-size: var(--text-2xl); margin: 0 0 var(--space-2); font-family: var(--font-title); font-weight: 400; letter-spacing: 0; }
   .lx-res-title .lx-soon-for { display: inline; font-size: var(--text-lg); margin: 0; }
-  .lx-res-sub { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 70ch; }
+  .lx-res-sub { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: var(--measure); }
   /* Map visualization: title and full-screen link above the embedded map profile */
   .lx-mapviz-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
   .lx-mapviz-head .lx-res-sub { margin-bottom: var(--space-4); }
@@ -878,7 +879,7 @@ const codes = items.map((it) => it.code)
     position: relative;
     width: 10px; height: 10px; min-width: 0; min-height: 0; padding: 0; border-radius: var(--radius-full);
     border: 2px solid var(--color-white); background: transparent; cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(28, 43, 58, 0.4);
     transition: background-color 0.25s, transform 0.25s;
   }
   .lx-photo :global(.lx-dot.is-on) { background: var(--color-white); transform: scale(1.2); }
@@ -889,13 +890,13 @@ const codes = items.map((it) => it.code)
     width: 36px; height: 36px; display: grid; place-items: center; padding: 0;
     border: 0; border-radius: var(--radius-full); cursor: pointer;
     background: rgba(255, 255, 255, 0.85); color: var(--mosaic-ink);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 6px rgba(28, 43, 58, 0.25);
     opacity: 0; transition: opacity 0.2s ease, background-color 0.2s;
   }
   .lx-nav[hidden] { display: none; }
   .lx-photo:hover .lx-nav, .lx-nav:focus-visible { opacity: 1; }
   .lx-nav:hover { background: var(--color-white); }
-  .lx-nav:focus-visible { outline: 2px solid var(--mosaic-amber); outline-offset: 2px; }
+  .lx-nav:focus-visible { outline: 2px solid var(--color-white); outline-offset: 2px; }
   .lx-prev { left: var(--space-3); }
   .lx-prev :global(svg) { transform: rotate(180deg); }
   .lx-next { right: var(--space-3); }
@@ -975,7 +976,7 @@ const codes = items.map((it) => it.code)
   .lx-pin-dot { fill: var(--color-white); stroke: var(--mosaic-teal); stroke-width: 2.5; }
   .lx-pin-ring { fill: var(--mosaic-teal); }
   .lx-pin-pulse { fill: var(--mosaic-teal); opacity: 0.25; transform-origin: center; transform-box: fill-box; animation: lx-pulse 2s ease-out 2; }
-  .lx-pin.is-drop { animation: lx-drop 0.5s cubic-bezier(.3,1.6,.5,1); transform-box: fill-box; }
+  .lx-pin.is-drop { animation: lx-drop 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); transform-box: fill-box; }
   .lx-map-label {
     position: absolute; left: 50%; top: var(--space-4); transform: translateX(-50%);
     font-size: var(--text-xs); letter-spacing: 0.25em; text-transform: uppercase; font-weight: 700;
@@ -1026,11 +1027,8 @@ const codes = items.map((it) => it.code)
   .lx-fact[hidden] { display: none; }
   .lx-fact > span:last-child { display: flex; flex-direction: column; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.45; }
   .lx-fact strong { font-family: var(--font-title); font-size: var(--text-lg); font-weight: 400; color: var(--color-text); }
-  .lx-fact-ic { width: 44px; height: 44px; border-radius: var(--radius-full); display: grid; place-items: center; }
-  .t-teal { background: var(--tint-teal-bg); color: var(--tint-teal-fg); }
-  .t-amber { background: var(--tint-amber-bg); color: var(--tint-amber-fg); }
-  .t-terra { background: var(--tint-terracotta-bg); color: var(--tint-terracotta-fg); }
-  .t-light { background: var(--tint-light-teal-bg); color: var(--tint-light-teal-fg); }
+  /* neutral discs: amber and terracotta carry meaning elsewhere (readiness, access) */
+  .lx-fact-ic { width: 44px; height: 44px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--color-gray-100); color: var(--color-gray-700); }
   /* data coverage: ring + open-access figure + legend, missing themes folded below */
   .lx-cov { min-width: 0; font-size: var(--text-sm); color: var(--color-muted); }
   .lx-cov-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); margin-top: var(--space-3); }
@@ -1074,7 +1072,7 @@ const codes = items.map((it) => it.code)
   .lx-foot {
     margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--color-border);
   }
-  .lx-summary { margin: var(--space-3) 0 0; color: var(--color-muted); max-width: 75ch; }
+  .lx-summary { margin: var(--space-3) 0 0; color: var(--color-muted); max-width: var(--measure); }
   .lx-summary:empty { display: none; }
   /* the three actions on one line (they wrap only on narrow screens) */
   .lx-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: flex-start; }

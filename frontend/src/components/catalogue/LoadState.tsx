@@ -7,12 +7,17 @@ export function Loading({ what = 'datasets' }: { what?: string }) {
   )
 }
 
-export function LoadError({ error, onRetry }: { error: Error; onRetry: () => void }) {
+/** Says what failed and what to do; the raw message (status code, network error) is folded away. */
+export function LoadError({ error, onRetry, what = 'Datasets' }: { error: Error; onRetry: () => void; what?: string }) {
   return (
     <div className="empty-state" role="alert">
-      <h3>The catalog could not be loaded</h3>
-      <p>{error.message}</p>
+      <h3>{what} not loaded</h3>
+      <p>MOSAIC could not reach its catalog. Check your connection and try again.</p>
       <button type="button" className="empty-state-clear" onClick={onRetry}>Try again</button>
+      <details className="empty-state-detail">
+        <summary>Technical detail</summary>
+        <p>{error.message}</p>
+      </details>
     </div>
   )
 }

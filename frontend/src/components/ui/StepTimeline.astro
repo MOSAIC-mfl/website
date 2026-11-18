@@ -45,19 +45,20 @@ const { steps, tint = 'teal' } = Astro.props
   .step-timeline[data-tint='terracotta'] { --chip-bg: var(--tint-terracotta-bg); --chip-fg: var(--tint-terracotta-fg); }
   .step-timeline[data-tint='light-teal'] { --chip-bg: var(--tint-light-teal-bg); --chip-fg: var(--tint-light-teal-fg); }
 
+  /* Left-aligned: multi-line text reads faster from a fixed left edge than centred. */
   .step {
     position: relative;
-    text-align: center;
+    text-align: start;
     padding-top: var(--space-2);
   }
 
-  /* Dotted connector between adjacent markers (markers are 64px, centred). */
+  /* Dotted connector from one marker to the next (markers are 64px, at the start of each column). */
   .step:not(:last-child)::after {
     content: '';
     position: absolute;
     top: 40px;
-    left: calc(50% + 38px);
-    right: calc(-50% + 38px);
+    left: calc(64px + 12px);
+    right: calc(12px - var(--space-4));
     border-top: 2px dotted var(--color-border);
     z-index: 0;
   }
@@ -66,7 +67,7 @@ const { steps, tint = 'teal' } = Astro.props
     position: relative;
     width: 64px;
     height: 64px;
-    margin: 0 auto var(--space-3);
+    margin: 0 0 var(--space-3);
   }
 
   .step-icon {

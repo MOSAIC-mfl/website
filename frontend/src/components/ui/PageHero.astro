@@ -148,7 +148,7 @@ const hasArt = Astro.slots.has('art')
   /* Family, Light weight, tracking and line height: the h1 defaults in global.css. */
   .page-hero-title {
     font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-6);
   }
 
   .page-hero--dark .page-hero-title { color: var(--color-white); }
@@ -173,7 +173,7 @@ const hasArt = Astro.slots.has('art')
   .page-hero--dark .page-hero-subtitle { color: var(--mosaic-light-teal); }
   /* Fixed grey (not a theming token) — the light hero stays dark-on-sand in
      both colour themes, so the subtitle must never invert. */
-  .page-hero--light .page-hero-subtitle { color: #4B5563; }
+  .page-hero--light .page-hero-subtitle { color: var(--mosaic-grey-text); }
 
   /* ── Art slot (full-bleed, right-anchored) ────────────── */
   .page-hero-art {

@@ -15,10 +15,10 @@ const catalogIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
 const hasPhoto = existsSync(fileURLToPath(new URL('../../../public/illustrations/lizeth-llanos.jpg', import.meta.url)))
 
 const issueCards = [
-  { icon: 'alert-circle', title: 'Report a problem', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
-  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalog entry.' },
-  { icon: 'file', title: 'Fix content', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
-  { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
+  { icon: 'alert-circle', title: 'Report a problem', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
+  { icon: 'file-text', title: 'Correct a dataset', href: catalogIssueUrl, body: 'Update or fix the information in a catalog entry.' },
+  { icon: 'file', title: 'Fix content', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
+  { icon: 'sparkles', title: 'Suggest an idea', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
 ] as const
 
 // The coordinator's institutional address (Lizeth, 2026-11-12), until a shared
@@ -53,7 +53,7 @@ const mailLinks = [
 <p class="gt-lead gt-direct-lead">If you use GitHub, an issue reaches the team directly:</p>
 <div class="gt-cards">
   {issueCards.map((c) => (
-    <ContentCard icon={c.icon} title={c.title} tint={c.tint} href={c.href} target="_blank" arrow>
+    <ContentCard icon={c.icon} title={c.title} href={c.href} target="_blank" arrow>
       {c.body}
     </ContentCard>
   ))}

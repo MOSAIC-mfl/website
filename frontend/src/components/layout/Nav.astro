@@ -39,7 +39,7 @@ function isActive(href: string, exact = false) {
   <button
     type="button"
     class="theme-toggle js-theme-toggle"
-    aria-label="Switch to dark theme"
+    aria-label="Dark theme"
     aria-pressed="false"
   >
     <Icon name="sun" size={20} aria-hidden="true" />
@@ -86,12 +86,11 @@ function isActive(href: string, exact = false) {
   <button
     type="button"
     class="theme-toggle theme-toggle-mobile js-theme-toggle"
-    aria-label="Switch to dark theme"
     aria-pressed="false"
   >
     <Icon name="sun" size={20} aria-hidden="true" />
     <Icon name="moon" size={20} aria-hidden="true" />
-    <span class="theme-toggle-label">Switch theme</span>
+    <span class="theme-toggle-label">Dark theme</span>
   </button>
 
   <!-- CGIAR / MFL co-branding: on mobile the lockup lives here instead of the
@@ -276,7 +275,7 @@ function isActive(href: string, exact = false) {
     z-index: 200;
     border-top: 1px solid var(--color-gray-200);
     border-bottom: 2px solid var(--color-cgiar-teal);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 24px rgba(28, 43, 58, 0.08);
     padding: var(--space-4) 0 var(--space-6);
   }
 
@@ -374,22 +373,19 @@ function isActive(href: string, exact = false) {
   const mobileMenu = document.getElementById('mobile-menu')
 
   if (hamburger && mobileMenu) {
-    hamburger.addEventListener('click', () => {
-      const open = hamburger.getAttribute('aria-expanded') === 'true'
-      hamburger.setAttribute('aria-expanded', String(!open))
-      hamburger.setAttribute('aria-label', open ? 'Open navigation menu' : 'Close navigation menu')
-      mobileMenu.hidden = open
-      // swap icon paths
-      const openPaths = hamburger.querySelectorAll('.hamburger-open')
-      const closePaths = hamburger.querySelectorAll('.hamburger-close')
-      openPaths.forEach(p => ((p as HTMLElement).style.display = open ? '' : 'none'))
-      closePaths.forEach(p => ((p as HTMLElement).style.display = open ? 'none' : ''))
-    })
+    // One place sets the state, so the button's name, icon and the menu always agree.
+    const setOpen = (open: boolean) => {
+      hamburger.setAttribute('aria-expanded', String(open))
+      hamburger.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu')
+      mobileMenu.hidden = !open
+      hamburger.querySelectorAll('.hamburger-open').forEach(p => ((p as HTMLElement).style.display = open ? 'none' : ''))
+      hamburger.querySelectorAll('.hamburger-close').forEach(p => ((p as HTMLElement).style.display = open ? '' : 'none'))
+    }
+    hamburger.addEventListener('click', () => setOpen(hamburger.getAttribute('aria-expanded') !== 'true'))
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && hamburger.getAttribute('aria-expanded') === 'true') {
-        hamburger.setAttribute('aria-expanded', 'false')
-        mobileMenu.hidden = true
+        setOpen(false)
         hamburger.focus()
       }
     })

@@ -105,7 +105,6 @@ const sections = [
 
   /* sections */
   /* clears the sticky site header (and the chip row on phones) when arriving via #section */
-  .ab-sec { scroll-margin-top: 7rem; }
   .ab-sec + .ab-sec { margin-top: var(--space-16); }
   /* With JavaScript, only the chosen section is shown */
   .ab.is-tabs .ab-sec + .ab-sec { margin-top: 0; }
@@ -144,7 +143,7 @@ const sections = [
     .ab-nav a :global(svg) { display: none; }
     .ab-nav a { white-space: nowrap; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-full); }
     .ab-nav a[aria-current='true']::before { display: none; }
-    .ab-sec { scroll-margin-top: 9.5rem; }
+    .ab-sec { scroll-margin-top: 3.5rem; } /* + --header-offset: clears the sticky chip row too */
   }
   @media (prefers-reduced-motion: reduce) {
     .ab.is-tabs .ab-sec.is-on { animation: none; }

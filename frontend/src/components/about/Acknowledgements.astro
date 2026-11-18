@@ -51,9 +51,12 @@ const acknowledgements = [
 
 <style>
   .ack-lead { color: var(--color-muted); margin: 0 0 var(--space-6); max-width: 62ch; }
-  .ack-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+  /* One row per partner (logo left, text right), so every text starts at the same height;
+     the 3-up grid left the texts at three different heights (review 2026-11-18). */
+  .ack-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   .ack-card {
-    display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6);
+    display: grid; grid-template-columns: 200px minmax(0, 1fr); grid-template-rows: auto 1fr;
+    column-gap: var(--space-6); row-gap: var(--space-2); align-items: start; padding: var(--space-6);
     background-color: var(--color-surface); border: 1px solid var(--color-border);
     border-radius: var(--radius-card); box-shadow: var(--shadow-card);
   }
@@ -62,6 +65,7 @@ const acknowledgements = [
   .ack-logo {
     display: flex; align-items: center; justify-content: flex-start;
     background-color: var(--color-white); border-radius: var(--radius-md); padding: var(--space-4); min-height: 104px;
+    grid-row: 1 / span 2;
   }
   /* Sized by width so the three horizontal lockups read at a comparable optical
      weight, with a height cap for the taller (two-square) ones. */
@@ -72,6 +76,8 @@ const acknowledgements = [
   .ack-note a { color: var(--color-link); }
   /* Ocean Teal is too dark to read on the dark surface — use the light tint of
      the same brand colour there (the accent itself is never restyled). */
-  @media (max-width: 1023px) { .ack-cards { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 767px) { .ack-cards { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .ack-card { grid-template-columns: minmax(0, 1fr); }
+    .ack-logo { grid-row: auto; }
+  }
 </style>

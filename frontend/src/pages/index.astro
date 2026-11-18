@@ -21,17 +21,17 @@ const allCountries = new Set(Object.values(geo).flatMap((l) => l.countries)).siz
 // The journey, in the language of About › What MOSAIC is (connect / integrate / support).
 const steps = [
   {
-    num: '1', icon: 'search', tint: 'teal', title: 'Find what exists',
+    num: '1', icon: 'search', title: 'Find what exists',
     body: 'Pick a landscape or search by topic. For each place you see what exists across centers, projects and partners, who made it and how ready it is to use.',
     href: `${base}/catalogue`, link: 'Search the catalog',
   },
   {
-    num: '2', icon: 'link', tint: 'amber', title: 'Go to the source',
+    num: '2', icon: 'link', title: 'Go to the source',
     body: 'Each entry links to where the data is kept, at the organization that produced it. MOSAIC connects, it does not duplicate: no copies are kept here.',
     href: `${base}/about#overview`, link: 'More about MOSAIC',
   },
   {
-    num: '3', icon: 'upload', tint: 'terracotta', title: 'Add your own',
+    num: '3', icon: 'upload', title: 'Add your own',
     body: 'Register a dataset in a few minutes so others can find it and build on it. Open to anyone working on these places. Research and knowledge resources are coming next.',
     href: `${base}/about#contribute`, link: 'How to contribute',
   },
@@ -53,7 +53,7 @@ const audiences = [
   <!-- ── Hero ──────────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="container hero-inner">
-      <div class="hero-content" data-reveal-stagger>
+      <div class="hero-content">
         <h1 class="hero-headline">Data and research for living landscapes</h1>
         <p class="hero-sub">
           MOSAIC is the entry point to the data and research produced around each living
@@ -78,34 +78,23 @@ const audiences = [
     </div>
   </section>
 
-  <!-- ── Stats bar (floating card) ─────────────────────────────────── -->
+  <!-- ── Figures: an open line, not three dashboard tiles (review 2026-11-18) ── -->
   <section class="stats-section">
     <div class="container">
-      <div class="stats-card" data-reveal-stagger>
-        <a class="stat-item" href={`${base}/catalogue`}>
-          <span class="stat-icon" aria-hidden="true"><Icon name="database" size={24} /></span>
-          <span class="stat-text">
-            <span class="stat-number" data-stat="resources">–</span>
-            <span class="stat-label">Datasets cataloged</span>
-          </span>
-        </a>
-        <div class="stat-divider" aria-hidden="true"></div>
-        <a class="stat-item" href={`${base}/landscapes`}>
-          <span class="stat-icon" aria-hidden="true"><Icon name="mountains" size={24} /></span>
-          <span class="stat-text">
-            <span class="stat-number" data-stat="landscapes">–</span>
-            <span class="stat-label">Landscapes with data</span>
-          </span>
-        </a>
-        <div class="stat-divider" aria-hidden="true"></div>
-        <a class="stat-item" href={`${base}/catalogue`}>
-          <span class="stat-icon" aria-hidden="true"><Icon name="globe" size={24} /></span>
-          <span class="stat-text">
-            <span class="stat-number" data-stat="countries">–</span>
-            <span class="stat-label">Countries with data</span>
-          </span>
-        </a>
-      </div>
+      <ul class="figures" data-stat-group>
+        <li><a class="figure" href={`${base}/catalogue`}>
+          <span class="stat-number" data-stat="resources">–</span>
+          <span class="stat-label">datasets cataloged</span>
+        </a></li>
+        <li><a class="figure" href={`${base}/landscapes`}>
+          <span class="stat-number" data-stat="landscapes">–</span>
+          <span class="stat-label">landscapes with data</span>
+        </a></li>
+        <li><a class="figure" href={`${base}/catalogue`}>
+          <span class="stat-number" data-stat="countries">–</span>
+          <span class="stat-label">countries with data</span>
+        </a></li>
+      </ul>
     </div>
   </section>
 
@@ -155,9 +144,9 @@ const audiences = [
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <ol class="how" data-reveal-stagger>
+      <ol class="how">
         {steps.map((st) => (
-          <li class="how-step" data-tint={st.tint}>
+          <li class="how-step">
             <span class="how-top">
               <span class="how-num" aria-hidden="true">{st.num}</span>
               <span class="how-ico" aria-hidden="true"><Icon name={st.icon} size={22} /></span>
@@ -180,7 +169,7 @@ const audiences = [
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
       </div>
-      <ul class="who-grid" data-reveal-stagger>
+      <ul class="who-grid">
         {audiences.map((a) => (
           <li>
             <a class="who-item" href={a.href}>
@@ -239,27 +228,28 @@ const audiences = [
   }
   .hero-sub {
     font-size: var(--text-lg);
-    /* Fixed grey (not a theming token) — this hero is always light in both
-       themes, so the subtitle must stay dark-on-sand and never invert. */
-    color: #4B5563;
+    /* Never-remapped brand ink — this hero is always light in both themes,
+       so the subtitle must stay dark-on-sand and never invert. */
+    color: var(--mosaic-ink);
     max-width: 560px;
     margin-bottom: var(--space-4);
   }
   .hero-support {
     font-size: var(--text-base);
-    color: #5B6B72;
+    color: var(--mosaic-grey-text);
     max-width: 560px;
     margin: 0 0 var(--space-8);
   }
   .hero-actions { display: flex; gap: var(--space-4); flex-wrap: wrap; }
   .hero-actions .btn { display: inline-flex; align-items: center; gap: var(--space-2); }
 
+  /* The site's one primary colour (Ocean Teal), as every other .btn-primary */
   .btn-hero-primary {
-    background-color: var(--mosaic-amber-text);
+    background-color: var(--mosaic-teal);
     color: var(--color-white);
-    border-color: var(--mosaic-amber-text);
+    border-color: var(--mosaic-teal);
   }
-  .btn-hero-primary:hover { background-color: #7D4D10; border-color: #7D4D10; color: var(--color-white); }
+  .btn-hero-primary:hover { background-color: var(--mosaic-teal-dark); border-color: var(--mosaic-teal-dark); color: var(--color-white); }
   .btn-hero-ghost {
     /* Sits on the hero band, which stays light in BOTH themes — use the
        never-remapped white, not --color-surface (dark-on-dark in dark mode). */
@@ -274,51 +264,25 @@ const audiences = [
   }
   .btn-hero-ghost:hover { background-color: var(--mosaic-teal); color: var(--color-white); }
 
-  /* ── Stats (floating card) ─────────────────────────────────── */
+  /* ── Figures (open line under the hero) ───────────────────── */
   .stats-section {
     background-color: var(--color-bg);
-    padding: 0 0 var(--space-16);
+    padding: var(--space-8) 0 var(--space-16);
   }
-  .stats-card {
-    position: relative;
-    z-index: 5;
-    margin-top: -3.5rem;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-6) var(--space-8);
+  .figures {
+    list-style: none; margin: 0; padding: var(--space-6) 0;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-4) var(--space-12);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
   }
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    flex: 1 1 0;
-    min-width: 0;
-    color: inherit;
-    text-decoration: none;
-    border-radius: var(--radius-md);
+  .figures[hidden] { display: none; }
+  .figure {
+    display: inline-flex; align-items: baseline; gap: var(--space-3);
+    color: inherit; text-decoration: none; border-radius: var(--radius-md);
   }
-  .stat-item:hover .stat-label { text-decoration: underline; }
-  .stat-icon {
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-full);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    /* neutral icons on this page (Lizeth 2026-11-10): grey disc, dark grey icon;
-       both tokens remap in the dark theme */
-    background-color: var(--color-gray-100);
-    color: var(--color-gray-700);
-  }
-  .stat-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  /* Big figures: Noto Serif Light, tight tracking (the CGIAR MFL page's
-     "2 million"), scaled to share the row with an icon and a label. */
+  .figure:hover .stat-label { text-decoration: underline; }
+  /* Big figures: Noto Serif Light, tight tracking (the CGIAR MFL page's "2 million");
+     tabular digits so the width does not jump when the dash becomes a number. */
   .stat-number {
     font-family: var(--font-title);
     font-size: clamp(2.5rem, 5vw, 3.75rem);
@@ -326,17 +290,17 @@ const audiences = [
     color: var(--color-text);
     line-height: 1;
     letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
   }
-  .stat-label { font-size: var(--text-sm); color: var(--color-muted); font-weight: 400; }
-  .stat-divider { width: 1px; align-self: stretch; background-color: var(--color-border); flex-shrink: 0; margin: var(--space-1) 0; }
+  .stat-label { font-size: var(--text-base); color: var(--color-muted); font-weight: 400; }
 
   /* ── Sections ──────────────────────────────────────────────── */
   .section-white { background-color: var(--color-bg); padding: var(--space-16) 0; }
   .section-subtle { background-color: var(--color-gray-50); padding: var(--space-16) 0; }
-  .section-title-center { text-align: center; margin-bottom: var(--space-12); }
+  .section-title-center { margin-bottom: var(--space-12); }
 
-  /* Centred section head: title + wavy underline */
-  .section-head { text-align: center; margin-bottom: var(--space-12); }
+  /* Section head: title + wavy underline, left-aligned like the rest of the page */
+  .section-head { text-align: start; margin-bottom: var(--space-12); }
   .section-head .section-title-center { margin-bottom: var(--space-2); }
   .section-wavy { display: inline-block; color: var(--color-link); }
 
@@ -347,8 +311,9 @@ const audiences = [
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6) var(--space-8);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-12);
+    max-width: 960px;
   }
   .who-item {
     display: flex;
@@ -372,7 +337,6 @@ const audiences = [
     justify-content: center;
   }
   .who-ico { background-color: var(--color-gray-100); color: var(--color-gray-700); }
-  @media (max-width: 900px) { .who-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
   /* ── What is a living landscape? ───────────────────────────── */
@@ -410,25 +374,21 @@ const audiences = [
     list-style: none; margin: 0; padding: 0;
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6);
   }
+  /* One card colour for all three steps: amber and terracotta mean readiness and
+     access on this site, so they are not used as decoration (review 2026-11-18). */
   .how-step {
-    --tint: var(--mosaic-teal);
     display: flex; flex-direction: column; gap: var(--space-3);
     padding: var(--space-8) var(--space-6);
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-top: 4px solid var(--tint);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
   }
-  .how-step[data-tint='amber'] { --tint: var(--mosaic-amber); }
-  .how-step[data-tint='terracotta'] { --tint: var(--mosaic-terracotta); }
   .how-top { display: flex; align-items: center; justify-content: space-between; }
   .how-num {
     font-family: var(--font-title); font-size: 3rem; font-weight: 300; line-height: 1; letter-spacing: -0.04em;
-    color: var(--tint);
+    color: var(--color-text);
   }
-  /* Ocean Teal is too dark on the dark surface: use its light tint there */
-  :global([data-theme='dark']) .how-step[data-tint='teal'] .how-num { color: var(--mosaic-light-teal); }
   .how-ico {
     width: 44px; height: 44px; border-radius: var(--radius-full);
     display: inline-flex; align-items: center; justify-content: center;
@@ -452,11 +412,6 @@ const audiences = [
       background: linear-gradient(to right, rgba(247, 244, 239, 0.88) 0%, rgba(247, 244, 239, 0.6) 45%, transparent 70%);
     }
   }
-  @media (max-width: 900px) {
-    .stats-card { flex-wrap: wrap; }
-    .stat-item { flex: 1 1 40%; }
-    .stat-divider { display: none; }
-  }
   @media (max-width: 767px) {
     /* text first, then the banner below it, edge to edge */
     .hero { display: block; min-height: 0; padding: 3.5rem 0 0; }
@@ -470,10 +425,6 @@ const audiences = [
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
       mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
     }
-  }
-  @media (max-width: 640px) {
-    .stat-item { flex: 1 1 100%; }
-    .stats-card { padding: var(--space-6); gap: var(--space-6); }
   }
 </style>
 

@@ -358,11 +358,11 @@ export function StoryDrawer({ story, studies, tab, activeChapter, activeOverlay,
       </header>
       <div className="rside-body" ref={body}>
         {story && studies && (
-          <div className="seg story-tabs" role="tablist">
-            <button type="button" role="tab" aria-pressed={tab === 'story'} aria-selected={tab === 'story'} onClick={() => onTab('story')}>
+          <div className="seg story-tabs" role="group" aria-label="Show">
+            <button type="button" aria-pressed={tab === 'story'} onClick={() => onTab('story')}>
               Story
             </button>
-            <button type="button" role="tab" aria-pressed={tab === 'studies'} aria-selected={tab === 'studies'} onClick={() => onTab('studies')}>
+            <button type="button" aria-pressed={tab === 'studies'} onClick={() => onTab('studies')}>
               Studies
             </button>
           </div>
