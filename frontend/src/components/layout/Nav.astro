@@ -17,11 +17,11 @@ const navLinks = [
 // a new viewer is published. The others are listed as "Soon" (Lizeth, 2026-11-18).
 const MAP_VIEWERS = ['KEN-LVB', 'PER-PCL']
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)
-const viewers = landscapes
-  .filter((l) => MAP_VIEWERS.includes(l.code))
-  .sort(byName)
-  .map((l) => ({ name: l.name, href: `${base}/landscapes/${l.code.toLowerCase()}/map/` }))
-const soonViewers = landscapes.filter((l) => !MAP_VIEWERS.includes(l.code)).sort(byName)
+// One A–Z list, every row alike: a ready viewer is a link, the others carry "Soon".
+const viewers = [...landscapes].sort(byName).map((l) => ({
+  name: l.name,
+  href: MAP_VIEWERS.includes(l.code) ? `${base}/landscapes/${l.code.toLowerCase()}/map/` : null,
+}))
 
 // Home must match exactly, otherwise it would light up on every page
 // (every path starts with the base path).
@@ -49,10 +49,11 @@ function isActive(href: string, exact = false) {
           <p class="nav-dd-head" id="nav-mv-head">Map viewers</p>
           <ul class="nav-dd-list" aria-labelledby="nav-mv-head">
             {viewers.map((v) => (
-              <li><a class="nav-dd-link" href={v.href}>{v.name}</a></li>
-            ))}
-            {soonViewers.map((l) => (
-              <li class="nav-dd-soon"><span>{l.name}</span> <span class="nav-dd-tag">Soon</span></li>
+              <li>
+                {v.href
+                  ? <a class="nav-dd-row" href={v.href}>{v.name}</a>
+                  : <span class="nav-dd-row">{v.name} <span class="nav-dd-tag">Soon</span></span>}
+              </li>
             ))}
           </ul>
         </div>
@@ -116,10 +117,11 @@ function isActive(href: string, exact = false) {
             <p class="mobile-mv-head" id="mobile-mv-head">Map viewers</p>
             <ul class="mobile-mv-list" aria-labelledby="mobile-mv-head">
               {viewers.map((v) => (
-                <li><a class="mobile-nav-link mobile-mv-link" href={v.href}>{v.name}</a></li>
-              ))}
-              {soonViewers.map((l) => (
-                <li class="mobile-mv-soon"><span>{l.name}</span> <span class="nav-dd-tag">Soon</span></li>
+                <li>
+                  {v.href
+                    ? <a class="mobile-mv-row" href={v.href}>{v.name}</a>
+                    : <span class="mobile-mv-row">{v.name} <span class="nav-dd-tag">Soon</span></span>}
+                </li>
               ))}
             </ul>
           </div>
@@ -314,16 +316,22 @@ function isActive(href: string, exact = false) {
     font-size: var(--text-xs);
     font-weight: 600;
   }
-  .nav-dd-soon,
-  .mobile-mv-soon {
+  /* Map-viewer rows: ready and coming look the same; only the Soon tag differs. */
+  .nav-dd-row,
+  .mobile-mv-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
-    color: var(--mosaic-grey-text);
+    min-height: 36px;
+    color: var(--mosaic-ink);
     font-size: var(--text-sm);
+    font-weight: 400;
+    text-decoration: none;
   }
-  .nav-dd-soon { padding: var(--space-1) var(--space-4); }
+  .nav-dd-row { padding: var(--space-1) var(--space-4); }
+  a.nav-dd-row:hover, a.mobile-mv-row:hover { background-color: var(--mosaic-sand); color: var(--mosaic-teal); }
+  a.nav-dd-row:focus-visible, a.mobile-mv-row:focus-visible { outline: 2px solid var(--mosaic-teal); outline-offset: -2px; }
   .nav-dd-tag {
     flex-shrink: 0;
     padding: 0.05rem var(--space-2);
@@ -443,8 +451,7 @@ function isActive(href: string, exact = false) {
     font-weight: 600;
   }
   .mobile-mv-list { list-style: none; margin: 0; padding: 0; }
-  .mobile-mv-link { padding-left: var(--space-4); font-size: var(--text-sm); }
-  .mobile-mv-soon { padding: var(--space-1) var(--space-6) var(--space-1) var(--space-4); }
+  .mobile-mv-row { padding: var(--space-1) var(--space-6) var(--space-1) var(--space-4); }
 
   .mobile-menu-cobrand {
     margin-top: var(--space-4);
