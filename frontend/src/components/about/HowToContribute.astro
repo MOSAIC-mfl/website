@@ -1,7 +1,6 @@
 ---
 /* About › How to contribute — moved here from the former /contribute page
    (2026-11-09; /contribute now redirects to /about#contribute). */
-import StickyNote from '../ui/StickyNote.astro'
 import StepTimeline from '../ui/StepTimeline.astro'
 
 // The catalogue's submission form (catalog repo — records/<ID>.yaml is
@@ -13,8 +12,8 @@ const howToUrl = 'https://github.com/MOSAIC-mfl/catalog#add-or-change-a-dataset'
 
 const steps = [
   { num: '01', icon: 'upload', title: 'Register', body: 'Fill the form: title, living landscape, country, contact. Everything else is optional; empty is a valid answer.' },
-  { num: '02', icon: 'eye', title: 'Review with you', body: 'The MOSAIC team turns your submission into a validated record and tags you to confirm the details. Typically 5–10 working days.' },
-  { num: '03', icon: 'check-circle', title: 'Published', body: 'Everything republishes automatically in about 2 minutes: permanent ID, a metadata record, and a page in the catalog.' },
+  { num: '02', icon: 'eye', title: 'Review with you', body: 'The MOSAIC team turns your submission into a validated record and tags you to confirm the details.' },
+  { num: '03', icon: 'check-circle', title: 'Published', body: 'Once you confirm, it is published automatically: a permanent ID, a metadata record and a page in the catalog.' },
 ]
 
 const required = [
@@ -42,7 +41,7 @@ const recommended = [
   <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a dataset</a>
   <a class="btn btn-secondary" href="#contact">Ask before contributing</a>
 </div>
-<p class="hc-note">4 required fields · about 2 minutes · via GitHub or plain email</p>
+<p class="hc-note">4 required fields · via GitHub or plain email</p>
 
 <h3 class="hc-h3">How it works</h3>
 <StepTimeline steps={steps} />
@@ -64,9 +63,6 @@ const recommended = [
       ))}
     </ul>
     <p class="need-foot">Full field descriptions: <a href="#metadata">Metadata guide</a>.</p>
-  </div>
-  <div class="need-sticky">
-    <StickyNote tint="teal" rotate={-2}>Not sure about a field? Leave it empty; you can always come back and edit it later.</StickyNote>
   </div>
 </div>
 
@@ -104,7 +100,7 @@ const recommended = [
   .hc-note + .hc-h3 { margin-top: 0; }
 
   .need-card {
-    display: grid; grid-template-columns: 1fr 1.3fr auto; gap: var(--space-8); align-items: start;
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: var(--space-8); align-items: start;
     margin-top: var(--space-12); padding: var(--space-8);
     background-color: var(--color-gray-50); border-radius: var(--radius-card);
   }
@@ -119,7 +115,6 @@ const recommended = [
   .need-tick { flex-shrink: 0; font-weight: 700; color: var(--color-muted); }
   .need-tick.req { color: var(--color-link); }
   .need-foot { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
-  .need-sticky { align-self: center; }
 
   .hc-bullets {
     list-style: disc; padding-left: var(--space-6); color: var(--color-muted);
@@ -129,10 +124,6 @@ const recommended = [
   .hc-text { color: var(--color-muted); margin: 0; max-width: var(--measure); }
   .hc-bullets a, .hc-text a, .need-foot a { color: var(--color-link); }
 
-  @media (max-width: 1100px) {
-    .need-card { grid-template-columns: 1fr 1fr; }
-    .need-sticky { grid-column: 1 / -1; justify-self: center; }
-  }
   @media (max-width: 767px) {
     .need-card { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-6); }
   }
