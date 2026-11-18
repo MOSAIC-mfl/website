@@ -11,12 +11,12 @@ const base = import.meta.env.BASE_URL
 
 const ways = [
   { href: `${base}/landscapes`, icon: 'map-pin', title: 'Landscapes', text: 'See the living landscapes on a map and what exists for each one.' },
-  { href: `${base}/catalogue`, icon: 'search', title: 'Catalogue', text: 'Search the datasets registered so far.' },
+  { href: `${base}/catalogue`, icon: 'search', title: 'Catalog', text: 'Search the datasets registered so far.' },
   { href: `${base}/about`, icon: 'globe', title: 'About', text: 'What MOSAIC is, how to contribute and how to get in touch.' },
 ] as const
 ---
 
-<BaseLayout title="Page not found" description="This address does not exist on the MOSAIC site. Start again from Landscapes, the Catalogue or About.">
+<BaseLayout title="Page not found" description="This address does not exist on the MOSAIC site. Start again from Landscapes, the Catalog or About.">
   <div class="container nf">
     <p class="nf-tag">Error 404</p>
     <h1 class="nf-title">Page not found</h1>

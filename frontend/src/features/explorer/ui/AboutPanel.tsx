@@ -42,7 +42,7 @@ export function AboutPanel({ intro, licence, sources, report, credits, recordHre
           {s.caveats && <p className="p-meta">{s.caveats}</p>}
           {s.record && (
             <p className="p-meta">
-              <a href={recordHref(s.record)}>Catalogue record</a>
+              <a href={recordHref(s.record)}>Catalog record</a>
             </p>
           )}
         </div>

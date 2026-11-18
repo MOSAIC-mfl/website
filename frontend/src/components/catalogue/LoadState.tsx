@@ -10,7 +10,7 @@ export function Loading({ what = 'datasets' }: { what?: string }) {
 export function LoadError({ error, onRetry }: { error: Error; onRetry: () => void }) {
   return (
     <div className="empty-state" role="alert">
-      <h3>The catalogue could not be loaded</h3>
+      <h3>The catalog could not be loaded</h3>
       <p>{error.message}</p>
       <button type="button" className="empty-state-clear" onClick={onRetry}>Try again</button>
     </div>

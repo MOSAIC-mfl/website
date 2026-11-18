@@ -16,7 +16,7 @@ const hasPhoto = existsSync(fileURLToPath(new URL('../../../public/illustrations
 
 const issueCards = [
   { icon: 'alert-circle', title: 'Report a problem', tint: 'teal', href: `${ghBase}?template=bug_report.yml`, body: 'A broken page or data that looks wrong.' },
-  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalogue entry.' },
+  { icon: 'file-text', title: 'Correct a dataset', tint: 'amber', href: catalogIssueUrl, body: 'Update or fix the information in a catalog entry.' },
   { icon: 'file', title: 'Fix content', tint: 'light-teal', href: `${ghBase}?template=content_fix.yml`, body: 'Improve a guide, description or other site text.' },
   { icon: 'sparkles', title: 'Suggest an idea', tint: 'terracotta', href: `${ghBase}?template=feature_request.yml`, body: 'Propose a new feature or improvement.' },
 ] as const
@@ -37,12 +37,12 @@ const mailLinks = [
 ]
 ---
 
-<p class="gt-lead">Write to the MOSAIC coordinator — no account needed:</p>
+<p class="gt-lead">Write to the MOSAIC coordinator (no account needed):</p>
 <div class="gt-direct">
   <CoordinatorCard
     name="Lizeth Llanos"
     role="MFL Geospatial Coordinator"
-    orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Programme"]}
+    orgLines={["Alliance of Bioversity International and CIAT", "CGIAR MFL Science Program"]}
     photo={hasPhoto ? `${base}/illustrations/lizeth-llanos.jpg` : undefined}
     rows={contactRows}
   />

@@ -98,7 +98,7 @@ export function TechnicalSection({ d, labels, jsonUrl }: Props) {
 
       <h3>Full record</h3>
       <dl className="dp-kv">
-        {row('Catalogue', d.provenance.record_url
+        {row('Catalog', d.provenance.record_url
           ? <a href={d.provenance.record_url} target="_blank" rel="noopener noreferrer">{d.provenance.source_name} ↗</a>
           : d.provenance.source_name)}
         {row('MOSAIC record', <a href={jsonUrl} target="_blank" rel="noopener noreferrer">JSON ↗</a>)}

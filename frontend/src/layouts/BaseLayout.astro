@@ -16,7 +16,7 @@ interface Props {
 const {
   title,
   // Same framing as About › What MOSAIC is: an entry point, never a store.
-  description = 'MOSAIC — an open network for living landscapes: the entry point to the data and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Programme.',
+  description = 'MOSAIC is an open network for living landscapes: the entry point to the data and research produced around each one. With support from the CGIAR Multifunctional Landscapes Science Program.',
   ogImage = '/website/og-image.png',
   noindex = false,
 } = Astro.props
@@ -71,7 +71,7 @@ const base = import.meta.env.BASE_URL
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
-    <meta property="og:site_name" content="MOSAIC — CGIAR MFL Science Programme" />
+    <meta property="og:site_name" content="MOSAIC — CGIAR MFL Science Program" />
     <!-- Twitter/X Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />

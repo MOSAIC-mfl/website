@@ -12,7 +12,7 @@ import { VOCAB_LABELS } from './vocab-labels'
 const FIXED_LABELS: Labels = {
   spatial: { yes: 'Spatial', no: 'Not spatial' },
   geometry: { point: 'Points', line: 'Lines', polygon: 'Polygons', mixed: 'Mixed' },
-  license: { other: 'Other licence' },
+  license: { other: 'Other license' },
   processing_status: { not_specified: 'Not stated' },
 }
 

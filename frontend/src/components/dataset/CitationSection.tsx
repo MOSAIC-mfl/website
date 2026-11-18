@@ -18,7 +18,7 @@ export function CitationSection({ d, base }: { d: RecordDetail; base: string }) 
           <>
             <p>
               No citation is registered for this dataset yet. Cite the data as its source asks (see Access &amp; use), or ask the contact below.
-              To point to this catalogue record, use:
+              To point to this catalog record, use:
             </p>
             <p className="dp-cite-text">{recordReference(d, base, origin)}</p>
           </>

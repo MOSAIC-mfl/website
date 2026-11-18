@@ -8,15 +8,15 @@ export interface FilterDef {
 /** Shown first, as in the approved design (Lizeth's catalogue). */
 export const PRIMARY_FILTERS: FilterDef[] = [
   { key: 'geography', label: 'Country' },
-  { key: 'landscape', label: 'Living Landscape' },
+  { key: 'landscape', label: 'Living landscape' },
   { key: 'theme', label: 'Theme' },
-  { key: 'processing_status', label: 'Readiness Status' },
+  { key: 'processing_status', label: 'Readiness status' },
 ]
 
 /** Behind "More filters". Catalogue tells MOSAIC's own records from those of connected catalogues. */
 export const MORE_FILTERS: FilterDef[] = [
-  { key: 'data_kind', label: 'Data Type' },
-  { key: 'access', label: 'Access Level' },
+  { key: 'data_kind', label: 'Data type' },
+  { key: 'access', label: 'Access level' },
   { key: 'license', label: 'License' },
-  { key: 'source', label: 'Catalogue' },
+  { key: 'source', label: 'Catalog' },
 ]
