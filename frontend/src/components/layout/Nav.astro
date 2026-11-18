@@ -17,11 +17,14 @@ const navLinks = [
 // a new viewer is published. The others are listed as "Soon" (Lizeth, 2026-11-18).
 const MAP_VIEWERS = ['KEN-LVB', 'PER-PCL']
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)
-// One A–Z list, every row alike: a ready viewer is a link, the others carry "Soon".
-const viewers = [...landscapes].sort(byName).map((l) => ({
-  name: l.name,
-  href: MAP_VIEWERS.includes(l.code) ? `${base}/landscapes/${l.code.toLowerCase()}/map/` : null,
-}))
+// One list, every row alike: ready viewers first (links), then the others with "Soon";
+// A–Z within each, no divider between them (Lizeth, 2026-11-18).
+const viewers = [...landscapes]
+  .sort((a, b) => Number(MAP_VIEWERS.includes(b.code)) - Number(MAP_VIEWERS.includes(a.code)) || byName(a, b))
+  .map((l) => ({
+    name: l.name,
+    href: MAP_VIEWERS.includes(l.code) ? `${base}/landscapes/${l.code.toLowerCase()}/map/` : null,
+  }))
 
 // Home must match exactly, otherwise it would light up on every page
 // (every path starts with the base path).
