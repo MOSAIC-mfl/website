@@ -163,6 +163,7 @@ export class ExplorerController {
       if (p.open_on_click) this.engine.onLayerClick(p.open_on_click, () => this.openPanel(p.id))
     }
     this.engine.onClick((e) => void this.click(e))
+    this.engine.onKeyInspect((c) => void this.inspectAt(c, null))
     this.store.set({ ready: true })
     void this.checkAvailability()
     await this.applyHash()

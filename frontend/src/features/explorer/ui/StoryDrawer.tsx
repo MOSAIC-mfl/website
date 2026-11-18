@@ -131,6 +131,28 @@ function ExposureCounter({ cfg, actions }: { cfg: Record<string, unknown>; actio
   )
 }
 
+/** An enlarged figure in a native modal <dialog>: Escape closes it, focus stays
+ *  inside while open and goes back to the figure button when it closes. */
+function FigureDialog({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const d = ref.current
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    if (d && !d.open) d.showModal()
+    return () => {
+      if (d?.open) d.close()
+      opener?.focus()
+    }
+  }, [])
+  return createPortal(
+    <dialog ref={ref} className="lvx-fig-overlay" aria-label={alt} onClose={onClose} onClick={onClose}>
+      <img src={src} alt={alt} />
+      <span>Press Esc or click to close</span>
+    </dialog>,
+    document.body,
+  )
+}
+
 function ChapterView({ ch, active, actions, onFigure }: { ch: Chapter; active: boolean; actions: StoryActions; onFigure: (src: string, alt: string) => void }) {
   const v = ch.visual ?? {}
   const ready = ch.status !== 'pending'
@@ -143,14 +165,14 @@ function ChapterView({ ch, active, actions, onFigure }: { ch: Chapter; active: b
       <p className="chapter-text">{ch.text}</p>
       {!ready && ch.placeholder && <div className="story-placeholder">{ch.placeholder}</div>}
       {ready && v.figure && (
-        <img
-          className="chapter-figure"
-          src={actions.assetUrl(v.figure)}
-          alt={v.alt ?? ch.title}
-          loading="lazy"
-          title="Click to enlarge"
+        <button
+          type="button"
+          className="chapter-figure-btn"
+          aria-label={`Enlarge figure: ${v.alt ?? ch.title}`}
           onClick={() => onFigure(actions.assetUrl(v.figure!), v.alt ?? ch.title)}
-        />
+        >
+          <img className="chapter-figure" src={actions.assetUrl(v.figure)} alt="" loading="lazy" />
+        </button>
       )}
       {ready && v.charts && <ChapterCharts charts={v.charts} build={actions.buildChart} />}
       {ready && v.steps?.length ? (
@@ -336,11 +358,11 @@ export function StoryDrawer({ story, studies, tab, activeChapter, activeOverlay,
       </header>
       <div className="rside-body" ref={body}>
         {story && studies && (
-          <div className="seg story-tabs" role="tablist">
-            <button type="button" role="tab" aria-pressed={tab === 'story'} aria-selected={tab === 'story'} onClick={() => onTab('story')}>
+          <div className="seg story-tabs" role="group" aria-label="Show">
+            <button type="button" aria-pressed={tab === 'story'} onClick={() => onTab('story')}>
               Story
             </button>
-            <button type="button" role="tab" aria-pressed={tab === 'studies'} aria-selected={tab === 'studies'} onClick={() => onTab('studies')}>
+            <button type="button" aria-pressed={tab === 'studies'} onClick={() => onTab('studies')}>
               Studies
             </button>
           </div>
@@ -353,14 +375,7 @@ export function StoryDrawer({ story, studies, tab, activeChapter, activeOverlay,
           <div className="empty">No studies registered yet.</div>
         )}
       </div>
-      {figure &&
-        createPortal(
-          <button type="button" className="lvx-fig-overlay" onClick={() => setFigure(null)}>
-            <img src={figure.src} alt={figure.alt} />
-            <span>Click anywhere to close</span>
-          </button>,
-          document.body,
-        )}
+      {figure && <FigureDialog src={figure.src} alt={figure.alt} onClose={() => setFigure(null)} />}
     </section>
   )
 }

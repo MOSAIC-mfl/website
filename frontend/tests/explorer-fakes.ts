@@ -45,6 +45,9 @@ export class FakeEngine implements MapEngine {
   onLayerClick() {
     return () => {}
   }
+  onKeyInspect() {
+    return () => {}
+  }
   flyTo(c: unknown) {
     this.flights.push(c)
   }

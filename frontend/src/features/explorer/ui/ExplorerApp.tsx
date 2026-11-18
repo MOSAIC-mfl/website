@@ -89,6 +89,8 @@ export default function ExplorerApp(props: ExplorerProps) {
   // Escape closes the menu and the floating panels (as in the explorer)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // an open modal (the enlarged story figure) takes its own Escape first
+      if (e.target instanceof Element && e.target.closest('dialog[open]')) return
       if (e.key === 'Escape' && controller) {
         controller.setMenu(false)
         controller.closeFloating()
@@ -183,7 +185,7 @@ export default function ExplorerApp(props: ExplorerProps) {
         />
         {/* not <main>: the page has its own, and the site's reveal-on-scroll styles hide the children of any main */}
         <div className="canvas" ref={canvasRef}>
-          <div className="map" ref={mapRef} role="application" aria-label={`Map: ${config.title}`} />
+          <div className="map" ref={mapRef} role="application" aria-label={`Map: ${config.title}. Arrow keys move the map; Enter shows the values at its center.`} />
           {error && <div className="notice">The explorer could not start: {error}</div>}
           {s && controller && (
             <>

@@ -75,7 +75,7 @@ export function DatasetPage({ base }: { base: string }) {
   }
 
   if (state.status === 'loading') return <div className="container dp"><Loading what="the dataset" /></div>
-  if (state.status === 'error') return <div className="container dp"><LoadError error={state.error} onRetry={state.retry} /></div>
+  if (state.status === 'error') return <div className="container dp"><LoadError what="Dataset" error={state.error} onRetry={state.retry} /></div>
   const { detail: d, labels, related } = state.data
   if (!d) {
     return (

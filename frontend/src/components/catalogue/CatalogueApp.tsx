@@ -71,15 +71,14 @@ export function CatalogueApp({ base }: Props) {
 
         <ActiveChips chips={chips} labels={labels} onRemove={toggle} onClearAll={clearAll} />
 
+        {/* Stays mounted, so screen readers hear the new count after every filter or search. */}
+        <p className="results-count" role="status">
+          {res ? <>Showing <strong>{res.items.length}</strong> of {res.total} datasets</> : results.status === 'error' ? '' : 'Loading datasets…'}
+        </p>
         {results.status === 'error' ? (
           <LoadError error={results.error} onRetry={results.retry} />
-        ) : !res ? (
-          <Loading />
-        ) : (
+        ) : !res ? null : (
           <>
-            <p className="results-count">
-              Showing <strong>{res.items.length}</strong> of {res.total} datasets
-            </p>
             {res.warnings.length > 0 && (
               <p className="results-count" role="note">{res.warnings.join('; ')}</p>
             )}

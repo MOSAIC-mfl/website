@@ -12,6 +12,8 @@ export function lastHarvest(sources: { harvested_at?: string | null }[]): string
 /** The figures strip of the catalogue page ("119 datasets · 11 landscapes · 15 countries · Updated …"). */
 export function CatalogueStats() {
   const o = useAsync(() => catalogue().overview(), [])
+  // a figure that never arrives reads as broken: on failure the strip shows no figures at all
+  if (o.status === 'error') return null
   const h = o.status === 'ok' ? headline(o.data.total, o.data.facets) : null
   const updated = o.status === 'ok' ? lastHarvest(o.data.sources) : null
   const stat = (value: number | undefined, label: string) => (

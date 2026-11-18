@@ -1,7 +1,7 @@
 /**
  * Fills the catalogue figures of a static page (elements with `data-stat="resources|landscapes|countries"`)
- * from mosaic-api when the page opens. Without the API the figures keep their placeholder (a dash) and
- * the rest of the page works.
+ * from mosaic-api when the page opens. While loading they show a dash. If the API cannot be reached,
+ * the group around them (`[data-stat-group]`) is hidden: a figure that never arrives reads as broken.
  */
 import { catalogue } from '../catalog'
 import { headline } from '../domain/stats'
@@ -15,6 +15,6 @@ export async function fillCatalogueFigures(root: ParentNode): Promise<void> {
       if (value !== undefined) el.textContent = String(value)
     }
   } catch {
-    /* figures stay as dashes */
+    for (const g of root.querySelectorAll<HTMLElement>('[data-stat-group]')) g.hidden = true
   }
 }

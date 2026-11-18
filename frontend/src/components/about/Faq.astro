@@ -41,10 +41,12 @@ const contributing = [
   .faq-list { max-width: 820px; }
   .faq-h3 { font-size: var(--text-xl); margin: var(--space-8) 0 var(--space-4); }
   .faq-h3:first-child { margin-top: 0; }
+  /* A list with a rule between questions, not one boxed card per question. */
   .faq {
-    border: 1px solid var(--color-border); border-radius: var(--radius-md);
-    padding: var(--space-4); margin-bottom: var(--space-3); background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) 0;
   }
+  .faq-h3 + .faq { border-top: 1px solid var(--color-border); }
   .faq summary { cursor: pointer; font-weight: 600; color: var(--color-text); }
-  .faq p { margin: var(--space-3) 0 0; color: var(--color-muted); }
+  .faq p { margin: var(--space-3) 0 0; color: var(--color-muted); max-width: var(--measure); }
 </style>

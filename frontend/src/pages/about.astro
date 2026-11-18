@@ -17,12 +17,12 @@ import GetInTouch from '../components/about/GetInTouch.astro'
 import Acknowledgements from '../components/about/Acknowledgements.astro'
 
 const sections = [
-  { id: 'overview', label: 'Overview', icon: 'globe', title: 'What MOSAIC is' },
-  { id: 'contribute', label: 'How to contribute', icon: 'upload', title: 'How to contribute' },
-  { id: 'metadata', label: 'Metadata guide', icon: 'file-text', title: 'Metadata guide' },
-  { id: 'faq', label: 'FAQ', icon: 'help-circle', title: 'Frequently asked questions' },
-  { id: 'contact', label: 'Get in touch', icon: 'mail', title: 'Get in touch' },
-  { id: 'acknowledgements', label: 'Acknowledgments', icon: 'building', title: 'Acknowledgments' },
+  { id: 'overview', label: 'Overview', title: 'What MOSAIC is' },
+  { id: 'contribute', label: 'How to contribute', title: 'How to contribute' },
+  { id: 'metadata', label: 'Metadata guide', title: 'Metadata guide' },
+  { id: 'faq', label: 'FAQ', title: 'Frequently asked questions' },
+  { id: 'contact', label: 'Get in touch', title: 'Get in touch' },
+  { id: 'acknowledgements', label: 'Acknowledgments', title: 'Acknowledgments' },
 ] as const
 ---
 
@@ -41,7 +41,6 @@ const sections = [
         {sections.map((s, i) => (
           <li>
             <a href={`#${s.id}`} data-tab={s.id} aria-current={i === 0 ? 'true' : undefined}>
-              <Icon name={s.icon} size={18} />
               <span>{s.label}</span>
             </a>
           </li>
@@ -105,7 +104,6 @@ const sections = [
 
   /* sections */
   /* clears the sticky site header (and the chip row on phones) when arriving via #section */
-  .ab-sec { scroll-margin-top: 7rem; }
   .ab-sec + .ab-sec { margin-top: var(--space-16); }
   /* With JavaScript, only the chosen section is shown */
   .ab.is-tabs .ab-sec + .ab-sec { margin-top: 0; }
@@ -140,11 +138,9 @@ const sections = [
       -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
       mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
     }
-    /* without their icons the chips are shorter, so more of them show at once */
-    .ab-nav a :global(svg) { display: none; }
     .ab-nav a { white-space: nowrap; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-full); }
     .ab-nav a[aria-current='true']::before { display: none; }
-    .ab-sec { scroll-margin-top: 9.5rem; }
+    .ab-sec { scroll-margin-top: 3.5rem; } /* + --header-offset: clears the sticky chip row too */
   }
   @media (prefers-reduced-motion: reduce) {
     .ab.is-tabs .ab-sec.is-on { animation: none; }
@@ -152,6 +148,8 @@ const sections = [
 </style>
 
 <script>
+  // smooth scrolling only when the reader has not asked for reduced motion
+  const smooth: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
   const root = document.querySelector<HTMLElement>('[data-ab]')
   if (root) {
     const secs = Array.from(root.querySelectorAll<HTMLElement>('[data-section]'))
@@ -175,12 +173,12 @@ const sections = [
       const active = tabs.find((t) => t.dataset.tab === id)
       const ul = active?.closest('ul')
       if (active && ul && ul.scrollWidth > ul.clientWidth) {
-        ul.scrollTo({ left: active.offsetLeft - 16, behavior: 'smooth' })
+        ul.scrollTo({ left: active.offsetLeft - 16, behavior: smooth })
       }
       if (opts.scroll) {
         // bring the top of the content into view if the reader had scrolled down
         const top = root!.getBoundingClientRect().top + window.scrollY - (window.innerWidth <= 900 ? 72 : 112)
-        if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' })
+        if (window.scrollY > top) window.scrollTo({ top, behavior: smooth })
       }
       if (opts.focus) root!.querySelector<HTMLElement>(`#${id}-title`)?.focus({ preventScroll: true })
     }

@@ -60,6 +60,9 @@
      background in use (4.6:1 on the amber tint, 5.1:1 on Warm Sand) and as a button fill
      under white text (5.6:1). The swatch above stays the brand reference. */
   --mosaic-amber-text:  #935B14;
+  /* Muted text on grounds that stay light in BOTH themes (the home hero, light page heroes):
+     the same value as --color-muted, but never remapped by the dark theme. */
+  --mosaic-grey-text:   #5A6872;
   /* Eyebrow text that follows the theme: dark shades on light pages, lighter ones on dark. */
   --color-amber-text:   #935B14;
   /* Text and outlines in the brand teal on a surface that follows the theme: links,
@@ -73,6 +76,13 @@
   /* Header & footer "bookend" colour — deeper Ocean Teal (brand request).
      Defined once so the two MOSAIC bookends always match; change here only. */
   --color-bookend:      #085A75;
+
+  /* Height kept clear under the sticky site header (~74px) by anchors, focus scrolling and
+     sticky side panels: one value instead of a guess per section. */
+  --header-offset:      6rem;
+
+  /* Line length for running text: 60ch is about 72 characters in Noto Sans (1ch = the "0"). */
+  --measure:            60ch;
 
   /* MOSAIC tile-mark colours (logo) */
   --mosaic-tile-teal:        #0D5C6B;
@@ -195,8 +205,9 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  /* tinted with Near-black (28 43 58), never pure black: one light source, one hue */
+  --shadow-sm: 0 1px 2px 0 rgb(28 43 58 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(28 43 58 / 0.1), 0 2px 4px -2px rgb(28 43 58 / 0.1);
 }
 
 /* ── Dark theme ───────────────────────────────────────────────────────────

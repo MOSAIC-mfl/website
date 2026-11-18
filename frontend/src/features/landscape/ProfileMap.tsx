@@ -19,7 +19,7 @@ export interface ProfileMapProps {
 export function ProfileMap({ code, base }: ProfileMapProps) {
   const res = useAsync(() => landscapePages().landscape(code), [code])
   if (res.status === 'loading') return <Loading what="the map profile" />
-  if (res.status === 'error') return <LoadError error={res.error} onRetry={res.retry} />
+  if (res.status === 'error') return <LoadError what="Map profile" error={res.error} onRetry={res.retry} />
   const page = res.data
   const section = page?.sections.find((s) => s.kind === MAP_SECTION)
   if (!page || !section) {

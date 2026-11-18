@@ -57,6 +57,8 @@ export interface MapEngine {
   queryAt(point: ScreenPoint, layers: string[], radius?: number): FeatureHit[]
   project(lngLat: LngLat): ScreenPoint
   onClick(handler: (e: MapClick) => void): () => void
+  /** Enter or Space on the focused map: the keyboard's "click", at the centre of the view */
+  onKeyInspect(handler: (lngLat: LngLat) => void): () => void
   onLayerClick(layer: string, handler: (e: MapClick) => void): () => void
   flyTo(camera: Camera, options?: { duration?: number; padding?: Padding }): void
   jumpTo(camera: Camera): void
