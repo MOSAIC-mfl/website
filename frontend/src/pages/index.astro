@@ -78,6 +78,9 @@ const audiences = [
     </div>
   </section>
 
+  <!-- ── Everything below the hero is one sheet that slides up over it ── -->
+  <div class="sheet">
+
   <!-- ── Figures: an open line, not three dashboard tiles (review 2026-11-18) ── -->
   <section class="stats-section">
     <div class="container">
@@ -182,6 +185,8 @@ const audiences = [
     </div>
   </section>
 
+  </div>
+
 </BaseLayout>
 
 <style>
@@ -264,6 +269,25 @@ const audiences = [
     cursor: pointer;
   }
   .btn-hero-ghost:hover { background-color: var(--mosaic-teal); color: var(--color-white); }
+
+  /* ── Sheet over the hero ───────────────────────────────────
+     The hero stays pinned under the header while the rest of the page slides
+     up over it as one sheet with rounded top corners. Only where the whole
+     hero fits on screen (so nothing of it is lost while pinned) and the
+     visitor has not asked for less motion; elsewhere the page scrolls as before. */
+  .sheet { position: relative; z-index: 1; background-color: var(--color-bg); }
+  @media (min-width: 768px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+    /* --header-height is the header's measured height (script below); the
+       fallback is its height on a desktop screen */
+    .hero { position: sticky; top: var(--header-height, 4.9375rem); z-index: 0; }
+    .sheet {
+      --sheet-radius: 1.5rem;
+      margin-top: calc(-1 * var(--sheet-radius));
+      border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+      overflow: hidden;
+      box-shadow: 0 -6px 24px rgb(28 43 58 / 0.1);
+    }
+  }
 
   /* ── Figures (open line under the hero) ───────────────────── */
   .stats-section {
@@ -450,4 +474,12 @@ const audiences = [
   import { fillCatalogueFigures } from '../lib/ui/catalogue-figures'
 
   fillCatalogueFigures(document)
+
+  // The hero pins right under the sticky header, whose height changes with the screen width.
+  const header = document.querySelector<HTMLElement>('.site-header')
+  if (header && 'ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`)
+    }).observe(header)
+  }
 </script>
