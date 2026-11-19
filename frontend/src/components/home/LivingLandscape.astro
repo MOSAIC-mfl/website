@@ -1,0 +1,154 @@
+---
+/* Art of "What is a living landscape?" (2026-11-19): the paper illustration builds itself one
+   piece at a time at 12 frames a second, like stop-motion, then holds on the full picture and
+   loops. The still is the page's image: it shows without script, with reduced motion, and until
+   the section is on screen. The animation starts when the section is in view and pauses when it
+   leaves. Pieces and positions: public/illustrations/living-landscape/ and
+   living-landscape-pieces.json; the timeline is src/lib/ui/living-landscape-timeline.ts. */
+const base = import.meta.env.BASE_URL
+const dir = `${base}/illustrations/living-landscape`
+---
+
+<div class="lla" data-dir={dir}>
+  <img
+    class="lla-still"
+    src={`${dir}/still.webp`}
+    alt="Paper illustration of a living landscape under a dome of sky: hills, a river, a forest, flowers and a butterfly, a farmhouse with two cows, wheat fields over layers of soil, and the sun. Around it, seven medallions linked by a dashed arc name its parts: water, forests, biodiversity, people and livelihoods, agriculture, land and soils, and climate. Caption: A connected socio-ecological system."
+    width="1116"
+    height="750"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="lla-scene" aria-hidden="true">
+    <div class="lla-dome" style={`--lla-mask: url(${dir}/dome-mask.png)`}></div>
+    <div class="lla-outer"></div>
+  </div>
+</div>
+
+<style>
+  .lla { position: relative; }
+  .lla-still {
+    position: relative; z-index: 1;
+    display: block; width: 100%; height: auto;
+    transition: opacity 250ms linear;
+  }
+  .lla.is-playing .lla-still { opacity: 0; }
+  .lla.is-playing.is-holding .lla-still { opacity: 1; }
+  .lla-scene {
+    position: absolute; left: 0; top: 0; width: 1116px; height: 750px;
+    transform-origin: 0 0; visibility: hidden;
+  }
+  .lla.is-playing .lla-scene { visibility: visible; }
+  .lla-dome, .lla-outer { position: absolute; inset: 0; }
+  .lla-dome {
+    -webkit-mask-image: var(--lla-mask); mask-image: var(--lla-mask);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  }
+  /* pieces are added by the script, so they need :global() */
+  .lla-scene :global(img) {
+    position: absolute; display: block; max-width: none;
+    visibility: hidden; pointer-events: none; user-select: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lla-scene { display: none; }
+    .lla .lla-still { opacity: 1; }
+  }
+</style>
+
+<script>
+  import manifest from './living-landscape-pieces.json'
+  import { ALWAYS, CYCLE, FADE_OUT, FPS, SETTLE, buildTimeline, pose } from '../../lib/ui/living-landscape-timeline'
+
+  interface Piece { id: string; src: string; x: number; y: number; w: number; h: number; z: number; dome: boolean }
+  const pieces = manifest.pieces as Piece[]
+  const cues = buildTimeline(pieces.map((p) => p.id))
+  const onTimeline = new Set(cues.map((c) => c.id))
+
+  function setup(root: HTMLElement): void {
+    const scene = root.querySelector<HTMLElement>('.lla-scene')
+    const dome = root.querySelector<HTMLElement>('.lla-dome')
+    const outer = root.querySelector<HTMLElement>('.lla-outer')
+    if (!scene || !dome || !outer) return
+    const dir = root.dataset.dir ?? ''
+    const els = new Map<string, HTMLImageElement>()
+    let loaded: Promise<unknown> | null = null
+    let ready = false, inView = false, running = false
+    let t = 0, last = 0, frame = -1
+
+    const load = (): Promise<unknown> => {
+      if (loaded) return loaded
+      for (const p of [...pieces].sort((a, b) => a.z - b.z)) {
+        const im = new Image()
+        im.src = `${dir}/${p.src}`
+        im.alt = ''
+        im.draggable = false
+        Object.assign(im.style, { left: `${p.x}px`, top: `${p.y}px`, width: `${p.w}px`, height: `${p.h}px` })
+        ;(p.dome ? dome : outer).appendChild(im)
+        els.set(p.id, im)
+      }
+      // decode every piece before the first frame, so none arrives late
+      loaded = Promise.all([...els.values()].map((im) => im.decode().catch(() => undefined)))
+      return loaded
+    }
+
+    const render = (time: number): void => {
+      for (const [id, el] of els) {
+        if (!onTimeline.has(id)) el.style.visibility = ALWAYS.includes(id) ? 'visible' : 'hidden'
+      }
+      for (const c of cues) {
+        const el = els.get(c.id)
+        if (!el) continue
+        if (time < c.t0) { el.style.visibility = 'hidden'; continue }
+        el.style.visibility = 'visible'
+        const p = Math.min(1, (time - c.t0) / c.dur)
+        if (p >= 1) { el.style.transform = ''; el.style.clipPath = ''; el.style.filter = ''; continue }
+        const q = pose(c.kind, c.p, p)
+        el.style.transformOrigin = c.p.origin ?? '50% 50%'
+        el.style.transform = `translate(${q.tx.toFixed(1)}px, ${q.ty.toFixed(1)}px) rotate(${q.rot.toFixed(2)}deg) scale(${q.scale.toFixed(3)})`
+        el.style.clipPath = q.clip
+        el.style.filter = 'drop-shadow(0 2px 2px rgba(28, 43, 58, 0.22))' // lifted while it moves
+      }
+      root.classList.toggle('is-holding', time >= SETTLE && time < FADE_OUT)
+      const fade = time >= FADE_OUT ? Math.max(0, 1 - (time - FADE_OUT) / (CYCLE - FADE_OUT - 0.1)) : 1
+      for (const [id, el] of els) if (!ALWAYS.includes(id) && el.parentElement === dome) el.style.opacity = String(fade)
+      outer.style.opacity = String(fade)
+    }
+
+    const tick = (now: number): void => {
+      if (!running) return
+      t += Math.min(0.1, (now - last) / 1000) // a hidden tab does not jump ahead
+      last = now
+      if (t >= CYCLE) t = 0
+      const f = Math.floor(t * FPS)
+      if (f !== frame) { frame = f; render(f / FPS) }
+      requestAnimationFrame(tick)
+    }
+    const play = (): void => {
+      if (running || !ready || !inView) return
+      running = true
+      root.classList.add('is-playing')
+      last = performance.now()
+      requestAnimationFrame(tick)
+    }
+
+    new ResizeObserver(() => {
+      scene.style.transform = `scale(${root.clientWidth / manifest.width})`
+    }).observe(root)
+
+    // load the pieces a little before the section scrolls into view; play while it is in view
+    new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        void load().then(() => { ready = true; play() })
+      }
+    }, { rootMargin: '300px 0px' }).observe(root)
+    new IntersectionObserver((entries) => {
+      inView = entries.some((e) => e.isIntersecting)
+      if (inView) play()
+      else running = false
+    }, { threshold: 0.35 }).observe(root)
+  }
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    for (const root of document.querySelectorAll<HTMLElement>('.lla')) setup(root)
+  }
+</script>
