@@ -3,7 +3,8 @@
 # scripts/parity_diff.sh — HTML + CSS output-parity harness for the MOSAIC website.
 #
 # Written for the Astro 4 -> 5 -> 6 -> 7 upgrade (see
-# blueprints/astro-7-typescript-6-upgrade/blueprint.md, steps 1, 2, 7, 8, 9, 10, 13 and 14),
+# blueprints/astro-7-typescript-6-upgrade/blueprint.md, a local-only planning file since removed;
+# steps 1, 2, 7, 8, 9, 10, 13 and 14),
 # and kept in the repository because every future Astro major needs the same evidence.
 #
 # Run from the REPOSITORY ROOT (the directory holding frontend/ and .github/):
