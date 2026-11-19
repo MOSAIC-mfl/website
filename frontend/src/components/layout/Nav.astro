@@ -1,6 +1,7 @@
 ---
 import Icon from '../ui/Icon.astro'
 import landscapes from '../../../data/landscapes.json'
+import { MAP_VIEWERS } from '../../lib/ui/map-viewers'
 
 const base = import.meta.env.BASE_URL
 const currentPath = Astro.url.pathname
@@ -12,10 +13,8 @@ const navLinks = [
   { href: `${base}/about`, label: 'About' },
 ]
 
-// Landscapes with a map viewer today. Whether a landscape has one is read from the API
-// when its map page opens, but this menu is built with the site: add a code here when
-// a new viewer is published. The others are listed as "Soon" (Lizeth, 2026-11-18).
-const MAP_VIEWERS = ['KEN-LVB', 'PER-PCL']
+// Landscapes with a map viewer today come from lib/ui/map-viewers.ts (one list, shared with the
+// map pages). The others are listed as "Soon" (Lizeth, 2026-11-18).
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)
 // One list, every row alike: ready viewers first (links), then the others with "Soon";
 // A–Z within each, no divider between them (Lizeth, 2026-11-18).
