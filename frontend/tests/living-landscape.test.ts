@@ -29,7 +29,23 @@ describe('living-landscape animation timeline', () => {
   it('ends every kind of move at rest', () => {
     for (const c of cues) {
       const q = pose(c.kind, c.p, 1)
-      expect([q.tx, q.ty, q.rot, q.scale, q.clip]).toEqual([0, 0, 0, 1, ''])
+      expect([q.tx, q.ty, q.rot, q.scale, q.opacity, q.clip]).toEqual([0, 0, 0, 1, 1, ''])
     }
+  })
+
+  it('brings each part in with a soft entry of 0.4 to 0.6 s, starting transparent', () => {
+    for (const c of cues) {
+      expect(c.dur).toBeGreaterThanOrEqual(0.4)
+      expect(c.dur).toBeLessThanOrEqual(0.9) // the sun rises a little slower
+      expect(pose(c.kind, c.p, 0).opacity).toBe(0)
+    }
+  })
+
+  it('follows the layer plan: base, water, forests, biodiversity, people, agriculture, land, climate, arc', () => {
+    const start = (id: string): number => cues.find((c) => c.id === id)?.t0 ?? NaN
+    const order = ['ground', 'med_water', 'med_forests', 'med_biodiversity', 'med_people', 'med_agriculture', 'med_land', 'med_climate', 'dash01', 'caption']
+    const times = order.map(start)
+    expect(times).toEqual([...times].sort((a, b) => a - b))
+    expect(start('dash16')).toBeLessThan(start('caption'))
   })
 })

@@ -1,7 +1,7 @@
 ---
 /* Art of "What is a living landscape?" (2026-11-19): the paper illustration builds itself one
-   piece at a time at 12 frames a second, like stop-motion, then holds on the full picture and
-   loops. The still is the page's image: it shows without script, with reduced motion, and until
+   part at a time, each with its medallion (soft fades with a short move), then the dashed arc and
+   the caption; it holds on the full picture and loops. The still is the page's image: it shows without script, with reduced motion, and until
    the section is on screen. The animation starts when the section is in view and pauses when it
    leaves. Pieces and positions: public/illustrations/living-landscape/ and
    living-landscape-pieces.json; the timeline is src/lib/ui/living-landscape-timeline.ts. */
@@ -57,7 +57,7 @@ const dir = `${base}/illustrations/living-landscape`
 
 <script>
   import manifest from './living-landscape-pieces.json'
-  import { ALWAYS, CYCLE, FADE_OUT, FPS, SETTLE, buildTimeline, pose } from '../../lib/ui/living-landscape-timeline'
+  import { ALWAYS, CYCLE, FADE_OUT, SETTLE, buildTimeline, pose } from '../../lib/ui/living-landscape-timeline'
 
   interface Piece { id: string; src: string; x: number; y: number; w: number; h: number; z: number; dome: boolean }
   const pieces = manifest.pieces as Piece[]
@@ -73,7 +73,7 @@ const dir = `${base}/illustrations/living-landscape`
     const els = new Map<string, HTMLImageElement>()
     let loaded: Promise<unknown> | null = null
     let ready = false, inView = false, running = false
-    let t = 0, last = 0, frame = -1
+    let t = 0, last = 0
 
     const load = (): Promise<unknown> => {
       if (loaded) return loaded
@@ -92,6 +92,9 @@ const dir = `${base}/illustrations/living-landscape`
     }
 
     const render = (time: number): void => {
+      // after the hold, everything but the sky fades out together before the next loop
+      const fade = time >= FADE_OUT ? Math.max(0, 1 - (time - FADE_OUT) / (CYCLE - FADE_OUT - 0.1)) : 1
+      outer.style.opacity = String(fade)
       for (const [id, el] of els) {
         if (!onTimeline.has(id)) el.style.visibility = ALWAYS.includes(id) ? 'visible' : 'hidden'
       }
@@ -101,17 +104,20 @@ const dir = `${base}/illustrations/living-landscape`
         if (time < c.t0) { el.style.visibility = 'hidden'; continue }
         el.style.visibility = 'visible'
         const p = Math.min(1, (time - c.t0) / c.dur)
-        if (p >= 1) { el.style.transform = ''; el.style.clipPath = ''; el.style.filter = ''; continue }
+        const inDome = el.parentElement === dome
+        if (p >= 1) {
+          el.style.transform = ''; el.style.clipPath = ''; el.style.filter = ''
+          el.style.opacity = inDome ? String(fade) : ''
+          continue
+        }
         const q = pose(c.kind, c.p, p)
         el.style.transformOrigin = c.p.origin ?? '50% 50%'
-        el.style.transform = `translate(${q.tx.toFixed(1)}px, ${q.ty.toFixed(1)}px) rotate(${q.rot.toFixed(2)}deg) scale(${q.scale.toFixed(3)})`
+        el.style.transform = `translate(${q.tx.toFixed(2)}px, ${q.ty.toFixed(2)}px) rotate(${q.rot.toFixed(2)}deg) scale(${q.scale.toFixed(4)})`
         el.style.clipPath = q.clip
-        el.style.filter = 'drop-shadow(0 2px 2px rgba(28, 43, 58, 0.22))' // lifted while it moves
+        el.style.opacity = String(inDome ? q.opacity * fade : q.opacity)
+        el.style.filter = 'drop-shadow(0 2px 2px rgba(28, 43, 58, 0.18))' // lifted while it moves
       }
       root.classList.toggle('is-holding', time >= SETTLE && time < FADE_OUT)
-      const fade = time >= FADE_OUT ? Math.max(0, 1 - (time - FADE_OUT) / (CYCLE - FADE_OUT - 0.1)) : 1
-      for (const [id, el] of els) if (!ALWAYS.includes(id) && el.parentElement === dome) el.style.opacity = String(fade)
-      outer.style.opacity = String(fade)
     }
 
     const tick = (now: number): void => {
@@ -119,8 +125,7 @@ const dir = `${base}/illustrations/living-landscape`
       t += Math.min(0.1, (now - last) / 1000) // a hidden tab does not jump ahead
       last = now
       if (t >= CYCLE) t = 0
-      const f = Math.floor(t * FPS)
-      if (f !== frame) { frame = f; render(f / FPS) }
+      render(t)
       requestAnimationFrame(tick)
     }
     const play = (): void => {
