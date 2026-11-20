@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/ui/Icon.astro'
 import HeroMosaic from '../components/home/HeroMosaic.astro'
+import LivingLandscape from '../components/home/LivingLandscape.astro'
 
 // The three catalogue figures are read from mosaic-api in the browser (script at the end), so the
 // home page never needs a rebuild when the catalogue changes. Until they arrive they show a dash.
@@ -125,14 +126,7 @@ const audiences = [
         </a>
       </div>
       <div class="ll-art">
-        <img
-          src={`${base}/illustrations/living-landscape.webp`}
-          alt="Illustration of a living landscape (hills, a river, forest, fields with grazing cattle and a farmhouse) ringed by the parts it brings together: water, forests, biodiversity, people and livelihoods, agriculture, land and soils, and climate."
-          width="1387"
-          height="745"
-          loading="lazy"
-          decoding="async"
-        />
+        <LivingLandscape />
         <p class="ll-parts">Water · Forests · Biodiversity · People and livelihoods · Agriculture · Land and soils · Climate</p>
       </div>
     </div>
@@ -386,7 +380,6 @@ const audiences = [
   }
   .ll-link:hover, .how-link:hover { text-decoration: underline; }
 
-  .ll-art img { display: block; width: 100%; height: auto; }
   /* The labels are part of the picture and too small to read on a phone: there
      they are repeated as text under it. */
   .ll-parts { display: none; margin: var(--space-3) 0 0; text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
