@@ -3,7 +3,7 @@ import type { RecordDetail } from '../src/lib/api/types'
 import { LabelBook } from '../src/lib/domain/labels'
 import { readinessBadge, readinessLabel, readinessRank } from '../src/lib/domain/readiness'
 import { sortOptions } from '../src/components/catalogue/FilterGroup'
-import { correctionLinks, coverageOf, licenseShort, primaryAccess, resolutionOf, statedCitation } from '../src/components/dataset/view'
+import { correctionLinks, coverageOf, licenseShort, primaryAccess, resolutionOf, samePeriodText, statedCitation } from '../src/components/dataset/view'
 
 const detail = (over: Partial<RecordDetail> & { record?: Partial<RecordDetail['record']> } = {}) =>
   ({
@@ -89,5 +89,18 @@ describe('formats', () => {
     expect(formatName('application/x-esri-shapefile')).toBe('Shapefile')
     expect(formatName('text/csv')).toBe('CSV')
     expect(formatName('application/x-foo')).toBe('application/x-foo')
+  })
+})
+
+describe('period as stated', () => {
+  it('is the same as the computed period whatever dash it was typed with', () => {
+    expect(samePeriodText('2000-2024', '2000–2024')).toBe(true)
+    expect(samePeriodText('2000 - 2024', '2000–2024')).toBe(true)
+    expect(samePeriodText('2000—2024', '2000–2024')).toBe(true)
+  })
+  it('is different when the contributor said more than the years', () => {
+    expect(samePeriodText('2018 and 2021 campaigns', '2018–2021')).toBe(false)
+    expect(samePeriodText('Since 2014, monthly', '2014 onwards')).toBe(false)
+    expect(samePeriodText('2023', null)).toBe(false)
   })
 })

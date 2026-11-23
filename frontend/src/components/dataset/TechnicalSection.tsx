@@ -3,7 +3,7 @@ import { NOT_SPECIFIED } from '../../lib/domain/facets'
 import type { LabelBook } from '../../lib/domain/labels'
 import { joinLabels } from '../../lib/domain/present'
 import { readinessLabel } from '../../lib/domain/readiness'
-import { coverageOf, formatsOf, periodOf, resolutionOf } from './view'
+import { coverageOf, formatsOf, periodOf, resolutionOf, samePeriodText } from './view'
 
 interface Props {
   d: RecordDetail
@@ -52,7 +52,7 @@ export function TechnicalSection({ d, labels, jsonUrl }: Props) {
       <h3>Temporal</h3>
       <dl className="dp-kv">
         {row('Period covered', periodOf(r) ?? 'Not specified')}
-        {t?.text && t.text !== periodOf(r) && row('As stated', t.text)}
+        {t?.text && !samePeriodText(t.text, periodOf(r)) && row('As stated', t.text)}
         {freq && freq !== 'unknown' && row('Update frequency', freq[0].toUpperCase() + freq.slice(1))}
         {r.source_updated && row('Updated at the source', r.source_updated)}
       </dl>

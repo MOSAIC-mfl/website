@@ -69,6 +69,13 @@ export function periodOf(r: MosaicRecord): string | null {
   return periodText(yearsOf(r)) ?? r.temporal?.text ?? null
 }
 
+/** Whether two ways of writing a period say the same thing: "2000-2024" and "2000–2024" do. Hyphen,
+    en dash and em dash count as one, and spaces around them and letter case are ignored. */
+export function samePeriodText(a: string | null | undefined, b: string | null | undefined): boolean {
+  const norm = (s: string | null | undefined) => (s ?? '').toLowerCase().replace(/\s*[-\u2013\u2014]\s*/g, '-').replace(/\s+/g, ' ').trim()
+  return norm(a) === norm(b)
+}
+
 export function resolutionOf(r: MosaicRecord): string | null {
   const res = r.spatial?.resolution
   if (!res) return null
