@@ -38,14 +38,15 @@ const steps = [
   },
 ] as const
 
-// Each audience gets a way in: where someone like them would start.
+// Each audience gets a way in: where someone like them would start. `go` says where the link
+// leads, so nobody expects a page of their own (there is none per audience).
 const audiences = [
-  { who: 'Researchers', what: 'looking for landscape data and research', href: `${base}/catalogue` },
-  { who: 'Institutions', what: 'sharing data and research', href: `${base}/about#contribute` },
-  { who: 'Landscape teams', what: 'coordinating data across places', href: `${base}/landscapes` },
-  { who: 'Decision-makers', what: 'comparing environmental and social information', href: `${base}/landscapes` },
-  { who: 'Data stewards', what: 'making their work easier to find and reuse', href: `${base}/about#metadata` },
-  { who: 'Funders and partners', what: 'tracking evidence across initiatives', href: `${base}/about#overview` },
+  { who: 'Researchers', what: 'looking for landscape data and research', go: 'Search the catalog', href: `${base}/catalogue` },
+  { who: 'Institutions', what: 'sharing data and research', go: 'Register a dataset', href: `${base}/about#contribute` },
+  { who: 'Landscape teams', what: 'coordinating data across places', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: 'Decision-makers', what: 'comparing environmental and social information', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: 'Data stewards', what: 'making their work easier to find and reuse', go: 'Read the metadata guide', href: `${base}/about#metadata` },
+  { who: 'Funders and partners', what: 'tracking evidence across initiatives', go: 'What MOSAIC is', href: `${base}/about#overview` },
 ] as const
 ---
 
@@ -167,8 +168,9 @@ const audiences = [
         {audiences.map((a) => (
           <li>
             <a class="who-item" href={a.href}>
-              <span class="who-name">{a.who} <Icon name="arrow-right" size={16} aria-hidden="true" /></span>
+              <span class="who-name">{a.who}</span>
               <span class="who-what">{a.what}</span>
+              <span class="who-go">{a.go} <Icon name="arrow-right" size={16} aria-hidden="true" /></span>
             </a>
           </li>
         ))}
@@ -337,13 +339,23 @@ const audiences = [
     font-weight: 400;
     color: var(--color-text);
   }
-  .who-name :global(svg) { color: var(--color-link); transition: transform 150ms ease-out; }
+  /* Where the item leads, in words: the whole item is the link, this line says its destination */
+  .who-go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-link);
+  }
+  .who-go :global(svg) { transition: transform 150ms ease-out; }
   .who-item:hover { color: var(--color-muted); }
   @media (hover: hover) {
-    .who-item:hover .who-name { text-decoration: underline; text-underline-offset: 3px; }
-    .who-item:hover .who-name :global(svg) { transform: translateX(3px); }
+    .who-item:hover .who-go { text-decoration: underline; text-underline-offset: 3px; }
+    .who-item:hover .who-go :global(svg) { transform: translateX(3px); }
   }
-  @media (prefers-reduced-motion: reduce) { .who-name :global(svg) { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .who-go :global(svg) { transition: none; } }
   @media (max-width: 900px) { .who-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 
