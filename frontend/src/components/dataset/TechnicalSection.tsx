@@ -29,6 +29,7 @@ export function TechnicalSection({ d, labels, jsonUrl }: Props) {
   const formats = formatsOf(r)
   const structures = r.structures ?? []
   const steps = r.processing ?? []
+  const coverageIsLandscape = d.landscapes.length > 0 && !(sp?.geography ?? []).includes('global')
   return (
     <section id="technical" className="dp-sec">
       <h2>Technical metadata</h2>
@@ -36,7 +37,9 @@ export function TechnicalSection({ d, labels, jsonUrl }: Props) {
 
       <h3>Spatial</h3>
       <dl className="dp-kv">
-        {row('Coverage', coverageOf(d, labels) ?? 'Not specified')}
+        {/* With a landscape (and not global), coverage is that landscape's name: the next row says it
+            with its code, so this one would repeat it. */}
+        {!coverageIsLandscape && row('Coverage', coverageOf(d, labels) ?? 'Not specified')}
         {row('Living landscape', d.landscapes.length
           ? <>{d.landscapes.map((c) => `${labels.label('landscape', c)} (${c})`).join(', ')}{d.landscapes_derived ? ' — from the dataset extent' : ''}</>
           : 'Not specified')}
