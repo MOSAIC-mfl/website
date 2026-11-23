@@ -2,7 +2,7 @@ import type { RecordDetail } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { ACCESS_BADGE, ACCESS_LABEL } from '../../lib/domain/present'
 import { readinessBadge, readinessLabel, readinessTooltip } from '../../lib/domain/readiness'
-import { correctionLinks, licenseShort, producers } from './view'
+import { correctionLinks, licenseShort, primaryAccess, producers, urlOf } from './view'
 
 interface Props {
   d: RecordDetail
@@ -17,6 +17,8 @@ export function DatasetHeader({ d, labels, base, jsonUrl }: Props) {
   const by = producers(r)
   const geo = (r.spatial?.geography ?? []).filter((g) => g !== 'global')
   const fix = correctionLinks(d)
+  const source = primaryAccess(r)
+  const sourceUrl = source && r.access === 'public' && (source.access ?? r.access) === 'public' ? urlOf(source) : undefined
   return (
     <header className="dp-head">
       <h1 className="dp-title">{r.title ?? d.local_id}</h1>
@@ -48,9 +50,11 @@ export function DatasetHeader({ d, labels, base, jsonUrl }: Props) {
         </div>
       </dl>
       <div className="dp-actions">
-        <a className="btn btn-primary" href="#access">
+        {/* A public dataset with a link goes straight to its source; any other opens the Access & use
+            section, which says how to ask for it. */}
+        <a className="btn btn-primary" href={sourceUrl ?? '#access'} {...(sourceUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-          Access the data
+          {sourceUrl ? 'Go to the data at its source ↗' : 'How to get the data'}
         </a>
         <a className="btn btn-secondary" href={jsonUrl} target="_blank" rel="noopener noreferrer">Metadata (JSON)</a>
         {fix && (

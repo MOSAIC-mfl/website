@@ -58,6 +58,15 @@ const fileSize = (bytes: number) =>
   />
 </BaseLayout>
 
+<!-- With a landscape open, the page header shrinks to its title, so the landscape starts higher on
+     the screen (it began two thirds of the way down). The intro screen keeps the full header. -->
+<style is:global>
+  body:has(.lx.is-live:not(.is-intro)) .page-hero.page-hero--compact { padding: 1rem 0 0.75rem; }
+  body:has(.lx.is-live:not(.is-intro)) .page-hero--compact .page-hero-title { font-size: 1.5rem; margin-bottom: 0; }
+  body:has(.lx.is-live:not(.is-intro)) .page-hero--compact .page-hero-subtitle { display: none; }
+  body:has(.lx.is-live:not(.is-intro)) .lp-wide { padding-top: var(--space-5); }
+</style>
+
 <style>
   .lp-wide {
     max-width: 1440px;
