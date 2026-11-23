@@ -68,9 +68,6 @@ const audiences = [
           <a href={`${base}/landscapes`} class="btn btn-hero-primary">
             <Icon name="map-pin" size={18} aria-hidden="true" /> Explore the landscapes
           </a>
-          <a href={`${base}/about#contribute`} class="btn btn-hero-ghost">
-            <Icon name="upload" size={18} aria-hidden="true" /> Register a dataset
-          </a>
         </div>
       </div>
     </div>
@@ -250,20 +247,6 @@ const audiences = [
     border-color: var(--mosaic-teal);
   }
   .btn-hero-primary:hover { background-color: var(--mosaic-teal-dark); border-color: var(--mosaic-teal-dark); color: var(--color-white); }
-  .btn-hero-ghost {
-    /* Sits on the hero band, which stays light in BOTH themes — use the
-       never-remapped white, not --color-surface (dark-on-dark in dark mode). */
-    background-color: var(--color-white);
-    color: var(--mosaic-teal);
-    border: 2px solid var(--mosaic-teal);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
-    cursor: pointer;
-  }
-  .btn-hero-ghost:hover { background-color: var(--mosaic-teal); color: var(--color-white); }
-
   /* ── Sheet over the hero ───────────────────────────────────
      The hero stays pinned under the header while the rest of the page slides
      up over it as one sheet with rounded top corners. Only where the whole
