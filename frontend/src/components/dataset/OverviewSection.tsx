@@ -1,6 +1,6 @@
 import type { RecordDetail } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
-import { NOT_STATED, READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, isReadiness, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
+import { NOT_STATED, READINESS_DECLARED, READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, isReadiness, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
 
 export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelBook }) {
   const r = d.record
@@ -46,7 +46,7 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
         <h3>Readiness: {readinessLabel(status)}</h3>
         <p>
           {isReadiness(status) ? READINESS_MEANING[status] : 'The contributor did not state how far the data has been processed, or its catalog has no such field.'}{' '}
-          {READINESS_NOTE}
+          {isReadiness(status) ? READINESS_DECLARED : READINESS_NOTE}
         </p>
         <details>
           <summary>What the statuses mean</summary>
