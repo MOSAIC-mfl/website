@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/ui/Icon.astro'
 import HeroMosaic from '../components/home/HeroMosaic.astro'
 import LivingLandscape from '../components/home/LivingLandscape.astro'
+import { LIVING_LANDSCAPE_IS } from '../lib/ui/shared-copy'
 
 // The three catalogue figures are read from mosaic-api in the browser (script at the end), so the
 // home page never needs a rebuild when the catalogue changes. Until they arrive they show a dash.
@@ -108,11 +109,7 @@ const audiences = [
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
-        <p class="ll-lead">
-          A living landscape is a place such as a river basin, a mountain range or a coastal delta,
-          where farms, forests, water and the people who depend on them are looked at together,
-          not one at a time.
-        </p>
+        <p class="ll-lead">A living landscape is {LIVING_LANDSCAPE_IS}</p>
         <p class="ll-body">
           The CGIAR Multifunctional Landscapes Science Program works with local communities,
           governments and partners in {allLandscapes > 0 ? `${allLandscapes} of these landscapes, in ${allCountries} countries` : 'these landscapes'} across
