@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/ui/Icon.astro'
 import HeroMosaic from '../components/home/HeroMosaic.astro'
 import LivingLandscape from '../components/home/LivingLandscape.astro'
-import { LIVING_LANDSCAPE_IS } from '../lib/ui/shared-copy'
+import { AUDIENCE, LIVING_LANDSCAPE_IS } from '../lib/ui/shared-copy'
 
 // The three catalogue figures are read from mosaic-api in the browser (script at the end), so the
 // home page never needs a rebuild when the catalogue changes. Until they arrive they show a dash.
@@ -42,12 +42,12 @@ const steps = [
 // Each audience gets a way in: where someone like them would start. `go` says where the link
 // leads, so nobody expects a page of their own (there is none per audience).
 const audiences = [
-  { who: 'Researchers', what: 'looking for landscape data and research', go: 'Search the catalog', href: `${base}/catalogue` },
-  { who: 'Institutions', what: 'sharing data and research', go: 'Register a dataset', href: `${base}/about#contribute` },
-  { who: 'Landscape teams', what: 'coordinating data across places', go: 'See the landscapes', href: `${base}/landscapes` },
-  { who: 'Decision-makers', what: 'comparing environmental and social information', go: 'See the landscapes', href: `${base}/landscapes` },
-  { who: 'Data stewards', what: 'making their work easier to find and reuse', go: 'Read the metadata guide', href: `${base}/about#metadata` },
-  { who: 'Funders and partners', what: 'tracking evidence across initiatives', go: 'What MOSAIC is', href: `${base}/about#overview` },
+  { who: AUDIENCE.researchers, what: 'looking for landscape data and research', go: 'Search the catalog', href: `${base}/catalogue` },
+  { who: AUDIENCE.institutions, what: 'sharing data and research', go: 'Register a dataset', href: `${base}/about#contribute` },
+  { who: AUDIENCE.landscapeTeams, what: 'coordinating data across places', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: AUDIENCE.decisionMakers, what: 'comparing environmental and social information', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: AUDIENCE.dataStewards, what: 'making their work easier to find and reuse', go: 'Read the metadata guide', href: `${base}/about#metadata` },
+  { who: AUDIENCE.funders, what: 'tracking evidence across initiatives', go: 'What MOSAIC is', href: `${base}/about#overview` },
 ] as const
 ---
 
