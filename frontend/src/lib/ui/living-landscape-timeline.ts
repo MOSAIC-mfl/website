@@ -24,28 +24,28 @@ export interface Pose {
 }
 
 /** each layer's entry, in seconds */
-export const ENTRY = 0.5
-/** layer id → start time, in order of entry */
+export const ENTRY = 0.4
+/** layer id → start time, in order of entry (sped up to about half the first pace, 2026-11-23) */
 export const SCHEDULE: readonly (readonly [string, number])[] = [
   ['sky', 0.0],
-  ['mountain_cream', 0.5],
-  ['mountains_teal', 1.0],
-  ['hills', 1.5],
-  ['ground', 2.0],
-  ['water', 3.0],
-  ['forests', 4.5],
-  ['biodiversity', 6.0],
-  ['people', 7.5],
-  ['agriculture', 9.0],
-  ['soils', 10.5],
-  ['climate', 12.0],
-  ['arc', 13.0],
+  ['mountain_cream', 0.25],
+  ['mountains_teal', 0.5],
+  ['hills', 0.75],
+  ['ground', 1.0],
+  ['water', 1.6],
+  ['forests', 2.35],
+  ['biodiversity', 3.1],
+  ['people', 3.85],
+  ['agriculture', 4.6],
+  ['soils', 5.35],
+  ['climate', 6.1],
+  ['arc', 6.65],
 ]
 /** every layer has settled; the still illustration is shown on top from here */
-export const SETTLE = 13.5
+export const SETTLE = 7.1
 /** the scene fades out from here, after a two-second hold */
-export const FADE_OUT = 15.5
-export const CYCLE = 16.1
+export const FADE_OUT = 9.1
+export const CYCLE = 9.7
 
 export function buildTimeline(ids: readonly string[]): Cue[] {
   const have = new Set(ids)
