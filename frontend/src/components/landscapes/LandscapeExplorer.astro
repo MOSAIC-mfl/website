@@ -282,10 +282,12 @@ const codes = items.map((it) => it.code)
         <p class="lx-empty" hidden>No landscapes match your search.</p>
       </div>
     </div>
+    {/* The way back to the world map; shown once a landscape is open */}
+    <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
   </div>
 
-  <!-- World map: the start screen (map + list), then a compact strip above the
-       chosen landscape, its pin highlighted, so the global view stays in sight -->
+  <!-- World map: the start screen only. With a landscape open it is hidden (it was a small strip
+       whose pins did what the list above does); the landscape's own map shows where it is. -->
   <div class="lx-intro" data-intro>
     <div class="lx-intro-head">
       <h2 class="lx-intro-title">{items.length} living landscapes in {introCountries.length} countries</h2>
@@ -310,11 +312,6 @@ const codes = items.map((it) => it.code)
           </a>
         ))}
       </svg>
-    </div>
-    <div class="lx-gm-side">
-      <p class="lx-gm-count">{items.length} landscapes in {introCountries.length} countries</p>
-      <p class="lx-gm-hint">Pick another pin on the map to switch.</p>
-      <a class="lx-gm-all" href={`${base}/landscapes`} data-gm-all><Icon name="grid" size={16} /> See all landscapes</a>
     </div>
     </div>
   </div>
@@ -617,15 +614,12 @@ const codes = items.map((it) => it.code)
   .lx.is-intro .lx-intro { animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
   /* the title belongs to the start screen only */
   .lx:not(.is-intro) .lx-intro-head { display: none; }
-  /* compact strip once a landscape is chosen */
+  /* once a landscape is chosen the world map goes; "See all landscapes" beside the list brings it back */
   .lx-gm-row { display: flex; align-items: center; gap: var(--space-8); }
-  .lx-gm-row .lx-intro-map { flex: 1 1 auto; max-width: 100%; transition: max-width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .lx.is-live:not(.is-intro) .lx-intro-map { max-width: 540px; }
-  .lx-gm-side { display: none; }
-  .lx.is-live:not(.is-intro) .lx-gm-side { display: block; animation: lx-arrive 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .lx-gm-count { margin: var(--space-1) 0 0; font-family: var(--font-title); font-size: var(--text-xl); font-weight: 400; color: var(--color-text); }
-  .lx-gm-hint { margin: var(--space-1) 0 var(--space-3); color: var(--color-muted); font-size: var(--text-sm); }
-  .lx-gm-all { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-link); font-weight: 600; text-decoration: none; }
+  .lx-gm-row .lx-intro-map { flex: 1 1 auto; max-width: 100%; }
+  .lx.is-live:not(.is-intro) .lx-intro { display: none; }
+  .lx-gm-all { display: none; }
+  .lx.is-live:not(.is-intro) .lx-gm-all { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-link); font-weight: 600; text-decoration: none; }
   .lx-gm-all:hover { text-decoration: underline; }
   :global([data-theme='dark']) .lx-gm-all { color: var(--mosaic-light-teal); }
   /* the chosen landscape's pin */
@@ -633,7 +627,6 @@ const codes = items.map((it) => it.code)
   .lx-ip.is-on .lx-ip-dot { fill: var(--mosaic-terracotta); }
   .lx-ip.is-on .lx-ip-body { transform: scale(1.6); }
   .lx-ip.is-on .lx-ip-name { opacity: 1; }
-  .lx.is-live:not(.is-intro) .lx-ip-name { font-size: 5px; stroke-width: 1.4px; }
   .lx.is-intro .lx-body { display: none; }
   .lx-pick-prompt { display: none; font-family: var(--font-title); font-weight: 400; font-size: var(--text-lg); line-height: 1.2; }
   .lx.is-intro .lx-pick-prompt { display: block; }
@@ -677,9 +670,6 @@ const codes = items.map((it) => it.code)
   @keyframes lx-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (max-width: 767px) {
     .lx-gm-row { flex-direction: column; align-items: stretch; gap: var(--space-3); }
-    .lx.is-live:not(.is-intro) .lx-intro-map { max-width: none; }
-    .lx-gm-side { text-align: left; }
-    .lx-gm-hint { display: none; }
     .lx-intro-map svg { aspect-ratio: 1.8 / 1; }
     .lx-ip-halo { r: 4.5px; }
     .lx-ip-dot { r: 2.2px; }
