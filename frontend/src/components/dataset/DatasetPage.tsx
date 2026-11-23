@@ -109,7 +109,7 @@ export function DatasetPage({ base }: { base: string }) {
 
       <div className="dp-layout">
         <div className="dp-main">
-          {section === 'overview' && <OverviewSection d={d} labels={labels} />}
+          {section === 'overview' && <OverviewSection d={d} />}
           {section === 'access' && <AccessSection d={d} labels={labels} />}
           {section === 'technical' && <TechnicalSection d={d} labels={labels} jsonUrl={jsonUrl} />}
           {section === 'citation' && <CitationSection d={d} base={base} />}
