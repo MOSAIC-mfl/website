@@ -356,6 +356,8 @@ const codes = items.map((it) => it.code)
         <Icon name="layers" size={30} />
         <span class="lx-badge-num" data-f="count">–</span>
         <span class="lx-badge-lbl" data-f="count-label">datasets</span>
+        {/* the badge is a link to the catalog filtered by this landscape: the arrow says so */}
+        <span class="lx-badge-go" aria-hidden="true"><Icon name="arrow-right" size={18} /></span>
       </a>
     </header>
 
@@ -840,6 +842,9 @@ const codes = items.map((it) => it.code)
   .lx-badge:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
   .lx-badge-num { font-family: var(--font-title); font-size: var(--text-4xl); font-weight: 300; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; line-height: 1; }
   .lx-badge-lbl { font-size: var(--text-xl); }
+  .lx-badge-go { display: inline-flex; margin-left: var(--space-1); transition: transform 150ms ease-out; }
+  .lx-badge:hover .lx-badge-go { transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { .lx-badge-go { transition: none; } }
   .lx-badge.is-bump { animation: lx-bump 0.6s ease; }
 
   /* photos | map side by side, Key insights in a full-width band below */
