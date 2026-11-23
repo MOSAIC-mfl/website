@@ -128,21 +128,23 @@ function tooltip(el) {
   if (!t) { t = document.createElement('div'); t.className = 'chart-tip'; t.style.cssText = 'position:absolute;pointer-events:none;padding:6px 8px;font:inherit;font-size:12px;line-height:1.35;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity 120ms ease;background:var(--surface,#fff);color:var(--ink,#111);border:1px solid var(--grid,#e5e7eb)'; if (getComputedStyle(el).position === 'static') el.style.position = 'relative'; el.appendChild(t); }
   return t;
 }
+// axis labels are read, not glanced at: 14px like every other text meant to be read (Font size matters)
+const AXIS = 14;
 function axes(g, el, { w, h, padL, padB, yt, y, labels, x, band = false, at = null, tick, avoid = null }) {
   const grid = css(el, '--grid', '#e8e8e8'), ink = css(el, '--axis-ink', '#6b6b6b'), s = g.ownerSVGElement;
   for (const v of yt) {
     const yy = y(v);
     svg('line', { x1: padL, x2: w, y1: yy, y2: yy, stroke: grid, 'stroke-width': 1, 'shape-rendering': 'crispEdges' }, g);
-    text(g, tick(v), { x: padL - 8, y: yy + 4, 'text-anchor': 'end', 'font-size': 12, fill: ink });
+    text(g, tick(v), { x: padL - 8, y: yy + 5, 'text-anchor': 'end', 'font-size': AXIS, fill: ink });
   }
   const n = labels.length;
   for (const i of xPicks(labels, w - padL, at)) {
-    const lab = String(labels[i]), tw = measure(s, lab, 12), xx = x(i);
+    const lab = String(labels[i]), tw = measure(s, lab, AXIS), xx = x(i);
     // the first and last labels are pulled inside the plot; none runs past either edge
     let left = band ? xx - tw / 2 : i === 0 ? xx : i === n - 1 ? xx - tw : xx - tw / 2;
     left = Math.max(band ? 0 : padL, Math.min(w - tw, left));
     if (avoid && left < avoid[1] + 8 && left + tw > avoid[0] - 8) continue;
-    text(g, lab, { x: left, y: h - padB + 18, 'font-size': 12, fill: ink });
+    text(g, lab, { x: left, y: h - padB + 19, 'font-size': AXIS, fill: ink });
   }
 }
 // Annotation labels sit in rows above the plot, never on the data. A label sits beside the top of its own leader
@@ -263,7 +265,7 @@ const rectSwatch = (st, w = 14, h = 10, r = 2) => (sw) => paintRect(sw, st, 0, (
 function settle(draw) { if (document.fonts) { document.fonts.ready.then(draw); document.fonts.addEventListener?.('loadingdone', draw, { once: true }); } }
 const heightOf = (h) => (typeof h === 'function' ? h() : h);
 
-function line(el, { labels, series, format = fmt.int, tickFormat = null, height = 220, fill = false, min, max, step = false, annotations, reference, today = null, todayLabel = 'Today', endLabel = false, yTicks = null, xAt = null, legend = null, tipLabels = null }) {
+function line(el, { labels, series, format = fmt.int, tickFormat = null, height = 220, fill = false, min, max, step = false, annotations, reference, today = null, todayLabel = 'Today', endLabel = false, labelEnds = false, yTicks = null, xAt = null, legend = null, tipLabels = null }) {
   el._fmt = format;
   const colourOf = (sr, k) => sr.colour || (k === 0 ? css(el, '--chart-1', '#2f6fdf') : css(el, `--chart-${k + 1}`, css(el, '--chart-muted', '#a3a3a3')));
   const draw = () => {
@@ -274,7 +276,9 @@ function line(el, { labels, series, format = fmt.int, tickFormat = null, height 
     const yt = yTicks || ticks(min ?? Math.min(0, ...all), top, 4);
     const tick = tickFormat || format;
     const lastVal = series[0].values.filter((v) => v != null).at(-1);
-    const padL = 12 + Math.max(...yt.map((v) => measure(s, tick(v), 12))), padB = 26, padR = endLabel ? 10 + measure(s, format(lastVal), 12, 600) : 0;
+    // labelEnds: each series is named at the end of its line, in its colour, instead of in a legend
+    const endNames = labelEnds ? series.map((sr) => measure(s, sr.name, 13, 600)) : [];
+    const padL = 12 + Math.max(...yt.map((v) => measure(s, tick(v), AXIS))), padB = 28, padR = labelEnds ? 8 + Math.max(...endNames) : endLabel ? 10 + measure(s, format(lastVal), 12, 600) : 0;
     const x = (i) => padL + (i * (w - padL - padR)) / Math.max(1, labels.length - 1);
     // the peaks clipped by max are labelled in the rows above the plot, where the line leaves it
     const peaks = [];
@@ -298,7 +302,8 @@ function line(el, { labels, series, format = fmt.int, tickFormat = null, height 
       // step: a balance that only changes on given days holds its value until the next one
       const d = pts.reduce((acc, p, i) => (p ? acc + (acc && pts[i - 1] ? (step ? `L${p[0].toFixed(1)} ${pts[i - 1][1].toFixed(1)}L` : 'L') : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1) : acc), '');
       if (fill && k === 0) { const first = pts.find(Boolean), last = [...pts].reverse().find(Boolean); svg('path', { d: `${d}L${last[0]} ${y(yt[0])}L${first[0]} ${y(yt[0])}Z`, fill: col, opacity: 0.12 }, g); }
-      if (today == null) svg('path', { d, fill: 'none', stroke: col, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
+      // a dashed series (a normal, a reference) is drawn dashed, exactly as its legend swatch
+      if (today == null) svg('path', { d, fill: 'none', stroke: col, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': sr.dash ? 'butt' : 'round', 'stroke-dasharray': sr.dash ? '4 3' : null }, g);
       else {
         // a forecast: the line after today is dashed, so a projection never reads as a fact
         const cut = x(today), id = 'c' + k + Math.random().toString(36).slice(2, 8);
@@ -311,6 +316,12 @@ function line(el, { labels, series, format = fmt.int, tickFormat = null, height 
       }
       if (endLabel && k === 0) { const li = sr.values.map((v, i) => (v == null ? -1 : i)).filter((i) => i >= 0).at(-1); text(g, format(sr.values[li]), { x: x(li) + 6, y: y(Math.min(sr.values[li], yt.at(-1))) + 4, 'font-size': 12, 'font-weight': 600, fill: css(el, '--ink', '#111') }); }
     });
+    if (labelEnds) {
+      // names at the right end of each line, pushed apart when two lines end close together
+      const ends = series.map((sr, k) => { const li = sr.values.map((v, i) => (v == null ? -1 : i)).filter((i) => i >= 0).at(-1); return li == null ? null : { k, x: x(li) + 6, y: y(Math.min(sr.values[li], yt.at(-1))) + 4 }; }).filter(Boolean).sort((a, b) => a.y - b.y);
+      for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
+      for (const e of ends) text(g, series[e.k].name, { x: e.x, y: e.y, 'font-size': 13, 'font-weight': 600, fill: colourOf(series[e.k], e.k) });
+    }
     references(g, el, reference, { y, padL, w, lines: linesAt(y).slice(0, series.length) });
     notesOver(g, el, N, { padT, h, padB });
     // hover: a rule, a dot per series and a bare tooltip
@@ -323,7 +334,7 @@ function line(el, { labels, series, format = fmt.int, tickFormat = null, height 
     s.setAttribute('aria-label', `${series.map((x) => x.name).join(', ')}, ${labels[0]} to ${labels.at(-1)}; latest ${last == null ? 'no data' : format(last)}`);
   };
   draw(); watch(el, draw); settle(draw);
-  const lg = series.length > 1 ? legendEl(series.map((sr, k) => ({ label: sr.name, w: 16, draw: (sw) => svg('line', { x1: 0, x2: 16, y1: 6, y2: 6, stroke: colourOf(sr, k), 'stroke-width': 2, 'stroke-dasharray': sr.dash ? '4 3' : null }, sw) })), legend) : null;
+  const lg = series.length > 1 && !labelEnds ? legendEl(series.map((sr, k) => ({ label: sr.name, w: 16, draw: (sw) => svg('line', { x1: 0, x2: 16, y1: 6, y2: 6, stroke: colourOf(sr, k), 'stroke-width': 2, 'stroke-dasharray': sr.dash ? '4 3' : null }, sw) })), legend) : null;
   return { legend: lg };
 }
 function bars(el, { labels, values, format = fmt.int, tickFormat = null, height = 200, highlight = null, dim = [], colour, mutedColour, annotations, reference, xAt = null, max = null }) {
@@ -333,7 +344,7 @@ function bars(el, { labels, values, format = fmt.int, tickFormat = null, height 
     const { s, w, h } = frame(el, heightOf(height));
     // max: a shared top for small multiples, so sibling charts read on one scale
     const yt = ticks(0, Math.max(max ?? 0, ...values, ...[].concat(reference || []).map((r) => r.value)), 4), tick = tickFormat || format;
-    const padL = 12 + Math.max(...yt.map((v) => measure(s, tick(v), 12))), padB = 26;
+    const padL = 12 + Math.max(...yt.map((v) => measure(s, tick(v), AXIS))), padB = 28;
     const band = (w - padL) / values.length, bw = Math.max(2, band * 0.62);
     const x = (i) => padL + band * i + band / 2;
     const N = prepNotes(s, annotations, x, w), padT = LANE(N.rows);

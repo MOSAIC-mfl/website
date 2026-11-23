@@ -41,6 +41,8 @@ export interface ExplorerState {
   menuOpen: boolean
   comparing: boolean
   notices: string[]
+  /** the overlay whose data is still arriving (a neutral 'Loading …' line over the map) */
+  loading: string | null
 }
 
 export interface RailItem {
@@ -134,6 +136,7 @@ export class ExplorerController {
       menuOpen: false,
       comparing: false,
       notices: [],
+      loading: null,
     })
   }
 
@@ -302,14 +305,28 @@ export class ExplorerController {
     if (id) {
       const r = this.renderers.get(id)
       if (!r) return
+      this.store.set({ loading: id })
       try {
         await r.show(this.ctx, this.view(id))
       } catch (err) {
         this.notice(`${r.config.title}: ${err instanceof Error ? err.message : String(err)}`)
       }
       this.store.set({}) // the legend and time bar depend on data loaded by show()
-    }
+      void this.settle(id)
+    } else this.store.set({ loading: null })
     this.writeHash()
+  }
+
+  /** Clears the loading line once the map has drawn the overlay (unless another one was chosen since). */
+  private async settle(id: string): Promise<void> {
+    await this.engine.whenIdle()
+    if (this.store.get().loading === id) this.store.set({ loading: null })
+  }
+
+  /** The 'Loading …' line: the title of the overlay still arriving, or null. */
+  loadingTitle(): string | null {
+    const id = this.store.get().loading
+    return id ? (this.renderers.get(id)?.config.title ?? null) : null
   }
 
   async toggleOverlay(id: string): Promise<void> {
@@ -319,9 +336,10 @@ export class ExplorerController {
   async setVariant(variant: string): Promise<void> {
     const id = this.store.get().overlay
     if (!id) return
-    this.store.set((s) => ({ variants: { ...s.variants, [id]: variant } }))
+    this.store.set((s) => ({ variants: { ...s.variants, [id]: variant }, loading: id }))
     await this.renderers.get(id)?.show(this.ctx, this.view(id))
     this.store.set({})
+    void this.settle(id)
   }
 
   async time(input: TimeInput): Promise<void> {
@@ -329,9 +347,10 @@ export class ExplorerController {
     const r = id ? this.renderers.get(id) : null
     if (!r || !r.timeKey) return
     const key = r.timeKey
-    this.store.set((s) => ({ times: { ...s.times, [key]: r.applyTime(s.times[key], input) } }))
+    this.store.set((s) => ({ times: { ...s.times, [key]: r.applyTime(s.times[key], input) }, loading: id }))
     await r.show(this.ctx, this.view(id!))
     this.store.set({})
+    void this.settle(id!)
     if (this.store.get().floating === 'cell' && this.lastClick) await this.inspectAt(this.lastClick, null, false)
     this.writeHash()
   }

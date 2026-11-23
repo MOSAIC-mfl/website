@@ -73,6 +73,20 @@ export class MapLibreEngine implements MapEngine {
     })
   }
 
+  whenIdle(timeoutMs = 30000): Promise<void> {
+    return new Promise((resolve) => {
+      const done = () => {
+        clearTimeout(timer)
+        this.map.off('idle', done)
+        resolve()
+      }
+      const timer = setTimeout(done, timeoutMs)
+      this.map.on('idle', done)
+      // 'idle' only fires after a frame: ask for one, so a layer that is already drawn resolves at once
+      this.map.triggerRepaint()
+    })
+  }
+
   // ---- sources and layers ------------------------------------------------------------------------
   addSource(id: string, spec: Record<string, unknown>): void {
     if (this.map.getSource(id) || this.pendingSources.has(id)) return

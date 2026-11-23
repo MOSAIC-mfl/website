@@ -53,6 +53,7 @@ export class FakeEngine implements MapEngine {
   }
   jumpTo() {}
   setPadding() {}
+  async whenIdle() {}
   containerHeight() {
     return 600
   }

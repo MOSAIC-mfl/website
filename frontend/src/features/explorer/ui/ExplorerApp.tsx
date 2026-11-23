@@ -190,6 +190,7 @@ export default function ExplorerApp(props: ExplorerProps) {
           {s && controller && (
             <>
               <Notices items={s.notices} />
+              {s.loading && !s.notices.length && <div className="loading" role="status">Loading {controller.loadingTitle()}…</div>}
               <TimeBar control={controller.timeControl()} onInput={(i) => void controller.time(i)} />
               <Legend model={controller.legend()} onVariant={(v) => void controller.setVariant(v)} />
               <div className="attrib">{controller.attribution()}</div>

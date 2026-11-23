@@ -106,22 +106,38 @@
 /* ---------- panels on the map ---------- */
 .lvx .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
               box-shadow: 0 10px 30px rgba(28, 43, 58, .08); }
-.lvx .legend { position: absolute; right: 12px; bottom: 34px; padding: 10px 12px; max-width: 240px; font-size: 0.75rem; z-index: 5; }
-.lvx .legend h3 { margin: 0 0 6px; font-size: 0.75rem; font-weight: 500; }
+/* legend text is read to use every layer: 14px; only the source notes stay at 12px (Font size matters) */
+.lvx .legend { position: absolute; right: 12px; bottom: 34px; padding: 10px 12px; max-width: 260px; font-size: 0.875rem; z-index: 5;
+               max-height: calc(100% - 90px); overflow-y: auto; }
+.lvx .legend h3 { margin: 0 0 6px; font-size: 0.875rem; font-weight: 500; line-height: 1.35; }
 .lvx .legend .seg { margin: 0 0 6px; }
-.lvx .legend .seg button { padding: 3px 9px; font-size: 0.75rem; }
+.lvx .legend .seg button { padding: 3px 9px; font-size: 0.8125rem; }
 .lvx .legend .seg button[aria-pressed="true"] { padding: 2px 8px; }
 .lvx .legend .steps { display: flex; gap: 0; margin: 4px 0 2px; }
 .lvx .legend .steps span { height: 10px; flex: 1; }
-.lvx .legend .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.75rem; }
+.lvx .legend .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.875rem; }
+/* labelled marks on the bar: a short tick on the bar's lower edge, its value centred under it */
+.lvx .legend .ticks { position: relative; height: 1.2rem; margin-top: -2px; font-size: 0.8125rem; color: var(--text); }
+.lvx .legend .ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; padding-top: 5px; }
+.lvx .legend .ticks span::before { content: ""; position: absolute; left: 50%; top: 0; width: 1px; height: 5px; background: currentColor; }
 .lvx .legend .src { margin: 6px 0 0; color: var(--faint); font-size: 0.75rem; }
-.lvx .legend .class-row { display: flex; align-items: center; gap: 7px; margin: 2px 0; font-size: 0.75rem; }
-.lvx .legend .class-row span:first-child { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+.lvx .legend .class-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-size: 0.875rem; line-height: 1.3; }
+.lvx .legend .class-row span:first-child { width: 14px; height: 14px; border-radius: 3px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+/* a white class ('Not observed') on the white card: outline it so the swatch is seen */
+.lvx .legend .class-row span.pale { box-shadow: inset 0 0 0 1px var(--muted); }
 .lvx .attrib { position: absolute; left: 8px; bottom: 8px; font-size: 0.75rem; color: #3d4349;
                background: rgba(255,255,255,.85); border-radius: 4px; padding: 2px 7px; z-index: 2; max-width: calc(100% - 280px); }
 .lvx .notice { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 460px; z-index: 7;
                background: var(--pill-warning-bg); border: 1px solid #fde68a; color: var(--pill-warning-ink);
                border-radius: 6px; padding: 7px 12px; font-size: 0.75rem; }
+/* a layer that is still loading: neutral, not a warning */
+.lvx .loading { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 7; display: flex; align-items: center; gap: 8px;
+                background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 9999px;
+                padding: 6px 14px; font-size: 0.875rem; box-shadow: 0 4px 14px rgba(28, 43, 58, .1); }
+.lvx .loading::before { content: ""; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--rule); border-top-color: var(--accent);
+                        animation: lvx-spin .8s linear infinite; }
+@keyframes lvx-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .lvx .loading::before { animation: none; border-color: var(--accent); } }
 
 /* right rail: lake / location / about / studies panels (384 px) */
 .lvx .rside { position: absolute; top: 12px; right: 12px; width: 384px; max-width: calc(100% - 24px);
@@ -134,17 +150,19 @@
 .lvx .icon-btn:hover { background: var(--raised); color: var(--text); }
 
 /* KPI strip: one container split by hairlines */
-.lvx .kpis { display: grid; grid-template-columns: 1.28fr 0.92fr 1.12fr; border: 1px solid var(--border);
+.lvx .kpis { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--border);
              border-radius: var(--radius-card); margin: 6px 0 14px; }
 .lvx .kpis > div { padding: 10px 12px; border-left: 1px solid var(--rule); min-width: 0; }
 .lvx .kpis > div:first-child { border-left: 0; }
-.lvx .kpis .label { font-size: 0.75rem; color: var(--muted); }
-.lvx .kpis .value { font-size: 1.1875rem; font-weight: 400; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lvx .kpis .value .unit { font-size: 0.6875rem; color: var(--muted); }
-.lvx .kpis .lead .value { font-size: 1.625rem; }
+.lvx .kpis .label { font-size: 0.8125rem; line-height: 1.3; color: var(--muted); }
+/* a value is never cut: the number stays whole and its unit may drop to the next line (Prefer horizontal labels) */
+.lvx .kpis .value { font-size: 1.1875rem; font-weight: 400; margin-top: 2px; line-height: 1.2; overflow-wrap: normal; }
+.lvx .kpis .value .n { white-space: nowrap; }
+.lvx .kpis .value .unit { font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
+.lvx .kpis .lead .value { font-size: 1.5rem; }
 .lvx .kpis .sub { font-size: 0.75rem; color: var(--faint); margin-top: 2px; }
 
-.lvx .chart-block h3 { font-size: 0.8125rem; font-weight: 500; margin: 12px 0 4px; }
+.lvx .chart-block h3 { font-size: 0.875rem; font-weight: 500; margin: 12px 0 4px; }
 .lvx .chart-block .meta { font-size: 0.75rem; color: var(--muted); margin: 6px 0 0; }
 .lvx .empty { border: 1px dashed var(--control); border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 0.8125rem; margin: 8px 0; }
 .lvx .p-meta { font-size: 0.75rem; color: var(--muted); margin: 6px 0 0; }
@@ -224,6 +242,9 @@
 
 /* while the Story tab is open the drawer stays: the map furniture moves left of it */
 @media (min-width: 901px) {
+  /* a side panel (lake, location) open on the right: the legend moves beside it, never under it (Use margins between charts) */
+  .lvx:has(.rside) .legend { right: 412px; }
+  .lvx:has(.rside):has(.timebar:not([hidden])) .legend { bottom: 150px; }
   .lvx[data-story="on"] .legend { right: 424px; }
   .lvx[data-story="on"] .timebar { left: calc(50% - 212px); max-width: calc(100% - 700px); }
   .lvx[data-story="on"]:has(.timebar:not([hidden])) .legend { bottom: 150px; }

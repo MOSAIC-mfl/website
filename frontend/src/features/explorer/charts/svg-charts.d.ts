@@ -33,6 +33,8 @@ export interface LineOptions {
   today?: number | null
   todayLabel?: string
   yTicks?: number[] | null
+  /** name each series at the right end of its line, in its colour, and draw no legend */
+  labelEnds?: boolean
   legend?: HTMLElement | string | null
   tipLabels?: string[] | null
 }

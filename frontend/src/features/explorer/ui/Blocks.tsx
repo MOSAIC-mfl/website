@@ -8,8 +8,8 @@ function Kpis({ items }: { items: Kpi[] }) {
       {items.map((k, i) => (
         <div key={i} className={k.lead ? 'lead' : undefined}>
           <div className="label">{k.label}</div>
-          <div className="value num" style={k.size ? { fontSize: k.size } : undefined} title={k.value}>
-            {k.value} {k.unit && <span className="unit">{k.unit}</span>}
+          <div className="value num" style={k.size ? { fontSize: k.size } : undefined}>
+            <span className="n">{k.value}</span> {k.unit && <span className="unit">{k.unit}</span>}
           </div>
           {k.sub && <div className="sub">{k.sub}</div>}
         </div>

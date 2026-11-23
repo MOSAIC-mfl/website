@@ -8,12 +8,18 @@ export interface LegendSwitch {
   value: string
 }
 
+/** A labelled mark on a colour bar; `at` runs from 0 (left end) to 1 (right end). */
+export interface LegendTick {
+  at: number
+  label: string
+}
+
 export type LegendModel = {
   title: string
   switch?: LegendSwitch
   notes: string[]
 } & (
-  | { kind: 'steps'; colors: string[]; axis: [string, string] }
+  | { kind: 'steps'; colors: string[]; axis: [string, string]; ticks?: LegendTick[] }
   | { kind: 'classes'; rows: { color: string; label: string }[] }
 )
 
@@ -41,8 +47,15 @@ export function legendFrom(cfg: LegendConfig, vars: Record<string, string | numb
 }
 
 /** A continuous legend from a colour ramp. */
-export function rampLegend(title: string, ramp: readonly string[], axis: [string, string], notes: string[]): LegendModel {
-  return { kind: 'steps', title, colors: rampSteps(ramp), axis, notes }
+export function rampLegend(title: string, ramp: readonly string[], axis: [string, string], notes: string[], ticks?: LegendTick[]): LegendModel {
+  return { kind: 'steps', title, colors: rampSteps(ramp), axis, notes, ...(ticks?.length ? { ticks } : {}) }
+}
+
+/** Where a value sits on a bar running from lo to hi (0..1), or null outside it. */
+export function tickAt(value: number, lo: number, hi: number): number | null {
+  if (!(hi > lo)) return null
+  const at = (value - lo) / (hi - lo)
+  return at > 0 && at < 1 ? at : null
 }
 
 export { fill as fillTemplate }
