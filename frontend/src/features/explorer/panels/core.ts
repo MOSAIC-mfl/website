@@ -4,6 +4,7 @@
  */
 import type { Block, PanelContent } from '../domain/blocks'
 import type { PanelConfig } from '../domain/config'
+import { fmtDate, fmtTick } from '../domain/format'
 import { fillTemplate } from '../domain/legend'
 import { Options } from '../domain/options'
 import { median, monthlyMeans } from '../domain/series'
@@ -36,10 +37,13 @@ const seriesSummary: PanelFactory = (config) => {
       const med = median(values)
       const recI = values.indexOf(Math.max(...values))
       const rec = points[recI]
+      // levels one decimal coarser than the difference (1135.6 m, but +0.45 m): the level is read at a
+      // glance, the difference is the point (Round your numbers); the record matches its chart label
+      const ld = Math.max(0, d - 1)
       const stats: Record<string, { value: string; vars: Record<string, string> }> = {
-        latest: { value: Number(latest[vk]).toFixed(d), vars: { date: String(latest[dk]) } },
+        latest: { value: Number(latest[vk]).toFixed(ld), vars: { date: fmtDate(String(latest[dk])) } },
         vs_median: { value: `${Number(latest[vk]) >= med ? '+' : ''}${(Number(latest[vk]) - med).toFixed(d)}`, vars: {} },
-        max: { value: Number(rec[vk]).toFixed(d), vars: { month: String(rec[dk]).slice(0, 7), date: String(rec[dk]) } },
+        max: { value: Number(rec[vk]).toFixed(ld), vars: { month: fmtDate(String(rec[dk]).slice(0, 7)), date: fmtDate(String(rec[dk])) } },
       }
       const blocks: Block[] = [
         {
@@ -66,11 +70,12 @@ const seriesSummary: PanelFactory = (config) => {
               labels: keys.map((k) => (k.endsWith('-01') && +k.slice(0, 4) % 5 === 0 ? k.slice(0, 4) : '')),
               series: [{ name: vk.toUpperCase(), values: vals }],
               format: (v) => v.toFixed(cd),
+              tickFormat: fmtTick,
               height: c.num('height', 190),
               min: Math.floor(Math.min(...vals)) - 0.3,
               max: Math.ceil(Math.max(...vals)) + 0.3,
               annotations: c.has('annotate_max')
-                ? [{ at: keys.indexOf(recK), label: fillTemplate(c.str('annotate_max'), { value: Number(rec[vk]).toFixed(1) }), short: c.optStr('annotate_max_short') }]
+                ? [{ at: keys.indexOf(recK), label: fillTemplate(c.str('annotate_max'), { value: Number(rec[vk]).toFixed(ld) }), short: c.optStr('annotate_max_short') }]
                 : [],
               reference: c.optStr('reference') === 'median' ? { value: med, label: 'median' } : undefined,
             },
@@ -78,8 +83,8 @@ const seriesSummary: PanelFactory = (config) => {
           meta: o.has('note')
             ? fillTemplate(o.str('note'), {
                 n: Number(doc.n ?? points.length).toLocaleString('en-US'),
-                first: String(points[0][dk]),
-                last: String(latest[dk]),
+                first: fmtDate(String(points[0][dk])),
+                last: fmtDate(String(latest[dk])),
                 source: String(doc.source ?? ''),
                 fetched: String(doc.fetched ?? ''),
               })

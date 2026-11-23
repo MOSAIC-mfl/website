@@ -3,6 +3,7 @@ import { lazy, Suspense, useMemo } from 'react'
 import { parseExplorerConfig } from '../explorer/domain/config'
 import { readConfig } from '../../lib/config'
 import { datasetHref } from '../../lib/domain/present'
+import { withLandscapeOutline } from './landscape-outline'
 import type { LandscapePage, LandscapeSection } from '../../lib/api/types'
 
 const ExplorerApp = lazy(() => import('../explorer/ui/ExplorerApp'))
@@ -10,11 +11,12 @@ const ExplorerApp = lazy(() => import('../explorer/ui/ExplorerApp'))
 export function MapExplorer({ page, section, base }: { page: LandscapePage; section: LandscapeSection; base: string }) {
   const parsed = useMemo(() => {
     try {
-      return { config: parseExplorerConfig(section.config) }
+      // the MOSAIC landscape boundary on top of the profile's own map (the explorer frames a wider area)
+      return { config: withLandscapeOutline(parseExplorerConfig(section.config), page.code, page.title) }
     } catch (err) {
       return { error: err instanceof Error ? err.message : String(err) }
     }
-  }, [section.config])
+  }, [section.config, page.code, page.title])
   const override = useMemo(() => {
     const root = readConfig().profileData
     return root ? `${root.replace(/\/+$/, '')}/${page.code}/` : null

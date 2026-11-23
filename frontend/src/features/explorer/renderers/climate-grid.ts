@@ -9,7 +9,7 @@
 import type { Block, Inspection } from '../domain/blocks'
 import type { LngLat } from '../domain/format'
 import { fmtInt, signed } from '../domain/format'
-import { rampLegend, type LegendModel } from '../domain/legend'
+import { rampLegend, tickAt, type LegendModel } from '../domain/legend'
 import type { Options } from '../domain/options'
 import { BaseRenderer } from './base'
 import { gridData, gridLayer, NODATA, normalValue, stackScale, WATER, type GridData, type GridMeta } from './grid'
@@ -147,14 +147,14 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     gridLayer(ctx, this.o.str('grid'), this.config.before).hide()
   }
 
-  private display(meta: GridMeta, t: ClimateTime): { lo: number; hi: number; ramp: string[]; label: string } {
+  private display(meta: GridMeta, t: ClimateTime): { lo: number; hi: number; ramp: string[]; label: string; centre?: number } {
     const units = this.o.str('units')
     if (t.mode === 'anomaly') {
       const a = this.o.sub('anomaly')!
       const r = meta.ranges[`${t.v}_${t.season}_anom`] ?? [0, 1]
       const c = a.num('centre', 0)
       const d = Math.max(Math.abs(r[0] - c), Math.abs(r[1] - c))
-      return { lo: c - d, hi: c + d, ramp: a.strList('ramp'), label: `${a.str('units')} (${meta.normal})` }
+      return { lo: c - d, hi: c + d, ramp: a.strList('ramp'), label: `${a.str('units')} (${meta.normal})`, centre: c }
     }
     const r = meta.ranges[`${t.v}_${t.season}`] ?? [0, 1]
     return { lo: r[0], hi: r[1], ramp: this.o.strList('ramp'), label: `${units} · ${this.seasonName(t.season)} ${this.o.str('aggregate')}` }
@@ -163,9 +163,16 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
   legend(view: OverlayView<ClimateTime>): LegendModel | null {
     if (!this.meta) return null
     const t = this.normalize(view.time)
-    const { lo, hi, ramp, label } = this.display(this.meta, t)
+    const { lo, hi, ramp, label, centre } = this.display(this.meta, t)
     const note = `${this.o.str('source')} · 0.05° (~5.5 km)${this.o.has('water_note') ? ` · ${this.o.str('water_note')}` : ''}`
-    return rampLegend(`${this.variable(t).title} — ${label}`, ramp, [lo.toFixed(0), hi.toFixed(0)], [note])
+    if (centre == null) return rampLegend(`${this.variable(t).title} — ${label}`, ramp, [lo.toFixed(0), hi.toFixed(0)], [note])
+    // a diverging scale: name its midpoint, where the colours change side (Diverging data, diverging palette)
+    const ratio = this.o.sub('anomaly')?.optStr('kind') === 'ratio'
+    const d = ratio || hi - lo >= 10 ? 0 : 1
+    const end = (v: number) => (ratio ? v.toFixed(0) : signed(v, d).replace('-', '\u2212'))
+    const at = tickAt(centre, lo, hi)
+    const ticks = at == null ? [] : [{ at, label: `${ratio ? centre.toFixed(0) : '0'} = normal` }]
+    return rampLegend(`${this.variable(t).title} — ${label}`, ramp, [end(lo), end(hi)], [note], ticks)
   }
 
   timeControl(view: OverlayView<ClimateTime>): TimeControl | null {
@@ -259,7 +266,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     const anomTxt =
       yearVal != null && normal != null
         ? ratio
-          ? `${Math.round((100 * yearVal) / normal)} % of normal`
+          ? `${Math.round((100 * yearVal) / normal)} %`
           : `${signed(yearVal - normal, 1)} ${anomaly?.optStr('units') ?? unit}`
         : '—'
     const water = (await grid.landmask())[cell.index] === WATER
@@ -269,7 +276,8 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
         items: [
           { label: `${this.seasonName(t.season)} ${this.o.str('aggregate')} · ${t.year}`, value: fmtV(yearVal), unit, lead: true },
           { label: `Normal ${meta.normal}`, value: fmtV(normal), unit },
-          { label: 'This year', value: anomTxt, size: 18 },
+          // the selected year, not today's: name it (a ratio reads 'as % of normal', a difference 'vs normal')
+          { label: `${t.year} ${ratio ? 'as % of normal' : 'vs normal'}`, value: anomTxt },
         ],
       },
     ]
@@ -295,14 +303,14 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
       title: `${t.year} by month vs the ${meta.normal} monthly normal (${unit})`,
       spec: {
         kind: 'line',
-        legend: true,
         options: {
           labels: MONTHS,
           height: 180,
+          labelEnds: true,
           format: (x) => (total ? Math.round(x) : x.toFixed(1)),
           series: [
             { name: String(t.year), values: t.year != null ? monthsOf(t.year).map(val) : [] },
-            { name: `normal ${meta.normal}`, values: normMon, colour: '#8a8a8a', dash: true },
+            { name: 'normal', values: normMon, colour: '#8a8a8a', dash: true },
           ],
         },
       },

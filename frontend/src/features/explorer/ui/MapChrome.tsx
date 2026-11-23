@@ -33,6 +33,16 @@ export function Legend({ model, onVariant }: { model: LegendModel | null; onVari
               <span key={i} style={{ background: c }} />
             ))}
           </div>
+          {model.ticks && (
+            // marks on the bar (a diverging scale's midpoint, class limits), each with its value under it
+            <div className="ticks" aria-hidden="true">
+              {model.ticks.map((t) => (
+                <span key={t.label} style={{ left: `${(t.at * 100).toFixed(2)}%` }}>
+                  {t.label}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="axis">
             <span>{model.axis[0]}</span>
             <span>{model.axis[1]}</span>
@@ -41,7 +51,7 @@ export function Legend({ model, onVariant }: { model: LegendModel | null; onVari
       ) : (
         model.rows.map((r) => (
           <div className="class-row" key={r.label}>
-            <span style={{ background: r.color }} />
+            <span className={isPale(r.color) ? 'pale' : undefined} style={{ background: r.color }} />
             <span>{r.label}</span>
           </div>
         ))
@@ -53,6 +63,14 @@ export function Legend({ model, onVariant }: { model: LegendModel | null; onVari
       ))}
     </div>
   )
+}
+
+/** White or near-white swatches ('Not observed') need an outline to be seen on the white card. */
+function isPale(color: string): boolean {
+  const hex = /^#([0-9a-f]{6})$/i.exec(color.trim())
+  if (!hex) return false
+  const n = parseInt(hex[1], 16)
+  return [n >> 16, (n >> 8) & 255, n & 255].every((c) => c > 235)
 }
 
 export function TimeBar({ control, onInput }: { control: TimeControl | null; onInput: (i: TimeInput) => void }) {

@@ -4,7 +4,7 @@
  */
 import type { Block, Inspection } from '../domain/blocks'
 import type { LngLat } from '../domain/format'
-import { rampLegend, type LegendModel } from '../domain/legend'
+import { rampLegend, tickAt, type LegendModel, type LegendTick } from '../domain/legend'
 import { classify, monthRange, type IndexClass } from '../domain/series'
 import { BaseRenderer } from './base'
 import { gridData, gridLayer, NODATA, type GridData, type GridMeta } from './grid'
@@ -88,7 +88,26 @@ export class IndexGridRenderer extends BaseRenderer<Time> {
     }
     notes.push(this.o.str('source'))
     const axis = this.o.strList('axis')
-    return rampLegend(this.o.optStr('title_long') ?? this.config.title, this.o.strList('ramp'), [axis[0] ?? '', axis[1] ?? ''], notes)
+    return rampLegend(this.o.optStr('title_long') ?? this.config.title, this.o.strList('ramp'), [axis[0] ?? '', axis[1] ?? ''], notes, this.classTicks())
+  }
+
+  /**
+   * The class limits drawn on the bar, so the WMO classes are read on the scale and not only in a note:
+   * the whole-number limits and 0 (half steps such as −1.5 would crowd the bar).
+   */
+  private classTicks(): LegendTick[] {
+    if (!this.o.has('range')) return []
+    const [lo, hi] = this.o.numList('range')
+    const classes = (this.o.raw<IndexClass[]>('classes') ?? []) as IndexClass[]
+    const limits = new Set<number>([0])
+    for (const c of classes) for (const v of [c.max, c.below]) if (typeof v === 'number' && Number.isInteger(v)) limits.add(v)
+    const label = (v: number) => (v > 0 ? `+${v}` : v < 0 ? `\u2212${-v}` : '0')
+    return [...limits]
+      .sort((a, b) => a - b)
+      .flatMap((v) => {
+        const at = tickAt(v, lo, hi)
+        return at == null ? [] : [{ at, label: label(v) }]
+      })
   }
 
   timeControl(view: OverlayView<Time>): TimeControl | null {

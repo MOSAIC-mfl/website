@@ -63,6 +63,8 @@ export interface MapEngine {
   flyTo(camera: Camera, options?: { duration?: number; padding?: Padding }): void
   jumpTo(camera: Camera): void
   setPadding(padding: Padding, animate?: boolean): void
+  /** resolves once everything visible has been drawn (tiles loaded), or after `timeoutMs` */
+  whenIdle(timeoutMs?: number): Promise<void>
   containerHeight(): number
   hasTerrain(): boolean
   setTerrainExaggeration(value: number): void
