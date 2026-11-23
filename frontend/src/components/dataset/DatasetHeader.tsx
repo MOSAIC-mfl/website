@@ -2,7 +2,7 @@ import type { RecordDetail } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { ACCESS_BADGE, ACCESS_LABEL } from '../../lib/domain/present'
 import { readinessBadge, readinessLabel, readinessTooltip } from '../../lib/domain/readiness'
-import { correctionLinks, licenseShort, primaryAccess, producers, urlOf } from './view'
+import { correctionLinks, directSourceUrl, licenseShort, producers } from './view'
 
 interface Props {
   d: RecordDetail
@@ -17,8 +17,7 @@ export function DatasetHeader({ d, labels, base, jsonUrl }: Props) {
   const by = producers(r)
   const geo = (r.spatial?.geography ?? []).filter((g) => g !== 'global')
   const fix = correctionLinks(d)
-  const source = primaryAccess(r)
-  const sourceUrl = source && r.access === 'public' && (source.access ?? r.access) === 'public' ? urlOf(source) : undefined
+  const sourceUrl = directSourceUrl(r)
   return (
     <header className="dp-head">
       <h1 className="dp-title">{r.title ?? d.local_id}</h1>

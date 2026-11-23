@@ -69,6 +69,13 @@ export function periodOf(r: MosaicRecord): string | null {
   return periodText(yearsOf(r)) ?? r.temporal?.text ?? null
 }
 
+/** The link the page header's main button opens directly: the main link of a public dataset.
+    Undefined for a restricted or non-public one, whose button opens Access & use instead. */
+export function directSourceUrl(r: MosaicRecord): string | undefined {
+  const source = primaryAccess(r)
+  return source && r.access === 'public' && (source.access ?? r.access) === 'public' ? urlOf(source) : undefined
+}
+
 /** Whether two ways of writing a period say the same thing: "2000-2024" and "2000–2024" do. Hyphen,
     en dash and em dash count as one, and spaces around them and letter case are ignored. */
 export function samePeriodText(a: string | null | undefined, b: string | null | undefined): boolean {
