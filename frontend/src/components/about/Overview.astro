@@ -3,6 +3,7 @@
    six-tile mark assembling itself (MosaicAssemble, 2026-11-10). */
 import Icon from '../ui/Icon.astro'
 import MosaicAssemble from './MosaicAssemble.astro'
+import { AUDIENCE } from '../../lib/ui/shared-copy'
 
 const base = import.meta.env.BASE_URL
 
@@ -18,7 +19,7 @@ const audiences = [
     icon: 'search',
     title: 'Data users',
     text: 'Need to know what data exists for a landscape, how good it is and how to get it.',
-    who: ['Researchers', 'GIS analysts', 'Decision-makers', 'Landscape teams'],
+    who: [AUDIENCE.researchers, AUDIENCE.decisionMakers, AUDIENCE.landscapeTeams, AUDIENCE.funders],
     href: `${base}/catalogue`,
     link: 'Browse the catalog',
   },
@@ -26,7 +27,7 @@ const audiences = [
     icon: 'upload',
     title: 'Data contributors',
     text: 'Want their datasets to be findable, well documented and reused by others.',
-    who: ['Data stewards', 'Center focal points', 'Projects and initiatives'],
+    who: [AUDIENCE.institutions, AUDIENCE.dataStewards, AUDIENCE.focalPoints],
     href: '#contribute',
     link: 'Register a dataset',
   },

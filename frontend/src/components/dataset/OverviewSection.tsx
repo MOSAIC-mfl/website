@@ -1,16 +1,11 @@
 import type { RecordDetail } from '../../lib/api/types'
-import type { LabelBook } from '../../lib/domain/labels'
-import { NOT_STATED, READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, isReadiness, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
+import { NOT_STATED, READINESS_DECLARED, READINESS_MEANING, READINESS_NOTE, READINESS_ORDER, isReadiness, readinessBadge, readinessLabel } from '../../lib/domain/readiness'
 
-export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelBook }) {
+export function OverviewSection({ d }: { d: RecordDetail }) {
   const r = d.record
-  const keywords = (r.keywords ?? []).map((k) => (typeof k === 'string' ? k : k.term))
-  const tags = [
-    ...(r.themes ?? []).map((t) => labels.label('theme', t)),
-    ...(d.facets.data_kind ?? []).filter((k) => k !== 'not_specified').map((k) => labels.label('data_kind', k)),
-    ...(r.spatial?.geography ?? []).filter((g) => g !== 'global').map((g) => labels.label('geography', g)),
-    ...keywords,
-  ]
+  // Only the record's own keywords: theme and data type are in Quick facts beside this, and the
+  // country is in the header, so repeating them here as tags said the same thing twice.
+  const tags = (r.keywords ?? []).map((k) => (typeof k === 'string' ? k : k.term))
   const status = r.processing_status
   const uses = r.usage?.intended_uses ?? []
   const avoid = r.usage?.not_recommended_for ?? []
@@ -20,7 +15,7 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
       {r.description ? <p className="dp-desc">{r.description}</p> : <p className="dp-muted">No description has been registered for this dataset yet.</p>}
       {r.note && <p className="dp-muted">{r.note}</p>}
       {tags.length > 0 && (
-        <ul className="dp-tags" aria-label="Themes and keywords">
+        <ul className="dp-tags" aria-label="Keywords">
           {tags.map((t, i) => <li key={`${t}-${i}`}>{t}</li>)}
         </ul>
       )}
@@ -46,7 +41,7 @@ export function OverviewSection({ d, labels }: { d: RecordDetail; labels: LabelB
         <h3>Readiness: {readinessLabel(status)}</h3>
         <p>
           {isReadiness(status) ? READINESS_MEANING[status] : 'The contributor did not state how far the data has been processed, or its catalog has no such field.'}{' '}
-          {READINESS_NOTE}
+          {isReadiness(status) ? READINESS_DECLARED : READINESS_NOTE}
         </p>
         <details>
           <summary>What the statuses mean</summary>

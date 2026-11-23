@@ -69,6 +69,20 @@ export function periodOf(r: MosaicRecord): string | null {
   return periodText(yearsOf(r)) ?? r.temporal?.text ?? null
 }
 
+/** The link the page header's main button opens directly: the main link of a public dataset.
+    Undefined for a restricted or non-public one, whose button opens Access & use instead. */
+export function directSourceUrl(r: MosaicRecord): string | undefined {
+  const source = primaryAccess(r)
+  return source && r.access === 'public' && (source.access ?? r.access) === 'public' ? urlOf(source) : undefined
+}
+
+/** Whether two ways of writing a period say the same thing: "2000-2024" and "2000–2024" do. Hyphen,
+    en dash and em dash count as one, and spaces around them and letter case are ignored. */
+export function samePeriodText(a: string | null | undefined, b: string | null | undefined): boolean {
+  const norm = (s: string | null | undefined) => (s ?? '').toLowerCase().replace(/\s*[-\u2013\u2014]\s*/g, '-').replace(/\s+/g, ' ').trim()
+  return norm(a) === norm(b)
+}
+
 export function resolutionOf(r: MosaicRecord): string | null {
   const res = r.spatial?.resolution
   if (!res) return null
@@ -132,11 +146,13 @@ export function recordReference(d: RecordDetail, base: string, origin: string): 
 }
 
 /** "Suggest an edit" / "Report a problem": the catalogue's tracker for MOSAIC, the record at its source otherwise. */
-export function correctionLinks(d: RecordDetail): { edit: string; problem: string; atSource: boolean } | null {
+/** Where a correction to the record goes: a new issue in the MOSAIC catalog, or, for a record
+    harvested from another catalog, that record at its source. One link: an edit and a problem
+    used to be two links to the same blank form. */
+export function correctionLink(d: RecordDetail): { url: string; atSource: boolean } | null {
   if (d.source === 'mosaic') {
-    const t = (what: string) => `${CATALOG_ISSUES}?title=${encodeURIComponent(`${d.local_id}: ${what}`)}`
-    return { edit: t('suggested edit'), problem: t('problem with this record'), atSource: false }
+    return { url: `${CATALOG_ISSUES}?title=${encodeURIComponent(`${d.local_id}: correction`)}`, atSource: false }
   }
   const url = d.provenance.record_url
-  return url ? { edit: url, problem: url, atSource: true } : null
+  return url ? { url, atSource: true } : null
 }

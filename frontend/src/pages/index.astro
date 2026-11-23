@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/ui/Icon.astro'
 import HeroMosaic from '../components/home/HeroMosaic.astro'
 import LivingLandscape from '../components/home/LivingLandscape.astro'
+import { AUDIENCE, LIVING_LANDSCAPE_IS } from '../lib/ui/shared-copy'
 
 // The three catalogue figures are read from mosaic-api in the browser (script at the end), so the
 // home page never needs a rebuild when the catalogue changes. Until they arrive they show a dash.
@@ -38,14 +39,15 @@ const steps = [
   },
 ] as const
 
-// Each audience gets a way in: where someone like them would start.
+// Each audience gets a way in: where someone like them would start. `go` says where the link
+// leads, so nobody expects a page of their own (there is none per audience).
 const audiences = [
-  { who: 'Researchers', what: 'looking for landscape data and research', href: `${base}/catalogue` },
-  { who: 'Institutions', what: 'sharing data and research', href: `${base}/about#contribute` },
-  { who: 'Landscape teams', what: 'coordinating data across places', href: `${base}/landscapes` },
-  { who: 'Decision-makers', what: 'comparing environmental and social information', href: `${base}/landscapes` },
-  { who: 'Data stewards', what: 'making their work easier to find and reuse', href: `${base}/about#metadata` },
-  { who: 'Funders and partners', what: 'tracking evidence across initiatives', href: `${base}/about#overview` },
+  { who: AUDIENCE.researchers, what: 'looking for landscape data and research', go: 'Search the catalog', href: `${base}/catalogue` },
+  { who: AUDIENCE.institutions, what: 'sharing data and research', go: 'Register a dataset', href: `${base}/about#contribute` },
+  { who: AUDIENCE.landscapeTeams, what: 'coordinating data across places', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: AUDIENCE.decisionMakers, what: 'comparing environmental and social information', go: 'See the landscapes', href: `${base}/landscapes` },
+  { who: AUDIENCE.dataStewards, what: 'making their work easier to find and reuse', go: 'Read the metadata guide', href: `${base}/about#metadata` },
+  { who: AUDIENCE.funders, what: 'tracking evidence across initiatives', go: 'What MOSAIC is', href: `${base}/about#overview` },
 ] as const
 ---
 
@@ -67,9 +69,6 @@ const audiences = [
         <div class="hero-actions">
           <a href={`${base}/landscapes`} class="btn btn-hero-primary">
             <Icon name="map-pin" size={18} aria-hidden="true" /> Explore the landscapes
-          </a>
-          <a href={`${base}/about#contribute`} class="btn btn-hero-ghost">
-            <Icon name="upload" size={18} aria-hidden="true" /> Register a dataset
           </a>
         </div>
       </div>
@@ -110,11 +109,7 @@ const audiences = [
         <svg class="section-wavy" width="72" height="9" viewBox="0 0 64 8" fill="none" aria-hidden="true">
           <path d="M1 4 Q9 1 17 4 T33 4 T49 4 T63 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
-        <p class="ll-lead">
-          A living landscape is a place such as a river basin, a mountain range or a coastal delta,
-          where farms, forests, water and the people who depend on them are looked at together,
-          not one at a time.
-        </p>
+        <p class="ll-lead">A living landscape is {LIVING_LANDSCAPE_IS}</p>
         <p class="ll-body">
           The CGIAR Multifunctional Landscapes Science Program works with local communities,
           governments and partners in {allLandscapes > 0 ? `${allLandscapes} of these landscapes, in ${allCountries} countries` : 'these landscapes'} across
@@ -170,8 +165,9 @@ const audiences = [
         {audiences.map((a) => (
           <li>
             <a class="who-item" href={a.href}>
-              <span class="who-name">{a.who} <Icon name="arrow-right" size={16} aria-hidden="true" /></span>
+              <span class="who-name">{a.who}</span>
               <span class="who-what">{a.what}</span>
+              <span class="who-go">{a.go} <Icon name="arrow-right" size={16} aria-hidden="true" /></span>
             </a>
           </li>
         ))}
@@ -250,20 +246,6 @@ const audiences = [
     border-color: var(--mosaic-teal);
   }
   .btn-hero-primary:hover { background-color: var(--mosaic-teal-dark); border-color: var(--mosaic-teal-dark); color: var(--color-white); }
-  .btn-hero-ghost {
-    /* Sits on the hero band, which stays light in BOTH themes — use the
-       never-remapped white, not --color-surface (dark-on-dark in dark mode). */
-    background-color: var(--color-white);
-    color: var(--mosaic-teal);
-    border: 2px solid var(--mosaic-teal);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
-    cursor: pointer;
-  }
-  .btn-hero-ghost:hover { background-color: var(--mosaic-teal); color: var(--color-white); }
-
   /* ── Sheet over the hero ───────────────────────────────────
      The hero stays pinned under the header while the rest of the page slides
      up over it as one sheet with rounded top corners. Only where the whole
@@ -354,13 +336,23 @@ const audiences = [
     font-weight: 400;
     color: var(--color-text);
   }
-  .who-name :global(svg) { color: var(--color-link); transition: transform 150ms ease-out; }
+  /* Where the item leads, in words: the whole item is the link, this line says its destination */
+  .who-go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-link);
+  }
+  .who-go :global(svg) { transition: transform 150ms ease-out; }
   .who-item:hover { color: var(--color-muted); }
   @media (hover: hover) {
-    .who-item:hover .who-name { text-decoration: underline; text-underline-offset: 3px; }
-    .who-item:hover .who-name :global(svg) { transform: translateX(3px); }
+    .who-item:hover .who-go { text-decoration: underline; text-underline-offset: 3px; }
+    .who-item:hover .who-go :global(svg) { transform: translateX(3px); }
   }
-  @media (prefers-reduced-motion: reduce) { .who-name :global(svg) { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .who-go :global(svg) { transition: none; } }
   @media (max-width: 900px) { .who-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
 

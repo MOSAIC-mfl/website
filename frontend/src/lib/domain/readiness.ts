@@ -20,8 +20,11 @@ export const READINESS_MEANING: Record<Readiness, string> = {
   validated: 'The contributor reports that it has been quality-checked.',
 }
 
-export const READINESS_NOTE =
-  'The status is declared by the contributor of each dataset; MOSAIC has not verified it. Records from catalogs without this field show "Not stated".'
+/** Who says so. Shown alone on the page of a dataset that has a status. */
+export const READINESS_DECLARED = 'The status is declared by the contributor of each dataset; MOSAIC has not verified it.'
+
+/** The same, with what a missing status means: for the legends, and for a dataset without one. */
+export const READINESS_NOTE = `${READINESS_DECLARED} Records from catalogs without this field show "Not stated".`
 
 export const isReadiness = (v: unknown): v is Readiness => (READINESS_ORDER as readonly unknown[]).includes(v)
 

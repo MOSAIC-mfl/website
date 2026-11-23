@@ -1,7 +1,7 @@
 import type { RecordDetail, RecordSummary } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { datasetHref, joinLabels } from '../../lib/domain/present'
-import { coverageOf, periodOf, primaryAccess, resolutionOf, urlOf } from './view'
+import { coverageOf, directSourceUrl, periodOf, primaryAccess, resolutionOf, urlOf } from './view'
 
 /** Side column: the facts at a glance, and where to go next. */
 export function DatasetSide({ d, labels, base, related }: { d: RecordDetail; labels: LabelBook; base: string; related: RecordSummary[] }) {
@@ -44,7 +44,8 @@ export function DatasetSide({ d, labels, base, related }: { d: RecordDetail; lab
         <ul className="dp-links">
           {landscape && <li><a href={`${base}/landscapes#${landscape}`}>{labels.label('landscape', landscape)}: the landscape</a></li>}
           {landscape && <li><a href={`${base}/catalogue/?landscape=${encodeURIComponent(landscape)}`}>All datasets for {labels.label('landscape', landscape)}</a></li>}
-          {source && urlOf(source) && <li><a href={urlOf(source)} target="_blank" rel="noopener noreferrer">The data at its source ↗</a></li>}
+          {/* Left out when the header's main button already opens this link (a public dataset). */}
+          {source && urlOf(source) && !directSourceUrl(r) && <li><a href={urlOf(source)} target="_blank" rel="noopener noreferrer">The data at its source ↗</a></li>}
           {d.provenance.record_url && !d.provenance.record_url.includes('/website/catalogue/') && (
             <li>
               <a href={d.provenance.record_url} target="_blank" rel="noopener noreferrer">
