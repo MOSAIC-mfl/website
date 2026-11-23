@@ -4,8 +4,8 @@ export type ViewMode = 'card' | 'list'
 
 const SORT_LABELS: Record<SortKey, string> = {
   relevance: 'Best match',
-  recent: 'Most recent',
-  oldest: 'Oldest',
+  recent: 'Newest data first',
+  oldest: 'Oldest data first',
   az: 'A → Z',
   za: 'Z → A',
 }
