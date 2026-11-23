@@ -43,6 +43,9 @@ export function AccessSection({ d, labels }: { d: RecordDetail; labels: LabelBoo
   const ee = points.find((p) => p.service?.type === 'gee' && !urlOf(p))
   const others = points.filter((p) => p !== ee && p !== primary)
   const licUrl = licenseUrl(r)
+  // Free-text terms are written out once, in the paragraph before the source button; the list row
+  // then points up to it instead of repeating two or three lines.
+  const licenseLine = !spdx && r.license_text ? 'Terms at the source (above)' : licenseText(r)
   const formats = formatsOf(r)
   const mail = contact?.email && `mailto:${contact.email}?subject=${encodeURIComponent(`MOSAIC ${d.id} — access request`)}`
   return (
@@ -89,7 +92,7 @@ export function AccessSection({ d, labels }: { d: RecordDetail; labels: LabelBoo
         <div><dt>Access level</dt><dd>{r.access ? labels.label('access', r.access) : 'Not specified'}</dd></div>
         <div>
           <dt>License</dt>
-          <dd>{licUrl ? <a href={licUrl} target="_blank" rel="noopener noreferrer">{licenseText(r) ?? licUrl}</a> : licenseText(r) ?? 'Not specified'}</dd>
+          <dd>{licUrl ? <a href={licUrl} target="_blank" rel="noopener noreferrer">{licenseLine ?? licUrl}</a> : licenseLine ?? 'Not specified'}</dd>
         </div>
         {r.attribution && <div><dt>Attribution</dt><dd>{r.attribution}</dd></div>}
         {formats.length > 0 && <div><dt>Formats</dt><dd>{formats.join(', ')}</dd></div>}
