@@ -87,16 +87,11 @@
 .dp-links a { font-weight: 600; }
 .dp-links span { color: var(--color-muted); }
 
-/* "How to access this dataset" keeps its Light Teal background in both themes
-   (a brand colour, never remapped), so in the dark theme its text stays dark
-   too; headings and paragraphs would otherwise turn light on a light box. */
-[data-theme='dark'] .ds-access,
-[data-theme='dark'] .ds-access h2,
-[data-theme='dark'] .ds-access p,
-[data-theme='dark'] .ds-access strong,
-[data-theme='dark'] .ds-access code { color: var(--mosaic-ink); }
-/* …and its links keep Ocean Teal: the themed link colour is light there */
-[data-theme='dark'] .ds-access a:not(.btn) { color: var(--mosaic-teal); }
+/* "How to access this dataset" in the dark theme: a Light Teal tint over the dark page, the same
+   one the landscape's dataset badge uses, so it reads as a panel of this theme and not as a light
+   box left behind. Its text and links then follow the theme (they used to be forced dark). */
+[data-theme='dark'] .ds-access { background-color: rgba(214, 238, 242, 0.12); }
+[data-theme='dark'] .ds-access-gee { border-top-color: var(--color-border); }
 
 /* Added with the API data (more of the standard v0.2 on the page) */
 .dp-back { display: inline-block; margin-top: var(--space-8); }
