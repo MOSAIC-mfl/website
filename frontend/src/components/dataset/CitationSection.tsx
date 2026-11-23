@@ -1,5 +1,6 @@
 import type { RecordDetail } from '../../lib/api/types'
-import { ROLE_LABEL, recordReference, statedCitation } from './view'
+import { CONTACT_EMAIL } from '../../lib/ui/shared-copy'
+import { ROLE_LABEL, correctionLink, recordReference, statedCitation } from './view'
 
 /** Citation & contacts: the record's own citation (never made up), funding, publications, everyone named. */
 export function CitationSection({ d, base }: { d: RecordDetail; base: string }) {
@@ -7,6 +8,8 @@ export function CitationSection({ d, base }: { d: RecordDetail; base: string }) 
   const cite = statedCitation(r)
   const origin = typeof location === 'undefined' ? '' : location.origin
   const pubs = r.related_publications ?? []
+  const fix = correctionLink(d)
+  const teamMail = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`MOSAIC ${d.id}: correction`)}`
   return (
     <section id="citation" className="dp-sec">
       <h2>Citation &amp; contacts</h2>
@@ -41,6 +44,12 @@ export function CitationSection({ d, base }: { d: RecordDetail; base: string }) 
           </li>
         ))}
       </ul>
+      {/* Correcting a record does not need a GitHub account: the contact or the team by e-mail too. */}
+      <p className="dp-muted">
+        Something wrong or out of date in this record? Write to the contact above or to the{' '}
+        <a href={teamMail}>MOSAIC team</a>
+        {fix && <>, or <a href={fix.url} target="_blank" rel="noopener noreferrer">{fix.atSource ? `suggest a correction at ${d.provenance.source_name}` : 'suggest a correction on GitHub'} ↗</a></>}.
+      </p>
 
       {(r.funding ?? []).length > 0 && (
         <>

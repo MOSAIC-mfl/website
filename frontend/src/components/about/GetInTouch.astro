@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ContentCard from '../ui/ContentCard.astro'
 import CoordinatorCard from '../ui/CoordinatorCard.astro'
+import { CONTACT_EMAIL } from '../../lib/ui/shared-copy'
 
 const base = import.meta.env.BASE_URL
 const ghBase = 'https://github.com/MOSAIC-mfl/website/issues/new'
@@ -23,7 +24,7 @@ const issueCards = [
 
 // The coordinator's institutional address (Lizeth, 2026-11-12), until a shared
 // mailbox exists. It is the way in for anyone without a GitHub account.
-const contactEmail = 'l.llanos@cgiar.org'
+const contactEmail = CONTACT_EMAIL
 const contactRows = [
   { icon: 'mail', label: 'Email', value: contactEmail, href: `mailto:${contactEmail}` },
 ]

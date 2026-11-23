@@ -2,7 +2,7 @@ import type { RecordDetail } from '../../lib/api/types'
 import type { LabelBook } from '../../lib/domain/labels'
 import { ACCESS_BADGE, ACCESS_LABEL } from '../../lib/domain/present'
 import { readinessBadge, readinessLabel, readinessTooltip } from '../../lib/domain/readiness'
-import { correctionLinks, directSourceUrl, licenseShort, producers } from './view'
+import { correctionLink, directSourceUrl, licenseShort, producers } from './view'
 
 interface Props {
   d: RecordDetail
@@ -16,7 +16,7 @@ export function DatasetHeader({ d, labels, base, jsonUrl }: Props) {
   const r = d.record
   const by = producers(r)
   const geo = (r.spatial?.geography ?? []).filter((g) => g !== 'global')
-  const fix = correctionLinks(d)
+  const fix = correctionLink(d)
   const sourceUrl = directSourceUrl(r)
   return (
     <header className="dp-head">
@@ -57,10 +57,7 @@ export function DatasetHeader({ d, labels, base, jsonUrl }: Props) {
         </a>
         <a className="btn btn-secondary" href={jsonUrl} target="_blank" rel="noopener noreferrer">Metadata (JSON)</a>
         {fix && (
-          <>
-            <a className="dp-action-link" href={fix.edit} target="_blank" rel="noopener noreferrer">{fix.atSource ? `Suggest an edit at ${d.provenance.source_name}` : 'Suggest an edit'} ↗</a>
-            {!fix.atSource && <a className="dp-action-link" href={fix.problem} target="_blank" rel="noopener noreferrer">Report a problem ↗</a>}
-          </>
+          <a className="dp-action-link" href={fix.url} target="_blank" rel="noopener noreferrer">{fix.atSource ? `Suggest a correction at ${d.provenance.source_name}` : 'Suggest a correction'} ↗</a>
         )}
       </div>
     </header>

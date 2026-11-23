@@ -146,11 +146,13 @@ export function recordReference(d: RecordDetail, base: string, origin: string): 
 }
 
 /** "Suggest an edit" / "Report a problem": the catalogue's tracker for MOSAIC, the record at its source otherwise. */
-export function correctionLinks(d: RecordDetail): { edit: string; problem: string; atSource: boolean } | null {
+/** Where a correction to the record goes: a new issue in the MOSAIC catalog, or, for a record
+    harvested from another catalog, that record at its source. One link: an edit and a problem
+    used to be two links to the same blank form. */
+export function correctionLink(d: RecordDetail): { url: string; atSource: boolean } | null {
   if (d.source === 'mosaic') {
-    const t = (what: string) => `${CATALOG_ISSUES}?title=${encodeURIComponent(`${d.local_id}: ${what}`)}`
-    return { edit: t('suggested edit'), problem: t('problem with this record'), atSource: false }
+    return { url: `${CATALOG_ISSUES}?title=${encodeURIComponent(`${d.local_id}: correction`)}`, atSource: false }
   }
   const url = d.provenance.record_url
-  return url ? { edit: url, problem: url, atSource: true } : null
+  return url ? { url, atSource: true } : null
 }

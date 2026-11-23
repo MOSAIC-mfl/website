@@ -3,7 +3,7 @@ import type { RecordDetail } from '../src/lib/api/types'
 import { LabelBook } from '../src/lib/domain/labels'
 import { readinessBadge, readinessLabel, readinessRank } from '../src/lib/domain/readiness'
 import { sortOptions } from '../src/components/catalogue/FilterGroup'
-import { correctionLinks, coverageOf, licenseShort, primaryAccess, resolutionOf, samePeriodText, statedCitation } from '../src/components/dataset/view'
+import { correctionLink, coverageOf, licenseShort, primaryAccess, resolutionOf, samePeriodText, statedCitation } from '../src/components/dataset/view'
 
 const detail = (over: Partial<RecordDetail> & { record?: Partial<RecordDetail['record']> } = {}) =>
   ({
@@ -60,9 +60,10 @@ describe('dataset page view', () => {
       },
     } as never)
     expect(primaryAccess(d.record)?.name).toBe('file')
-    expect(correctionLinks(d)?.edit).toContain('github.com/MOSAIC-mfl/catalog/issues/new')
+    expect(correctionLink(d)?.url).toContain('github.com/MOSAIC-mfl/catalog/issues/new')
+    expect(correctionLink(d)?.url).toContain(encodeURIComponent(': correction'))
     const cdh = detail({ source: 'cdh', provenance: { source: 'cdh', source_name: 'CGIAR Climate Data Hub', record_url: 'https://github.com/x/y', format: 'cdh', fetched_at: '' } } as never)
-    expect(correctionLinks(cdh)).toEqual({ edit: 'https://github.com/x/y', problem: 'https://github.com/x/y', atSource: true })
+    expect(correctionLink(cdh)).toEqual({ url: 'https://github.com/x/y', atSource: true })
   })
 })
 

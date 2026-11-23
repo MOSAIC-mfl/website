@@ -18,3 +18,6 @@ export const AUDIENCE = {
   funders: 'Funders and partners',
   focalPoints: 'Center focal points',
 } as const
+
+/** The MOSAIC team's address: About › Get in touch, and the correction note on a dataset page. */
+export const CONTACT_EMAIL = 'l.llanos@cgiar.org'
