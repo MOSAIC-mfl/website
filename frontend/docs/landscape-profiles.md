@@ -64,6 +64,13 @@ story drawer.
   panel is open (one at a time), the story chapter. No `window.*` hooks.
 - What changes per profile is configuration. New behaviour is a new module registered by kind.
 
+**Drawn for every profile, not configured in it.** The MOSAIC landscape boundary
+(`features/landscape/landscape-outline.ts`): the full-resolution file
+`public/data/boundaries/<CODE>.geojson`, written by `scripts/build_map_outlines.py` from
+mosaic-standard `boundaries/` with the licence's short `credit` (from `legacy/spec/boundary_provenance.json`)
+in the attribution line. A classes legend shows its rows under headings when they carry `group`
+(mosaic-standard `docs/landscape-profiles.md`).
+
 ## Adding things
 
 | To add | Where | Then |

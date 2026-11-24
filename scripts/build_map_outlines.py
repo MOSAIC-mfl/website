@@ -33,6 +33,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CATALOG = REPO_ROOT.parent / "mosaic-standard"
 OUT_PATH = REPO_ROOT / "frontend" / "data" / "landscape_outlines.json"
+# Full-resolution boundaries for the map explorers (served as files, loaded only by a map)
+BOUNDARY_DIR = REPO_ROOT / "frontend" / "public" / "data" / "boundaries"
+BOUNDARY_PRECISION = 5  # decimals of degrees (~1 m): the explorers zoom in to streets
 
 MAX_RING_POINTS = 500  # per ring, after subsampling
 PRECISION = 3  # decimals kept per projected coordinate
@@ -95,12 +98,32 @@ def geometry_bbox(geometry: dict) -> list[float]:
     return [min(xs), min(ys), max(xs), max(ys)]
 
 
+def write_boundary(code: str, feature: dict, prov: dict) -> None:
+    """frontend/public/data/boundaries/<CODE>.geojson: the canonical outline at full resolution, with
+    its licence and the attribution the licence asks for."""
+
+    def rnd(c):  # nested coordinate arrays
+        return [rnd(x) for x in c] if isinstance(c[0], list) else [round(c[0], BOUNDARY_PRECISION), round(c[1], BOUNDARY_PRECISION)]
+
+    geometry = {"type": feature["geometry"]["type"], "coordinates": rnd(feature["geometry"]["coordinates"])}
+    props = {"code": code, "name": feature.get("properties", {}).get("name")}
+    props.update({k: prov.get(k) for k in ("source", "source_url", "license", "license_url", "attribution", "credit") if prov.get(k)})
+    out = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": props, "geometry": geometry}]}
+    (BOUNDARY_DIR / f"{code}.geojson").write_text(
+        json.dumps(out, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8"
+    )
+
+
 def main() -> int:
     catalog = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CATALOG
     boundaries = catalog / "boundaries"
     if not boundaries.is_dir():
         print(f"Boundaries folder not found: {boundaries}")
         return 1
+
+    prov_path = catalog / "legacy" / "spec" / "boundary_provenance.json"
+    provenance = json.loads(prov_path.read_text(encoding="utf-8")) if prov_path.exists() else {}
+    BOUNDARY_DIR.mkdir(parents=True, exist_ok=True)
 
     outlines: dict[str, dict] = {}
     for path in sorted(boundaries.glob("*.geojson")):
@@ -115,6 +138,11 @@ def main() -> int:
             print(f"Warning: empty path for {code}, skipped")
             continue
         outlines[code] = {"d": d, "bbox": geometry_bbox(feature["geometry"])}
+        prov = provenance.get(code) or {}
+        if prov.get("publish", True):
+            write_boundary(code, feature, prov)
+            outlines[code]["boundary"] = f"data/boundaries/{code}.geojson"
+            outlines[code]["credit"] = prov.get("credit") or prov.get("attribution") or "MOSAIC"
 
     out = {
         "_meta": {
@@ -127,7 +155,9 @@ def main() -> int:
                 f"{PRECISION} decimals, rings subsampled to <= {MAX_RING_POINTS} "
                 "vertices; 'bbox' is the projected [x0, y0, x1, y1] of the "
                 "full-resolution geometry (the zoom target). Render with "
-                "fill-rule='evenodd'. Regenerate with "
+                "fill-rule='evenodd'. 'boundary' (when the licence lets MOSAIC "
+                "publish it) is the full-resolution file the map explorers draw, "
+                "'credit' its attribution line. Regenerate with "
                 "scripts/build_map_outlines.py."
             ),
             "projection": "equirectangular: x = lon + 180, y = 90 - lat",
