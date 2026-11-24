@@ -1,5 +1,5 @@
 /** What floats over the map: legend, time bar, popover, side panel frame, notices, attribution. */
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import type { Inspection } from '../domain/blocks'
 import type { LegendModel } from '../domain/legend'
 import type { ScreenPoint } from '../ports/map-engine'
@@ -49,11 +49,16 @@ export function Legend({ model, onVariant }: { model: LegendModel | null; onVari
           </div>
         </>
       ) : (
-        model.rows.map((r) => (
-          <div className="class-row" key={r.label}>
-            <span className={isPale(r.color) ? 'pale' : undefined} style={{ background: r.color }} />
-            <span>{r.label}</span>
-          </div>
+        model.rows.map((r, i) => (
+          <Fragment key={r.label}>
+            {/* a group heading over its first class; ungrouped classes after groups get a plain gap */}
+            {r.group && r.group !== model.rows[i - 1]?.group && <h4 className="class-group">{r.group}</h4>}
+            {!r.group && i > 0 && model.rows[i - 1].group && <div className="class-gap" />}
+            <div className="class-row">
+              <span className={isPale(r.color) ? 'pale' : undefined} style={{ background: r.color }} />
+              <span>{r.label}</span>
+            </div>
+          </Fragment>
         ))
       )}
       {model.notes.map((n, i) => (

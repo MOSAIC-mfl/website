@@ -37,9 +37,9 @@ const seriesSummary: PanelFactory = (config) => {
       const med = median(values)
       const recI = values.indexOf(Math.max(...values))
       const rec = points[recI]
-      // levels one decimal coarser than the difference (1135.6 m, but +0.45 m): the level is read at a
-      // glance, the difference is the point (Round your numbers); the record matches its chart label
-      const ld = Math.max(0, d - 1)
+      // decimals_level: the levels may be rounded coarser than the difference (1135.6 m, but +0.45 m):
+      // the level is read at a glance, the difference is the point; the record matches its chart label
+      const ld = o.num('decimals_level', d)
       const stats: Record<string, { value: string; vars: Record<string, string> }> = {
         latest: { value: Number(latest[vk]).toFixed(ld), vars: { date: fmtDate(String(latest[dk])) } },
         vs_median: { value: `${Number(latest[vk]) >= med ? '+' : ''}${(Number(latest[vk]) - med).toFixed(d)}`, vars: {} },

@@ -1,8 +1,11 @@
 /**
  * The MOSAIC living-landscape boundary on a map explorer. An explorer frames a wider area than the
  * landscape (the whole Lake Victoria basin, the whole Ucayali department), so without this line the reader
- * cannot tell which part of the map is the landscape. The geometry is the site's own copy of the canonical
- * boundary (data/landscape_outlines.json, simplified for the locator map), so no profile has to carry it.
+ * cannot tell which part of the map is the landscape. The geometry is the site's copy of the canonical
+ * boundary (mosaic-standard boundaries/, built by scripts/build_map_outlines.py), so no profile has to
+ * carry it: the full-resolution file public/data/boundaries/<CODE>.geojson, loaded by the map only, with
+ * its licence's credit in the attribution line. A landscape whose boundary MOSAIC may not publish at full
+ * resolution falls back to the simplified locator outline (data/landscape_outlines.json).
  */
 import type { ExplorerConfig, StyleLayerSpec } from '../explorer/domain/config'
 import outlines from '../../../data/landscape_outlines.json'
@@ -33,9 +36,34 @@ export function pathRings(d: string): Ring[] {
   return rings.filter((r) => r.length > 1)
 }
 
-/** The boundary of a landscape as GeoJSON lines, or null when the site has no outline for it. */
+interface OutlineEntry {
+  d?: string
+  /** site-relative path of the full-resolution boundary file */
+  boundary?: string
+  /** short credit line the boundary's licence asks for */
+  credit?: string
+}
+
+const entryOf = (code: string): OutlineEntry | undefined => (outlines.outlines as Record<string, OutlineEntry>)[code]
+
+/** URL of a file of the site (Astro's base may come with or without its trailing slash). */
+export function siteUrl(path: string, base: string = import.meta.env.BASE_URL ?? '/'): string {
+  const rel = `${base.replace(/\/+$/, '')}/${path}`
+  // MapLibre fetches GeoJSON in a worker, where a relative URL would not resolve: make it absolute
+  return typeof window === 'undefined' ? rel : new URL(rel, window.location.href).href
+}
+
+/** What the map draws for a landscape: the full-resolution file when there is one, else the locator lines. */
+export function landscapeBoundary(code: string): { data: unknown; credit: string } | null {
+  const entry = entryOf(code)
+  if (entry?.boundary) return { data: siteUrl(entry.boundary), credit: entry.credit ?? 'MOSAIC' }
+  const lines = landscapeLines(code)
+  return lines ? { data: lines, credit: entry?.credit ?? 'MOSAIC' } : null
+}
+
+/** The simplified locator outline of a landscape as GeoJSON lines, or null when the site has none. */
 export function landscapeLines(code: string): { type: 'FeatureCollection'; features: unknown[] } | null {
-  const entry = (outlines.outlines as Record<string, { d?: string }>)[code]
+  const entry = entryOf(code)
   if (!entry?.d) return null
   const rings = pathRings(entry.d)
   if (!rings.length) return null
@@ -50,8 +78,8 @@ export function landscapeLines(code: string): { type: 'FeatureCollection'; featu
  * above the overlays and under the place names, and a switch at the top of the first rail group (on).
  */
 export function withLandscapeOutline(config: ExplorerConfig, code: string, name: string): ExplorerConfig {
-  const data = landscapeLines(code)
-  if (!data || config.toggles.some((t) => t.id === OUTLINE_TOGGLE)) return config
+  const boundary = landscapeBoundary(code)
+  if (!boundary || config.toggles.some((t) => t.id === OUTLINE_TOGGLE)) return config
   const layers: StyleLayerSpec[] = [
     {
       id: `${SOURCE}-halo`,
@@ -73,14 +101,15 @@ export function withLandscapeOutline(config: ExplorerConfig, code: string, name:
   const mapLayers = at < 0 ? [...base, ...layers] : [...base.slice(0, at), ...layers, ...base.slice(at)]
   return {
     ...config,
-    map: { ...config.map, sources: { ...config.map.sources, [SOURCE]: { type: 'geojson', data } }, layers: mapLayers },
+    map: { ...config.map, sources: { ...config.map.sources, [SOURCE]: { type: 'geojson', data: boundary.data } }, layers: mapLayers },
     toggles: [
       {
         id: OUTLINE_TOGGLE,
         group: config.groups[0],
         title: 'Landscape boundary',
         swatch: INK,
-        attribution: `${name} boundary · MOSAIC`,
+        // the licence of the boundary asks for its credit (e.g. CC BY-IGO 3.0 for OCHA's COD-AB)
+        attribution: `${name} boundary: ${boundary.credit}`,
         default: true,
         layers: layers.map((l) => l.id),
       },

@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest'
 import lvb from './fixtures-landscape-ken-lvb.json'
 import { parseExplorerConfig } from '../src/features/explorer/domain/config'
 import { fmtDate, fmtTick } from '../src/features/explorer/domain/format'
-import { rampLegend, tickAt } from '../src/features/explorer/domain/legend'
-import { landscapeLines, OUTLINE_TOGGLE, pathRings, withLandscapeOutline } from '../src/features/landscape/landscape-outline'
+import { groupRows, legendFrom, rampLegend, tickAt } from '../src/features/explorer/domain/legend'
+import { landscapeBoundary, landscapeLines, OUTLINE_TOGGLE, pathRings, siteUrl, withLandscapeOutline } from '../src/features/landscape/landscape-outline'
 
 const section = (lvb as { sections: { kind: string; config?: unknown }[] }).sections.find((s) => s.kind === 'map-explorer')!
 
@@ -65,5 +65,36 @@ describe('landscape boundary', () => {
     expect(out.map.sources['mosaic-landscape']).toBeDefined()
     // applied twice, it adds nothing
     expect(withLandscapeOutline(out, 'KEN-LVB', 'x').toggles.filter((t) => t.id === OUTLINE_TOGGLE)).toHaveLength(1)
+  })
+
+  it('draws the full-resolution file and credits its licence', () => {
+    const b = landscapeBoundary('KEN-LVB')!
+    expect(String(b.data)).toMatch(/\/data\/boundaries\/KEN-LVB\.geojson$/)
+    expect(b.credit).toContain('CC BY-IGO 3.0')
+    const out = withLandscapeOutline(parseExplorerConfig(section.config), 'KEN-LVB', 'Lake Victoria Basin (Kenya)')
+    expect(out.toggles[0].attribution).toBe('Lake Victoria Basin (Kenya) boundary: IEBC / OCHA COD-AB, CC BY-IGO 3.0')
+  })
+
+  it('builds site URLs with or without a trailing slash in the base', () => {
+    expect(siteUrl('data/x.geojson', '/website')).toMatch(/\/website\/data\/x\.geojson$/)
+    expect(siteUrl('data/x.geojson', '/website/')).toMatch(/\/website\/data\/x\.geojson$/)
+  })
+})
+
+describe('grouped class legends', () => {
+  it('lists each group together, in order of first appearance, ungrouped classes last', () => {
+    const rows = groupRows([
+      { color: '#1', label: 'Forest', group: 'Forest formation' },
+      { color: '#2', label: 'Pasture', group: 'Agricultural area' },
+      { color: '#3', label: 'Not observed' },
+      { color: '#4', label: 'Flooded forest', group: 'Forest formation' },
+    ])
+    expect(rows.map((r) => r.label)).toEqual(['Forest', 'Flooded forest', 'Pasture', 'Not observed'])
+  })
+
+  it('leaves a legend without groups as it is', () => {
+    const m = legendFrom({ kind: 'classes', title: 't', classes: [{ name: 'b', color: '#000' }, { name: 'a', color: '#fff' }] })
+    expect(m.kind === 'classes' && m.rows.map((r) => r.label)).toEqual(['b', 'a'])
+    expect(m.kind === 'classes' && m.rows.every((r) => !('group' in r))).toBe(true)
   })
 })

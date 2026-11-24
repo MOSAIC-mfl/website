@@ -125,6 +125,10 @@
 .lvx .legend .class-row span:first-child { width: 14px; height: 14px; border-radius: 3px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
 /* a white class ('Not observed') on the white card: outline it so the swatch is seen */
 .lvx .legend .class-row span.pale { box-shadow: inset 0 0 0 1px var(--muted); }
+/* a group of classes (a level-1 category of the source's legend): a small heading over its classes */
+.lvx .legend .class-group { margin: 8px 0 2px; font-size: 0.8125rem; font-weight: 600; color: var(--muted); }
+.lvx .legend .class-group:first-of-type { margin-top: 2px; }
+.lvx .legend .class-gap { height: 6px; }
 .lvx .attrib { position: absolute; left: 8px; bottom: 8px; font-size: 0.75rem; color: #3d4349;
                background: rgba(255,255,255,.85); border-radius: 4px; padding: 2px 7px; z-index: 2; max-width: calc(100% - 280px); }
 .lvx .notice { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 460px; z-index: 7;

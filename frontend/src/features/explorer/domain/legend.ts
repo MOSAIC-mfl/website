@@ -14,13 +14,20 @@ export interface LegendTick {
   label: string
 }
 
+/** A class of a classes legend; rows of one group come together and the first carries the heading. */
+export interface LegendRow {
+  color: string
+  label: string
+  group?: string
+}
+
 export type LegendModel = {
   title: string
   switch?: LegendSwitch
   notes: string[]
 } & (
   | { kind: 'steps'; colors: string[]; axis: [string, string]; ticks?: LegendTick[] }
-  | { kind: 'classes'; rows: { color: string; label: string }[] }
+  | { kind: 'classes'; rows: LegendRow[] }
 )
 
 const fill = (text: string, vars: Record<string, string | number>): string =>
@@ -34,7 +41,7 @@ export function legendFrom(cfg: LegendConfig, vars: Record<string, string | numb
       kind: 'classes',
       title: fill(cfg.title, vars),
       notes,
-      rows: cfg.classes.map((c) => ({ color: c.color ?? (c.rgb ? `rgb(${c.rgb.join(',')})` : '#999'), label: c.name })),
+      rows: groupRows(cfg.classes.map((c) => ({ color: c.color ?? (c.rgb ? `rgb(${c.rgb.join(',')})` : '#999'), label: c.name, ...(c.group ? { group: c.group } : {}) }))),
     }
   }
   return {
@@ -44,6 +51,17 @@ export function legendFrom(cfg: LegendConfig, vars: Record<string, string | numb
     colors: cfg.colors,
     axis: [cfg.labels[0] ?? '', cfg.labels[1] ?? ''],
   }
+}
+
+/**
+ * Rows of one group together, groups in the order they first appear, the profile's order kept inside a
+ * group; rows without a group come last (e.g. 'Not observed', which is not a class).
+ */
+export function groupRows(rows: LegendRow[]): LegendRow[] {
+  if (!rows.some((r) => r.group)) return rows
+  const order: string[] = []
+  for (const r of rows) if (r.group && !order.includes(r.group)) order.push(r.group)
+  return [...order.flatMap((g) => rows.filter((r) => r.group === g)), ...rows.filter((r) => !r.group)]
 }
 
 /** A continuous legend from a colour ramp. */

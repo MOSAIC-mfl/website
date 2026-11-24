@@ -78,7 +78,8 @@ website/
 │   ├── scripts/ tests/ public/
 │   └── package.json
 ├── scripts/                    # build_map_outlines.py, build_landscape_geo.py, build_map_labels.py
-│                               # (map data in frontend/data/ from the boundaries in mosaic-standard),
+│                               # (map data in frontend/data/ and the explorers' boundaries in
+│                               # frontend/public/data/boundaries/, from mosaic-standard),
 │                               # validate_site_data.py, parity_diff.sh
 └── .nvmrc                      # Node 22
 ```

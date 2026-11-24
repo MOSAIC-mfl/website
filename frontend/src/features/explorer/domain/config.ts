@@ -94,6 +94,8 @@ export interface LegendClass {
   name: string
   rgb?: [number, number, number]
   color?: string
+  /** heading the class is listed under (e.g. level 1 of the source's legend) */
+  group?: string
 }
 
 export type LegendConfig =
