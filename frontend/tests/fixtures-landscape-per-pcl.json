@@ -40,7 +40,7 @@
     "data": {
      "roots": {
       "site": "https://anaguilarar.github.io/mosaic-ucayali/data/",
-      "hf": "https://huggingface.co/datasets/aaguilar90/mosaic-ucayali/resolve/main/"
+      "hf": "https://huggingface.co/datasets/MOSAIC-CGIAR/mosaic-ucayali/resolve/main/"
      },
      "default_root": "hf",
      "routes": [

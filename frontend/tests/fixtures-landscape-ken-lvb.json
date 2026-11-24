@@ -40,7 +40,7 @@
     "data": {
      "roots": {
       "site": "https://anaguilarar.github.io/mosaic-lake-victoria/data/",
-      "hf": "https://huggingface.co/datasets/aaguilar90/mosaic-lake-victoria/resolve/main/"
+      "hf": "https://huggingface.co/datasets/MOSAIC-CGIAR/mosaic-lake-victoria/resolve/main/"
      },
      "default_root": "hf",
      "routes": [
