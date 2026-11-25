@@ -243,6 +243,7 @@ export class ClimateGridRenderer extends BaseRenderer<ClimateTime> {
     const n = Number(meta.months[`n_${seriesVar.id}`] ?? 0)
     const y0 = Number(String(meta.months.start).slice(0, 4))
     const series = await grid.cellSeries(v.cells, cell.index, n)
+    if (series.every((x) => x === NODATA)) return null // a cell outside the profile's area (masked): nothing to show
     const scale = meta.scale
     const val = (x: number) => (x === NODATA ? null : x * scale)
     const monthsOf = (y: number) => Array.from(series.slice((y - y0) * 12, (y - y0) * 12 + 12))
