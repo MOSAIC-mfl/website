@@ -1,5 +1,6 @@
 /** About & sources: the explorer's credits and the source, period, licence and citation of each layer. */
 import type { SourceEntry } from '../domain/config'
+import { webUrl } from '../domain/links'
 
 interface Props {
   intro?: string
@@ -15,12 +16,21 @@ export function AboutPanel({ intro, licence, sources, report, credits, recordHre
     <>
       <div className="about-brand">
         {intro && <p>{intro}</p>}
-        {credits.map((c) => (
-          <p key={c.name}>
-            {c.url ? <a href={c.url}>{c.name}</a> : c.name}
-            {c.role ? ` — ${c.role}` : ''}
-          </p>
-        ))}
+        {credits.map((c) => {
+          const url = webUrl(c.url)
+          return (
+            <p key={c.name}>
+              {url ? (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {c.name}
+                </a>
+              ) : (
+                c.name
+              )}
+              {c.role ? ` — ${c.role}` : ''}
+            </p>
+          )
+        })}
         {report && (
           <p>
             <a href={report} target="_blank" rel="noopener noreferrer">
