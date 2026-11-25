@@ -155,6 +155,7 @@ export class IndexGridRenderer extends BaseRenderer<Time> {
       ctx.data.json<{ monthly: Record<string, number | null> }>(this.o.str('basin_series')),
       this.o.has('qc') ? grid.stack(this.o.str('qc')) : Promise.resolve(null),
     ])
+    if (series.every((x) => x === NODATA)) return null // a cell outside the profile's area (masked): nothing to show
     const val = (x: number) => (x === NODATA ? null : x * scale)
     const basin = months.map((k) => basinDoc.monthly[k] ?? null)
     const cur = val(series[m])
