@@ -1,9 +1,10 @@
 ---
-/* Privacy notice, version 1.0 (2026-11-26). DRAFT for legal review: every <mark class="legal-todo">
+/* Privacy notice, version 1.1 (2026-11-26; 1.0 the same day, before Google Analytics). DRAFT for legal review: every <mark class="legal-todo">
    is a fact only the responsible entity's legal team can supply. Written from what the site really
-   does (checked 2026-11-26): no accounts, no forms of its own, no cookies, no analytics, three
-   preference items in the visitor's own browser, third-party hosts GitHub (site and API) and
-   Hugging Face (map explorer layers). Change this text only with a new version number and date. */
+   does (checked 2026-11-26): no accounts, no forms of its own, Google Analytics only after consent
+   (CookieConsent.astro), preference items in the visitor's own browser, third-party hosts GitHub
+   (site and API) and Hugging Face (map explorer layers). Change this text only with a new version
+   number and date, and bump CONSENT_VERSION in src/lib/consent/consent.ts when cookies change. */
 import LegalPage from '../components/layout/LegalPage.astro'
 
 const base = import.meta.env.BASE_URL
@@ -12,7 +13,7 @@ const base = import.meta.env.BASE_URL
 <LegalPage
   title="Privacy notice"
   description="What personal data the MOSAIC website handles, who receives it, and how to exercise your rights."
-  version="1.0"
+  version="1.1"
   effective="2026-11-26"
 >
   <h2>1. Who is responsible</h2>
@@ -30,8 +31,9 @@ const base = import.meta.env.BASE_URL
 
   <h2>2. Visiting the website</h2>
   <p>
-    The website has no user accounts, no sign-in, no forms of its own, no cookies, no analytics
-    and no advertising. We do not build profiles of visitors.
+    The website has no user accounts, no sign-in, no forms of its own and no advertising. The
+    only cookies are Google Analytics cookies, and only if you accept them (section 3). We do not
+    build profiles of individual visitors.
   </p>
   <ul>
     <li>
@@ -49,15 +51,48 @@ const base = import.meta.env.BASE_URL
       statement. Nothing is loaded from them until you open a map.
     </li>
     <li>
-      <strong>Settings kept in your browser.</strong> The site remembers three choices in your
-      own browser: light or dark theme and whether the map panel is folded (kept until you clear
-      your browser's site data), and your last catalog search (deleted when you close the tab).
-      They are not cookies, they never leave your device, and they are set only when you make the
-      choice. You can delete them at any time from your browser's settings.
+      <strong>Settings kept in your browser.</strong> The site remembers your choices in your own
+      browser: light or dark theme and whether the map panel is folded (kept until you clear your
+      browser's site data), your last catalog search (deleted when you close the tab), and your
+      cookie choice (see below). They are not cookies, they never leave your device, and they are
+      set only when you make the choice. You can delete them at any time from your browser's
+      settings.
     </li>
   </ul>
 
-  <h2>3. Contact details shown in the catalog</h2>
+  <h2 id="cookies">3. Cookies and analytics</h2>
+  <p>
+    With your permission, we use Google Analytics 4 to count visits and see which pages and
+    features are used, so that we can improve the site. Google Analytics is not loaded at all
+    until you click “Accept all”, or turn on Analytics under “Settings”. If you reject, or do
+    nothing, no request is sent to Google Analytics.
+  </p>
+  <ul>
+    <li>
+      <strong>Cookies set:</strong> <code>_ga</code> (tells visitors apart) and
+      <code>_ga_*</code> (keeps the state of a visit), each kept up to 2 years. Your browser may
+      delete them sooner.
+    </li>
+    <li>
+      <strong>Who receives the data:</strong> Google, as our service provider, under the
+      <a href="https://policies.google.com/privacy">Google Privacy Policy</a>. Google Analytics
+      does not store the IP addresses of visitors in the EU, Switzerland and the UK. We have
+      turned off Google signals and advertising personalization. We keep the data for
+      <mark class="legal-todo">[GA DATA RETENTION: 2 or 14 months]</mark>.
+    </li>
+    <li>
+      <strong>Legal basis:</strong> your consent. You can withdraw it at any time from
+      “Cookie settings” at the bottom of every page. The site then deletes the Google Analytics
+      cookies and stops measuring.
+    </li>
+    <li>
+      <strong>Record of your choice:</strong> your browser keeps your choice, with this
+      notice's version, the date and time, and how you made it (accept, reject or settings),
+      including any later change. When this notice changes, we ask you again.
+    </li>
+  </ul>
+
+  <h2>4. Contact details shown in the catalog</h2>
   <p>
     A dataset's page may show the name, organization and work email of a contact person, so that
     users can cite the data and ask for access. These details come from the person or their
@@ -69,7 +104,7 @@ const base = import.meta.env.BASE_URL
     them with an institutional address, or remove them.
   </p>
 
-  <h2>4. Writing to us or contributing</h2>
+  <h2>5. Writing to us or contributing</h2>
   <ul>
     <li>
       <strong>Email.</strong> When you write to MOSAIC, we use your address and message only to
@@ -83,15 +118,15 @@ const base = import.meta.env.BASE_URL
     </li>
   </ul>
 
-  <h2>5. Who receives personal data</h2>
+  <h2>6. Who receives personal data</h2>
   <p>
-    Only the services named above: GitHub and Hugging Face as hosts, and
+    Only the services named above: GitHub and Hugging Face as hosts, Google for analytics if you accept it, and
     <mark class="legal-todo">[EMAIL PROVIDER, e.g. Microsoft 365 for CGIAR mail]</mark> for email.
     We do not sell personal data or share it for advertising. These services are based in the
     United States. <mark class="legal-todo">[SAFEGUARDS FOR INTERNATIONAL TRANSFERS]</mark>
   </p>
 
-  <h2>6. Your rights</h2>
+  <h2>7. Your rights</h2>
   <p>
     You can ask to know what personal data we hold about you, to correct or update it, to have
     it deleted, to object to its use, and to withdraw any consent you gave. Write to
@@ -105,13 +140,13 @@ const base = import.meta.env.BASE_URL
     <mark class="legal-todo">[DATA PROTECTION AUTHORITY or other complaint route]</mark>.
   </p>
 
-  <h2>7. Children</h2>
+  <h2>8. Children</h2>
   <p>
     The website is meant for researchers, institutions and decision-makers. It is not directed at
     children and we do not knowingly collect their data.
   </p>
 
-  <h2>8. Changes to this notice</h2>
+  <h2>9. Changes to this notice</h2>
   <p>
     Each version of this notice has a number and a date. We publish a substantial change on this
     page before it takes effect. See also the <a href={`${base}/terms`}>Terms of use</a>.
