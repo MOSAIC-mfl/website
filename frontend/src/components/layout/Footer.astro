@@ -64,7 +64,11 @@ const year = new Date().getFullYear()
 
     <div class="footer-bottom">
       <p>&copy; {year} CGIAR MFL Science Program. Content licensed under CC BY 4.0 unless otherwise stated.</p>
-      <a href="https://github.com/MOSAIC-mfl/website">GitHub</a>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href={`${base}/privacy`}>Privacy</a>
+        <a href={`${base}/terms`}>Terms of use</a>
+        <a href="https://github.com/MOSAIC-mfl/website">GitHub</a>
+      </nav>
     </div>
   </div>
 </footer>
@@ -186,6 +190,8 @@ const year = new Date().getFullYear()
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
   }
+
+  .footer-legal { display: flex; gap: var(--space-4); flex-wrap: wrap; }
 
   .footer-bottom a:hover {
     color: var(--mosaic-light-teal);

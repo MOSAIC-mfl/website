@@ -31,7 +31,7 @@ async function datasetIds(): Promise<string[]> {
 
 export const GET: APIRoute = async ({ site }) => {
   const base = import.meta.env.BASE_URL
-  const pages = ['/', '/landscapes/', '/catalogue/', '/about/'].map((p) => `${base}${p}`)
+  const pages = ['/', '/landscapes/', '/catalogue/', '/about/', '/privacy/', '/terms/'].map((p) => `${base}${p}`)
   const datasets = (await datasetIds()).map((id) => datasetHref(base, id))
   const urls = [...pages, ...datasets]
     .map((p) => `  <url><loc>${new URL(p, site).href.replace(/&/g, '&amp;')}</loc></url>`)
