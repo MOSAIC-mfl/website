@@ -162,6 +162,24 @@ const sections = [
       const id = alias[h] ?? h
       return ids.includes(id) ? id : null
     }
+    // an anchor inside a section (e.g. #ways-to-register in How to contribute) opens that section
+    const sectionOf = (hash: string) => {
+      const h = decodeURIComponent(hash.replace(/^#/, ''))
+      return resolve(hash) ?? (h ? document.getElementById(h)?.closest<HTMLElement>('[data-section]')?.dataset.section ?? null : null)
+    }
+    const revealInner = () => {
+      const h = decodeURIComponent(location.hash.replace(/^#/, ''))
+      if (h && !resolve(location.hash)) document.getElementById(h)?.scrollIntoView({ behavior: smooth })
+    }
+    // follow the address: a section, or an anchor inside one (opened first if hidden)
+    const follow = () => {
+      const id = resolve(location.hash)
+      if (id) return show(id, { scroll: true })
+      const inner = sectionOf(location.hash)
+      if (!inner) return show('overview', { scroll: true })
+      if (!secs.find((s) => s.dataset.section === inner)?.classList.contains('is-on')) show(inner)
+      revealInner()
+    }
 
     function show(id: string, opts: { focus?: boolean; scroll?: boolean } = {}) {
       secs.forEach((s) => s.classList.toggle('is-on', s.dataset.section === id))
@@ -185,7 +203,8 @@ const sections = [
 
     root.classList.add('is-tabs')
     // arriving at /about#section: the browser scrolls to the section itself
-    show(resolve(location.hash) ?? 'overview')
+    show(sectionOf(location.hash) ?? 'overview')
+    revealInner()
 
     // Any in-page link to a section (menu, "Next", links inside the content)
     root.addEventListener('click', (e) => {
@@ -197,7 +216,7 @@ const sections = [
       history.pushState(null, '', `#${id}`)
       show(id, { focus: true, scroll: true })
     })
-    window.addEventListener('popstate', () => show(resolve(location.hash) ?? 'overview', { scroll: true }))
-    window.addEventListener('hashchange', () => { const id = resolve(location.hash); if (id) show(id, { scroll: true }) })
+    window.addEventListener('popstate', follow)
+    window.addEventListener('hashchange', () => { if (location.hash) follow() })
   }
 </script>
