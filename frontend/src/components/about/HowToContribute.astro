@@ -1,7 +1,10 @@
 ---
 /* About › How to contribute — moved here from the former /contribute page
-   (2026-11-09; /contribute now redirects to /about#contribute). */
+   (2026-11-09; /contribute now redirects to /about#contribute).
+   2026-11-27: the ways to register are shown side by side, with the same weight;
+   "Register a dataset" leads to them instead of the GitHub form alone. */
 import StepTimeline from '../ui/StepTimeline.astro'
+import ContentCard from '../ui/ContentCard.astro'
 
 // The catalogue's submission form (catalog repo — records/<ID>.yaml is
 // the source of truth; submissions become validated record files via PR).
@@ -13,9 +16,29 @@ const howToUrl = 'https://github.com/MOSAIC-mfl/catalog#add-or-change-a-dataset'
 const skillUrl = 'https://github.com/MOSAIC-mfl/mosaic-skills/tree/main/skills/mosaic-contribute'
 
 const steps = [
-  { num: '01', icon: 'upload', title: 'Register', body: 'Fill the form: title, living landscape, country, contact. Everything else is optional; empty is a valid answer.' },
+  { num: '01', icon: 'upload', title: 'Register', body: 'Choose any of the four ways below. Four fields are required; everything else is optional, and empty is a valid answer.' },
   { num: '02', icon: 'eye', title: 'Review with you', body: 'The MOSAIC team turns your submission into a validated record and tags you to confirm the details.' },
   { num: '03', icon: 'check-circle', title: 'Published', body: 'Once you confirm, it is published automatically: a permanent ID, a metadata record and a page in the catalog.' },
+]
+
+// The ways to register, in the same card and with the same weight.
+const routes = [
+  {
+    icon: 'sparkles', title: 'With an AI assistant', href: skillUrl, external: true,
+    body: 'Your datasets are in a folder? The mosaic-contribute skill reads the files, asks only what they cannot tell and prepares the records for you. Works with Claude or any assistant that can run commands.',
+  },
+  {
+    icon: 'file-text', title: 'Online form', href: newDatasetUrl, external: true,
+    body: 'Fill in a short form with the four required fields. You need a free GitHub account.',
+  },
+  {
+    icon: 'mail', title: 'By email', href: '#contact', external: false,
+    body: 'No GitHub account, or a whole inventory? Email the four required fields, or your centre\'s spreadsheet, to the MOSAIC coordinator. We prepare the records for you.',
+  },
+  {
+    icon: 'database', title: 'As a record file', href: howToUrl, external: true,
+    body: 'Comfortable with Git? Copy a record file in the catalog repository, edit it and open a pull request. Validation runs automatically.',
+  },
 ]
 
 const required = [
@@ -40,13 +63,22 @@ const recommended = [
   metadata that points to them.
 </p>
 <div class="hc-actions">
-  <a class="btn btn-primary" href={newDatasetUrl} target="_blank" rel="noopener noreferrer">Register a dataset</a>
+  <a class="btn btn-primary" href="#ways-to-register">Register a dataset</a>
   <a class="btn btn-secondary" href="#contact">Ask before contributing</a>
 </div>
-<p class="hc-note">4 required fields · via GitHub or plain email</p>
+<p class="hc-note">4 required fields · with an AI assistant, an online form, email or Git</p>
 
 <h3 class="hc-h3">How registration works</h3>
 <StepTimeline steps={steps} />
+
+<h3 class="hc-h3" id="ways-to-register">Ways to register</h3>
+<div class="hc-routes">
+  {routes.map((r) => (
+    <ContentCard icon={r.icon} title={r.title} href={r.href} target={r.external ? '_blank' : undefined} arrow>
+      {r.body}
+    </ContentCard>
+  ))}
+</div>
 
 <div class="need-card">
   <div class="need-col">
@@ -68,35 +100,10 @@ const recommended = [
   </div>
 </div>
 
-<h3 class="hc-h3">Other ways to contribute</h3>
-<ul class="hc-bullets">
-  <li>
-    <strong>Your datasets are in a folder?</strong> Use the
-    <a href={skillUrl} target="_blank" rel="noopener noreferrer">mosaic-contribute skill</a> with an AI
-    assistant that can run commands, such as Claude. It reads your files, asks only what they cannot
-    tell (who made the data, the licence, where to get it, a short description) and sends the records
-    for review. No spreadsheet, no form, and your files stay on your computer.
-  </li>
-  <li>
-    <strong>No GitHub account?</strong> Email the four required fields (title, landscape, country,
-    contact) to the <a href="#contact">MOSAIC coordinator</a>. We register it for you and send back
-    the published link.
-  </li>
-  <li>
-    <strong>Comfortable with Git?</strong> Each dataset is one record file in the
-    <a href="https://github.com/MOSAIC-mfl/catalog" target="_blank" rel="noopener noreferrer">catalog's code on GitHub</a>:
-    copy one, edit it, open a pull request. Validation runs automatically, so you can't break the catalog.
-  </li>
-  <li>
-    <strong>Many datasets at once?</strong> Send your center's inventory (a spreadsheet is fine) to the
-    <a href="#contact">MOSAIC coordinator</a>. We run a scripted import and return draft records for your review.
-  </li>
-  <li>
-    <strong>Updating an existing dataset?</strong> <a href={updateIssueUrl} target="_blank" rel="noopener noreferrer">Open an update issue</a> describing the change.
-  </li>
-</ul>
-<p class="hc-text">
-  Step-by-step instructions for all routes:
+<p class="hc-text hc-after">
+  <strong>Updating a dataset already in the catalog?</strong>
+  <a href={updateIssueUrl} target="_blank" rel="noopener noreferrer">Open an update issue</a> describing the change.
+  Step-by-step instructions for every way:
   <a href={howToUrl} target="_blank" rel="noopener noreferrer">How to register a dataset</a>.
 </p>
 
@@ -125,15 +132,16 @@ const recommended = [
   .need-tick.req { color: var(--color-link); }
   .need-foot { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--color-muted); }
 
-  .hc-bullets {
-    list-style: disc; padding-left: var(--space-6); color: var(--color-muted);
-    display: flex; flex-direction: column; gap: var(--space-3); margin: 0 0 var(--space-4); line-height: 1.6;
-    max-width: var(--measure);
-  }
+  /* the anchor of the "Register a dataset" button: clear the sticky chip row on narrow screens too */
+  @media (max-width: 900px) { #ways-to-register { scroll-margin-top: 3.5rem; } }
+  .hc-routes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
   .hc-text { color: var(--color-muted); margin: 0; max-width: var(--measure); }
-  .hc-bullets a, .hc-text a, .need-foot a { color: var(--color-link); }
+  .hc-text strong { color: var(--color-text); }
+  .hc-after { margin-top: var(--space-8); line-height: 1.6; }
+  .hc-text a, .need-foot a { color: var(--color-link); }
 
   @media (max-width: 767px) {
     .need-card { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-6); }
+    .hc-routes { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   }
 </style>
