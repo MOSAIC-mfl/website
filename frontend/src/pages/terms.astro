@@ -1,0 +1,93 @@
+---
+/* Terms of use, version 1.0 (2026-11-26). DRAFT for legal review: every <mark class="legal-todo">
+   is a fact or a clause only the responsible entity's legal team can supply. MOSAIC sells nothing,
+   so there is no refund policy. Change this text only with a new version number and date. */
+import LegalPage from '../components/layout/LegalPage.astro'
+
+const base = import.meta.env.BASE_URL
+---
+
+<LegalPage
+  title="Terms of use"
+  description="The conditions for using the MOSAIC website, its catalog and the content published on it."
+  version="1.0"
+  effective="2026-11-26"
+>
+  <h2>1. About these terms</h2>
+  <p>
+    MOSAIC is an open network for living landscapes: a coordination network and metadata system
+    that connects data and research about each landscape. It is an initiative of the CGIAR
+    Multifunctional Landscapes Science Program, run by
+    <mark class="legal-todo">[RESPONSIBLE ENTITY]</mark>. By using this website you accept these
+    terms. The website is free and has no user accounts.
+  </p>
+
+  <h2>2. Website content</h2>
+  <ul>
+    <li>
+      Text and graphics made for this website are licensed under
+      <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0</a>
+      (CC BY 4.0), unless stated otherwise.
+    </li>
+    <li>
+      Landscape photos come from Wikimedia Commons under their own licences. Each photo shows its
+      author and licence, and the photos were resized for the web.
+    </li>
+    <li>
+      The CGIAR and Multifunctional Landscapes names and logos are not covered by CC BY 4.0 and
+      may not be reused without permission.
+    </li>
+  </ul>
+
+  <h2>3. The catalog and the data it describes</h2>
+  <p>
+    The catalog holds descriptions (metadata) of datasets. MOSAIC does not hold the datasets
+    themselves: they stay with the institutions that produce them, under the licence and access
+    conditions shown on each dataset's page. Check those conditions before you use, share or
+    publish any data, and cite the source as its owner asks.
+  </p>
+  <p>
+    The descriptions are written by contributors and reviewed for structure, not for scientific
+    accuracy. Catalog metadata is shared under
+    <mark class="legal-todo">[METADATA LICENCE, e.g. CC0 or CC BY 4.0]</mark>.
+  </p>
+
+  <h2>4. Maps and landscape boundaries</h2>
+  <p>
+    The boundaries of the living landscapes are working delineations of the Science Program. The
+    names and boundaries shown on MOSAIC maps do not imply any opinion on the legal status of any
+    country, territory or area, or on the delimitation of its frontiers.
+  </p>
+
+  <h2>5. Contributing</h2>
+  <p>
+    When you register a dataset or suggest a correction, you confirm that you may share the
+    information you send, and you agree that the description is published in the catalog under
+    the metadata licence above. If your description names a contact person, that person must
+    agree to be named; see the <a href={`${base}/privacy`}>Privacy notice</a>.
+  </p>
+
+  <h2>6. No warranty</h2>
+  <p>
+    The website, the API and the catalog are provided as they are, without warranty of any kind.
+    We work to keep them accurate and available but cannot guarantee it.
+    <mark class="legal-todo">[LIMITATION OF LIABILITY clause]</mark>
+  </p>
+
+  <h2>7. Links to other sites</h2>
+  <p>
+    MOSAIC links to data services, publications and websites run by others. We are not
+    responsible for their content, terms or privacy practices.
+  </p>
+
+  <h2>8. Privileges and immunities</h2>
+  <p>
+    <mark class="legal-todo">[PRIVILEGES AND IMMUNITIES and governing-law clause, as the responsible entity uses on its own websites]</mark>
+  </p>
+
+  <h2>9. Changes and contact</h2>
+  <p>
+    Each version of these terms has a number and a date, and a substantial change is published
+    here before it takes effect. Questions: <mark class="legal-todo">[CONTACT EMAIL]</mark>.
+  </p>
+</LegalPage>

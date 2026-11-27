@@ -1,5 +1,8 @@
 ---
+import { GA_MEASUREMENT_ID, isMeasurementId } from '../../lib/consent/consent'
+
 const base = import.meta.env.BASE_URL
+const hasCookies = isMeasurementId(GA_MEASUREMENT_ID)
 const year = new Date().getFullYear()
 ---
 
@@ -64,7 +67,12 @@ const year = new Date().getFullYear()
 
     <div class="footer-bottom">
       <p>&copy; {year} CGIAR MFL Science Program. Content licensed under CC BY 4.0 unless otherwise stated.</p>
-      <a href="https://github.com/MOSAIC-mfl/website">GitHub</a>
+      <nav class="footer-legal" aria-label="Legal">
+        <a href={`${base}/privacy`}>Privacy</a>
+        <a href={`${base}/terms`}>Terms of use</a>
+        {hasCookies && <button type="button" class="footer-link-btn js-cookie-settings">Cookie settings</button>}
+        <a href="https://github.com/MOSAIC-mfl/website">GitHub</a>
+      </nav>
     </div>
   </div>
 </footer>
@@ -186,6 +194,14 @@ const year = new Date().getFullYear()
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
   }
+
+  .footer-legal { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+
+  .footer-link-btn {
+    background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .footer-link-btn:hover { color: var(--mosaic-light-teal); }
 
   .footer-bottom a:hover {
     color: var(--mosaic-light-teal);

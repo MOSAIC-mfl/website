@@ -1,0 +1,153 @@
+---
+/* Cookie banner and settings (2026-11-26). Rendered only when a real GA4 measurement ID is set
+   in src/lib/consent/consent.ts; with no ID the site sets no cookies and shows no banner.
+   Google "basic" consent mode: gtag.js is not even requested until the visitor accepts.
+   Reject is as easy as Accept: same size, same row, one click. The footer's "Cookie settings"
+   button (.js-cookie-settings) reopens the panel to change or withdraw the choice. */
+import { GA_MEASUREMENT_ID, isMeasurementId } from '../../lib/consent/consent'
+
+const base = import.meta.env.BASE_URL
+const enabled = isMeasurementId(GA_MEASUREMENT_ID)
+---
+
+{enabled && (
+  <section class="cc" data-cc hidden role="region" aria-labelledby="cc-title">
+    <div class="cc-inner">
+      <h2 id="cc-title" class="cc-title">Cookies on MOSAIC</h2>
+      <p class="cc-text">
+        With your permission we use Google Analytics cookies to count visits and see which pages
+        are used, so we can improve the site. They are off unless you accept. You can change your
+        choice at any time from “Cookie settings” at the bottom of every page.
+        <a href={`${base}/privacy#cookies`}>Privacy notice</a>
+      </p>
+
+      <div class="cc-settings" data-cc-settings hidden>
+        <label class="cc-cat">
+          <input type="checkbox" checked disabled />
+          <span><strong>Necessary</strong>: your theme, map panel and catalog search, and this
+            choice, kept in your browser only. Always on.</span>
+        </label>
+        <label class="cc-cat">
+          <input type="checkbox" data-cc-analytics />
+          <span><strong>Analytics</strong>: Google Analytics cookies <code>_ga</code> and
+            <code>_ga_*</code>, kept up to 2 years. Off unless you turn it on.</span>
+        </label>
+      </div>
+
+      <div class="cc-actions">
+        <button type="button" class="btn btn-primary cc-btn" data-cc-reject>Reject all</button>
+        <button type="button" class="btn btn-primary cc-btn" data-cc-accept>Accept all</button>
+        <button type="button" class="btn btn-secondary cc-btn" data-cc-open-settings>Settings</button>
+        <button type="button" class="btn btn-secondary cc-btn" data-cc-save hidden>Save my choice</button>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  import {
+    CONSENT_STORAGE_KEY, GA_MEASUREMENT_ID, analyticsAllowed, gaCookieNames, isMeasurementId,
+    isWithdrawal, needsPrompt, parseConsent, recordDecision, type ConsentMethod, type ConsentState,
+  } from '../../lib/consent/consent'
+
+  const id = GA_MEASUREMENT_ID
+  const root = document.querySelector<HTMLElement>('[data-cc]')
+  const w = window as unknown as Record<string, unknown> & { dataLayer?: unknown[] }
+
+  function read(): ConsentState | null {
+    try { return parseConsent(localStorage.getItem(CONSENT_STORAGE_KEY)) } catch { return null }
+  }
+  function write(s: ConsentState) {
+    try { localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(s)) } catch { /* storage blocked: choice lasts this page */ }
+  }
+
+  function loadAnalytics() {
+    if (w.__mosaicGaLoaded) return
+    w.__mosaicGaLoaded = true
+    w[`ga-disable-${id}`] = false
+    w.dataLayer = w.dataLayer || []
+    // gtag must push the arguments object itself, as Google's snippet does
+    // eslint-disable-next-line prefer-rest-params
+    const gtag = function () { w.dataLayer!.push(arguments) }
+    w.gtag = gtag
+    ;(gtag as (...a: unknown[]) => void)('js', new Date())
+    ;(gtag as (...a: unknown[]) => void)('config', id, { allow_google_signals: false, allow_ad_personalization_signals: false })
+    const s = document.createElement('script')
+    s.async = true
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`
+    document.head.appendChild(s)
+  }
+
+  function stopAnalytics() {
+    w[`ga-disable-${id}`] = true
+    for (const name of gaCookieNames(document.cookie)) {
+      for (const domain of ['', `; domain=${location.hostname}`, `; domain=.${location.hostname}`]) {
+        document.cookie = `${name}=; Max-Age=0; path=/${domain}`
+      }
+    }
+  }
+
+  if (root && isMeasurementId(id)) {
+    const settings = root.querySelector<HTMLElement>('[data-cc-settings]')!
+    const analyticsBox = root.querySelector<HTMLInputElement>('[data-cc-analytics]')!
+    const openSettingsBtn = root.querySelector<HTMLButtonElement>('[data-cc-open-settings]')!
+    const saveBtn = root.querySelector<HTMLButtonElement>('[data-cc-save]')!
+
+    const show = (withSettings: boolean) => {
+      const s = read()
+      analyticsBox.checked = analyticsAllowed(s)
+      settings.hidden = !withSettings
+      saveBtn.hidden = !withSettings
+      openSettingsBtn.hidden = withSettings
+      root.hidden = false
+    }
+
+    const decide = (analytics: boolean, method: ConsentMethod) => {
+      const prev = read()
+      const next = recordDecision(prev, { analytics, method, page: location.pathname })
+      write(next)
+      if (isWithdrawal(prev, next)) stopAnalytics()
+      if (analytics) loadAnalytics()
+      root.hidden = true
+    }
+
+    root.querySelector('[data-cc-accept]')!.addEventListener('click', () => decide(true, 'banner-accept'))
+    root.querySelector('[data-cc-reject]')!.addEventListener('click', () => decide(false, 'banner-reject'))
+    saveBtn.addEventListener('click', () => decide(analyticsBox.checked, 'settings-save'))
+    openSettingsBtn.addEventListener('click', () => { show(true); analyticsBox.focus() })
+
+    for (const b of document.querySelectorAll<HTMLElement>('.js-cookie-settings')) {
+      b.addEventListener('click', () => { show(true); analyticsBox.focus() })
+    }
+
+    const state = read()
+    if (analyticsAllowed(state)) loadAnalytics()
+    else if (needsPrompt(state)) show(false)
+  }
+</script>
+
+<style>
+  .cc {
+    position: fixed; inset: auto var(--space-4) var(--space-4) var(--space-4); z-index: 1000;
+    display: flex; justify-content: center;
+  }
+  .cc[hidden] { display: none; }
+  .cc-inner {
+    max-width: 720px; width: 100%;
+    background: var(--color-surface); color: var(--color-text);
+    border: 1px solid var(--color-border); border-radius: var(--radius-card);
+    padding: var(--space-6);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  .cc-title { font-size: var(--text-lg); margin: 0 0 var(--space-2); }
+  .cc-text { font-size: var(--text-sm); margin: 0 0 var(--space-4); }
+  .cc-settings { display: grid; gap: var(--space-3); margin: 0 0 var(--space-4); }
+  .cc-settings[hidden] { display: none; }
+  .cc-cat { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-sm); }
+  .cc-cat input { margin-top: 0.2rem; flex: none; }
+  .cc-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .cc-btn[hidden] { display: none; }
+  @media (max-width: 560px) {
+    .cc-btn { flex: 1 1 100%; }
+  }
+</style>

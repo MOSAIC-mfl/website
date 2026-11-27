@@ -427,6 +427,8 @@ export function mountExplorer(root: HTMLElement, live: ExplorerData): void {
     credit.append(a, ', ')
     if (ph.licence_url) credit.append(Object.assign(document.createElement('a'), { href: ph.licence_url, target: '_blank', rel: 'noopener', textContent: ph.licence }))
     else credit.append(ph.licence)
+    // CC BY / BY-SA ask to say the photo was changed: every photo was resized for the web.
+    credit.append(' (resized)')
   }
   function renderPhotos(it: Item) {
     const fig = $('[data-photo]')
