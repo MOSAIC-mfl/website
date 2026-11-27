@@ -9,6 +9,8 @@ const newDatasetUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new?template
 const updateIssueUrl = 'https://github.com/MOSAIC-mfl/catalog/issues/new'
 // The catalog README's "Add or change a dataset" section: the current (standard v0.2) instructions.
 const howToUrl = 'https://github.com/MOSAIC-mfl/catalog#add-or-change-a-dataset'
+// The mosaic-contribute skill (mosaic-skills repo): a folder of datasets -> records, via an AI assistant.
+const skillUrl = 'https://github.com/MOSAIC-mfl/mosaic-skills/tree/main/skills/mosaic-contribute'
 
 const steps = [
   { num: '01', icon: 'upload', title: 'Register', body: 'Fill the form: title, living landscape, country, contact. Everything else is optional; empty is a valid answer.' },
@@ -68,6 +70,13 @@ const recommended = [
 
 <h3 class="hc-h3">Other ways to contribute</h3>
 <ul class="hc-bullets">
+  <li>
+    <strong>Your datasets are in a folder?</strong> Use the
+    <a href={skillUrl} target="_blank" rel="noopener noreferrer">mosaic-contribute skill</a> with an AI
+    assistant that can run commands, such as Claude. It reads your files, asks only what they cannot
+    tell (who made the data, the licence, where to get it, a short description) and sends the records
+    for review. No spreadsheet, no form, and your files stay on your computer.
+  </li>
   <li>
     <strong>No GitHub account?</strong> Email the four required fields (title, landscape, country,
     contact) to the <a href="#contact">MOSAIC coordinator</a>. We register it for you and send back
